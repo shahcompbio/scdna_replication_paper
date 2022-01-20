@@ -23,7 +23,7 @@ rule all_fig1:
 			]
 		),
 		expand(
-			'analysis/fig1/{dataset}/s_phase_cells.tsv',
+			'analysis/fig1/{dataset}/clone_states.tsv',
 			dataset=[
 				d for d in config['fitness_datasets']
 				if (d not in bad_datasets)
@@ -157,11 +157,10 @@ rule compute_consensus_clone_states:
 
 rule plot_consensus_clone_copynumber:
 	input:
-		clone_states = 'analysis/fitness_s_clones/{dataset}/clone_states.tsv',
-		clone_copy = 'analysis/fitness_s_clones/{dataset}/clone_copy.tsv',
-		clone_copy2_norm = 'analysis/fitness_s_clones/{dataset}/clone_copy2_norm.tsv'
-	output: 'plots/fitness_s_clones/{dataset}/consensus_clone_copynumber.pdf'
-	log: 'logs/fitness_s_clones/{dataset}/plot_consensus_clone_copynumber.log'
+		clone_states = 'analysis/fig1/{dataset}/clone_states.tsv',
+		clone_copy = 'analysis/fig1/{dataset}/clone_copy.tsv'
+	output: 'plots/fig1/{dataset}/consensus_clone_copynumber.pdf'
+	log: 'logs/fig1/{dataset}/plot_consensus_clone_copynumber.log'
 	shell:
 		'python3 scripts/fitness_s_clones/plot_consensus_clone_copynumber.py '
 		'{input} {output} &> {log}'
