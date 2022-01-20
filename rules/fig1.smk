@@ -135,7 +135,7 @@ rule infer_SPF:
 		input_col = 'copy'
 	log: 'logs/fig1/{dataset}/infer_SPF.log'
 	shell:
-		'source ../scdna_replication_utils/venv/bin/activate ; '
+		'source ../scdna_replication_tools/venv/bin/activate ; '
 		'python3 scripts/fig1/infer_SPF.py '
 		'{input} {params} {output} &> {log} ; '
 		'deactivate'
@@ -149,7 +149,7 @@ rule compute_consensus_clone_states:
 		clone_col = 'clone_id'
 	log: 'logs/fig1/{dataset}/compute_consensus_clone_states.log'
 	shell:
-		'source ../scdna_replication_utils/venv/bin/activate ; '
+		'source ../scdna_replication_tools/venv/bin/activate ; '
 		'python3 scripts/common/compute_consensus_clone_profiles.py '
 		'{input} {params} {output} &> {log} ; '
 		'deactivate'

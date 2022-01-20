@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 import numpy as np
 import pandas as pd
-from scdna_replication_utils.infer_SPF import SPF
+from scdna_replication_tools.infer_SPF import SPF
 
 
 def get_args():
@@ -21,23 +21,31 @@ def main():
 	argv = get_args()
 	cn_s = pd.read_csv(argv.cn_s, sep='\t')
 	cn_g1 = pd.read_csv(argv.cn_g1, sep='\t')
+	print('loaded data')
 
 	# temporarily remove columns that don't get used by infer_SPF in order to avoid
 	# removing cells/loci that have NaN entries in some fields
-	temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.input_col]]
-	temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'clone_id', argv.input_col]]
+	temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', 'state', argv.input_col]]
+	temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'clone_id', 'state', argv.input_col]]
 
+	print('creating spf object')
 	# create SPF object with input
 	spf = SPF(temp_cn_s, temp_cn_g1, input_col=argv.input_col, clone_col='clone_id')
 
+	print('running inference')
 	# run inference
-	cn_s_clones, spf_table = spf.infer()
+	cn_s_with_clone_id, spf_table = spf.infer()
+	print('done running inference')
 
 	# extract clone profiles from spf object
 	clone_profiles = spf.clone_profiles
 
-	# merge cn_s_clones with initial cn_s input to add columns that were excluded from temp_cn_s
-	cn_s_out = pd.merge(cn_s, cn_s_clones)
+	print('cn_s.shape', cn_s.shape)
+	print('cn_s_with_clone_id.shape', cn_s_with_clone_id.shape)
+
+	# merge cn_s_with_clone_id with initial cn_s input to add columns that were excluded from temp_cn_s
+	cn_s_out = pd.merge(cn_s, cn_s_with_clone_id)
+	print('cn_s_out.shape', cn_s_out.shape)
 
 	# save output files
 	cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
