@@ -27,7 +27,7 @@ def main():
 	# merge time info with cn now using library_id as common column
 	cn_out = pd.merge(cn, time_df)
 
-	cn_out.to_csv(argv.cn_out, sep='\t')
+	cn_out.to_csv(argv.cn_out, sep='\t', index=False)
 
 
 if __name__ == '__main__':

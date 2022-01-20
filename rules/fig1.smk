@@ -16,7 +16,7 @@ bad_datasets = []
 rule all_fig1:
 	input:
 		expand(
-			'analysis/fig1/{dataset}/non_s_phase_cells.tsv',
+			'analysis/fig1/{dataset}/spf_table.tsv',
 			dataset=[
 				d for d in config['fitness_datasets']
 				if (d not in bad_datasets)
@@ -122,6 +122,37 @@ rule get_non_s_phase_cells:
 
 		df.to_csv(str(output), sep='\t', index=False)
 
+
+rule infer_SPF:
+	input:
+		cn_s = 'analysis/fig1/{dataset}/s_phase_cells.tsv',
+		cn_g1 = 'analysis/fig1/{dataset}/non_s_phase_cells.tsv'
+	output:
+		cn_s_out = 'analysis/fig1/{dataset}/s_phase_cells_with_clones.tsv',
+		spf_table = 'analysis/fig1/{dataset}/spf_table.tsv',
+		clone_copy = 'analysis/fig1/{dataset}/clone_copy.tsv'
+	params:
+		input_col = 'copy'
+	log: 'logs/fig1/{dataset}/infer_SPF.log'
+	shell:
+		'source ../scdna_replication_utils/venv/bin/activate ; '
+		'python3 scripts/fig1/infer_SPF.py '
+		'{input} {params} {output} &> {log} ; '
+		'deactivate'
+
+
+rule compute_consensus_clone_states:
+	input: 'analysis/fig1/{dataset}/non_s_phase_cells.tsv'
+	output: 'analysis/fig1/{dataset}/clone_states.tsv'
+	params:
+		input_col = 'state',
+		clone_col = 'clone_id'
+	log: 'logs/fig1/{dataset}/compute_consensus_clone_states.log'
+	shell:
+		'source ../scdna_replication_utils/venv/bin/activate ; '
+		'python3 scripts/common/compute_consensus_clone_profiles.py '
+		'{input} {params} {output} &> {log} ; '
+		'deactivate'
 
 
 rule plot_consensus_clone_copynumber:
