@@ -1,0 +1,65 @@
+{
+	"__default__" :
+	{
+	  	"queue" : "general",
+		"mem": 64,
+		"threads" : 1,
+		"time" : "2:00",
+		"extra" : "",
+		"latency": "10",
+        "logdir": "logs/cluster"
+	},
+	"compute_consensus_clone_copynumber" :
+	{
+		"time" : "24:00",
+		"mem" : 72
+	},
+	"compute_consensus_clone_copynumber_50kb" :
+	{
+		"time" : "24:00",
+		"mem" : 256
+	},
+	"get_non_s_phase_cells_50kb" :
+	{
+		"mem" : 256
+	},
+	"get_s_phase_cells_50kb" :
+	{
+		"mem" : 256
+	},
+	"collect_cn_data_50kb" :
+	{
+		"mem" : 256,
+		"time" : "12:00"
+	},
+	"generate_G1_table" :
+	{
+		"time" : "18:00"
+	},
+	"generate_detergent" :
+	{
+		"time" : "18:00",
+		"mem" : 320
+	},
+	"decompose_G1_cells" :
+	{
+		"time" : "72:00"
+	},
+	"identify_G1_events" :
+	{
+		"mem" : 320,
+		"time" : "6:00"
+	},
+	"normalize_by_cell" :
+	{
+		"time" : "24:00"
+	},
+	"downsampling_analysis" :
+	{
+		"time" : "24:00"
+	},
+	"bulk_gc_correction" :
+	{
+		"time" : "8:00"
+	}
+}

@@ -1,0 +1,3 @@
+ticket_dir_50kb: /juno/work/shah/users/weinera2/projects/hmmcopy/output
+ticket_dir_500kb: /work/shah/tantalus
+datasets: ['2295', 'SA039']
