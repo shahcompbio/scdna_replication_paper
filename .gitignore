@@ -128,5 +128,15 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# snakemake
+.snakemake/
+
 # repo-specific folders and files
 data/
+logs/
+analysis/
+plots/
+err.txt
+out.txt
+
+
