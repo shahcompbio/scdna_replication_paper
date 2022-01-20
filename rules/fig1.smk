@@ -23,12 +23,27 @@ rule all_fig1:
 			]
 		),
 		expand(
-			'analysis/fig1/{dataset}/clone_states.tsv',
+			'plots/fig1/{dataset}/consensus_clone_copynumber.pdf',
 			dataset=[
 				d for d in config['fitness_datasets']
 				if (d not in bad_datasets)
 			]
 		),
+		expand(
+			'plots/fig1/{dataset}/clonal_evolution.pdf',
+			dataset=[
+				d for d in config['fitness_datasets']
+				if (d not in bad_datasets)
+			]
+		),
+		expand(
+			'plots/fig1/{dataset}/s_predictiveness.pdf',
+			dataset=[
+				d for d in config['fitness_datasets']
+				if (d not in bad_datasets)
+			]
+		),
+		
 
 
 def dataset_cn_files(wildcards):
@@ -162,34 +177,36 @@ rule plot_consensus_clone_copynumber:
 	output: 'plots/fig1/{dataset}/consensus_clone_copynumber.pdf'
 	log: 'logs/fig1/{dataset}/plot_consensus_clone_copynumber.log'
 	shell:
-		'python3 scripts/fitness_s_clones/plot_consensus_clone_copynumber.py '
+		'source ../scgenome/venv/bin/activate ; '
+		'python3 scripts/fig1/plot_consensus_clone_copynumber.py '
 		'{input} {output} &> {log}'
+		' ; deactivate'
 
 
 rule plot_clonal_evolution:
 	input: 
-		s_phase = 'analysis/fitness_s_clones/{dataset}/s_phase_with_clone_id_time.tsv',
-		non_s_phase = 'analysis/fitness_s_clones/{dataset}/non_s_phase_cells_time.tsv'
+		s_phase = 'analysis/fig1/{dataset}/s_phase_cells_with_clones.tsv',
+		non_s_phase = 'analysis/fig1/{dataset}/non_s_phase_cells.tsv'
 	output:
-		s_out = 'analysis/fitness_s_clones/{dataset}/s_phase_clone_time_counts.tsv',
-		non_s_out = 'analysis/fitness_s_clones/{dataset}/non_s_phase_clone_time_counts.tsv',
-		plot = 'plots/fitness_s_clones/{dataset}/clonal_evolution.pdf'
-	log: 'logs/fitness_s_clones/{dataset}/plot_clonal_evolution.log'
+		s_out = 'analysis/fig1/{dataset}/s_phase_clone_time_counts.tsv',
+		non_s_out = 'analysis/fig1/{dataset}/non_s_phase_clone_time_counts.tsv',
+		plot = 'plots/fig1/{dataset}/clonal_evolution.pdf'
+	log: 'logs/fig1/{dataset}/plot_clonal_evolution.log'
 	shell:
-		'python3 scripts/fitness_s_clones/plot_clonal_evolution.py '
+		'python3 scripts/fig1/plot_clonal_evolution.py '
 		'{input} {output} &> {log}'
 
 
 rule plot_s_predictiveness:
 	input:
-		s_phase = 'analysis/fitness_s_clones/{dataset}/s_phase_clone_time_counts.tsv',
-		non_s_phase = 'analysis/fitness_s_clones/{dataset}/non_s_phase_clone_time_counts.tsv',
+		s_phase = 'analysis/fig1/{dataset}/s_phase_clone_time_counts.tsv',
+		non_s_phase = 'analysis/fig1/{dataset}/non_s_phase_clone_time_counts.tsv',
 	output:
-		tsv = 'analysis/fitness_s_clones/{dataset}/s_predictiveness.tsv',
-		plot = 'plots/fitness_s_clones/{dataset}/s_predictiveness.pdf'
+		tsv = 'analysis/fig1/{dataset}/s_predictiveness.tsv',
+		plot = 'plots/fig1/{dataset}/s_predictiveness.pdf'
 	params:
 		dataset = lambda wildcards: wildcards.dataset
-	log: 'logs/fitness_s_clones/{dataset}/plot_s_predictiveness.log'
+	log: 'logs/fig1/{dataset}/plot_s_predictiveness.log'
 	shell:
-		'python3 scripts/fitness_s_clones/plot_s_predictiveness.py '
+		'python3 scripts/fig1/plot_s_predictiveness.py '
 		'{input} {params} {output} &> {log}'
