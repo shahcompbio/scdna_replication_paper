@@ -96,4 +96,7 @@ if __name__ == '__main__':
 	cn = cn[cn['fastqscreen_mm10'] < cn['fastqscreen_grch37']]
 	print("shape after filtering mouse bins", cn.shape)
 
+	# drop unmapable regions with negative gc values
+	cn = cn[cn['gc']>=0]
+
 	cn.to_csv(argv.output, sep='\t', index=False)
