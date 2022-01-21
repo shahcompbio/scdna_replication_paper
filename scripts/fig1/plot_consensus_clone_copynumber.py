@@ -62,13 +62,13 @@ def plot_as_one_page(df, argv, num_clones):
 
 def main():
 	argv = get_args()
-	clone_idx = ['chr', 'start', 'end', 'width']
+	clone_idx = ['chr', 'start', 'end']
 	clone_states = pd.read_csv(argv.clone_states, sep='\t', index_col=clone_idx)
 	clone_copy = pd.read_csv(argv.clone_copy, sep='\t', index_col=clone_idx)
 	num_clones = len(clone_states.columns)
 
 	# melt these three df into one df where the columns are 
-	# chr, start, end, width, clone_id, state, copy, copy2_norm
+	# chr, start, end, clone_id, state, copy, copy2_norm
 	clone_states2 = pd.melt(clone_states.reset_index(),
 							id_vars=clone_idx, value_vars=clone_states.columns,
 							var_name='clone_id', value_name='state')
@@ -80,10 +80,8 @@ def main():
 	# see if deleting dfs clears up memory to prevent segmentation fault
 	del clone_states2
 	del clone_copy2
-	del clone_copy2_norm2
 	del clone_states
 	del clone_copy
-	del clone_copy2_norm
 
 	# reset column types to be compatible with scgenome.cnplot
 	df.loc[:, 'chr'] = df['chr'].astype('category')

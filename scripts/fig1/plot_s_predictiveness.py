@@ -31,11 +31,10 @@ def main():
 	clones = df.clone_id.unique()
 	df.set_index(['clone_id', 'timepoint', 's_phase'], inplace=True)
 
-	time_diff_df = pd.DataFrame(columns=['clone_id', 's_phase', 't0', 't1', 'time_frac_diff', 'time_count_diff'])
-	phase_diff_df = pd.DataFrame(columns=['clone_id', 'timepoint', 'phase_frac_diff'])
+	time_diff_df = []
+	phase_diff_df = []
 
 	# find difference in a clone's number/fraction of cells between two adjacent timepoints
-	i = 0
 	for t in range(len(times)-1):
 		for c in clones:
 			t0 = times[t]
@@ -43,18 +42,22 @@ def main():
 			for phase in [True, False]:
 				count_diff = df.loc[c, t1, phase]['num_cells'] - df.loc[c, t0, phase]['num_cells']
 				frac_diff = df.loc[c, t1, phase]['fraction'] - df.loc[c, t0, phase]['fraction']
-				time_diff_df.loc[i] = [c, phase, t0, t1, frac_diff, count_diff]
-				i += 1
+				temp_time_df = pd.DataFrame({'clone_id': [c], 's_phase': [phase], 't0': [t0], 't1': [t1],
+											'time_frac_diff': [frac_diff], 'time_count_diff': [count_diff]})
+				time_diff_df.append(temp_time_df)
+
+	time_diff_df = pd.concat(time_diff_df)
 
 	# find difference between S-phase and G1-phase fractions for a given timepoint
 	# large frac_diff values are situations with more S-phase cells than we'd expect
-	i = 0
 	for t in times:
 		for c in clones:
 			# how many cells are in S-phase for this time & clone compared to what we'd expect (non-S fraction)
 			frac = df.loc[c, t, True]['fraction'] - df.loc[c, t, False]['fraction']
-			phase_diff_df.loc[i] = [c, t, frac]
-			i += 1
+			temp_phase_df = pd.DataFrame({'clone_id': [c], 'timepoint': [t], 'phase_frac_diff': [frac]})
+			phase_diff_df.append(temp_phase_df)
+
+	phase_diff_df = pd.concat(phase_diff_df)
 	
 	phase_diff_df.set_index(['clone_id', 'timepoint'], inplace=True)
 	out_df = time_diff_df.query('s_phase == False')

@@ -34,11 +34,10 @@ def main():
 	times = [int(t.replace('X', '')) for t in times]
 	clones = sorted(non_s_df.clone_id.unique())
 
-	all_s_counts = pd.DataFrame(columns=['timepoint', 'clone_id', 'num_cells', 'fraction'])
-	all_non_s_counts = pd.DataFrame(columns=['timepoint', 'clone_id', 'num_cells', 'fraction'])
+	all_s_counts = []
+	all_non_s_counts = []
 
 	# find number of cells in each clone at each time
-	j = 0
 	for t in times:
 		time = 'X{}'.format(t)
 		s_chunk = s_df[s_df['timepoint'] == time]
@@ -59,12 +58,17 @@ def main():
 		for i in clones:
 			s_num_cells = s_counts[i] if i in s_counts else 0
 			s_frac = s_num_cells / total_s_cells
-			all_s_counts.loc[j] = [t, i, s_num_cells, s_frac]
+			temp_s = pd.DataFrame({'timepoint': [t], 'clone_id': [i], 'num_cells': [s_num_cells], 'fraction': [s_frac]})
 			non_s_num_cells = non_s_counts[i] if i in non_s_counts else 0
 			non_s_frac = non_s_num_cells / total_non_s_cells
-			all_non_s_counts.loc[j] = [t, i, non_s_num_cells, non_s_frac]
-			j += 1
+			temp_non_s = pd.DataFrame({'timepoint': [t], 'clone_id': [i], 'num_cells': [non_s_num_cells], 'fraction': [non_s_frac]})
 
+			all_s_counts.append(temp_s)
+			all_non_s_counts.append(temp_non_s)
+
+	# contat list of dfs into one df
+	all_s_counts = pd.concat(all_s_counts)
+	all_non_s_counts = pd.concat(all_non_s_counts)
 
 	# convert columns from objects to ints and floats
 	all_s_counts['timepoint'] = all_s_counts['timepoint'].astype('int64')

@@ -50,7 +50,7 @@ def main():
 	# save output files
 	cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
 	spf_table.to_csv(argv.spf_table, sep='\t', index=False)
-	clone_profiles.to_csv(argv.consensus_clones, sep='\t', index=False)
+	clone_profiles.to_csv(argv.consensus_clones, sep='\t')
 
 
 if __name__ == '__main__':
