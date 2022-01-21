@@ -63,6 +63,7 @@ def main():
 	out_df = time_diff_df.query('s_phase == False')
 	out_df.drop(columns=['s_phase'], inplace=True)
 	out_df['phase_frac_diff'] = None
+	out_df.reset_index(inplace=True, drop=True)
 
 	# for each time (t0) & clone, treat the phase_diff_df value as the "predicted" proliferation rate
 	# and the time_diff_df value as the "observed" proliferation rate

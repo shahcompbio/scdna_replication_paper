@@ -135,6 +135,7 @@ dmypy.json
 data/
 logs/
 analysis/
+notebooks/
 plots/
 err.txt
 out.txt
