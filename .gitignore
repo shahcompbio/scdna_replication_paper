@@ -139,5 +139,6 @@ notebooks/
 plots/
 err.txt
 out.txt
-
+.DS_Store
+._.DS_Store
 
