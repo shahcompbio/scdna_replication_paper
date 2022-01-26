@@ -132,7 +132,6 @@ dmypy.json
 .snakemake/
 
 # repo-specific folders and files
-data/
 logs/
 analysis/
 notebooks/
