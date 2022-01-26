@@ -16,7 +16,7 @@ bad_datasets = []
 rule all_fig1:
 	input:
 		expand(
-			'analysis/fig1/{dataset}/spf_table.tsv',
+			'plots/fig1/{dataset}/cn_heatmaps.pdf',
 			dataset=[
 				d for d in config['fitness_datasets']
 				if (d not in bad_datasets)
@@ -210,3 +210,19 @@ rule plot_s_predictiveness:
 	shell:
 		'python3 scripts/fig1/plot_s_predictiveness.py '
 		'{input} {params} {output} &> {log}'
+
+
+rule plot_cn_heatmaps:
+	input:
+		s_phase = 'analysis/fig1/{dataset}/s_phase_cells_with_clones.tsv',
+		non_s_phase = 'analysis/fig1/{dataset}/non_s_phase_cells.tsv'
+	output: 'plots/fig1/{dataset}/cn_heatmaps.pdf'
+	params:
+		dataset = lambda wildcards: wildcards.dataset
+	log: 'logs/fig1/{dataset}/plot_cn_heatmaps.log'
+	shell:
+		'source ../scgenome/venv/bin/activate ; '
+		'python3 scripts/fig1/plot_cn_heatmaps.py '
+		'{input} {params} {output} &> {log}'
+		' ; deactivate'
+
