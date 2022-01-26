@@ -118,21 +118,8 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
 
         # annotate the clones for S-phase cells.. using the same colors as G1 clones
         cluster_ids_s = plot_data_s.columns.get_level_values(1).values
-        print('cluster_ids_s')
-        print(cluster_ids_s.shape)
-        print(cluster_ids_s)
         num_colors_g1 = len(np.unique(cluster_ids_g1))
-        print('num_colors_g1', num_colors_g1)
         color_mat_s = cncluster.get_cluster_colors(cluster_ids_s, num_colors=num_colors_g1)
-        print('color_mat_s')
-        print(len(color_mat_s))
-        print(color_mat_s)
-
-        # get list of color pigments in the same order as clone_dict
-        # colors_used_s = []
-        # for c in color_mat_s:
-        #     if c not in colors_used_s:
-        #         colors_used_s.append(c)
 
         # match clone IDs to color pigments
         clones_to_colors_s = {}
