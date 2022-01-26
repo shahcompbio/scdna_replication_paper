@@ -1,5 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')
+import sys
+sys.setrecursionlimit(10000)
 import scgenome.cnplot
 import matplotlib.pyplot as plt
 import pandas as pd
