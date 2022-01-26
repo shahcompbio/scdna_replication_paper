@@ -54,7 +54,7 @@ def make_color_mat_float(values, palette_color):
     return color_mat, color_dict
 
 
-def plot_cn_heatmap(cn_g, cn_s, figsize=(18,16), title=None, clone_col='clone_id'):
+def plot_cn_heatmap(cn_g, cn_s, figsize=(18,16), dataset=None, clone_col='clone_id'):
     cn_g = cn_g.copy()
     cn_s = cn_s.copy()
 
@@ -79,9 +79,9 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,16), title=None, clone_col='clone_id
         ax_s, cn_s, value_col, cluster_field_name=cluster_col
     )
     
-    if title:
-        ax_g1.set_title(title)
-        ax_s.set_title(title)
+    if dataset:
+        ax_g1.set_title('{}: G1/2-phase'.format(dataset))
+        ax_s.set_title('{}: S-phase'.format(dataset))
 
     
     if len(clone_dict) > 1:
@@ -143,7 +143,7 @@ def main():
     cn_s.chr = cn_s.chr.astype(str)
     cn_g.chr = cn_g.chr.astype(str)
 
-    fig = plot_cn_heatmap(cn_g, cn_s, title=argv.dataset, clone_col='clone_id')
+    fig = plot_cn_heatmap(cn_g, cn_s, dataset=argv.dataset, clone_col='clone_id')
 
     fig.savefig(argv.output_pdf, bbox_inches='tight')
 
