@@ -186,15 +186,18 @@ rule plot_consensus_clone_copynumber:
 rule plot_clonal_evolution:
 	input: 
 		s_phase = 'analysis/fig1/{dataset}/s_phase_cells_with_clones.tsv',
-		non_s_phase = 'analysis/fig1/{dataset}/non_s_phase_cells.tsv'
+		non_s_phase = 'analysis/fig1/{dataset}/non_s_phase_cells.tsv',
+		times = 'data/fitness/fitness_time_scale.tsv'
 	output:
 		s_out = 'analysis/fig1/{dataset}/s_phase_clone_time_counts.tsv',
 		non_s_out = 'analysis/fig1/{dataset}/non_s_phase_clone_time_counts.tsv',
 		plot = 'plots/fig1/{dataset}/clonal_evolution.pdf'
+	params:
+		dataset = lambda wildcards: wildcards.dataset
 	log: 'logs/fig1/{dataset}/plot_clonal_evolution.log'
 	shell:
 		'python3 scripts/fig1/plot_clonal_evolution.py '
-		'{input} {output} &> {log}'
+		'{input} {params} {output} &> {log}'
 
 
 rule plot_s_predictiveness:

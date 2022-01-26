@@ -10,6 +10,8 @@ def get_args():
 
 	p.add_argument('s_phase', help='input cell_id to clone_id tsv file for s phase cells')
 	p.add_argument('non_s_phase', help='input cell_id to clone_id tsv file for non s phase cells')
+	p.add_argument('times', help='time between passage numbers from fitness_time_scales.tsv')
+	p.add_argument('datatag')
 	p.add_argument('s_out', help='output of S-phase cell counts by time and clone')
 	p.add_argument('non_s_out', help='output of non-S-phase cell counts by time and clone')
 	p.add_argument('output_pdf', help='output pdf file fraction of each clone for S and non-S cells')
@@ -24,6 +26,12 @@ def main():
 	non_s_df = pd.read_csv(argv.non_s_phase, sep='\t')
 
 	plot_label = s_df.datasetname.unique()[0] + ': ' + s_df.label.unique()[0]
+
+	# load in timepoint to time (days) mapping for this dataset
+	time_df = pd.read_csv(argv.times, sep='\t')
+	time_df = time_df.loc[time_df['datatag']==argv.datatag]
+	time_df = time_df[['timepoint', 'time']]
+
 
 	# reduce to just unique mappings of cells to clones
 	s_df = s_df[['cell_id', 'clone_id', 'timepoint']].drop_duplicates()
@@ -70,6 +78,20 @@ def main():
 	all_s_counts = pd.concat(all_s_counts)
 	all_non_s_counts = pd.concat(all_non_s_counts)
 
+	# merge in real time (days) if time_df isn't empty
+	if len(time_df) > 0:
+		# remove X prefix and convert to int so it matches count dfs
+		time_df['timepoint'] = time_df['timepoint'].apply(lambda x: int(x.replace('X', '')))
+		# merge time_df into each count df
+		all_non_s_counts = pd.merge(all_non_s_counts, time_df, on='timepoint')
+		all_s_counts = pd.merge(all_s_counts, time_df, on='timepoint')
+		# make sure the new time column is int64 just like other int columns
+		time_col = 'time (days)'
+		all_non_s_counts[time_col] = all_non_s_counts['time'].astype('int64')
+		all_s_counts[time_col] = all_s_counts['time'].astype('int64')
+	else:
+		time_col = 'timepoint'
+
 	# convert columns from objects to ints and floats
 	all_s_counts['timepoint'] = all_s_counts['timepoint'].astype('int64')
 	all_s_counts['num_cells'] = all_s_counts['num_cells'].astype('int64')
@@ -83,15 +105,15 @@ def main():
 
 	# x-axis is time, y-axis is number of cells, hue is clone_id
 	# do this for both S and non-S groups
-	sns.scatterplot(data=all_s_counts, x='timepoint', y='num_cells', hue='clone_id', ax=axs[0])
-	sns.scatterplot(data=all_non_s_counts, x='timepoint', y='num_cells', hue='clone_id', ax=axs[1])
+	sns.scatterplot(data=all_s_counts, x=time_col, y='num_cells', hue='clone_id', ax=axs[0])
+	sns.scatterplot(data=all_non_s_counts, x=time_col, y='num_cells', hue='clone_id', ax=axs[1])
 	axs[0].set_title('{}\nS-phase'.format(plot_label))
 	axs[1].set_title('{}\nnon-S-phase'.format(plot_label))
 
 	# x-axis is time, y-axis is fraction of cells (normalized to this timept), hue is clone_id
 	# do this for both S and non-S groups
-	sns.scatterplot(data=all_s_counts, x='timepoint', y='fraction', hue='clone_id', ax=axs[2])
-	sns.scatterplot(data=all_non_s_counts, x='timepoint', y='fraction', hue='clone_id', ax=axs[3])
+	sns.scatterplot(data=all_s_counts, x=time_col, y='fraction', hue='clone_id', ax=axs[2])
+	sns.scatterplot(data=all_non_s_counts, x=time_col, y='fraction', hue='clone_id', ax=axs[3])
 	axs[2].set_title('{}\nS-phase'.format(plot_label))
 	axs[3].set_title('{}\nnon-S-phase'.format(plot_label))
 
