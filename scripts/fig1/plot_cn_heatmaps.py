@@ -85,17 +85,18 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
         ax_g1.set_title('{}: G1/2-phase'.format(dataset))
         ax_s.set_title('{}: S-phase'.format(dataset))
 
+    print('clone_dict\n', clone_dict)
     
     if len(clone_dict) > 1:
         # annotate the clones for G1-phase cells
         cluster_ids_g1 = plot_data_g1.columns.get_level_values(1).values
         print('cluster_ids_g1')
         print(cluster_ids_g1.shape)
-        print(cluster_ids_g1)
-        color_mat_g1 = cncluster.get_cluster_colors(cluster_ids_g1)
+        print(set(cluster_ids_g1))
+        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, return_map=True)
         print('color_mat_g1')
         print(len(color_mat_g1))
-        print(color_mat_g1)
+        print(color_mat_g1[0])
 
         # get list of color pigments in the same order as clone_dict
         colors_used_g1 = []
@@ -111,15 +112,23 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
         # create color bar that shows clone id for each row in heatmap
         ax = fig.add_axes([0.05,0.0,0.03,1.])
         plot_colorbar(ax, color_mat_g1)
-        
+
         # create legend to match colors to clone ids
         ax = fig.add_axes([0.0,0.75,0.02,0.25])
         plot_color_legend(ax, clones_to_colors_g1, title='Clone ID')
 
         # annotate the clones for S-phase cells.. using the same colors as G1 clones
         cluster_ids_s = plot_data_s.columns.get_level_values(1).values
-        num_colors_g1 = len(np.unique(cluster_ids_g1))
-        color_mat_s = cncluster.get_cluster_colors(cluster_ids_s, num_colors=num_colors_g1)
+        print('cluster_ids_s')
+        print(cluster_ids_s.shape)
+        print(set(cluster_ids_s))
+        color_mat_s = cncluster.get_cluster_colors(cluster_ids_s, color_map=color_map_g1)
+
+        # get list of color pigments in the same order as clone_dict
+        colors_used_s = []
+        for c in color_mat_s:
+            if c not in colors_used_s:
+                colors_used_s.append(c)
 
         # match clone IDs to color pigments
         clones_to_colors_s = {}
@@ -129,7 +138,7 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
         # create color bar that shows clone id for each row in heatmap
         ax = fig.add_axes([0.55,0.0,0.03,1.])
         plot_colorbar(ax, color_mat_s)
-        
+
         # create legend to match colors to clone ids
         ax = fig.add_axes([0.5,0.75,0.02,0.25])
         plot_color_legend(ax, clones_to_colors_s, title='Clone ID')
