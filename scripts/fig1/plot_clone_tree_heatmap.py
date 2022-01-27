@@ -55,7 +55,7 @@ def main():
     cn2['dendrogram_order'] = 0
     i = 0
     for clone_id, chunk in cn2.groupby('cell_id'):
-        cn2.loc[chunk.index, 'dendrogram_order'] = np.where(np.array(Z['leaves'])==i)[0][0]
+        cn2.loc[chunk.index, 'dendrogram_order'] = -np.where(np.array(Z['leaves'])==i)[0][0]
         i += 1
 
     # plot the consensus clone heatmap
