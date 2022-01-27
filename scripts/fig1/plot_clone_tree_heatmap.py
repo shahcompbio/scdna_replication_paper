@@ -36,6 +36,9 @@ def main():
     cn2 = cn.reset_index().melt(id_vars=['chr', 'start', 'end'], var_name='cell_id', value_name='state')
     cn2['cluster_id'] = 0
 
+    # round state to the nearest integer (floats might've been generated when taking median)
+    cn2['state'] = np.rint(cn2['state'])
+
     # create figure with heatmap being 10x wider than dendrogram
     fig, ax = plt.subplots(1, 2, gridspec_kw={'width_ratios': [1, 10]}, figsize=(11, 4), tight_layout=True)
     ax = ax.flatten()
