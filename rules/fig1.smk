@@ -23,7 +23,7 @@ rule all_fig1:
 			]
 		),
 		expand(
-			'plots/fig1/{dataset}/clone_tree_heatmap.pdf',
+			'plots/fig1/{dataset}/clone_tree_heatmap.png',
 			dataset=[
 				d for d in config['fitness_datasets']
 				if (d not in bad_datasets)
@@ -192,7 +192,7 @@ rule plot_consensus_clone_copynumber:
 
 rule plot_clone_tree_heatmap:
 	input: 'analysis/fig1/{dataset}/clone_states.tsv',
-	output: 'plots/fig1/{dataset}/clone_tree_heatmap.pdf'
+	output: 'plots/fig1/{dataset}/clone_tree_heatmap.png'
 	params:
 		dataset = lambda wildcards: wildcards.dataset
 	log: 'logs/fig1/{dataset}/plot_clone_tree_heatmap.log'

@@ -17,7 +17,7 @@ def get_args():
 
     p.add_argument('clone_states', help='input clone copynumber states tsv file')
     p.add_argument('dataset')
-    p.add_argument('output_pdf', help='output pdf file of dendrogram next to heatmap of consensus clone profiles')
+    p.add_argument('output', help='output plot of dendrogram next to heatmap of consensus clone profiles')
 
     return p.parse_args()
 
@@ -63,7 +63,7 @@ def main():
     ax[1].tick_params(labelleft=False)
     ax[1].set_title('{} clone pseudobulks'.format(argv.dataset))
 
-    fig.savefig(argv.output_pdf, bbox_inches='tight')
+    fig.savefig(argv.output)
 
 
 if __name__ == '__main__':
