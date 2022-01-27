@@ -23,6 +23,13 @@ rule all_fig1:
 			]
 		),
 		expand(
+			'plots/fig1/{dataset}/clone_tree_heatmap.pdf',
+			dataset=[
+				d for d in config['fitness_datasets']
+				if (d not in bad_datasets)
+			]
+		),
+		expand(
 			'plots/fig1/{dataset}/consensus_clone_copynumber.pdf',
 			dataset=[
 				d for d in config['fitness_datasets']
@@ -180,6 +187,19 @@ rule plot_consensus_clone_copynumber:
 		'source ../scgenome/venv/bin/activate ; '
 		'python3 scripts/fig1/plot_consensus_clone_copynumber.py '
 		'{input} {output} &> {log}'
+		' ; deactivate'
+
+
+rule plot_clone_tree_heatmap:
+	input: 'analysis/fig1/{dataset}/clone_states.tsv',
+	output: 'plots/fig1/{dataset}/clone_tree_heatmap.pdf'
+	params:
+		dataset = lambda wildcards: wildcards.dataset
+	log: 'logs/fig1/{dataset}/plot_clone_tree_heatmap.log'
+	shell:
+		'source ../scgenome/venv/bin/activate ; '
+		'python3 scripts/fig1/plot_clone_tree_heatmap.py '
+		'{input} {params} {output} &> {log}'
 		' ; deactivate'
 
 
