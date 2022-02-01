@@ -105,15 +105,15 @@ def main():
 
     # x-axis is time, y-axis is number of cells, hue is clone_id
     # do this for both S and non-S groups
-    sns.scatterplot(data=all_s_counts, x=time_col, y='num_cells', hue='clone_id', ax=axs[0])
-    sns.scatterplot(data=all_non_s_counts, x=time_col, y='num_cells', hue='clone_id', ax=axs[1])
+    sns.lineplot(data=all_s_counts, x=time_col, y='num_cells', hue='clone_id', ax=axs[0])
+    sns.lineplot(data=all_non_s_counts, x=time_col, y='num_cells', hue='clone_id', ax=axs[1])
     axs[0].set_title('{}\nS-phase'.format(plot_label))
     axs[1].set_title('{}\nnon-S-phase'.format(plot_label))
 
     # x-axis is time, y-axis is fraction of cells (normalized to this timept), hue is clone_id
     # do this for both S and non-S groups
-    sns.scatterplot(data=all_s_counts, x=time_col, y='fraction', hue='clone_id', ax=axs[2])
-    sns.scatterplot(data=all_non_s_counts, x=time_col, y='fraction', hue='clone_id', ax=axs[3])
+    sns.lineplot(data=all_s_counts, x=time_col, y='fraction', hue='clone_id', ax=axs[2])
+    sns.lineplot(data=all_non_s_counts, x=time_col, y='fraction', hue='clone_id', ax=axs[3])
     axs[2].set_title('{}\nS-phase'.format(plot_label))
     axs[3].set_title('{}\nnon-S-phase'.format(plot_label))
 
