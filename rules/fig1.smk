@@ -140,6 +140,7 @@ rule get_non_s_phase_cells:
                             'letters': 'clone_id',
                             'datatag': 'dataset_id'},
                         inplace=True)
+        clones.drop(columns=['sample_id', 'V1'], inplace=True)
 
         # force clone cell_ids to match for the SA906 datasets
         clones['cell_id'] = clones['cell_id'].str.replace('SA906a', 'SA906', regex=False)
