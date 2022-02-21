@@ -134,7 +134,7 @@ rule get_non_s_phase_cells:
     output: 'analysis/fig1/{dataset}/non_s_phase_cells.tsv'
     run:
         df = pd.read_csv(str(input.cn), sep='\t')
-        clones = pd.read_csv(str(input.clones), sep='\t')
+        clones = pd.read_csv(str(input.clones))
 
         clones.rename(columns={'single_cell_id': 'cell_id',
                             'letters': 'clone_id',
