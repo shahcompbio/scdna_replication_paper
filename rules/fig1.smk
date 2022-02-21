@@ -4,7 +4,14 @@ import pandas as pd
 np.random.seed(2794834348)
 
 configfile: "config.yaml"
-samples = pd.read_csv('data/fitness/fitness_pseudobulk_qc_status.tsv', sep='\t')
+samples1 = pd.read_csv('data/fitness/dlp_summaries_rebuttal.csv')
+samples2 = pd.read_csv('data/fitness/fitness_pseudobulk_qc_status.tsv', sep='\t')
+
+# drop sample_id column from samples2
+samples2.drop(columns=['sample_id'], inplace=True)
+
+# merge samples1 and samples2 using 'library_id' to get samples
+samples = pd.merge(samples1, samples2, on='library_id')
 
 # drop rows where ticket, library_id, or sample_id is NA
 samples = samples[samples['mem_jira_ticket'].notna()]
@@ -54,7 +61,7 @@ rule all_fig1:
 
 
 def dataset_cn_files(wildcards):
-    mask = samples['datatag'] == wildcards.dataset
+    mask = samples['datasetname'] == wildcards.dataset
     library_ids = samples.loc[mask, 'library_id']
     ticket_ids = samples.loc[mask, 'mem_jira_ticket']
 
@@ -67,14 +74,14 @@ def dataset_cn_files(wildcards):
 
 
 def dataset_sample_ids(wildcards):
-    mask = samples['datatag'] == wildcards.dataset
+    mask = samples['datasetname'] == wildcards.dataset
     sample_ids = samples.loc[mask, 'sample_id']
     sample_ids = list(sample_ids)
     return sample_ids
 
 
 def dataset_metric_files(wildcards):
-    mask = samples['datatag'] == wildcards.dataset
+    mask = samples['datasetname'] == wildcards.dataset
     library_ids = samples.loc[mask, 'library_id']
     ticket_ids = samples.loc[mask, 'mem_jira_ticket']
 
