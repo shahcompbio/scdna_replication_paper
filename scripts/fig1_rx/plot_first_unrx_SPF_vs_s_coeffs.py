@@ -72,9 +72,15 @@ def main():
         early_unrx_spf_df.append(temp_df)
     early_unrx_spf_df = pd.concat(early_unrx_spf_df, ignore_index=True)
 
+    # compute S-phase enrichment: the fraction of S-phase cells belonging to clone c
+    # minus the fraction of G1/2-phase cells belonging to clone c at time t
+    total_num_S = sum(early_unrx_spf_df['num_cells_s'].values)
+    total_num_G = sum(early_unrx_spf_df['num_cells_g'].values)
+    early_unrx_spf_df['SPE'] = (early_unrx_spf_df['num_cells_s'] / total_num_S) - (early_unrx_spf_df['num_cells_g'] / total_num_G)
+
     # merge early SPF with fitness selection coefficients
     s_coeffs = df[['clone_id', 'datasetname', 'labels', 'mean_1_plus_s', 'median_1_plus_s', 'sd_1_plus_s']].drop_duplicates()
-    early_unrx_spf_df2 = early_unrx_spf_df[['clone_id', 'SPF']]
+    early_unrx_spf_df2 = early_unrx_spf_df[['clone_id', 'SPF', 'SPE', 'num_cells_s', 'num_cells_g']]
     early_unrx_spf_df3 = pd.merge(s_coeffs, early_unrx_spf_df2)
     early_unrx_spf_df3.reset_index(inplace=True, drop=True)
 
@@ -90,11 +96,15 @@ def main():
         median_1_plus_s_unrx = unrx_row['median_1_plus_s'].values[0]
         sd_1_plus_s_unrx = unrx_row['sd_1_plus_s'].values[0]
         first_unrx_spf = unrx_row['SPF'].values[0]
+        first_unrx_spe = unrx_row['SPE'].values[0]
+        num_cells_g = unrx_row['num_cells_g'].values[0]
+
         temp_df = pd.DataFrame({
-            'clone_id': [clone_id], 'first_unrx_spf': [first_unrx_spf], 
+            'clone_id': [clone_id], 'first_unrx_spf': [first_unrx_spf], 'first_unrx_spe': [first_unrx_spe],
             'mean_1_plus_s_rx': [mean_1_plus_s_rx], 'median_1_plus_s_rx': [median_1_plus_s_rx],
             'sd_1_plus_s_rx': [sd_1_plus_s_rx], 'mean_1_plus_s_unrx': [mean_1_plus_s_unrx],
-            'median_1_plus_s_unrx': [median_1_plus_s_unrx], 'sd_1_plus_s_unrx': [sd_1_plus_s_unrx]
+            'median_1_plus_s_unrx': [median_1_plus_s_unrx], 'sd_1_plus_s_unrx': [sd_1_plus_s_unrx],
+            'num_cells_g': [num_cells_g]
         })
         early_unrx_spf_df4.append(temp_df)
     early_unrx_spf_df4 = pd.concat(early_unrx_spf_df4, ignore_index=True)
@@ -103,21 +113,35 @@ def main():
     early_unrx_spf_df4['unrx_minus_rx_sd_1_plus_s'] = early_unrx_spf_df4['sd_1_plus_s_unrx'] + early_unrx_spf_df4['sd_1_plus_s_rx']
 
     # plot figures
-    fig, ax = plt.subplots(1, 3, figsize=(12, 5), tight_layout=True)
+    fig, ax = plt.subplots(2, 3, figsize=(12, 10), tight_layout=True)
     ax = ax.flatten()
 
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='unrx_minus_rx_median_1_plus_s', y='first_unrx_spf', hue='clone_id', ax=ax[0]
+        data=early_unrx_spf_df4, x='unrx_minus_rx_median_1_plus_s', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[0]
     )
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='median_1_plus_s_rx', y='first_unrx_spf', hue='clone_id', ax=ax[1]
+        data=early_unrx_spf_df4, x='median_1_plus_s_rx', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[1]
     )
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='median_1_plus_s_unrx', y='first_unrx_spf', hue='clone_id', ax=ax[2]
+        data=early_unrx_spf_df4, x='median_1_plus_s_unrx', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[2]
     )
     ax[0].set_title(argv.dataset)
     ax[1].set_title(argv.rx_dataset)
     ax[2].set_title(argv.unrx_dataset)
+
+    sns.scatterplot(
+        data=early_unrx_spf_df4, x='unrx_minus_rx_median_1_plus_s', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[3]
+    )
+    sns.scatterplot(
+        data=early_unrx_spf_df4, x='median_1_plus_s_rx', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[4]
+    )
+    sns.scatterplot(
+        data=early_unrx_spf_df4, x='median_1_plus_s_unrx', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[5]
+    )
+    ax[3].set_title(argv.dataset)
+    ax[4].set_title(argv.rx_dataset)
+    ax[5].set_title(argv.unrx_dataset)
+
     fig.savefig(argv.output_pdf, bbox_inches='tight')
 
     # save output tsv
