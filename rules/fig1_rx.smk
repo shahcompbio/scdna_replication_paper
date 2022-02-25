@@ -64,14 +64,13 @@ rule all_fig1_rx:
                 if (d not in bad_datasets)
             ]
         ),
-        
-        # expand(
-        #     'plots/fig1_rx/{dataset}/s_predictiveness.pdf',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fig1_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.pdf',
+            dataset=[
+                d for d in config['fitness_rx_pairs']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 def dataset_cn_files(wildcards):
@@ -326,4 +325,25 @@ rule plot_total_SPF_vs_time:
     shell:
         'python3 scripts/fig1_rx/plot_total_SPF_vs_time.py '
         '{input} {params} {output} &> {log}'
+
+
+rule plot_first_unrx_SPF_vs_s_coeffs:
+    input:
+        s_phase_rx = 'analysis/fig1_rx/{dataset}/s_phase_rx_clone_time_counts.tsv',
+        non_s_phase_rx = 'analysis/fig1_rx/{dataset}/non_s_phase_rx_clone_time_counts.tsv',
+        s_phase_unrx = 'analysis/fig1_rx/{dataset}/s_phase_unrx_clone_time_counts.tsv',
+        non_s_phase_unrx = 'analysis/fig1_rx/{dataset}/non_s_phase_unrx_clone_time_counts.tsv',
+        s_coeffs = 'data/fitness/fitness_selection_coefficients.csv'
+    output: 
+        pdf = 'plots/fig1_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.pdf',
+        tsv = 'analysis/fig1_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.tsv'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        rx_name = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['Rx'],
+        unrx_name = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['UnRx']
+    log: 'logs/fig1_rx/{dataset}/plot_first_unrx_SPF_vs_s_coeffs.log'
+    shell:
+        'python3 scripts/fig1_rx/plot_first_unrx_SPF_vs_s_coeffs.py '
+        '{input} {params} {output} &> {log}'
+
 
