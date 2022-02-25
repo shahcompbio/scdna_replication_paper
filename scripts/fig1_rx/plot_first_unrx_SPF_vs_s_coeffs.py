@@ -113,14 +113,14 @@ def main():
     early_unrx_spf_df4['unrx_minus_rx_sd_1_plus_s'] = early_unrx_spf_df4['sd_1_plus_s_unrx'] + early_unrx_spf_df4['sd_1_plus_s_rx']
 
     # plot figures
-    fig, ax = plt.subplots(2, 3, figsize=(12, 10), tight_layout=True)
+    fig, ax = plt.subplots(2, 3, figsize=(12, 8), tight_layout=True)
     ax = ax.flatten()
 
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='unrx_minus_rx_median_1_plus_s', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[0]
+        data=early_unrx_spf_df4, x='unrx_minus_rx_median_1_plus_s', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[0], legend=False
     )
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='median_1_plus_s_rx', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[1]
+        data=early_unrx_spf_df4, x='median_1_plus_s_rx', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[1], legend=False
     )
     sns.scatterplot(
         data=early_unrx_spf_df4, x='median_1_plus_s_unrx', y='first_unrx_spf', hue='clone_id', size='num_cells_g', ax=ax[2]
@@ -130,17 +130,19 @@ def main():
     ax[2].set_title(argv.unrx_dataset)
 
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='unrx_minus_rx_median_1_plus_s', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[3]
+        data=early_unrx_spf_df4, x='unrx_minus_rx_median_1_plus_s', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[3], legend=False
     )
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='median_1_plus_s_rx', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[4]
+        data=early_unrx_spf_df4, x='median_1_plus_s_rx', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[4], legend=False
     )
     sns.scatterplot(
-        data=early_unrx_spf_df4, x='median_1_plus_s_unrx', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[5]
+        data=early_unrx_spf_df4, x='median_1_plus_s_unrx', y='first_unrx_spe', hue='clone_id', size='num_cells_g', ax=ax[5], legend=False
     )
     ax[3].set_title(argv.dataset)
     ax[4].set_title(argv.rx_dataset)
     ax[5].set_title(argv.unrx_dataset)
+    ax[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
 
     fig.savefig(argv.output_pdf, bbox_inches='tight')
 
