@@ -57,7 +57,6 @@ rule all_fig1:
                 if (d not in bad_datasets)
             ]
         ),
-        
 
 
 def dataset_cn_files(wildcards):
