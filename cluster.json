@@ -8,5 +8,9 @@
 		"extra" : "",
 		"latency": "10",
         "logdir": "logs/cluster"
+	},
+	"collect_cn_data" :
+	{
+		"mem": 96
 	}
 }
