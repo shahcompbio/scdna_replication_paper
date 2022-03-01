@@ -10,12 +10,19 @@ bad_datasets = []
 rule all_fig2:
     input:
         expand(
-            'analysis/fig2/{dataset}/s_phase_cells.tsv',
+            'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
             dataset=[
                 d for d in config['simulated_datasets']['diploid']
                 if (d not in bad_datasets)
             ]
         ),
+        # expand(
+        #     'plots/fig2/{dataset}/cn_heatmaps.pdf',
+        #     dataset=[
+        #         d for d in config['simulated_datasets']['diploid']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
 
 rule simulate_diploid_data:
     input:
@@ -40,3 +47,36 @@ rule simulate_diploid_data:
     shell:
         'python3 scripts/fig2/simulate_diploid_data.py '
         '{input} {params} {output} &> {log}'
+
+
+rule plot_cn_heatmaps:
+    input:
+        s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
+        g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
+    output:
+        s_phase = 'plots/fig2/{dataset}/cn_heatmaps.pdf',
+    params:
+        value_col = 'true_G1_state',
+        dataset = lambda wildcards: wildcards.dataset
+    log:
+        'logs/fig2/{dataset}/plot_cn_heatmaps.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig2/plot_s_vs_g_cn_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule infer_scRT:
+    input:
+        cn_s = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
+    params:
+        input_col = 'reads'
+    log: 'logs/fig2/{dataset}/infer_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
