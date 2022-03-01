@@ -41,7 +41,7 @@ def main():
 
     logging.info('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer(level=='bulk')
+    cn_s_with_scrt = scrt.infer(level='bulk')
     logging.info('done running inference')
 
     logging.info('cn_s.shape {}'.format(cn_s.shape))
