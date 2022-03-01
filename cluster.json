@@ -2,15 +2,19 @@
 	"__default__" :
 	{
 	  	"queue" : "general",
-		"mem": 64,
+		"mem" : 64,
 		"threads" : 1,
 		"time" : "2:00",
 		"extra" : "",
-		"latency": "10",
-        "logdir": "logs/cluster"
+		"latency" : "10",
+        "logdir" : "logs/cluster"
 	},
 	"collect_cn_data" :
 	{
-		"mem": 96
+		"mem" : 96
+	},
+	"infer_scRT" :
+	{
+		"time" : "12:00"
 	}
 }

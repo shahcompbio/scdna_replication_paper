@@ -32,8 +32,8 @@ def main():
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
-    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', 'state', argv.input_col]]
-    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'clone_id', 'state', argv.input_col]]
+    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', 'gc', 'state', argv.input_col]]
+    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'gc', 'clone_id', 'state', argv.input_col]]
 
     logging.info('creating scrt object')
     # create SPF object with input
