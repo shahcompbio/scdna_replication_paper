@@ -43,12 +43,12 @@ def main():
     cn_s_with_scrt = scrt.infer(level='bulk')
     print('done running inference')
 
-    print('cn_s.shape {}'.format(cn_s.shape))
-    print('cn_s_with_scrt.shape {}'.format(cn_s_with_scrt.shape))
+    print('cn_s.shape', cn_s.shape)
+    print('cn_s_with_scrt.shape', cn_s_with_scrt.shape)
 
     # merge cn_s_with_scrt with initial cn_s input to add columns that were excluded from temp_cn_s
     cn_s_out = pd.merge(cn_s, cn_s_with_scrt)
-    print('cn_s_out.shape {}'.format(cn_s_out.shape))
+    print('cn_s_out.shape', cn_s_out.shape)
 
     # save output files
     cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
