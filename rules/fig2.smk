@@ -16,6 +16,13 @@ rule all_fig2:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig2/{dataset}/scRT_heatmaps.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['diploid']
+                if (d not in bad_datasets)
+            ]
+        ),
         # expand(
         #     'plots/fig2/{dataset}/cn_heatmaps.pdf',
         #     dataset=[
@@ -78,5 +85,19 @@ rule infer_scRT:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig2/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule evaluate_model_performance:
+    input: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 
+        plot1 = 'plots/fig2/{dataset}/scRT_heatmaps.pdf',
+        plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps.pdf',
+        plot3 = 'plots/fig2/{dataset}/frac_rt_distributions.pdf'
+    log: 'logs/fig2/{dataset}/evaluate_model_performance.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig2/evaluate_model_performance.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'

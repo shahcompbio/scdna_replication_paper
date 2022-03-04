@@ -88,7 +88,7 @@ simulated_datasets:
     #   num_reads: 1000000
     #   num_cells_S: 400
     #   num_cells_G: 400
-    #   bin_size: 5000
-    #   s_time_dist: 'uniform'
+    #   bin_size: 500000
+    #   s_time_dist: 'normal'
 
 
