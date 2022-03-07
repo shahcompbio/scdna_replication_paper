@@ -5,7 +5,7 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
-bad_datasets = []
+bad_datasets = ['A6']
 
 rule all_fig2:
     input:
@@ -18,6 +18,13 @@ rule all_fig2:
         ),
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['diploid']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig2/{dataset}/twidth_heatmaps.pdf',
             dataset=[
                 d for d in config['simulated_datasets']['diploid']
                 if (d not in bad_datasets)
@@ -99,5 +106,18 @@ rule evaluate_model_performance:
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig2/evaluate_model_performance.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule twidth_analysis:
+    input: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 
+        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps.pdf',
+        plot2 = 'plots/fig2/{dataset}/twidth_curves.pdf',
+    log: 'logs/fig2/{dataset}/twidth_analysis.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig2/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
