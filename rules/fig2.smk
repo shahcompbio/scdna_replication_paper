@@ -115,9 +115,17 @@ rule twidth_analysis:
     output: 
         plot1 = 'plots/fig2/{dataset}/twidth_heatmaps.pdf',
         plot2 = 'plots/fig2/{dataset}/twidth_curves.pdf',
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        sigma1 = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['A'],
+        s_time_dist = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_dist']
     log: 'logs/fig2/{dataset}/twidth_analysis.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig2/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+

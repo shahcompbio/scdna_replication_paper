@@ -12,6 +12,12 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells with true and inferred scRT data')
+    p.add_argument('dataset')
+    p.add_argument('sigma1', type=float, help='noise of read depth profiles')
+    p.add_argument('gc_slope', type=float, help='slope of linear GC bias')
+    p.add_argument('gc_int', type=float, help='intercept of linear GC bias')
+    p.add_argument('A', type=float, help='steepness of inflection point when drawing RT state')
+    p.add_argument('s_time_dist', help='distribution of S-phase cells captured (normal or uniform)')
     p.add_argument('output_heatmap', help='heatmap comparing true and inferred rt_state values with T-width superimposed')
     p.add_argument('output_curves', help='T-width curves of true and inferred rt_states')
 
@@ -149,11 +155,14 @@ def main():
     df['true_time_from_scheduled_rt'] = df['mcf7rt_hours'] - (df['true_frac_rt'] * 10.0)
 
 
-    fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
     ax = ax.flatten()
 
-    Tw = compute_and_plot_twidth(df, column='time_from_scheduled_rt', title='Inferred scRT heterogeneity', ax=ax[1])
-    true_Tw = compute_and_plot_twidth(df, column='true_time_from_scheduled_rt', title='True scRT heterogeneity', ax=ax[0])
+    title_second_line = 'dataset: {}, A: {}, sigma1: {}\ngc_int: {}, gc_slope: {}, s_time_dist: {}'.format(
+        argv.dataset, argv.A, argv.sigma1, argv.gc_int, argv.gc_slope, argv.s_time_dist
+    )
+    Tw = compute_and_plot_twidth(df, column='time_from_scheduled_rt', title='Inferred scRT heterogeneity\n{}'.format(title_second_line), ax=ax[1])
+    true_Tw = compute_and_plot_twidth(df, column='true_time_from_scheduled_rt', title='True scRT heterogeneity\n{}'.format(title_second_line), ax=ax[0])
 
     fig.savefig(argv.output_curves)
 
@@ -164,8 +173,8 @@ def main():
     plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', secondary_field_name='true_frac_rt', cmap=rt_cmap)
     plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state', secondary_field_name='true_frac_rt', cmap=rt_cmap)
 
-    ax[0].set_title('True scRT, T-width: {}'.format(round(true_Tw, 3)))
-    ax[1].set_title('Inferred scRT, T-width: {}'.format(round(Tw, 3)))
+    ax[0].set_title('True scRT, T-width: {}\n{}'.format(round(true_Tw, 3), title_second_line))
+    ax[1].set_title('Inferred scRT, T-width: {}\n{}'.format(round(Tw, 3), title_second_line))
 
     fig.savefig(argv.output_heatmap)
 
