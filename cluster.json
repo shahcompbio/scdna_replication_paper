@@ -13,6 +13,10 @@
 	{
 		"mem" : 96
 	},
+	"simulate_diploid_data" :
+	{
+		"mem" : 256
+	},
 	"infer_scRT" :
 	{
 		"time" : "48:00",

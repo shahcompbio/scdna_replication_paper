@@ -5,12 +5,12 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
-bad_datasets = ['A6']
+bad_datasets = []
 
 rule all_fig2:
     input:
         expand(
-            'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
+            'analysis/fig2/{dataset}/s_phase_cells.tsv',
             dataset=[
                 d for d in config['simulated_datasets']['diploid']
                 if (d not in bad_datasets)
@@ -55,7 +55,7 @@ rule simulate_diploid_data:
         num_cells_S = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_cells_S'],
         num_cells_G = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_cells_G'],
         bin_size = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['bin_size'],
-        s_time_dist = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_dist']
+        s_time_stdev = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_stdev']
     log:
         'logs/fig2/{dataset}/simulate_diploid_data.log'
     shell:
@@ -121,7 +121,7 @@ rule twidth_analysis:
         gc_slope = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_slope'],
         gc_int = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_int'],
         A = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['A'],
-        s_time_dist = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_dist']
+        s_time_stdev = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_stdev']
     log: 'logs/fig2/{dataset}/twidth_analysis.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '

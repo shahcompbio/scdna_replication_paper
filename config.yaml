@@ -23,7 +23,7 @@ simulated_datasets:
       num_cells_S: 400
       num_cells_G: 400
       bin_size: 500000
-      s_time_dist: 'uniform'
+      s_time_stdev: -1  # uniform
     A2:
       sigma1: 0.3
       gc_slope: 1.2
@@ -34,7 +34,7 @@ simulated_datasets:
       num_cells_S: 400
       num_cells_G: 400
       bin_size: 500000
-      s_time_dist: 'uniform'
+      s_time_stdev: -1  # uniform
     A3:
       sigma1: 0.3
       gc_slope: 1.2
@@ -45,7 +45,7 @@ simulated_datasets:
       num_cells_S: 400
       num_cells_G: 400
       bin_size: 500000
-      s_time_dist: 'uniform'
+      s_time_stdev: -1  # uniform
     A4:
       sigma1: 0.3
       gc_slope: 1.2
@@ -56,7 +56,7 @@ simulated_datasets:
       num_cells_S: 400
       num_cells_G: 400
       bin_size: 500000
-      s_time_dist: 'uniform'
+      s_time_stdev: -1  # uniform
     A5:
       sigma1: 0.3
       gc_slope: 1.2
@@ -66,8 +66,8 @@ simulated_datasets:
       num_reads: 1000000
       num_cells_S: 400
       num_cells_G: 400
-      bin_size: 50000
-      s_time_dist: 'uniform'
+      bin_size: 500000
+      s_time_stdev: 30  # normal
     A6:
       sigma1: 0.3
       gc_slope: 1.2
@@ -77,8 +77,8 @@ simulated_datasets:
       num_reads: 1000000
       num_cells_S: 400
       num_cells_G: 400
-      bin_size: 10000
-      s_time_dist: 'uniform'
+      bin_size: 500000
+      s_time_stdev: 20  # normal
     A7:
       sigma1: 0.3
       gc_slope: 1.2
@@ -89,6 +89,16 @@ simulated_datasets:
       num_cells_S: 400
       num_cells_G: 400
       bin_size: 500000
-      s_time_dist: 'normal'
-
+      s_time_stdev: 10  # normal
+    A8:
+      sigma1: 0.3
+      gc_slope: 1.2
+      gc_int: 0.0
+      A: 0.1
+      B: 0.0
+      num_reads: 1000000
+      num_cells_S: 400
+      num_cells_G: 400
+      bin_size: 50000
+      s_time_stdev: -1  # uniform
 
