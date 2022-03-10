@@ -31,7 +31,6 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, value_col='state')
         ax[0], cn_g, value_col
     )
 
-    ax_s = fig.add_axes([0.6,0.0,0.4,1.])
     plot_data_s = scgenome.cnplot.plot_clustered_cell_cn_matrix(
         ax[1], cn_s, value_col
     )

@@ -37,6 +37,13 @@ rule all_fig2:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig2/{dataset}/true_scRT_heatmap.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['diploid']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 rule simulate_diploid_data:
     input:
@@ -77,6 +84,20 @@ rule plot_cn_heatmaps:
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig2/plot_s_vs_g_cn_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule plot_true_scRT_heatmap:
+    input: 'analysis/fig2/{dataset}/s_phase_cells.tsv',
+    output: 'plots/fig2/{dataset}/true_scRT_heatmap.pdf',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log:
+        'logs/fig2/{dataset}/plot_true_scRT_heatmap.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig2/plot_true_scRT_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
 
