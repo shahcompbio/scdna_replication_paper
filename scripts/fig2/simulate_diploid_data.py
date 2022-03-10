@@ -237,22 +237,22 @@ def main():
     print('diploid_g_cells.head()\n', diploid_g_cells.head())
 
     # aggregate simulated data into 500kb bins if bin size was initially small
-    if argv.bin_size < 500000:
-        print('aggregating S-phase cells into 500kb bins...')
-        sim_s_to_500kb = []
-        for cell_id, cell_cn in diploid_s_cells.groupby('cell_id'):
-            aggregated_df = aggregate_small_bin_df(ref_data_500kb, cell_cn)
-            sim_s_to_500kb.append(aggregated_df)
-        diploid_s_cells = pd.concat(sim_s_to_500kb, ignore_index=True)
-        print('diploid_s_cells.head()\n', diploid_s_cells.head())
+    # if argv.bin_size < 500000:
+    #     print('aggregating S-phase cells into 500kb bins...')
+    #     sim_s_to_500kb = []
+    #     for cell_id, cell_cn in diploid_s_cells.groupby('cell_id'):
+    #         aggregated_df = aggregate_small_bin_df(ref_data_500kb, cell_cn)
+    #         sim_s_to_500kb.append(aggregated_df)
+    #     diploid_s_cells = pd.concat(sim_s_to_500kb, ignore_index=True)
+    #     print('diploid_s_cells.head()\n', diploid_s_cells.head())
 
-        print('aggregating G1-phase cells into 500kb bins...')
-        sim_g_to_500kb = []
-        for cell_id, cell_cn in diploid_g_cells.groupby('cell_id'):
-            aggregated_df = aggregate_small_bin_df(ref_data_500kb, cell_cn)
-            sim_g_to_500kb.append(aggregated_df)
-        diploid_g_cells = pd.concat(sim_g_to_500kb, ignore_index=True)
-        print('diploid_g_cells.head()\n', diploid_g_cells.head())
+    #     print('aggregating G1-phase cells into 500kb bins...')
+    #     sim_g_to_500kb = []
+    #     for cell_id, cell_cn in diploid_g_cells.groupby('cell_id'):
+    #         aggregated_df = aggregate_small_bin_df(ref_data_500kb, cell_cn)
+    #         sim_g_to_500kb.append(aggregated_df)
+    #     diploid_g_cells = pd.concat(sim_g_to_500kb, ignore_index=True)
+    #     print('diploid_g_cells.head()\n', diploid_g_cells.head())
 
 
     diploid_s_cells.to_csv(argv.s_out, sep='\t', index=False)

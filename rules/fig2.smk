@@ -16,27 +16,27 @@ rule all_fig2:
                 if (d not in bad_datasets)
             ]
         ),
-        expand(
-            'plots/fig2/{dataset}/scRT_heatmaps.pdf',
-            dataset=[
-                d for d in config['simulated_datasets']['diploid']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fig2/{dataset}/twidth_heatmaps.pdf',
-            dataset=[
-                d for d in config['simulated_datasets']['diploid']
-                if (d not in bad_datasets)
-            ]
-        ),
         # expand(
-        #     'plots/fig2/{dataset}/cn_heatmaps.pdf',
+        #     'plots/fig2/{dataset}/scRT_heatmaps.pdf',
         #     dataset=[
         #         d for d in config['simulated_datasets']['diploid']
         #         if (d not in bad_datasets)
         #     ]
         # ),
+        # expand(
+        #     'plots/fig2/{dataset}/twidth_heatmaps.pdf',
+        #     dataset=[
+        #         d for d in config['simulated_datasets']['diploid']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        expand(
+            'plots/fig2/{dataset}/cn_heatmaps.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['diploid']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 rule simulate_diploid_data:
     input:
