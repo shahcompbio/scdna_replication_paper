@@ -25,6 +25,13 @@ rule all_fig2:
             ]
         ),
         expand(
+            'plots/fig2/{dataset}/model_gc_correction.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['diploid']
+                if (d not in bad_datasets and d not in small_bin_datasets)
+            ]
+        ),
+        expand(
             'plots/fig2/{dataset}/cn_heatmaps.pdf',
             dataset=[
                 d for d in config['simulated_datasets']['diploid']
@@ -121,6 +128,26 @@ rule evaluate_model_performance:
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig2/evaluate_model_performance.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule evaluate_model_gc_correction:
+    input: 
+        cn_s = 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
+        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
+    output: 'plots/fig2/{dataset}/model_gc_correction.pdf',
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        sigma1 = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['A'],
+        s_time_stdev = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_stdev']
+    log: 'logs/fig2/{dataset}/evaluate_model_gc_correction.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig2/evaluate_model_gc_correction.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
