@@ -6,30 +6,24 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 
 bad_datasets = []
+small_bin_datasets = ['A8']
 
 rule all_fig2:
     input:
         expand(
-            'analysis/fig2/{dataset}/s_phase_cells.tsv',
+            'plots/fig2/{dataset}/scRT_heatmaps.pdf',
             dataset=[
                 d for d in config['simulated_datasets']['diploid']
-                if (d not in bad_datasets)
+                if (d not in bad_datasets and d not in small_bin_datasets)
             ]
         ),
-        # expand(
-        #     'plots/fig2/{dataset}/scRT_heatmaps.pdf',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']['diploid']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig2/{dataset}/twidth_heatmaps.pdf',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']['diploid']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fig2/{dataset}/twidth_heatmaps.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['diploid']
+                if (d not in bad_datasets and d not in small_bin_datasets)
+            ]
+        ),
         expand(
             'plots/fig2/{dataset}/cn_heatmaps.pdf',
             dataset=[
