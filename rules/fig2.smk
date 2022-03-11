@@ -46,10 +46,31 @@ rule all_fig2:
             ]
         ),
 
-rule simulate_diploid_data:
+## TODO: update params and config.yaml to match script arguments
+rule simulate_cell_cn_states:
     input:
         gc_rt_data = 'data/gc_rt_bin_sizes.csv',
         gc_map_data = 'data/gc_map_500kb.csv'
+    output:
+        s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
+        g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
+    params:
+        num_reads = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_reads'],
+        num_cells_S = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_cells_S'],
+        num_cells_G = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_cells_G'],
+        bin_size = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['bin_size'],
+        s_time_stdev = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_stdev']
+    log:
+        'logs/fig2/{dataset}/simulate_cell_cn_states.log'
+    shell:
+        'python3 scripts/fig2/simulate_cell_cn_states.py '
+        '{input} {params} {output} &> {log}'
+
+## TODO: update script entirely so it takes in output from the above rule
+rule cn_to_reads:
+    input:
+        s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
+        g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
     output:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
