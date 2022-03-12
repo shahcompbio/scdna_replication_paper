@@ -2,19 +2,23 @@ import numpy as np
 import pandas as pd
 from argparse import ArgumentParser
 
-## TODO: update args to match what's needed in functions
-## might need to create flags since clones, clone_probs, states, state_probs will all be lists
+
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('ref_data', help='gc and rt data at different bin sizes')
-    p.add_argument('gc_profile_500kb', help='gc and map data at 500kb without blacklisted regions')
-    p.add_argument('num_cells_S', type=int, help='number of S-phase cells')
-    p.add_argument('num_cells_G', type=int, help='number of G1/2-phase cells')
-    p.add_argument('bin_size', type=int, help='bin size to use when simulating data (must be in ref_data)')
-    p.add_argument('s_time_stdev', type=float, help='standard deviation for normal distribution of S-phase times/fractions (negative for uniform distribution)')
-    p.add_argument('s_out', help='simulated S-phase cells')
-    p.add_argument('g_out', help='simulated G1/2-phase cells')
+    p.add_argument('-gr', '--ref_data', help='gc and rt data at different bin sizes')
+    p.add_argument('-gm', '--gc_profile_500kb', help='gc and map data at 500kb without blacklisted regions')
+    p.add_argument('-nS', '--num_cells_S', type=int, help='number of S-phase cells')
+    p.add_argument('-nG', '--num_cells_G', type=int, help='number of G1/2-phase cells')
+    p.add_argument('-bs', '--bin_size', type=int, help='bin size to use when simulating data (must be in ref_data)')
+    p.add_argument('-std', '--s_time_stdev', type=float, help='standard deviation for normal distribution of S-phase times/fractions (negative for uniform distribution)')
+    p.add_argument('-c', '--clones', type=str, nargs='+', help='list of unique clone ids')
+    p.add_argument('-cp', '--clone_probs', type=float, nargs='+', help='probability of observing each clone')
+    p.add_argument('-s', '--states', type=int, nargs='+', help='list of unique copy number states')
+    p.add_argument('-sp', '--state_probs', type=float, nargs='+', help='probability of each copy number state occurring')
+    p.add_argument('-cna', '--cell_CNA_prob', type=float, help='probability of each chromosome having a cell-specific CNA')
+    p.add_argument('-so', '--s_out', help='simulated S-phase cells')
+    p.add_argument('-go', '--g_out', help='simulated G1/2-phase cells')
 
     return p.parse_args()
 
@@ -32,11 +36,11 @@ def filter_small_bin_df(large_bin_df, small_bin_df):
     return filtered_small_df
 
 
-def simulate_clone_profiles(ref_data, num_clones, states, state_probs, clone_cn_column='clone_cn_state'):
+def simulate_clone_profiles(ref_data, clones, states, state_probs, clone_cn_column='clone_cn_state'):
     clone_cn = []
-    for i in range(num_clones):
+    for clone_id in clones:
         clone_df = ref_data.copy()
-        clone_df['clone_id'] = i
+        clone_df['clone_id'] = clone_id
         clone_df.reset_index(inplace=True, drop=True)
         for chrom_id, chunk in clone_df.groupby('chr'):
             cn = np.random.choice(states, p=state_probs)
@@ -46,8 +50,8 @@ def simulate_clone_profiles(ref_data, num_clones, states, state_probs, clone_cn_
     return clone_cn
 
 
-def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, state_probs, keep_CNA_prob, s_time_col='true_s_time', rt_col='mcf7rt',
-                           cell_id_prefix='cell_S', clone_cn_column='clone_cn_state', cell_cn_column='cell_cn_state', s_time_stdev=None):
+def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, state_probs, cell_CNA_prob, s_time_col='true_s_time', rt_col='mcf7rt',
+                           cell_id_prefix='cell_S', clone_cn_column='clone_cn_state', cell_cn_column='true_G1_state', s_time_stdev=None):
     cell_cn = []
     for i in range(num_cells):
         # draw the clone this cell is from
@@ -60,7 +64,7 @@ def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, sta
         temp_cell_df.reset_index(inplace=True, drop=True)
         # loop through each chromosome and add some cell-specific CNAs
         for chrom_id, chunk in temp_cell_df.groupby('chr'):
-            change_cn = np.random.choice([0, 1], p=[keep_CNA_prob, 1-keep_CNA_prob])
+            change_cn = np.random.choice([0, 1], p=[1-cell_CNA_prob, cell_CNA_prob])
             current_cn = chunk[cell_cn_column].values[0]
             # find a new CN value if true
             if change_cn == 1:
@@ -94,6 +98,8 @@ def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, sta
         cell_cn.append(temp_cell_df)
     cell_cn = pd.concat(cell_cn, ignore_index=True)
 
+    return cell_cn
+
 
 def main():
     argv = get_args()
@@ -111,24 +117,22 @@ def main():
     ref_data = filter_small_bin_df(gc_profile_500kb, ref_data)
     print('ref_data.head()\n', ref_data.head())
 
-    num_clones = len(argv.clones)
-
     assert len(argv.clones) == len(argv.clone_probs)
     assert len(argv.states) == len(argv.state_probs)
 
     # simulate consensus clone profiles
-    clone_cn = simulate_clone_profiles(ref_data, argv.num_clones, argv.states, argv.state_probs)
+    clone_cn = simulate_clone_profiles(ref_data, argv.clones, argv.states, argv.state_probs)
 
     print('simulating S-phase cells...')
     s_cells = simulate_cell_profiles(
-        clone_cn, argv.num_cells_S, argv.clones, argv.clone_probs, argv.states, argv.state_probs, argv.keep_CNA_prob
+        clone_cn, argv.num_cells_S, argv.clones, argv.clone_probs, argv.states, argv.state_probs, argv.cell_CNA_prob,
         cell_id_prefix='cell_S', s_time_stdev=argv.s_time_stdev, rt_col='mcf7rt'
     )
     print('s_cells.head()\n', s_cells.head())
 
     print('simulating G1-phase cells...')
     g_cells = simulate_cell_profiles(
-        clone_cn, argv.num_cells_G, argv.clones, argv.clone_probs, argv.states, argv.state_probs, argv.keep_CNA_prob
+        clone_cn, argv.num_cells_G, argv.clones, argv.clone_probs, argv.states, argv.state_probs, argv.cell_CNA_prob,
         cell_id_prefix='cell_G', s_time_stdev=None
     )
     print('g_cells.head()\n', g_cells.head())
