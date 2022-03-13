@@ -118,6 +118,7 @@ simulated_datasets:
       states: [1, 2, 3, 4, 5, 6, 7]
       state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
       cell_CNA_prob: 0.05
+      infer_mode: 'cell'
     P2:
       sigma1: 0.3
       gc_slope: 1.2
@@ -134,4 +135,5 @@ simulated_datasets:
       states: [2]
       state_probs: [1]
       cell_CNA_prob: 0
+      infer_mode: 'bulk'
 

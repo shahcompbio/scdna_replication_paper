@@ -11,47 +11,40 @@ small_bin_datasets = ['A8']
 rule all_fig2:
     input:
         expand(
-            'analysis/fig2/{dataset}/s_phase_cells.tsv',
+            'plots/fig2/{dataset}/scRT_heatmaps.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['polyploid']
+                if (d not in bad_datasets and d not in small_bin_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig2/{dataset}/twidth_heatmaps.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['polyploid']
+                if (d not in bad_datasets and d not in small_bin_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig2/{dataset}/model_gc_correction.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['polyploid']
+                if (d not in bad_datasets and d not in small_bin_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig2/{dataset}/cn_heatmaps.pdf',
             dataset=[
                 d for d in config['simulated_datasets']['polyploid']
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/fig2/{dataset}/scRT_heatmaps.pdf',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']['diploid']
-        #         if (d not in bad_datasets and d not in small_bin_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig2/{dataset}/twidth_heatmaps.pdf',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']['diploid']
-        #         if (d not in bad_datasets and d not in small_bin_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig2/{dataset}/model_gc_correction.pdf',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']['diploid']
-        #         if (d not in bad_datasets and d not in small_bin_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig2/{dataset}/cn_heatmaps.pdf',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']['diploid']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig2/{dataset}/true_scRT_heatmap.pdf',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']['diploid']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fig2/{dataset}/true_scRT_heatmap.pdf',
+            dataset=[
+                d for d in config['simulated_datasets']['polyploid']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 rule simulate_cell_cn_states:
@@ -150,7 +143,8 @@ rule infer_scRT:
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
     output: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
     params:
-        input_col = 'reads'
+        input_col = 'reads',
+        infer_mode = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['infer_mode']
     log: 'logs/fig2/{dataset}/infer_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -180,11 +174,11 @@ rule evaluate_model_gc_correction:
     output: 'plots/fig2/{dataset}/model_gc_correction.pdf',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        sigma1 = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['sigma1'],
-        gc_slope = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_slope'],
-        gc_int = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_int'],
-        A = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['A'],
-        s_time_stdev = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_stdev']
+        sigma1 = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['A'],
+        s_time_stdev = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['s_time_stdev']
     log: 'logs/fig2/{dataset}/evaluate_model_gc_correction.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
@@ -200,11 +194,11 @@ rule twidth_analysis:
         plot2 = 'plots/fig2/{dataset}/twidth_curves.pdf',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        sigma1 = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['sigma1'],
-        gc_slope = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_slope'],
-        gc_int = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_int'],
-        A = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['A'],
-        s_time_stdev = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_stdev']
+        sigma1 = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['A'],
+        s_time_stdev = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['s_time_stdev']
     log: 'logs/fig2/{dataset}/twidth_analysis.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '

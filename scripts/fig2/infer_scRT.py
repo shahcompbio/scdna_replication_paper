@@ -10,6 +10,7 @@ def get_args():
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells')
     p.add_argument('cn_g1', help='input long-form copy number dataframe for G1-phase cells including clone_id')
     p.add_argument('input_col', help='column in two cn dataframes to be used for matching S-phase cells to clones')
+    p.add_argument('infer_mode', help='options: bulk/clone/cell')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
 
     return p.parse_args()
@@ -40,7 +41,7 @@ def main():
 
     print('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer(level='bulk')
+    cn_s_with_scrt = scrt.infer(level=argv.infer_mode)
     print('done running inference')
 
     print('cn_s.shape', cn_s.shape)
