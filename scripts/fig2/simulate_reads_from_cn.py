@@ -5,18 +5,14 @@ from argparse import ArgumentParser
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('ref_data', help='gc and rt data at different bin sizes')
-    p.add_argument('gc_profile_500kb', help='gc and map data at 500kb without blacklisted regions')
+    p.add_argument('cn_s', help='True somatic CN profiles for S-phase cells')
+    p.add_argument('cn_g', help='True somatic CN profiles for S-phase cells')
     p.add_argument('sigma1', type=float, help='noise of read depth profiles')
     p.add_argument('gc_slope', type=float, help='slope of linear GC bias')
     p.add_argument('gc_int', type=float, help='intercept of linear GC bias')
     p.add_argument('A', type=float, help='steepness of inflection point when drawing RT state')
     p.add_argument('B', type=float, help='offset for where inflection point occurs when drawing RT state')
     p.add_argument('num_reads', type=int, help='number of reads per cell')
-    p.add_argument('num_cells_S', type=int, help='number of S-phase cells')
-    p.add_argument('num_cells_G', type=int, help='number of G1/2-phase cells')
-    p.add_argument('bin_size', type=int, help='bin size to use when simulating data (must be in ref_data)')
-    p.add_argument('s_time_stdev', type=float, help='standard deviation for normal distribution of S-phase times/fractions (negative for uniform distribution)')
     p.add_argument('s_out', help='simulated S-phase cells')
     p.add_argument('g_out', help='simulated G1/2-phase cells')
 
@@ -69,9 +65,9 @@ def model(G1_state, gc, rt, s_time, sigma1, gc_slope, gc_int, num_reads, A=1, B=
     return read_count, replicated, true_CN, observed_CN
 
 
-def simulate_cell(temp_df, cell_id, s_time, num_reads, gc_slope, gc_int, sigma1, A, B):    
+def simulate_cell(temp_df, cell_id, s_time, num_reads, gc_slope, gc_int, sigma1, A, B, rt_col='mcf7rt', cn_state_col='true_G1_state'):    
     read_count, replicated, true_CN, observed_CN = model(
-        temp_df['true_G1_state'].values, temp_df['gc'].values, temp_df['mcf7rt'].values,
+        temp_df[cn_state_col].values, temp_df['gc'].values, temp_df[rt_col].values,
         s_time, sigma1, gc_slope, gc_int, num_reads, A=A, B=B
     )
     
@@ -79,77 +75,31 @@ def simulate_cell(temp_df, cell_id, s_time, num_reads, gc_slope, gc_int, sigma1,
     temp_df['reads'] = read_count
     temp_df['true_rt_state'] = replicated
     temp_df['true_observed_CN'] = observed_CN
-    temp_df['true_s_time'] = s_time
     temp_df['true_frac_rt'] = sum(replicated) / len(replicated)
-    # exact number of reads will be a few off from input due to rounding errors --> use sum of output
     temp_df['total_mapped_reads_hmmcopy'] = sum(read_count)
     temp_df['gc_slope'] = gc_slope
     temp_df['gc_int'] = gc_int
     temp_df['sigma1'] = sigma1
     temp_df['A'] = A
     temp_df['B'] = B
-    temp_df['cell_id'] = cell_id
     temp_df['rpm'] = (temp_df['reads'] / sum(temp_df['reads'].values)) * 1e6
     
     return temp_df
 
 
-def simulate_diploid_s_cells(
-    ref_data, num_cells, gc_slope, gc_int, sigma1, A, B, num_reads,
-    rt_col='mcf7rt', cell_id_prefix='cell_S', s_time_stdev=10
-):
-    sim_s_df = []
-    for i in range(num_cells):
-        temp_df = ref_data.copy()
-        cell_id = '{}_{}'.format(cell_id_prefix, i)
-
-        min_rt_value = min(temp_df[rt_col].values)
-        max_rt_value = max(temp_df[rt_col].values)
-        
-        if s_time_stdev <= 0:
-            # draw from a normal distribution when stdev is not positive
-            s_time = np.random.uniform(low=min_rt_value, high=max_rt_value)
-        else:
-            # draw from normal distribution and check too see if within range of min-max of rt_col
-            repeat = True
-            while repeat:
-                s_time = np.random.normal(loc=np.mean(temp_df[rt_col].values), scale=s_time_stdev)
-                if s_time < max_rt_value and s_time > min_rt_value:
-                    repeat = False
-
-        # assume a diploid cell
-        temp_df['true_G1_state'] = 2
-        # simulate gc bias and to get read counts
-        temp_df = simulate_cell(temp_df, cell_id, s_time, num_reads, gc_slope, gc_int, sigma1, A, B)
-
-        sim_s_df.append(temp_df)
-
-    sim_s_df = pd.concat(sim_s_df, ignore_index=True)
+def simulate_reads_from_cn(cn, gc_slope, gc_int, sigma1, A, B, num_reads, rt_col='mcf7rt', cn_state_col='true_G1_state'):
+    """ Given a df with somatic CN states and true S-phase times for all cells, simulate read count with GC and replication bias. """
+    sim_df = []
     
-    return sim_s_df
-
-
-def simulate_diploid_g_cells(
-    ref_data, num_cells, gc_slope, gc_int, sigma1, A, B, num_reads,
-    rt_col='mcf7rt', cell_id_prefix='cell_S'
-):
-    sim_g_df = []
-    for i in range(num_cells):
-        temp_df = ref_data.copy()
-        cell_id = '{}_{}'.format(cell_id_prefix, i)
-
-        s_time = np.inf
-
-        # assume a diploid cell
-        temp_df['true_G1_state'] = 2
+    for cell_id, chunk in cn.groupby('cell_id'):
+        s_time = chunk['true_s_time'].values[0]
         # simulate gc bias and to get read counts
-        temp_df = simulate_cell(temp_df, cell_id, s_time, num_reads, gc_slope, gc_int, sigma1, A, B)
+        temp_df = simulate_cell(chunk, cell_id, s_time, num_reads, gc_slope, gc_int, sigma1, A, B, rt_col=rt_col, cn_state_col=cn_state_col)
+        sim_df.append(temp_df)
 
-        sim_g_df.append(temp_df)
-
-    sim_g_df = pd.concat(sim_g_df, ignore_index=True)
+    sim_df = pd.concat(sim_df, ignore_index=True)
     
-    return sim_g_df
+    return sim_df
 
 
 def aggregate_small_bin_df(large_bin_df, small_bin_df):
@@ -200,60 +150,40 @@ def aggregate_small_bin_df(large_bin_df, small_bin_df):
 def main():
     argv = get_args()
 
-    ref_data = pd.read_csv(argv.ref_data, dtype={'Chromosome': str})
-    ref_data = ref_data.dropna().reset_index(drop=True)
-    ref_data.rename(columns={'Chromosome': 'chr', 'Start': 'start', 'End': 'end'}, inplace=True)
-    ref_data['chr'] = ref_data['chr'].astype('category')
-    
-    ref_data_500kb = ref_data.loc[ref_data['bin_size']==500000]
-    ref_data_500kb.reset_index(inplace=True, drop=True)
-    print('ref_data_500kb.head()\n', ref_data_500kb.head())
-
-    ref_data = ref_data.loc[ref_data['bin_size']==int(argv.bin_size)]
-    ref_data.reset_index(inplace=True, drop=True)
-    print('ref_data.head()\n', ref_data.head())
-
-    gc_profile_500kb = pd.read_csv(argv.gc_profile_500kb)
-    ref_data = filter_small_bin_df(gc_profile_500kb, ref_data)
-    ref_data_500kb = filter_small_bin_df(gc_profile_500kb, ref_data_500kb)
-    print('ref_data.head()\n', ref_data.head())
-    print('ref_data_500kb.head()\n', ref_data_500kb.head())
+    cn_s = pd.read_csv(argv.cn_s, sep='\t')
+    cn_g = pd.read_csv(argv.cn_g, sep='\t')
 
     print('simulating S-phase cells...')
-    diploid_s_cells = simulate_diploid_s_cells(
-        ref_data, argv.num_cells_S, argv.gc_slope, argv.gc_int, argv.sigma1, argv.A, argv.B, argv.num_reads, 
-        rt_col='mcf7rt', cell_id_prefix='cell_S', s_time_stdev=argv.s_time_stdev
-    )
-    print('diploid_s_cells.head()\n', diploid_s_cells.head())
+    cn_s = simulate_reads_from_cn(cn_s, argv.gc_slope, argv.gc_int, argv.sigma1, argv.A, argv.B, argv.num_reads,
+                                  rt_col='mcf7rt', cn_state_col='true_G1_state')
+    print('cn_s.head()\n', cn_s.head())
 
     print('simulating G1-phase cells...')
-    diploid_g_cells = simulate_diploid_g_cells(
-        ref_data, argv.num_cells_G, argv.gc_slope, argv.gc_int, argv.sigma1, argv.A, argv.B, argv.num_reads, 
-        rt_col='mcf7rt', cell_id_prefix='cell_G'
-    )
-    print('diploid_g_cells.head()\n', diploid_g_cells.head())
+    cn_g = simulate_reads_from_cn(cn_g, argv.gc_slope, argv.gc_int, argv.sigma1, argv.A, argv.B, argv.num_reads,
+                                  rt_col='mcf7rt', cn_state_col='true_G1_state')
+    print('cn_g.head()\n', cn_g.head())
 
     # aggregate simulated data into 500kb bins if bin size was initially small
     # if argv.bin_size < 500000:
     #     print('aggregating S-phase cells into 500kb bins...')
     #     sim_s_to_500kb = []
-    #     for cell_id, cell_cn in diploid_s_cells.groupby('cell_id'):
+    #     for cell_id, cell_cn in cn_s.groupby('cell_id'):
     #         aggregated_df = aggregate_small_bin_df(ref_data_500kb, cell_cn)
     #         sim_s_to_500kb.append(aggregated_df)
-    #     diploid_s_cells = pd.concat(sim_s_to_500kb, ignore_index=True)
-    #     print('diploid_s_cells.head()\n', diploid_s_cells.head())
+    #     cn_s = pd.concat(sim_s_to_500kb, ignore_index=True)
+    #     print('cn_s.head()\n', cn_s.head())
 
     #     print('aggregating G1-phase cells into 500kb bins...')
     #     sim_g_to_500kb = []
-    #     for cell_id, cell_cn in diploid_g_cells.groupby('cell_id'):
+    #     for cell_id, cell_cn in cn_g.groupby('cell_id'):
     #         aggregated_df = aggregate_small_bin_df(ref_data_500kb, cell_cn)
     #         sim_g_to_500kb.append(aggregated_df)
-    #     diploid_g_cells = pd.concat(sim_g_to_500kb, ignore_index=True)
-    #     print('diploid_g_cells.head()\n', diploid_g_cells.head())
+    #     cn_g = pd.concat(sim_g_to_500kb, ignore_index=True)
+    #     print('cn_g.head()\n', cn_g.head())
 
 
-    diploid_s_cells.to_csv(argv.s_out, sep='\t', index=False)
-    diploid_g_cells.to_csv(argv.g_out, sep='\t', index=False)
+    cn_s.to_csv(argv.s_out, sep='\t', index=False)
+    cn_g.to_csv(argv.g_out, sep='\t', index=False)
 
 
 

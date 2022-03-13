@@ -11,7 +11,7 @@ small_bin_datasets = ['A8']
 rule all_fig2:
     input:
         expand(
-            'analysis/fig2/{dataset}/g1_phase_cn_states.tsv',
+            'analysis/fig2/{dataset}/s_phase_cells.tsv',
             dataset=[
                 d for d in config['simulated_datasets']['polyploid']
                 if (d not in bad_datasets)
@@ -90,8 +90,8 @@ rule simulate_cell_cn_states:
         '-go {output.g1_phase} '
         '&> {log}'
 
-## TODO: update script entirely so it takes in output from the above rule
-rule cn_to_reads:
+
+rule simulate_reads_from_cn:
     input:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
@@ -99,20 +99,16 @@ rule cn_to_reads:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
     params:
-        sigma1 = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['sigma1'],
-        gc_slope = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_slope'],
-        gc_int = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['gc_int'],
-        A = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['A'],
-        B = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['B'],
-        num_reads = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_reads'],
-        num_cells_S = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_cells_S'],
-        num_cells_G = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['num_cells_G'],
-        bin_size = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['bin_size'],
-        s_time_stdev = lambda wildcards: config['simulated_datasets']['diploid'][wildcards.dataset]['s_time_stdev']
+        sigma1 = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['A'],
+        B = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['B'],
+        num_reads = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['num_reads']
     log:
-        'logs/fig2/{dataset}/simulate_diploid_data.log'
+        'logs/fig2/{dataset}/simulate_reads_from_cn.log'
     shell:
-        'python3 scripts/fig2/simulate_diploid_data.py '
+        'python3 scripts/fig2/simulate_reads_from_cn.py '
         '{input} {params} {output} &> {log}'
 
 
