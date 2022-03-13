@@ -146,9 +146,6 @@ def main():
     df.chr = df.chr.astype('str')
     df.chr = df.chr.astype('category')
 
-    # assign dummy cluster_id column for scgenome heatmaps
-    df['cluster_id'] = 'A'
-
     # compute time from scheduled replication for each bin
     df['mcf7rt_hours'] = ((df['mcf7rt'] / 10.0) - 10.) * -1.
     df['time_from_scheduled_rt'] = df['mcf7rt_hours'] - (df['frac_rt'] * 10.0)
@@ -170,8 +167,8 @@ def main():
     ax = ax.flatten()
 
     rt_cmap = get_rt_cmap()
-    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', secondary_field_name='true_frac_rt', cmap=rt_cmap)
-    plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state', secondary_field_name='true_frac_rt', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=rt_cmap)
 
     ax[0].set_title('True scRT, T-width: {}\n{}'.format(round(true_Tw, 3), title_second_line))
     ax[1].set_title('Inferred scRT, T-width: {}\n{}'.format(round(Tw, 3), title_second_line))

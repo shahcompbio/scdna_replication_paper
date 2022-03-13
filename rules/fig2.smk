@@ -6,42 +6,42 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 
 bad_datasets = []
-small_bin_datasets = ['A8']
+small_bin_datasets = ['D9']
 
 rule all_fig2:
     input:
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps.pdf',
             dataset=[
-                d for d in config['simulated_datasets']['polyploid']
+                d for d in config['simulated_datasets']
                 if (d not in bad_datasets and d not in small_bin_datasets)
             ]
         ),
         expand(
             'plots/fig2/{dataset}/twidth_heatmaps.pdf',
             dataset=[
-                d for d in config['simulated_datasets']['polyploid']
+                d for d in config['simulated_datasets']
                 if (d not in bad_datasets and d not in small_bin_datasets)
             ]
         ),
         expand(
             'plots/fig2/{dataset}/model_gc_correction.pdf',
             dataset=[
-                d for d in config['simulated_datasets']['polyploid']
+                d for d in config['simulated_datasets']
                 if (d not in bad_datasets and d not in small_bin_datasets)
             ]
         ),
         expand(
             'plots/fig2/{dataset}/cn_heatmaps.pdf',
             dataset=[
-                d for d in config['simulated_datasets']['polyploid']
+                d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
             'plots/fig2/{dataset}/true_scRT_heatmap.pdf',
             dataset=[
-                d for d in config['simulated_datasets']['polyploid']
+                d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
@@ -55,15 +55,15 @@ rule simulate_cell_cn_states:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
     params:
-        num_cells_S = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['num_cells_S'],
-        num_cells_G = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['num_cells_G'],
-        bin_size = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['bin_size'],
-        s_time_stdev = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['s_time_stdev'],
-        clones = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['clones'],
-        clone_probs = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['clone_probs'],
-        states = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['states'],
-        state_probs = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['state_probs'],
-        cell_CNA_prob = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['cell_CNA_prob']
+        num_cells_S = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_cells_S'],
+        num_cells_G = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_cells_G'],
+        bin_size = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['bin_size'],
+        s_time_stdev = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['s_time_stdev'],
+        clones = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['clones'],
+        clone_probs = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['clone_probs'],
+        states = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['states'],
+        state_probs = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['state_probs'],
+        cell_CNA_prob = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['cell_CNA_prob']
     log:
         'logs/fig2/{dataset}/simulate_cell_cn_states.log'
     shell:
@@ -92,12 +92,12 @@ rule simulate_reads_from_cn:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
     params:
-        sigma1 = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['sigma1'],
-        gc_slope = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_slope'],
-        gc_int = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_int'],
-        A = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['A'],
-        B = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['B'],
-        num_reads = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['num_reads']
+        sigma1 = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
+        B = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['B'],
+        num_reads = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_reads']
     log:
         'logs/fig2/{dataset}/simulate_reads_from_cn.log'
     shell:
@@ -144,7 +144,7 @@ rule infer_scRT:
     output: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
     params:
         input_col = 'reads',
-        infer_mode = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['infer_mode']
+        infer_mode = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['infer_mode']
     log: 'logs/fig2/{dataset}/infer_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -174,11 +174,11 @@ rule evaluate_model_gc_correction:
     output: 'plots/fig2/{dataset}/model_gc_correction.pdf',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        sigma1 = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['sigma1'],
-        gc_slope = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_slope'],
-        gc_int = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_int'],
-        A = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['A'],
-        s_time_stdev = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['s_time_stdev']
+        sigma1 = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
+        s_time_stdev = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['s_time_stdev']
     log: 'logs/fig2/{dataset}/evaluate_model_gc_correction.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
@@ -194,11 +194,11 @@ rule twidth_analysis:
         plot2 = 'plots/fig2/{dataset}/twidth_curves.pdf',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        sigma1 = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['sigma1'],
-        gc_slope = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_slope'],
-        gc_int = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['gc_int'],
-        A = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['A'],
-        s_time_stdev = lambda wildcards: config['simulated_datasets']['polyploid'][wildcards.dataset]['s_time_stdev']
+        sigma1 = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['sigma1'],
+        gc_slope = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_slope'],
+        gc_int = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_int'],
+        A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
+        s_time_stdev = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['s_time_stdev']
     log: 'logs/fig2/{dataset}/twidth_analysis.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '

@@ -31,10 +31,10 @@ def plot_true_rt_state(df, argv):
     ax = ax.flatten()
 
     rt_cmap = get_rt_cmap()
-    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', secondary_field_name='true_frac_rt', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=rt_cmap)
     ax[0].set_title('{}: True scRT'.format(argv.dataset))
 
-    plot_clustered_cell_cn_matrix(ax[1], df, 'reads', secondary_field_name='true_frac_rt', cmap='viridis')
+    plot_clustered_cell_cn_matrix(ax[1], df, 'reads', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap='viridis')
     ax[1].set_title('{}: Read count'.format(argv.dataset))
 
     fig.savefig(argv.output, bbox_inches='tight')
@@ -47,9 +47,6 @@ def main():
     # set chr column to category
     df.chr = df.chr.astype(str)
     df.chr = df.chr.astype('category')
-
-    # assign dummy cluster_id column for scgenome heatmaps
-    df['cluster_id'] = 'A'
 
     # create separate plots
     plot_true_rt_state(df, argv)

@@ -28,11 +28,11 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, value_col='state')
     ax = ax.flatten()
 
     plot_data_g1 = scgenome.cnplot.plot_clustered_cell_cn_matrix(
-        ax[0], cn_g, value_col
+        ax[0], cn_g, value_col, cluster_field_name='clone_id'
     )
 
     plot_data_s = scgenome.cnplot.plot_clustered_cell_cn_matrix(
-        ax[1], cn_s, value_col
+        ax[1], cn_s, value_col, cluster_field_name='clone_id'
     )
     
     if dataset:
@@ -51,9 +51,6 @@ def main():
 
     cn_s.chr = cn_s.chr.astype(str)
     cn_g.chr = cn_g.chr.astype(str)
-
-    cn_g['cluster_id'] = 'A'
-    cn_s['cluster_id'] = 'A'
 
     fig = plot_cn_heatmap(cn_g, cn_s, dataset=argv.dataset, value_col=argv.value_col)
 

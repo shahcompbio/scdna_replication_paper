@@ -13,9 +13,9 @@
 	{
 		"mem" : 96
 	},
-	"simulate_diploid_data" :
+	"simulate_cell_cn_states" :
 	{
-		"mem" : 256
+		"mem" : 128
 	},
 	"infer_scRT" :
 	{
