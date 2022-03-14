@@ -128,28 +128,6 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
 
 
 
-# def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, value_col='state'):
-#     ''' Plot clustered cell cn matrices for S- and G1-phase copy number states with no clones labeled '''
-#     fig = plt.figure(figsize=figsize)
-#     ax0 = fig.add_axes([0.1,0.0,0.4,1.])
-#     ax1 = fig.add_axes([0.6,0.0,0.4,1.])
-
-#     plot_data_g1 = scgenome.cnplot.plot_clustered_cell_cn_matrix(
-#         ax0, cn_g, value_col, cluster_field_name='clone_id'
-#     )
-
-#     plot_data_s = scgenome.cnplot.plot_clustered_cell_cn_matrix(
-#         ax1, cn_s, value_col, cluster_field_name='clone_id'
-#     )
-    
-#     if dataset:
-#         ax0.set_title('{}: G1/2-phase'.format(dataset))
-#         ax1.set_title('{}: S-phase'.format(dataset))
-    
-
-#     return fig
-
-
 def main():
     argv = get_args()
 
