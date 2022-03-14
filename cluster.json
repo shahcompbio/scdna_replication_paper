@@ -15,6 +15,7 @@
 	},
 	"simulate_cell_cn_states" :
 	{
+		"time" : "6:00",
 		"mem" : 128
 	},
 	"infer_scRT" :
