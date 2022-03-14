@@ -26,9 +26,10 @@ def main():
     if 'clone_id' not in cn_g1.columns:
         cn_g1['clone_id'] = 'A'
 
-    # use true G1 and rt states to recreate the 'state' column
+    # use true G1 copy number as the 'state' column
+    # this is important for ploidy calculation
     cn_g1['state'] = cn_g1['true_G1_state']
-    cn_s['state'] = cn_s['true_G1_state'] * (1 + cn_s['true_rt_state'])
+    cn_s['state'] = cn_s['true_G1_state']
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
