@@ -14,7 +14,7 @@ fitness_rx_pairs:
 simulated_datasets:
   # fully diploid datasets
   D1:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -31,7 +31,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'bulk'
   D2:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.5
@@ -48,7 +48,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'bulk'
   D3:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 1.0
@@ -65,7 +65,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'bulk'
   D4:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.05
@@ -82,7 +82,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'bulk'
   D5:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -99,7 +99,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'bulk'
   D6:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -116,7 +116,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'bulk'
   D7:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -133,7 +133,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'bulk'
   D8:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -150,7 +150,7 @@ simulated_datasets:
     cell_CNA_prob: 0.05
     infer_mode: 'bulk'
   D9:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -168,7 +168,7 @@ simulated_datasets:
     infer_mode: 'bulk'
   # polyclonal datasets
   P1:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -185,7 +185,7 @@ simulated_datasets:
     cell_CNA_prob: 0.05
     infer_mode: 'cell'
   P2:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -202,7 +202,7 @@ simulated_datasets:
     cell_CNA_prob: 0.15
     infer_mode: 'cell'
   P3:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -219,7 +219,7 @@ simulated_datasets:
     cell_CNA_prob: 0.25
     infer_mode: 'cell'
   P4:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -236,7 +236,7 @@ simulated_datasets:
     cell_CNA_prob: 0.0
     infer_mode: 'cell'
   P5:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -253,7 +253,7 @@ simulated_datasets:
     cell_CNA_prob: 0.05
     infer_mode: 'cell'
   P6:
-    sigma1: 0.3
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -269,4 +269,21 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
     infer_mode: 'cell'
+  P7:
+    sigma1: 0.1
+    gc_slope: 1.2
+    gc_int: 0.0
+    A: 0.1
+    B: 0.0
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    s_time_stdev: 20  # normal
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.0
+    infer_mode: 'clone'
 

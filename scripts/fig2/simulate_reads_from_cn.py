@@ -56,11 +56,11 @@ def model(G1_state, gc, rt, s_time, sigma1, gc_slope, gc_int, num_reads, A=1, B=
     observed_CN = true_CN * ((gc * gc_slope) + gc_int)
     
     # add some random noise to the observed copy number
-    reads_norm = softplus(np.random.normal(loc=observed_CN, scale=sigma1))
+    noisy_CN = np.random.gamma(observed_CN / sigma1, sigma1)
     
-    # scale reads_norm and then draw true read count from multinomial distribution
-    expected_reads_pval = reads_norm / sum(reads_norm)
-    read_count = np.random.multinomial(num_reads, expected_reads_pval)
+    # scale noisy_CN and then draw true read count from multinomial distribution
+    noisy_CN_pval = noisy_CN / sum(noisy_CN)
+    read_count = np.random.multinomial(num_reads, noisy_CN_pval)
     
     return read_count, replicated, true_CN, observed_CN
 
