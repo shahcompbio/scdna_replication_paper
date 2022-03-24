@@ -1,0 +1,137 @@
+import pandas as pd
+import numpy as np
+
+np.random.seed(2794834348)
+
+configfile: "config.yaml"
+samples = pd.read_csv('data/signatures/signatures_samples.tsv', sep='\t')
+
+bad_datasets = []
+
+rule all_fig3:
+    input:
+        expand(
+            'plots/fig3/{dataset}/cn_heatmaps.pdf',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+
+
+def dataset_cn_files(wildcards):
+    mask = samples['dataset_id'] == wildcards.dataset
+    library_ids = samples.loc[mask, 'library_id']
+    ticket_ids = samples.loc[mask, 'ticket_id']
+
+    files = expand(
+        config['ticket_dir_500kb'] + \
+            '/{ticket}/results/hmmcopy/{library}_reads.csv.gz',
+        zip, ticket=ticket_ids, library=library_ids
+    )
+    return files
+
+
+def dataset_sample_ids(wildcards):
+    mask = samples['dataset_id'] == wildcards.dataset
+    sample_ids = samples.loc[mask, 'sample_id']
+    sample_ids = list(sample_ids)
+    return sample_ids
+
+
+def dataset_metric_files(wildcards):
+    mask = samples['dataset_id'] == wildcards.dataset
+    library_ids = samples.loc[mask, 'library_id']
+    ticket_ids = samples.loc[mask, 'ticket_id']
+
+    files = expand(
+        config['ticket_dir_500kb'] + \
+            '/{ticket}/results/annotation/{library}_metrics.csv.gz',
+        zip, ticket=ticket_ids, library=library_ids
+    )
+    return files
+
+
+def dataset_metric_files_updated_classifier(wildcards):
+    mask = samples['dataset_id'] == wildcards.dataset
+    library_ids = samples.loc[mask, 'library_id']
+    sample_ids = samples.loc[mask, 'isabl_sample_id']
+
+    files = expand(
+        '/juno/work/shah/users/weinera2/projects/all-dlp-classifier' + \
+            '/analysis/{sample}:{library}/merged_classifier_results.tsv',
+        zip, sample=sample_ids, library=library_ids
+    )
+    return files
+
+
+rule collect_cn_data:
+    input: 
+        hmm = dataset_cn_files,
+        annotation = dataset_metric_files_updated_classifier
+    output: 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv'
+    log: 'logs/fig3/{dataset}/collect_cn_data.log'
+    params:
+        samples = dataset_sample_ids
+    shell: 
+        'python scripts/fig3/collect_cn_data.py '
+        '--hmm {input.hmm} --annotation {input.annotation} '
+        '--samples {params.samples} --output {output} &> {log}'
+
+
+rule get_s_phase_cells:
+    input: 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv'
+    output: 'analysis/fig3/{dataset}/s_phase_cells.tsv'
+    run:
+        df = pd.read_csv(str(input), sep='\t', index_col=False)
+        df = df.query('is_s_phase_prob_new >= 0.5 | is_s_phase_prob >= 0.5')
+        df.to_csv(str(output), sep='\t', index=False)
+
+
+rule get_non_s_phase_cells:
+    input:
+        cn = 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv',
+        clones = 'data/signatures/{dataset}_clones.tsv'
+    output: 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    run:
+        df = pd.read_csv(str(input.cn), sep='\t', index_col=False)
+        clones = pd.read_csv(str(input.clones), sep='\t', index_col=False)
+
+        df = df.query('is_s_phase_prob_new < 0.5 & is_s_phase_prob < 0.5')
+        # only use cells that have clone_id's assigned (and add clone_id column)
+        df = pd.merge(df, clones, on='cell_id')
+
+        df.to_csv(str(output), sep='\t', index=False)
+
+
+rule infer_scRT:
+    input:
+        cn_s = 'analysis/fig3/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
+    params:
+        input_col = 'reads',
+        infer_mode = 'cell'
+    log: 'logs/fig3/{dataset}/infer_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_cn_heatmaps:
+    input:
+        s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
+        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    output: 'plots/fig3/{dataset}/cn_heatmaps.pdf'
+    params:
+        value_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log:
+        'logs/fig3/{dataset}/plot_cn_heatmaps.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_s_vs_g_cn_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
