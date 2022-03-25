@@ -17,6 +17,13 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig3/{dataset}/rt_heatmap.pdf',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 def dataset_cn_files(wildcards):
@@ -120,6 +127,22 @@ rule infer_scRT:
         'deactivate'
 
 
+rule infer_scRT_g1:
+    input:
+        cn_s = 'analysis/fig3/{dataset}/g1_phase_cells.tsv',
+        cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/fig3/{dataset}/g1_phase_cells_with_scRT.tsv',
+    params:
+        input_col = 'reads',
+        infer_mode = 'clone'
+    log: 'logs/fig3/{dataset}/infer_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule plot_cn_heatmaps:
     input:
         s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
@@ -128,10 +151,24 @@ rule plot_cn_heatmaps:
     params:
         value_col = 'state',
         dataset = lambda wildcards: wildcards.dataset
-    log:
-        'logs/fig3/{dataset}/plot_cn_heatmaps.log'
+    log: 'logs/fig3/{dataset}/plot_cn_heatmaps.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig3/plot_s_vs_g_cn_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule plot_rt_heatmap:
+    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 'plots/fig3/{dataset}/rt_heatmap.pdf'
+    params:
+        value_col = 'rt_state',
+        sort_col = 'frac_rt',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig3/{dataset}/plot_rt_heatmap.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_rt_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'

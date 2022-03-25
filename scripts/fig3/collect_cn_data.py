@@ -78,6 +78,9 @@ if __name__ == '__main__':
 	# filter based on number of hmmcopy mapped reads
 	cn = cn.query('total_mapped_reads_hmmcopy > 500000')
 
+	# filter based on position (blacklisted loci have gc<0)
+	cn = cn.query('gc > 0')
+
 	# filter out control cells that don't contain one of the sample_ids in their cell_id
 	print(argv.samples)
 	cn = cn[cn['cell_id'].str.contains('|'.join(argv.samples))]
