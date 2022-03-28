@@ -24,6 +24,13 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig3/{dataset}/rt_clusters_heatmap.pdf',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 def dataset_cn_files(wildcards):
@@ -170,5 +177,24 @@ rule plot_rt_heatmap:
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig3/plot_rt_heatmap.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule rt_clustering:
+    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 
+        umap = 'plots/fig3/{dataset}/rt_clusters_umap.pdf',
+        kde = 'plots/fig3/{dataset}/rt_clusters_kde.pdf',
+        heatmap = 'plots/fig3/{dataset}/rt_clusters_heatmap.pdf',
+        df = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_clusters.tsv'
+    params:
+        value_col = 'rt_state',
+        sort_col = 'frac_rt',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig3/{dataset}/rt_clustering.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig3/rt_clustering.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
