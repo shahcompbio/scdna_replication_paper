@@ -125,6 +125,7 @@ rule infer_scRT:
     output: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
     params:
         input_col = 'reads',
+        assign_col = 'copy',
         infer_mode = 'cell'
     log: 'logs/fig3/{dataset}/infer_scRT.log'
     shell:
@@ -141,6 +142,7 @@ rule infer_scRT_g1:
     output: 'analysis/fig3/{dataset}/g1_phase_cells_with_scRT.tsv',
     params:
         input_col = 'reads',
+        assign_col = 'copy',
         infer_mode = 'clone'
     log: 'logs/fig3/{dataset}/infer_scRT.log'
     shell:

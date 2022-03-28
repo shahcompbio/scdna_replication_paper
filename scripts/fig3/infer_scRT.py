@@ -10,6 +10,7 @@ def get_args():
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells')
     p.add_argument('cn_g1', help='input long-form copy number dataframe for G1-phase cells including clone_id')
     p.add_argument('input_col', help='column in two cn dataframes to be used for matching S-phase cells to clones')
+    p.add_argument('assign_col', help='column in two cn dataframes to be used for assigning S-phase cells to clones')
     p.add_argument('infer_mode', help='options: bulk/clone/cell')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
 
@@ -28,12 +29,13 @@ def main():
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
-    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', 'gc', 'state', argv.input_col]]
-    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'gc', 'clone_id', 'state', argv.input_col]]
+    temp_cn_s = cn_s[['cell_id', 'library_id', 'chr', 'start', 'gc', 'state', 'copy', 'reads']]
+    temp_cn_g1 = cn_g1[['cell_id', 'library_id', 'chr', 'start', 'gc', 'clone_id', 'state', 'copy', 'reads']]
 
     print('creating scrt object')
     # create SPF object with input
-    scrt = scRT(temp_cn_s, temp_cn_g1, input_col=argv.input_col, clone_col='clone_id')
+    scrt = scRT(temp_cn_s, temp_cn_g1, input_col=argv.input_col, clone_col='clone_id', cell_col='cell_id',
+                assign_col=argv.assign_col, library_col='library_id', cn_state_col='state', chr_col='chr', start_col='start', gc_col='gc')
 
     print('running inference')
     # run inference

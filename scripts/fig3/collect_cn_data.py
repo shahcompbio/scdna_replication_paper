@@ -84,6 +84,9 @@ if __name__ == '__main__':
 	# remove Y chromosome since we're dealing with female cell lines
 	cn = cn.query('chr != "Y"')
 
+	# remove Y chromosome since we're dealing with female cell lines
+	cn['library_id'] = cn['cell_id'].apply(lambda x: x.split('-')[1])
+
 	# filter out control cells that don't contain one of the sample_ids in their cell_id
 	print(argv.samples)
 	cn = cn[cn['cell_id'].str.contains('|'.join(argv.samples))]
