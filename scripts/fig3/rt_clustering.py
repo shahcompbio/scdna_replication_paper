@@ -137,6 +137,9 @@ def main():
     # pivot into RT state matrices
     rt = df.pivot(index=['cell_id', argv.sort_col, 'clone_id'], columns=['chr', 'start'], values=argv.value_col)
 
+    # drop loci that might only be present in a handful of cells
+    rt = rt.dropna(axis=1)
+
     embedding, clusterer = get_rt_state_clusters(rt)
     plot_umaps(rt, embedding, clusterer, argv)
 

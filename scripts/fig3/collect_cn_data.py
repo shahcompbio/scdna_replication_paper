@@ -114,4 +114,7 @@ if __name__ == '__main__':
 	cn = cn[cn['fastqscreen_mm10'] < cn['fastqscreen_grch37']]
 	print("shape after filtering mouse bins", cn.shape)
 
+	# drop cell cycle state column because the mappings are inaccurate.. we only care about filtering on experimental condition
+	cn.drop(columns=['cell_cycle_state'], inplace=True)
+
 	cn.to_csv(argv.output, sep='\t', index=False)
