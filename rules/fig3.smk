@@ -6,7 +6,8 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 samples = pd.read_csv('data/signatures/signatures_samples.tsv', sep='\t')
 
-bad_datasets = []
+# only look at SA039 and SA906 datasets from fitness paper
+bad_datasets = ['SA1188', 'SA1054', 'SA1055', 'SA1056']
 
 rule all_fig3:
     input:
@@ -105,11 +106,16 @@ rule get_s_phase_cells:
 rule get_non_s_phase_cells:
     input:
         cn = 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv',
-        clones = 'data/signatures/{dataset}_clones.tsv'
+        clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
     output: 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
     run:
         df = pd.read_csv(str(input.cn), sep='\t', index_col=False)
-        clones = pd.read_csv(str(input.clones), sep='\t', index_col=False)
+        #clones = pd.read_csv(str(input.clones), sep='\t', index_col=False)
+
+        # load in clones from fitness results
+        clones = pd.read_csv(str(input.clones))
+        clones = clones.drop(columns=['V1', 'datatag', 'sample_id'])
+        clones = clones.rename(columns={'single_cell_id': 'cell_id', 'letters': 'clone_id'})
 
         df = df.query('is_s_phase_prob_new < 0.5 & is_s_phase_prob < 0.5')
         # only use cells that have clone_id's assigned (and add clone_id column)
