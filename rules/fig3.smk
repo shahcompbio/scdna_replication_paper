@@ -108,6 +108,8 @@ rule get_non_s_phase_cells:
         cn = 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv',
         clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
     output: 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    params:
+        dataset = lambda wildcards: wildcards.dataset
     run:
         df = pd.read_csv(str(input.cn), sep='\t', index_col=False)
         #clones = pd.read_csv(str(input.clones), sep='\t', index_col=False)
@@ -116,6 +118,11 @@ rule get_non_s_phase_cells:
         clones = pd.read_csv(str(input.clones))
         clones = clones.drop(columns=['V1', 'datatag', 'sample_id'])
         clones = clones.rename(columns={'single_cell_id': 'cell_id', 'letters': 'clone_id'})
+
+        # remove the 'a' or 'b' suffix from SA906 cell IDs in the clone mapping file
+        dataset = str(params.dataset)
+        if 'SA906' in dataset:
+            clones['cell_id'] = clones['cell_id'].apply(lambda x: x.replace(dataset, 'SA906'))
 
         df = df.query('is_s_phase_prob_new < 0.5 & is_s_phase_prob < 0.5')
         # only use cells that have clone_id's assigned (and add clone_id column)
