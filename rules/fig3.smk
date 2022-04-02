@@ -32,7 +32,14 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
-
+        expand(
+            'plots/fig3/{dataset}/twidth_curves.pdf',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        
 
 def dataset_cn_files(wildcards):
     mask = samples['dataset_id'] == wildcards.dataset
@@ -213,3 +220,29 @@ rule rt_clustering:
         'python3 scripts/fig3/rt_clustering.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
+
+
+rule compute_rt_pseudobulks:
+    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
+    log: 'logs/fig3/{dataset}/compute_rt_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/compute_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule twidth_analysis:
+    input: 
+        scrt = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
+        bulks = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
+    output: 'plots/fig3/{dataset}/twidth_curves.pdf'
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig3/{dataset}/twidth_analysis.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/twidth_analysis.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
