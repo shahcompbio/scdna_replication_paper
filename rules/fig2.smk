@@ -11,35 +11,42 @@ small_bin_datasets = ['D9']
 rule all_fig2:
     input:
         expand(
-            'plots/fig2/{dataset}/scRT_heatmaps.pdf',
+            'plots/fig2/{dataset}/scRT_heatmaps.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets and d not in small_bin_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_heatmaps.pdf',
+            'plots/fig2/{dataset}/twidth_heatmaps.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets and d not in small_bin_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/model_gc_correction.pdf',
+            'plots/fig2/{dataset}/model_gc_correction.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets and d not in small_bin_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/cn_heatmaps.pdf',
+            'plots/fig2/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/true_scRT_heatmap.pdf',
+            'plots/fig2/{dataset}/true_scRT_heatmap.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'analysis/fig2/{dataset}/scRT_pseudobulks.tsv',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
@@ -110,7 +117,7 @@ rule plot_cn_heatmaps:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
     output:
-        s_phase = 'plots/fig2/{dataset}/cn_heatmaps.pdf',
+        s_phase = 'plots/fig2/{dataset}/cn_heatmaps.png',
     params:
         value_col = 'true_G1_state',
         dataset = lambda wildcards: wildcards.dataset
@@ -125,7 +132,7 @@ rule plot_cn_heatmaps:
 
 rule plot_true_scRT_heatmap:
     input: 'analysis/fig2/{dataset}/s_phase_cells.tsv',
-    output: 'plots/fig2/{dataset}/true_scRT_heatmap.pdf',
+    output: 'plots/fig2/{dataset}/true_scRT_heatmap.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log:
@@ -156,9 +163,9 @@ rule infer_scRT:
 rule evaluate_model_performance:
     input: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 
-        plot1 = 'plots/fig2/{dataset}/scRT_heatmaps.pdf',
-        plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps.pdf',
-        plot3 = 'plots/fig2/{dataset}/frac_rt_distributions.pdf'
+        plot1 = 'plots/fig2/{dataset}/scRT_heatmaps.png',
+        plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps.png',
+        plot3 = 'plots/fig2/{dataset}/frac_rt_distributions.png'
     log: 'logs/fig2/{dataset}/evaluate_model_performance.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
@@ -171,7 +178,7 @@ rule evaluate_model_gc_correction:
     input: 
         cn_s = 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
-    output: 'plots/fig2/{dataset}/model_gc_correction.pdf',
+    output: 'plots/fig2/{dataset}/model_gc_correction.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
         sigma1 = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['sigma1'],
@@ -187,11 +194,23 @@ rule evaluate_model_gc_correction:
         'deactivate'
 
 
+rule compute_rt_pseudobulks:
+    input: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 'analysis/fig2/{dataset}/scRT_pseudobulks.tsv'
+    log: 'logs/fig2/{dataset}/compute_rt_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/compute_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+
 rule twidth_analysis:
     input: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 
-        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps.pdf',
-        plot2 = 'plots/fig2/{dataset}/twidth_curves.pdf',
+        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps.png',
+        plot2 = 'plots/fig2/{dataset}/twidth_curves.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
         sigma1 = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['sigma1'],
