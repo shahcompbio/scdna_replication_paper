@@ -133,40 +133,40 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
     infer_mode: 'bulk'
-  D8:
-    sigma1: 0.1
-    gc_slope: 1.2
-    gc_int: 0.0
-    A: 0.1
-    B: 0.0
-    num_reads: 1000000
-    num_cells_S: 400
-    num_cells_G: 400
-    bin_size: 500000
-    s_time_stdev: 10  # normal
-    clones: ['A']
-    clone_probs: [1]
-    states: [2]
-    state_probs: [1]
-    cell_CNA_prob: 0.05
-    infer_mode: 'bulk'
-  D9:
-    sigma1: 0.1
-    gc_slope: 1.2
-    gc_int: 0.0
-    A: 0.1
-    B: 0.0
-    num_reads: 1000000
-    num_cells_S: 400
-    num_cells_G: 400
-    bin_size: 50000
-    s_time_stdev: -1  # uniform
-    clones: ['A']
-    clone_probs: [1]
-    states: [2]
-    state_probs: [1]
-    cell_CNA_prob: 0
-    infer_mode: 'bulk'
+  # D8:
+  #   sigma1: 0.1
+  #   gc_slope: 1.2
+  #   gc_int: 0.0
+  #   A: 0.1
+  #   B: 0.0
+  #   num_reads: 1000000
+  #   num_cells_S: 400
+  #   num_cells_G: 400
+  #   bin_size: 500000
+  #   s_time_stdev: 10  # normal
+  #   clones: ['A']
+  #   clone_probs: [1]
+  #   states: [2]
+  #   state_probs: [1]
+  #   cell_CNA_prob: 0.05
+  #   infer_mode: 'bulk'
+  # D9:
+  #   sigma1: 0.1
+  #   gc_slope: 1.2
+  #   gc_int: 0.0
+  #   A: 0.1
+  #   B: 0.0
+  #   num_reads: 1000000
+  #   num_cells_S: 400
+  #   num_cells_G: 400
+  #   bin_size: 50000
+  #   s_time_stdev: -1  # uniform
+  #   clones: ['A']
+  #   clone_probs: [1]
+  #   states: [2]
+  #   state_probs: [1]
+  #   cell_CNA_prob: 0
+  #   infer_mode: 'bulk'
   # polyclonal datasets
   P1:
     sigma1: 0.1
