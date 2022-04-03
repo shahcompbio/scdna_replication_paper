@@ -12,28 +12,28 @@ bad_datasets = ['SA1188', 'SA1054', 'SA1055', 'SA1056']
 rule all_fig3:
     input:
         expand(
-            'plots/fig3/{dataset}/cn_heatmaps.pdf',
+            'plots/fig3/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['signatures_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/rt_heatmap.pdf',
+            'plots/fig3/{dataset}/rt_heatmap.png',
             dataset=[
                 d for d in config['signatures_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/rt_clusters_heatmap.pdf',
+            'plots/fig3/{dataset}/rt_clusters_heatmap.png',
             dataset=[
                 d for d in config['signatures_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/twidth_curves.pdf',
+            'plots/fig3/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_datasets']
                 if (d not in bad_datasets)
@@ -176,7 +176,7 @@ rule plot_cn_heatmaps:
     input:
         s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
         g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    output: 'plots/fig3/{dataset}/cn_heatmaps.pdf'
+    output: 'plots/fig3/{dataset}/cn_heatmaps.png'
     params:
         value_col = 'state',
         dataset = lambda wildcards: wildcards.dataset
@@ -190,7 +190,7 @@ rule plot_cn_heatmaps:
 
 rule plot_rt_heatmap:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
-    output: 'plots/fig3/{dataset}/rt_heatmap.pdf'
+    output: 'plots/fig3/{dataset}/rt_heatmap.png'
     params:
         value_col = 'rt_state',
         sort_col = 'frac_rt',
@@ -206,9 +206,9 @@ rule plot_rt_heatmap:
 rule rt_clustering:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 
-        umap = 'plots/fig3/{dataset}/rt_clusters_umap.pdf',
-        kde = 'plots/fig3/{dataset}/rt_clusters_kde.pdf',
-        heatmap = 'plots/fig3/{dataset}/rt_clusters_heatmap.pdf',
+        umap = 'plots/fig3/{dataset}/rt_clusters_umap.png',
+        kde = 'plots/fig3/{dataset}/rt_clusters_kde.png',
+        heatmap = 'plots/fig3/{dataset}/rt_clusters_heatmap.png',
         df = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_clusters.tsv'
     params:
         value_col = 'rt_state',
@@ -237,7 +237,7 @@ rule twidth_analysis:
     input: 
         scrt = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
         bulks = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
-    output: 'plots/fig3/{dataset}/twidth_curves.pdf'
+    output: 'plots/fig3/{dataset}/twidth_curves.png'
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fig3/{dataset}/twidth_analysis.log'

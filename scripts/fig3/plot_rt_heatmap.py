@@ -76,9 +76,9 @@ def plot_true_rt_state(df, argv):
     secondary_sort_column = argv.sort_col
     secondary_sort_label = 'Frac Rep'
 
-    fig = plt.figure(figsize=(10, 7))
+    fig = plt.figure(figsize=(9, 9))
     
-    ax0 = fig.add_axes([0.25,0.0,0.75,1.])
+    ax0 = fig.add_axes([0.2,0.0,0.8,1.])
     rt_cmap = get_rt_cmap()
     plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, argv.value_col, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
     ax0.set_title('{}: Inferred scRT'.format(argv.dataset))
@@ -111,19 +111,19 @@ def plot_true_rt_state(df, argv):
         secondary_color_mat, secondary_to_colors = make_color_mat_float(secondary_array, 'Blues')
 
         # create color bar that shows clone id for each row in heatmap
-        ax = fig.add_axes([0.2,0.0,0.05,1.])
+        ax = fig.add_axes([0.15,0.0,0.05,1.])
         plot_colorbar(ax, color_mat0)
 
         # create color bar that shows secondary sort value for each row in heatmap
-        ax = fig.add_axes([0.15,0.0,0.05,1.])
+        ax = fig.add_axes([0.1,0.0,0.05,1.])
         plot_colorbar(ax, secondary_color_mat)
 
         # create legend to match colors to clone ids
-        ax = fig.add_axes([0.0,0.75,0.08,0.25])
+        ax = fig.add_axes([0.0,0.65,0.1,0.25])
         plot_color_legend(ax, clones_to_colors0, title='Clone ID')
 
         # create legend to match colors to secondary sort values
-        ax = fig.add_axes([0.0,0.5,0.08,0.25])
+        ax = fig.add_axes([0.0,0.4,0.1,0.25])
         plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
 
     fig.savefig(argv.output, bbox_inches='tight')
