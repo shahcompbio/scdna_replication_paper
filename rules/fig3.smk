@@ -7,7 +7,7 @@ configfile: "config.yaml"
 samples = pd.read_csv('data/signatures/signatures_samples.tsv', sep='\t')
 
 # only look at SA039 and SA906 datasets from fitness paper
-bad_datasets = ['SA1188', 'SA1054', 'SA1055', 'SA1056']
+bad_datasets = ['SA1054', 'SA1055', 'SA1056']
 
 rule all_fig3:
     input:
@@ -120,16 +120,19 @@ rule get_non_s_phase_cells:
     run:
         df = pd.read_csv(str(input.cn), sep='\t', index_col=False)
         #clones = pd.read_csv(str(input.clones), sep='\t', index_col=False)
-
-        # load in clones from fitness results
-        clones = pd.read_csv(str(input.clones))
-        clones = clones.drop(columns=['V1', 'datatag', 'sample_id'])
-        clones = clones.rename(columns={'single_cell_id': 'cell_id', 'letters': 'clone_id'})
-
-        # remove the 'a' or 'b' suffix from SA906 cell IDs in the clone mapping file
         dataset = str(params.dataset)
-        if 'SA906' in dataset:
-            clones['cell_id'] = clones['cell_id'].apply(lambda x: x.replace(dataset, 'SA906'))
+
+        if dataset in ['2295', 'SA1188']:
+            clones = pd.read_csv('data/signatures/{}_clones.tsv'.format(dataset), sep='\t')
+        else:
+            # load in clones from fitness results
+            clones = pd.read_csv(str(input.clones))
+            clones = clones.drop(columns=['V1', 'datatag', 'sample_id'])
+            clones = clones.rename(columns={'single_cell_id': 'cell_id', 'letters': 'clone_id'})
+
+            # remove the 'a' or 'b' suffix from SA906 cell IDs in the clone mapping file
+            if 'SA906' in dataset:
+                clones['cell_id'] = clones['cell_id'].apply(lambda x: x.replace(dataset, 'SA906'))
 
         df = df.query('is_s_phase_prob_new < 0.5 & is_s_phase_prob < 0.5')
         # only use cells that have clone_id's assigned (and add clone_id column)
