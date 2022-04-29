@@ -36,6 +36,10 @@ def softplus(x):
     return np.log1p(np.exp(-np.abs(x))) + np.maximum(x, 0)
 
 
+def softmax(x):
+    return np.exp(x) / sum(np.exp(x))
+
+
 def model(G1_state, gc, rt, s_time, sigma1, gc_slope, gc_int, num_reads, A=1, B=0, allele_specific=False):
     """Given the true CN state, GC, and RT values for a cell, come up with that observed read count profile."""
     # probablility of each allele being replicated follows logistic function of rt minus s_time
@@ -53,10 +57,13 @@ def model(G1_state, gc, rt, s_time, sigma1, gc_slope, gc_int, num_reads, A=1, B=
     
     # add gc bias to the true CN
     # Is a simple linear model sufficient here?
-    observed_CN = true_CN * ((gc * gc_slope) + gc_int)
+    observed_CN = true_CN * softmax((gc * gc_slope) + gc_int)
     
     # add some random noise to the observed copy number
-    noisy_CN = np.random.gamma(observed_CN / sigma1, sigma1)
+    if sigma1 > 0:
+        noisy_CN = np.random.gamma(observed_CN / sigma1, sigma1)
+    else:
+        noisy_CN = observed_CN
     
     # scale noisy_CN and then draw true read count from multinomial distribution
     noisy_CN_pval = noisy_CN / sum(noisy_CN)
