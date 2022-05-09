@@ -57,7 +57,7 @@ def model(G1_state, gc, rt, s_time, sigma1, gc_slope, gc_int, num_reads, A=1, B=
     
     # add gc bias to the true CN
     # Is a simple linear model sufficient here?
-    observed_CN = true_CN * softmax((gc * gc_slope) + gc_int)
+    observed_CN = true_CN * softplus((gc * gc_slope) + gc_int)
     
     # add some random noise to the observed copy number
     if sigma1 > 0:

@@ -168,7 +168,7 @@ simulated_datasets:
   #   cell_CNA_prob: 0
   #   infer_mode: 'bulk'
   D10:
-    sigma1: 0.00001
+    sigma1: 0.1
     gc_slope: 1.2
     gc_int: 0.0
     A: 0.1
@@ -202,7 +202,7 @@ simulated_datasets:
     cell_CNA_prob: 0
     infer_mode: 'pyro'
   D12:
-    sigma1: 0.00001
+    sigma1: 0.1
     gc_slope: 0.0
     gc_int: 0.0
     A: 0.1
