@@ -26,6 +26,12 @@ def main():
     if 'clone_id' not in cn_g1.columns:
         cn_g1['clone_id'] = 'A'
 
+    if 'library_id' not in cn_g1.columns:
+        cn_g1['library_id'] = 'A'
+
+    if 'library_id' not in cn_s.columns:
+        cn_s['library_id'] = 'A'
+
     # use true G1 copy number as the 'state' column
     # this is important for ploidy calculation
     cn_g1['state'] = cn_g1['true_G1_state']
@@ -33,8 +39,8 @@ def main():
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
-    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', 'gc', 'state', 'mcf7rt', argv.input_col]]
-    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'gc', 'clone_id', 'state', argv.input_col]]
+    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', 'gc', 'state', 'library_id', 'mcf7rt', argv.input_col]]
+    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'gc', 'clone_id', 'state', 'library_id', argv.input_col]]
 
     print('creating scrt object')
     # create SPF object with input
