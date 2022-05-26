@@ -184,7 +184,7 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-    infer_mode: 'bulk'
+    infer_mode: 'pyro'
   D11:
     sigma1: -1
     gc_slope: 1.2
@@ -201,7 +201,7 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-    infer_mode: 'bulk'
+    infer_mode: 'pyro'
   D12:
     sigma1: 0.1
     gc_slope: 0.0
@@ -218,7 +218,7 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-    infer_mode: 'bulk'
+    infer_mode: 'pyro'
   # polyclonal datasets
   P1:
     sigma1: 0.1
