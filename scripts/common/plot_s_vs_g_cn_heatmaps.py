@@ -61,13 +61,13 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, value_col='state',
     cn_g = cn_g.copy()
     cn_s = cn_s.copy()
 
-    # create mapping of clones
-    clone_dict = dict([(y,x+1) for x,y in enumerate(sorted(cn_g[clone_col].unique()))])
-    cn_g['cluster_id'] = cn_g[clone_col]
-    cn_g = cn_g.replace({'cluster_id': clone_dict})
-    cn_s['cluster_id'] = cn_s[clone_col]
-    cn_s = cn_s.replace({'cluster_id': clone_dict})
+   # create mapping of clones
     cluster_col = 'cluster_id'
+    clone_dict = dict([(y,x+1) for x,y in enumerate(sorted(cn_g[clone_col].unique()))])
+    cn_g[cluster_col] = cn_g[clone_col]
+    cn_g = cn_g.replace({cluster_col: clone_dict})
+    cn_s[cluster_col] = cn_s[clone_col]
+    cn_s = cn_s.replace({cluster_col: clone_dict})
 
     fig = plt.figure(figsize=figsize)
     ax_g1 = fig.add_axes([0.1,0.0,0.4,1.])

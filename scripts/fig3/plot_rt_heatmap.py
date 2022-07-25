@@ -13,8 +13,10 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells with true scRT data')
+    p.add_argument('value_col', help='column containing rt states')
+    p.add_argument('sort_col', help='column containing time within S-phase')
     p.add_argument('dataset')
-    p.add_argument('output', help='heatmap of read count and true scRT states')
+    p.add_argument('output', help='heatmap of inferred scRT states')
 
     return p.parse_args()
 
@@ -71,20 +73,15 @@ def plot_true_rt_state(df, argv):
     df[cluster_col] = df[clone_col]
     df = df.replace({cluster_col: clone_dict})
 
-    secondary_sort_column = 'true_frac_rt'
+    secondary_sort_column = argv.sort_col
     secondary_sort_label = 'Frac Rep'
 
-    fig = plt.figure(figsize=(14, 7))
+    fig = plt.figure(figsize=(9, 9))
     
-    ax0 = fig.add_axes([0.12,0.0,0.38,1.])
+    ax0 = fig.add_axes([0.2,0.0,0.8,1.])
     rt_cmap = get_rt_cmap()
-    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'true_rt_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
-    ax0.set_title('{}: True scRT'.format(argv.dataset))
-
-    ax1 = fig.add_axes([0.62,0.0,0.38,1.])
-    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'reads', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis')
-    ax1.set_title('{}: Read count'.format(argv.dataset))
-    
+    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, argv.value_col, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
+    ax0.set_title('{}: Inferred scRT'.format(argv.dataset))
     
     if len(clone_dict) > 1:
         # annotate the clones for G1-phase cells
@@ -114,44 +111,19 @@ def plot_true_rt_state(df, argv):
         secondary_color_mat, secondary_to_colors = make_color_mat_float(secondary_array, 'Blues')
 
         # create color bar that shows clone id for each row in heatmap
-        ax = fig.add_axes([0.09,0.0,0.03,1.])
+        ax = fig.add_axes([0.15,0.0,0.05,1.])
         plot_colorbar(ax, color_mat0)
 
         # create color bar that shows secondary sort value for each row in heatmap
-        ax = fig.add_axes([0.06,0.0,0.03,1.])
+        ax = fig.add_axes([0.1,0.0,0.05,1.])
         plot_colorbar(ax, secondary_color_mat)
 
         # create legend to match colors to clone ids
-        ax = fig.add_axes([0.0,0.75,0.04,0.25])
+        ax = fig.add_axes([0.0,0.65,0.1,0.25])
         plot_color_legend(ax, clones_to_colors0, title='Clone ID')
 
         # create legend to match colors to secondary sort values
-        ax = fig.add_axes([0.0,0.5,0.04,0.25])
-        plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
-
-        # annotate the clones for S-phase cells.. using the same colors as G1 clones
-        cluster_ids1 = plot_data1.columns.get_level_values(1).values
-        color_mat1 = cncluster.get_cluster_colors(cluster_ids1, color_map=color_map0)
-
-        # match clone IDs to color pigments
-        clones_to_colors1 = {}
-        for i, key in enumerate(clone_dict.keys()):
-            clones_to_colors1[key] = colors_used0[i]
-
-        # create color bar that shows clone id for each row in heatmap
-        ax = fig.add_axes([0.59,0.0,0.03,1.])
-        plot_colorbar(ax, color_mat1)
-
-        # create color bar that shows secondary sort value for each row in heatmap
-        ax = fig.add_axes([0.56,0.0,0.03,1.])
-        plot_colorbar(ax, secondary_color_mat)
-
-        # create legend to match colors to clone ids
-        ax = fig.add_axes([0.5,0.75,0.04,0.25])
-        plot_color_legend(ax, clones_to_colors1, title='Clone ID')
-
-         # create legend to match colors to secondary sort values
-        ax = fig.add_axes([0.5,0.5,0.04,0.25])
+        ax = fig.add_axes([0.0,0.4,0.1,0.25])
         plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
 
     fig.savefig(argv.output, bbox_inches='tight')

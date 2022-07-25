@@ -52,8 +52,8 @@ def plot_true_vs_inferred_rt_state(df, argv):
     ax = ax.flatten()
 
     rt_cmap = get_rt_cmap()
-    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', secondary_field_name='true_frac_rt', cmap=rt_cmap)
-    plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state', secondary_field_name='true_frac_rt', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=rt_cmap)
 
     ax[0].set_title('True scRT')
     ax[1].set_title('Inferred scRT\nAccuracy: {}'.format(round(accuracy, 3)))
@@ -69,8 +69,8 @@ def plot_rt_accuracy(df, argv):
 
     acc_cmap = get_acc_cmap()
     chng_cmap = get_chng_cmap(int(max(df['changepoint_segments'])))
-    plot_clustered_cell_cn_matrix(ax[0], df, 'rt_state_diff', secondary_field_name='true_frac_rt', cmap=acc_cmap)
-    plot_clustered_cell_cn_matrix(ax[1], df, 'changepoint_segments', secondary_field_name='true_frac_rt', cmap=chng_cmap)
+    plot_clustered_cell_cn_matrix(ax[0], df, 'rt_state_diff', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=acc_cmap)
+    plot_clustered_cell_cn_matrix(ax[1], df, 'changepoint_segments', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=chng_cmap)
 
     ax[0].set_title('False positives (green) and negatives (purple)\nAccuracy: {}'.format(round(accuracy, 3)))
     ax[1].set_title('Inferred changepoint segments')
@@ -129,9 +129,6 @@ def main():
     # set chr column to category
     df.chr = df.chr.astype('str')
     df.chr = df.chr.astype('category')
-
-    # assign dummy cluster_id column for scgenome heatmaps
-    df['cluster_id'] = 'A'
 
     # 1 is false positive, 0 is accurate, -1 is false negative
     df['rt_state_diff'] = df['rt_state'] - df['true_rt_state']
