@@ -18,6 +18,10 @@
 		"time" : "6:00",
 		"mem" : 128
 	},
+	"simulate_reads_from_cn_pyro" :
+	{
+		"mem" : 128
+	},
 	"infer_scRT" :
 	{
 		"time" : "48:00",
