@@ -82,7 +82,7 @@ def plot_true_rt_state(df, argv):
     ax0.set_title('{}: True rep state'.format(argv.dataset))
 
     ax1 = fig.add_axes([0.62,0.0,0.38,1.])
-    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'true_reads_norm', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis')
+    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'true_reads_norm', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis', max_cn=None)
     ax1.set_title('{}: Read count'.format(argv.dataset))
     
     

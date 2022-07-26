@@ -145,13 +145,18 @@ def model_g1(gc_profile, cn=None, num_cells=None, num_loci=None, u_guess=70., po
     return reads
 
 
+def convert_rt_units(rt):
+    # make sure rt units range from 0-1
+    return (rt - rt.min()) / (rt.max() - rt.min())
+
+
 def simulate_s_cells(gc_profile, cn, rt, argv):
     pyro.clear_param_store()
 
     num_loci, num_cells = cn.shape
     gc_profile = torch.tensor(gc_profile.values)
     cn = torch.tensor(cn.values)
-    rt_profile = torch.tensor(rt.values)
+    rt_profile = torch.tensor(convert_rt_units(rt.values))
 
     u_guess = float(argv.num_reads) / (1.5 * torch.mean(cn))
 
@@ -276,8 +281,8 @@ def main():
     # G1-phase: condition each model based in argv parameters and simulate read count
     reads_norm_g, reads_g = simulate_g_cells(gc_profile, cn_g, argv)
     
-    reads_norm_g_df = pd.DataFrame(reads_norm_g, columns=cn_g.columns, index=cn_g.index)
-    reads_g_df = pd.DataFrame(reads_g, columns=cn_g.columns, index=cn_g.index)
+    reads_norm_g_df = pd.DataFrame(reads_norm_g.numpy(), columns=cn_g.columns, index=cn_g.index)
+    reads_g_df = pd.DataFrame(reads_g.numpy(), columns=cn_g.columns, index=cn_g.index)
     
     # merge normalized read count
     reads_norm_g_df = reads_norm_g_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_norm')
