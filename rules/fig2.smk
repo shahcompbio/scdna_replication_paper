@@ -30,20 +30,20 @@ rule all_fig2:
         #         if (d not in bad_datasets)
         #     ]
         # ),
-        # expand(
-        #     'plots/fig2/{dataset}/cn_heatmaps.png',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig2/{dataset}/true_scRT_heatmap.png',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fig2/{dataset}/cn_heatmaps.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig2/{dataset}/true_scRT_heatmap.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         # expand(
         #     'analysis/fig2/{dataset}/scRT_pseudobulks.tsv',
         #     dataset=[
@@ -51,13 +51,6 @@ rule all_fig2:
         #         if (d not in bad_datasets)
         #     ]
         # ),
-        expand(
-            'analysis/fig2/{dataset}/s_phase_cells.tsv',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
 
 
 rule simulate_cell_cn_states:
@@ -97,35 +90,12 @@ rule simulate_cell_cn_states:
         '&> {log}'
 
 
-# rule simulate_reads_from_cn:
-#     input:
-#         s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
-#         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
-#     output:
-#         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
-#         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
-#     params:
-#         sigma1 = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['sigma1'],
-#         gc_slope = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_slope'],
-#         gc_int = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_int'],
-#         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
-#         B = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['B'],
-#         num_reads = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_reads']
-#     log:
-#         'logs/fig2/{dataset}/simulate_reads_from_cn.log'
-#     shell:
-#         'python3 scripts/fig2/simulate_reads_from_cn.py '
-#         '{input} {params} {output} &> {log}'
-
-
 rule simulate_reads_from_cn_pyro:
     input:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
     output:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
-        # cn_s = 'analysis/fig2/{dataset}/s_phase_cn_mat.tsv',
-        # reads_norm = 'analysis/fig2/{dataset}/s_phase_reads_norm.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
     params:
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
@@ -148,8 +118,6 @@ rule simulate_reads_from_cn_pyro:
         '-a {params.A} '
         '-n {params.num_reads} '
         '-so {output.s_phase} '
-        # '-rn {output.reads_norm} '
-        # '-cn {output.cn_s} '
         '-go {output.g1_phase} '
         '&> {log} ; '
         'deactivate'

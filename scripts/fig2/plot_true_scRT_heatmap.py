@@ -71,18 +71,18 @@ def plot_true_rt_state(df, argv):
     df[cluster_col] = df[clone_col]
     df = df.replace({cluster_col: clone_dict})
 
-    secondary_sort_column = 'true_frac_rt'
-    secondary_sort_label = 'Frac Rep'
+    secondary_sort_column = 'true_t'
+    secondary_sort_label = 'Time in S-phase'
 
     fig = plt.figure(figsize=(14, 7))
     
     ax0 = fig.add_axes([0.12,0.0,0.38,1.])
     rt_cmap = get_rt_cmap()
-    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'true_rt_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
-    ax0.set_title('{}: True scRT'.format(argv.dataset))
+    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'true_rep', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
+    ax0.set_title('{}: True rep state'.format(argv.dataset))
 
     ax1 = fig.add_axes([0.62,0.0,0.38,1.])
-    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'reads', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis')
+    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'true_reads_norm', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis')
     ax1.set_title('{}: Read count'.format(argv.dataset))
     
     
