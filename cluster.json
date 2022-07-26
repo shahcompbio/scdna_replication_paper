@@ -22,7 +22,12 @@
 	{
 		"mem" : 128
 	},
-	"infer_scRT" :
+	"infer_scRT_bulk" :
+	{
+		"time" : "48:00",
+		"mem" : 128
+	},
+	"infer_scRT_pyro" :
 	{
 		"time" : "48:00",
 		"mem" : 128

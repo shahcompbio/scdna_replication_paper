@@ -51,6 +51,20 @@ rule all_fig2:
         #         if (d not in bad_datasets)
         #     ]
         # ),
+        expand(
+            'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 rule simulate_cell_cn_states:
@@ -155,15 +169,37 @@ rule plot_true_scRT_heatmap:
         ' ; deactivate'
 
 
-rule infer_scRT:
+rule infer_scRT_bulk:
     input:
         cn_s = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
-    output: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv',
+    output: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
     params:
-        input_col = 'reads',
-        infer_mode = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['infer_mode']
-    log: 'logs/fig2/{dataset}/infer_scRT.log'
+        input_col = 'true_reads_norm',
+        cn_col = 'true_G1_state',
+        gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
+        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
+        infer_mode = 'bulk'
+    log: 'logs/fig2/{dataset}/infer_scRT_bulk.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule infer_scRT_pyro:
+    input:
+        cn_s = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
+    params:
+        input_col = 'true_reads_norm',
+        cn_col = 'true_G1_state',
+        gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
+        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
+        infer_mode = 'pyro'
+    log: 'logs/fig2/{dataset}/infer_scRT_pyro.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig2/infer_scRT.py '
