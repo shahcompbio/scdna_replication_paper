@@ -124,6 +124,8 @@ rule simulate_reads_from_cn_pyro:
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
     output:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
+        # cn_s = 'analysis/fig2/{dataset}/s_phase_cn_mat.tsv',
+        # reads_norm = 'analysis/fig2/{dataset}/s_phase_reads_norm.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
     params:
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
@@ -146,6 +148,8 @@ rule simulate_reads_from_cn_pyro:
         '-a {params.A} '
         '-n {params.num_reads} '
         '-so {output.s_phase} '
+        # '-rn {output.reads_norm} '
+        # '-cn {output.cn_s} '
         '-go {output.g1_phase} '
         '&> {log} ; '
         'deactivate'

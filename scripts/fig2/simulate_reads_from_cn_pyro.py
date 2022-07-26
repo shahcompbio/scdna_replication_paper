@@ -231,6 +231,9 @@ def main():
     df_s = pd.read_csv(argv.df_s, sep='\t')
     df_g = pd.read_csv(argv.df_g, sep='\t')
 
+    df_s.chr = df_s.chr.astype(str)
+    df_g.chr = df_g.chr.astype(str)
+
     cn_s = pd.pivot_table(df_s, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
     cn_g = pd.pivot_table(df_g, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
     gc_profile = df_s[['chr', 'start', argv.gc_col]].drop_duplicates()[argv.gc_col]
@@ -251,15 +254,24 @@ def main():
     print('p_rep_df\n', p_rep_df.head())
     print('t_df\n', t_df.head())
 
-    # TODO: figure out how to properly melt and merge simulated tensor into main df
-    reads_norm_df = reads_norm_df.melt(value_vars=cn_s.columns, value_name='true_reads_norm')
-    print('reads_norm_df\n', reads_norm_df.head())
-    # df_s = pd.merge(df_s, reads_norm_df)
-    print('df_s\n', df_s.head())
-    # df_s = pd.merge(df_s, reads_df.melt(value_vars=cn_s.columns, value_name='true_reads'))
-    # df_s = pd.merge(df_s, rep_df.melt(value_vars=cn_s.columns, value_name='true_rep'))
-    # df_s = pd.merge(df_s, p_rep_df.melt(value_vars=cn_s.columns, value_name='true_p_rep'))
-    # df_s = pd.merge(df_s, t_df.reset_index(drop=True), on='cell_id')
+    # merge normalized read count
+    reads_norm_df = reads_norm_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_norm')
+    reads_norm_df.chr = reads_norm_df.chr.astype(str)
+    df_s = pd.merge(df_s, reads_norm_df)
+    # merge raw reads before normalizing total read count
+    reads_df = reads_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_raw')
+    reads_df.chr = reads_df.chr.astype(str)
+    df_s = pd.merge(df_s, reads_df)
+    # merge true replication states
+    rep_df = rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_rep')
+    rep_df.chr = rep_df.chr.astype(str)
+    df_s = pd.merge(df_s, rep_df)
+    # merge probability of each bin being replicated
+    p_rep_df = p_rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_p_rep')
+    p_rep_df.chr = p_rep_df.chr.astype(str)
+    df_s = pd.merge(df_s, p_rep_df)
+    # merge s-phase times
+    df_s = pd.merge(df_s, t_df.reset_index(), on='cell_id')
 
     # G1-phase: condition each model based in argv parameters and simulate read count
     reads_norm_g, reads_g = simulate_g_cells(gc_profile, cn_g, argv)
@@ -267,12 +279,17 @@ def main():
     reads_norm_g_df = pd.DataFrame(reads_norm_g, columns=cn_g.columns, index=cn_g.index)
     reads_g_df = pd.DataFrame(reads_g, columns=cn_g.columns, index=cn_g.index)
     
-    # again, merging model values with the input df might be wrong
-    # df_g = pd.merge(df_g, reads_norm_g_df.melt(value_vars=cn_g.columns, value_name='true_reads_norm'))
-    # df_g = pd.merge(df_g, reads_g_df.melt(value_vars=cn_g.columns, value_name='true_reads'))
+    # merge normalized read count
+    reads_norm_g_df = reads_norm_g_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_norm')
+    reads_norm_g_df.chr = reads_norm_g_df.chr.astype(str)
+    df_g = pd.merge(df_g, reads_norm_g_df)
+    # merge raw reads before normalizing total read count
+    reads_g_df = reads_g_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_raw')
+    reads_g_df.chr = reads_g_df.chr.astype(str)
+    df_g = pd.merge(df_g, reads_g_df)
 
-    # df_s.to_csv(argv.s_out, sep='\t', index=False)
-    # df_g.to_csv(argv.g_out, sep='\t', index=False)
+    df_s.to_csv(argv.s_out, sep='\t', index=False)
+    df_g.to_csv(argv.g_out, sep='\t', index=False)
 
 
 
