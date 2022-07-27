@@ -9,13 +9,20 @@ bad_datasets = []
 
 rule all_fig2:
     input:
-        # expand(
-        #     'plots/fig2/{dataset}/scRT_heatmaps.png',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         # expand(
         #     'plots/fig2/{dataset}/twidth_heatmaps.png',
         #     dataset=[
@@ -51,20 +58,20 @@ rule all_fig2:
         #         if (d not in bad_datasets)
         #     ]
         # ),
-        expand(
-            'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # expand(
+        #     'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
+        #     dataset=[
+        #         d for d in config['simulated_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
+        #     dataset=[
+        #         d for d in config['simulated_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
 
 
 rule simulate_cell_cn_states:
@@ -207,13 +214,35 @@ rule infer_scRT_pyro:
         'deactivate'
 
 
-rule evaluate_model_performance:
-    input: 'analysis/fig2/{dataset}/s_phase_cells_with_scRT.tsv'
+rule evaluate_model_performance_bulk:
+    input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv'
     output: 
-        plot1 = 'plots/fig2/{dataset}/scRT_heatmaps.png',
-        plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps.png',
-        plot3 = 'plots/fig2/{dataset}/frac_rt_distributions.png'
-    log: 'logs/fig2/{dataset}/evaluate_model_performance.log'
+        plot1 = 'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
+        plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps_bulk.png',
+        plot3 = 'plots/fig2/{dataset}/frac_rt_distributions_bulk.png'
+    params:
+        rep_col = 'rt_state',
+        cn_col = 'changepoint_segments',
+        frac_rt_col = 'frac_rt'
+    log: 'logs/fig2/{dataset}/evaluate_model_performance_bulk.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig2/evaluate_model_performance.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule evaluate_model_performance_pyro:
+    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv'
+    output: 
+        plot1 = 'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
+        plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps_pyro.png',
+        plot3 = 'plots/fig2/{dataset}/frac_rt_distributions_pyro.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'model_s_time'
+    log: 'logs/fig2/{dataset}/evaluate_model_performance_pyro.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig2/evaluate_model_performance.py '
