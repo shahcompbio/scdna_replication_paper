@@ -35,11 +35,6 @@ def main():
     if 'library_id' not in cn_s.columns:
         cn_s['library_id'] = 'A'
 
-    # use true G1 copy number as the 'state' column
-    # this is important for ploidy calculation
-    cn_g1['state'] = cn_g1['true_G1_state']
-    cn_s['state'] = cn_s['true_G1_state']
-
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
     temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, 'library_id', argv.rt_col, argv.input_col]]
@@ -59,6 +54,8 @@ def main():
     print('cn_s_with_scrt.shape', cn_s_with_scrt.shape)
 
     # merge cn_s_with_scrt with initial cn_s input to add columns that were excluded from temp_cn_s
+    if 'clone_id' in cn_s_with_scrt.columns and 'clone_id' in cn_s.columns:
+        cn_s_with_scrt.rename(columns={'clone_id': 'assigned_clone_id'}, inplace=True)
     cn_s_out = pd.merge(cn_s, cn_s_with_scrt)
     print('cn_s_out.shape', cn_s_out.shape)
 
