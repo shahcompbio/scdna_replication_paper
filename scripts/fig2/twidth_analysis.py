@@ -15,18 +15,21 @@ def get_args():
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells with true and inferred scRT data')
     p.add_argument('dataset')
-    p.add_argument('sigma1', type=float, help='noise of read depth profiles')
-    p.add_argument('gc_slope', type=float, help='slope of linear GC bias')
-    p.add_argument('gc_int', type=float, help='intercept of linear GC bias')
     p.add_argument('A', type=float, help='steepness of inflection point when drawing RT state')
-    p.add_argument('s_time_dist', help='distribution of S-phase cells captured (normal or uniform)')
+    p.add_argument('nb_r', type=float, help='amount of sequencing noise')
+    p.add_argument('rt_col', help='true replication time of each bin (i.e. mcf7rt')
+    p.add_argument('frac_rt_col', help='inferred fraction replicated for each cell')
+    p.add_argument('true_frac_col', help='true fraction replicated for each cell')
+    p.add_argument('rep_state', help='inferred replication state for each bin')
+    p.add_argument('true_rep_state', help='true replication state for each bin')
+    p.add_argument('infer_mode', help='pyro model or bulk')
     p.add_argument('output_heatmap', help='heatmap comparing true and inferred rt_state values with T-width superimposed')
     p.add_argument('output_curves', help='T-width curves of true and inferred rt_states')
 
     return p.parse_args()
 
 
-def calc_pct_replicated_per_time_bin(cn, column='time_from_scheduled_rt', per_cell=False, query2=None):
+def calc_pct_replicated_per_time_bin(cn, column='time_from_scheduled_rt', per_cell=False, query2=None, rep_state='rt_state'):
     intervals = np.linspace(-10, 10, 201)
     time_bins = []
     pct_reps = []
@@ -40,11 +43,11 @@ def calc_pct_replicated_per_time_bin(cn, column='time_from_scheduled_rt', per_ce
             if per_cell:
                 for cell_id, chunk_cn in temp_cn.groupby('cell_id'):
                     if chunk_cn.shape[0] > 0:
-                        percent_replicated = sum(chunk_cn.rt_state) / len(chunk_cn.rt_state)
+                        percent_replicated = sum(chunk_cn[rep_state]) / len(chunk_cn[rep_state])
                         pct_reps.append(percent_replicated)
                         time_bins.append(a)
             else:
-                percent_replicated = sum(temp_cn.rt_state) / len(temp_cn.rt_state)
+                percent_replicated = sum(temp_cn[rep_state]) / len(temp_cn[rep_state])
                 pct_reps.append(percent_replicated)
                 time_bins.append(a)
     return time_bins, pct_reps
@@ -116,9 +119,9 @@ def plot_cell_variability(xdata, ydata, popt=None, left_time=None, right_time=No
     ax.legend(loc='best')
 
 
-def compute_and_plot_twidth(cn, column='time_from_scheduled_rt', per_cell=False, query2=None,
+def compute_and_plot_twidth(cn, column='time_from_scheduled_rt', per_cell=False, query2=None, rep_state='rt_state',
                             alpha=1, title='Cell-to-cell variabilty', curve='sigmoid', ax=None):
-    time_bins, pct_reps = calc_pct_replicated_per_time_bin(cn, per_cell=per_cell, column=column, query2=query2)
+    time_bins, pct_reps = calc_pct_replicated_per_time_bin(cn, per_cell=per_cell, column=column, query2=query2, rep_state=rep_state)
     if curve == 'sigmoid':
         popt, pcov = fit_sigmoid(time_bins, pct_reps)
         t_width, right_time, left_time = calc_t_width(popt)
@@ -174,7 +177,7 @@ def get_rt_cmap():
     return ListedColormap(color_list)
 
 
-def plot_true_vs_inferred_rt_state(df, true_Tw, inferred_Tw, title_second_line):
+def plot_true_vs_inferred_rt_state(df, true_Tw, inferred_Tw, title_second_line, argv):
     df = df.copy()
 
     # create mapping of clones
@@ -184,18 +187,18 @@ def plot_true_vs_inferred_rt_state(df, true_Tw, inferred_Tw, title_second_line):
     df[cluster_col] = df[clone_col]
     df = df.replace({cluster_col: clone_dict})
 
-    secondary_sort_column = 'true_frac_rt'
+    secondary_sort_column = argv.true_frac_col
     secondary_sort_label = 'Frac Rep'
 
     fig = plt.figure(figsize=(14, 7))
     
     ax0 = fig.add_axes([0.12,0.0,0.38,1.])
     rt_cmap = get_rt_cmap()
-    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'true_rt_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
+    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, argv.true_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
     ax0.set_title('True scRT, T-width: {}\n{}'.format(round(true_Tw, 3), title_second_line))
 
     ax1 = fig.add_axes([0.62,0.0,0.38,1.])
-    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'rt_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
+    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, argv.rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
     ax1.set_title('Inferred scRT, T-width: {}\n{}'.format(round(inferred_Tw, 3), title_second_line))
 
     if len(clone_dict) > 1:
@@ -279,22 +282,22 @@ def main():
     df.chr = df.chr.astype('category')
 
     # compute time from scheduled replication for each bin
-    df['mcf7rt_hours'] = ((df['mcf7rt'] / 10.0) - 10.) * -1.
-    df['time_from_scheduled_rt'] = df['mcf7rt_hours'] - (df['frac_rt'] * 10.0)
-    df['true_time_from_scheduled_rt'] = df['mcf7rt_hours'] - (df['true_frac_rt'] * 10.0)
+    df['rt_hours'] = ((df[argv.rt_col] / 10.0) - 10.) * -1.
+    df['time_from_scheduled_rt'] = df['rt_hours'] - (df[argv.frac_rt_col] * 10.0)
+    df['true_time_from_scheduled_rt'] = df['rt_hours'] - (df[argv.true_frac_col] * 10.0)
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
     ax = ax.flatten()
 
-    title_second_line = 'dataset: {}, A: {}, sigma1: {}\ngc_int: {}, gc_slope: {}, s_time_dist: {}'.format(
-        argv.dataset, argv.A, argv.sigma1, argv.gc_int, argv.gc_slope, argv.s_time_dist
+    title_second_line = 'dataset: {}, A: {}, nb_r: {}, infer: {}'.format(
+        argv.dataset, argv.A, argv.nb_r, argv.infer_mode
     )
-    Tw = compute_and_plot_twidth(df, column='time_from_scheduled_rt', title='Inferred scRT heterogeneity\n{}'.format(title_second_line), ax=ax[1])
-    true_Tw = compute_and_plot_twidth(df, column='true_time_from_scheduled_rt', title='True scRT heterogeneity\n{}'.format(title_second_line), ax=ax[0])
+    Tw = compute_and_plot_twidth(df, column='time_from_scheduled_rt', rep_state=argv.rep_state, title='Inferred scRT heterogeneity\n{}'.format(title_second_line), ax=ax[1])
+    true_Tw = compute_and_plot_twidth(df, column='true_time_from_scheduled_rt', rep_state=argv.true_rep_state, title='True scRT heterogeneity\n{}'.format(title_second_line), ax=ax[0])
 
     fig.savefig(argv.output_curves, bbox_inches='tight')
 
-    fig = plot_true_vs_inferred_rt_state(df, true_Tw, Tw, title_second_line)
+    fig = plot_true_vs_inferred_rt_state(df, true_Tw, Tw, title_second_line, argv)
     
     fig.savefig(argv.output_heatmap, bbox_inches='tight')
 
