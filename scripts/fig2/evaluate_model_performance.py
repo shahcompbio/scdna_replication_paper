@@ -11,6 +11,9 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells with true and inferred scRT data')
+    p.add_argument('rep_col', help='column name for inferred replication states')
+    p.add_argument('cn_col', help='column name containing copy number (pyro model) or changepoint segment (heuristic model)')
+    p.add_argument('frac_rt_col', help='column name for time within S-phase (i.e. fraction replicated)')
     p.add_argument('output_rt_state', help='heatmap comparing true and inferred rt_state values')
     p.add_argument('output_rt_accuracy', help='heatmap of false pos/neg and changepoint segments')
     p.add_argument('output_frac_rt', help='Compare distributions of frac_rt between true and inferred')
@@ -46,14 +49,14 @@ def get_acc_cmap():
 
 def plot_true_vs_inferred_rt_state(df, argv):
     # compute accuracy of inferred rt_state values
-    accuracy = 1.0 - (sum(abs(df['true_rt_state'] - df['rt_state'])) / df.shape[0])
+    accuracy = 1.0 - (sum(abs(df['true_rep'] - df[argv.rep_col])) / df.shape[0])
 
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
     ax = ax.flatten()
 
     rt_cmap = get_rt_cmap()
-    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rt_state', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=rt_cmap)
-    plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[0], df, 'true_rep', cluster_field_name='clone_id', secondary_field_name='true_t', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[1], df, argv.rep_col, cluster_field_name='clone_id', secondary_field_name='true_t', cmap=rt_cmap)
 
     ax[0].set_title('True scRT')
     ax[1].set_title('Inferred scRT\nAccuracy: {}'.format(round(accuracy, 3)))
@@ -62,25 +65,33 @@ def plot_true_vs_inferred_rt_state(df, argv):
 
 
 def plot_rt_accuracy(df, argv):
-    accuracy = 1.0 - (sum(abs(df['true_rt_state'] - df['rt_state'])) / df.shape[0])
+    accuracy = 1.0 - (sum(abs(df['true_rep'] - df[argv.rep_col])) / df.shape[0])
 
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
     ax = ax.flatten()
 
     acc_cmap = get_acc_cmap()
-    chng_cmap = get_chng_cmap(int(max(df['changepoint_segments'])))
-    plot_clustered_cell_cn_matrix(ax[0], df, 'rt_state_diff', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=acc_cmap)
-    plot_clustered_cell_cn_matrix(ax[1], df, 'changepoint_segments', cluster_field_name='clone_id', secondary_field_name='true_frac_rt', cmap=chng_cmap)
+    plot_clustered_cell_cn_matrix(ax[0], df, 'rt_state_diff', cluster_field_name='clone_id', secondary_field_name='true_t', cmap=acc_cmap)
+
+    if 'change' in argv.cn_col:
+        chng_cmap = get_chng_cmap(int(max(df[argv.cn_col])))
+        plot_clustered_cell_cn_matrix(ax[1], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t', cmap=chng_cmap)
+        ax[1].set_title('Inferred changepoint segments')
+    elif 'cn' in argv.cn_col:
+        plot_clustered_cell_cn_matrix(ax[1], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
+        ax[1].set_title('Inferred CN state')
+    else:
+        print('specify whether to plot inferred CN or changepoint heatmap')
 
     ax[0].set_title('False positives (green) and negatives (purple)\nAccuracy: {}'.format(round(accuracy, 3)))
-    ax[1].set_title('Inferred changepoint segments')
+    
 
     fig.savefig(argv.output_rt_accuracy, bbox_inches='tight')
 
 
 def plot_frac_rt_distributions(df, argv):
-    df_frac = df[['cell_id', 'true_frac_rt', 'frac_rt']].drop_duplicates().reset_index(drop=True)
-    df_frac2 = df_frac.rename(columns={'true_frac_rt': 'true', 'frac_rt': 'inferred'})
+    df_frac = df[['cell_id', 'true_t', argv.frac_rt_col]].drop_duplicates().reset_index(drop=True)
+    df_frac2 = df_frac.rename(columns={'true_t': 'true', argv.frac_rt_col: 'inferred'})
     df_frac2 = df_frac2.melt(id_vars='cell_id', var_name='source', value_name='frac_rt')
 
     fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
@@ -101,8 +112,8 @@ def plot_frac_rt_distributions(df, argv):
 
     # before plotting, we need to sort so that the data points
     # correspond to each other as they did in "set1" and "set2"
-    set1 = df_frac['true_frac_rt'].values
-    set2 = df_frac['frac_rt'].values
+    set1 = df_frac['true_t'].values
+    set2 = df_frac[argv.frac_rt_col].values
     sort_idxs1 = np.argsort(set1)
     sort_idxs2 = np.argsort(set2)
 
@@ -131,7 +142,7 @@ def main():
     df.chr = df.chr.astype('category')
 
     # 1 is false positive, 0 is accurate, -1 is false negative
-    df['rt_state_diff'] = df['rt_state'] - df['true_rt_state']
+    df['rt_state_diff'] = df[argv.rep_col] - df['true_rep']
 
     # create separate plots
     plot_true_vs_inferred_rt_state(df, argv)

@@ -11,12 +11,12 @@ def get_args():
     p.add_argument('-nS', '--num_cells_S', type=int, help='number of S-phase cells')
     p.add_argument('-nG', '--num_cells_G', type=int, help='number of G1/2-phase cells')
     p.add_argument('-bs', '--bin_size', type=int, help='bin size to use when simulating data (must be in ref_data)')
-    p.add_argument('-std', '--s_time_stdev', type=float, help='standard deviation for normal distribution of S-phase times/fractions (negative for uniform distribution)')
     p.add_argument('-c', '--clones', type=str, nargs='+', help='list of unique clone ids')
     p.add_argument('-cp', '--clone_probs', type=float, nargs='+', help='probability of observing each clone')
     p.add_argument('-s', '--states', type=int, nargs='+', help='list of unique copy number states')
     p.add_argument('-sp', '--state_probs', type=float, nargs='+', help='probability of each copy number state occurring')
     p.add_argument('-cna', '--cell_CNA_prob', type=float, help='probability of each chromosome having a cell-specific CNA')
+    p.add_argument('-rt', '--rt_col', type=str, help='column in ref_data containing appropriate replication timing values')
     p.add_argument('-so', '--s_out', help='simulated S-phase cells')
     p.add_argument('-go', '--g_out', help='simulated G1/2-phase cells')
 
@@ -50,8 +50,8 @@ def simulate_clone_profiles(ref_data, clones, states, state_probs, clone_cn_colu
     return clone_cn
 
 
-def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, state_probs, cell_CNA_prob, s_time_col='true_s_time', rt_col='mcf7rt',
-                           cell_id_prefix='cell_S', clone_cn_column='clone_cn_state', cell_cn_column='true_G1_state', s_time_stdev=None):
+def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, state_probs, cell_CNA_prob, rt_col='mcf7rt',
+                           cell_id_prefix='cell_S', clone_cn_column='clone_cn_state', cell_cn_column='true_G1_state'):
     cell_cn = []
     for i in range(num_cells):
         # draw the clone this cell is from
@@ -74,25 +74,6 @@ def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, sta
                     if cn != current_cn:
                         keep_going = False
                 temp_cell_df.loc[chunk.index, cell_cn_column] = cn
-
-        # assign an S-phase time if cell is in S-phase
-        if s_time_stdev is not None:
-            min_rt_value = min(temp_cell_df[rt_col].values)
-            max_rt_value = max(temp_cell_df[rt_col].values)
-            if s_time_stdev <= 0:
-                # draw from a normal distribution when stdev is not positive
-                s_time = np.random.uniform(low=min_rt_value, high=max_rt_value)
-            else:
-                # draw from normal distribution and check too see if within range of min-max of rt_col
-                repeat = True
-                while repeat:
-                    s_time = np.random.normal(loc=np.mean(temp_cell_df[rt_col].values), scale=s_time_stdev)
-                    if s_time < max_rt_value and s_time > min_rt_value:
-                        repeat = False
-        else:
-            s_time = np.inf  # assign value of infiniti if cell is not replicated
-
-        temp_cell_df[s_time_col] = s_time
 
         # add cell to list
         cell_cn.append(temp_cell_df)
@@ -126,14 +107,14 @@ def main():
     print('simulating S-phase cells...')
     s_cells = simulate_cell_profiles(
         clone_cn, argv.num_cells_S, argv.clones, argv.clone_probs, argv.states, argv.state_probs, argv.cell_CNA_prob,
-        cell_id_prefix='cell_S', s_time_stdev=argv.s_time_stdev, rt_col='mcf7rt'
+        cell_id_prefix='cell_S', rt_col=argv.rt_col
     )
     print('s_cells.head()\n', s_cells.head())
 
     print('simulating G1-phase cells...')
     g_cells = simulate_cell_profiles(
         clone_cn, argv.num_cells_G, argv.clones, argv.clone_probs, argv.states, argv.state_probs, argv.cell_CNA_prob,
-        cell_id_prefix='cell_G', s_time_stdev=None
+        cell_id_prefix='cell_G'
     )
     print('g_cells.head()\n', g_cells.head())
 

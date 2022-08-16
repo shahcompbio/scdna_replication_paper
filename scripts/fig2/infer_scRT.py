@@ -10,6 +10,9 @@ def get_args():
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells')
     p.add_argument('cn_g1', help='input long-form copy number dataframe for G1-phase cells including clone_id')
     p.add_argument('input_col', help='column in two cn dataframes to be used for matching S-phase cells to clones')
+    p.add_argument('cn_col', help='column in that contains CN states for priors')
+    p.add_argument('gc_col', help='column containing gc values')
+    p.add_argument('rt_col', help='column containing rt values')
     p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
 
@@ -32,19 +35,15 @@ def main():
     if 'library_id' not in cn_s.columns:
         cn_s['library_id'] = 'A'
 
-    # use true G1 copy number as the 'state' column
-    # this is important for ploidy calculation
-    cn_g1['state'] = cn_g1['true_G1_state']
-    cn_s['state'] = cn_s['true_G1_state']
-
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
-    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', 'gc', 'state', 'library_id', 'mcf7rt', argv.input_col]]
-    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', 'gc', 'clone_id', 'state', 'library_id', argv.input_col]]
+    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, 'library_id', argv.rt_col, argv.input_col]]
+    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', argv.gc_col, 'clone_id', argv.cn_col, 'library_id', argv.input_col]]
 
     print('creating scrt object')
     # create SPF object with input
-    scrt = scRT(temp_cn_s, temp_cn_g1, input_col=argv.input_col, clone_col='clone_id', assign_col=argv.input_col, rt_prior_col='mcf7rt')
+    scrt = scRT(temp_cn_s, temp_cn_g1, input_col=argv.input_col, clone_col='clone_id', assign_col=argv.input_col, rt_prior_col=argv.rt_col,
+                cn_state_col=argv.cn_col, gc_col=argv.gc_col)
 
     print('running inference')
     # run inference
@@ -55,6 +54,8 @@ def main():
     print('cn_s_with_scrt.shape', cn_s_with_scrt.shape)
 
     # merge cn_s_with_scrt with initial cn_s input to add columns that were excluded from temp_cn_s
+    if 'clone_id' in cn_s_with_scrt.columns and 'clone_id' in cn_s.columns:
+        cn_s_with_scrt.rename(columns={'clone_id': 'assigned_clone_id'}, inplace=True)
     cn_s_out = pd.merge(cn_s, cn_s_with_scrt)
     print('cn_s_out.shape', cn_s_out.shape)
 
