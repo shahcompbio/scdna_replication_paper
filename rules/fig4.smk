@@ -30,7 +30,7 @@ align_metrics_data_urls = [
 
 rule all_fig4:
     input:
-        'analysis/fig4/cn_data.tsv',
+        'analysis/fig4/cn_data_filtered.tsv',
 
 
 rule get_data:
@@ -52,3 +52,12 @@ rule get_data:
         '--metrics_out {output.metrics_data} '
         '--align_metrics_out {output.align_metrics_data} '
         '&> {log}'
+
+# make sure all cells have same loci
+rule filter_data:
+    input: 'analysis/fig4/cn_data.tsv'
+    output: 'analysis/fig4/cn_data_filtered.tsv'
+    log: 'logs/fig4/filter_data.log'
+    shell:
+        'python scripts/fig4/filter_data.py '
+        '{input} {params} {output} &> {log}'
