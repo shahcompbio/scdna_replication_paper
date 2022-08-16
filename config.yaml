@@ -119,21 +119,21 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-  D8:
-    nb_r: 100000
-    gc_col: 'gc'
-    gc_betas: [1.2, 0.0]
-    rt_col: 'mcf7rt'
-    A: 15
-    num_reads: 1000000
-    num_cells_S: 400
-    num_cells_G: 400
-    bin_size: 500000
-    clones: ['A']
-    clone_probs: [1]
-    states: [2]
-    state_probs: [1]
-    cell_CNA_prob: 0.05
+  #D8:
+  #  nb_r: 100000
+  #  gc_col: 'gc'
+  #  gc_betas: [1.2, 0.0]
+  #  rt_col: 'mcf7rt'
+  #  A: 15
+  #  num_reads: 1000000
+  #  num_cells_S: 400
+  #  num_cells_G: 400
+  #  bin_size: 500000
+  #  clones: ['A']
+  #  clone_probs: [1]
+  #  states: [2]
+  #  state_probs: [1]
+  #  cell_CNA_prob: 0.05
   # polyclonal datasets
   P1:
     nb_r: 100000
