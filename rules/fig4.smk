@@ -59,13 +59,37 @@ rule get_data:
 # make sure all cells have same loci and no NaNs
 rule filter_data:
     input: 'analysis/fig4/cn_data.tsv'
-    output: 
-        cn_s = 'analysis/fig4/cn_s.tsv',
-        cn_g1 = 'analysis/fig4/cn_g1.tsv',
-        cn_g2 = 'analysis/fig4/cn_g2.tsv'
+    output: 'analysis/fig4/cn_data_filtered.tsv'
     log: 'logs/fig4/filter_data.log'
     shell:
         'python scripts/fig4/filter_data.py '
+        '{input} {params} {output} &> {log}'
+
+
+# use metrics file to split each cell in filtered cn data by cell cycle state
+rule split_cell_cycle:
+    input:
+        cn_data = 'analysis/fig4/cn_data_filtered.tsv',
+        metrics_data = 'analysis/fig4/metrics_data.tsv'
+    output:
+        cn_s = 'analysis/fig4/cn_s.tsv',
+        cn_g1 = 'analysis/fig4/cn_g1.tsv',
+        cn_g2 = 'analysis/fig4/cn_g2.tsv'
+    log: 'logs/fig4/split_cell_cycle.log'
+    shell:
+        'python scripts/fig4/split_cell_cycle.py '
+        '{input} {params} {output} &> {log}'
+
+
+rule compute_cn_prior:
+    input:
+        cn_s = 'analysis/fig4/cn_s.tsv',
+        cn_g1 = 'analysis/fig4/cn_g1.tsv',
+        cn_g2 = 'analysis/fig4/cn_g2.tsv'
+    output: 'analysis/fig4/cn_s_with_cn_prior.tsv',
+    log: 'logs/fig4/compute_cn_prior.log'
+    shell:
+        'python scripts/fig4/compute_cn_prior.py '
         '{input} {params} {output} &> {log}'
 
 
@@ -73,10 +97,12 @@ rule infer_scRT_pyro:
     input:
         cn_s = 'analysis/fig4/cn_s.tsv',
         cn_g1 = 'analysis/fig4/cn_g1.tsv',
+        cn_g2 = 'analysis/fig4/cn_g2.tsv'
     output: 'analysis/fig4/cn_s_pyro_infered.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
+        copy_col = 'copy',
         gc_col = 'gc',
         infer_mode = 'pyro'
     log: 'logs/fig4/infer_scRT_pyro.log'

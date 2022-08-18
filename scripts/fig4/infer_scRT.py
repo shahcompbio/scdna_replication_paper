@@ -9,8 +9,10 @@ def get_args():
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells')
     p.add_argument('cn_g1', help='input long-form copy number dataframe for G1-phase cells including clone_id')
-    p.add_argument('input_col', help='column in two cn dataframes to be used for matching S-phase cells to clones')
-    p.add_argument('cn_col', help='column in that contains CN states for priors')
+    p.add_argument('cn_g2', help='input long-form copy number dataframe for G2-phase cells including clone_id')
+    p.add_argument('input_col', help='column that contains raw reads or rpm that is used as observed data in model')
+    p.add_argument('cn_col', help='column in that contains hmmcopy cn states')
+    p.add_argument('copy_col', help='column in that contains hmmcopy cn states')
     p.add_argument('gc_col', help='column containing gc values')
     p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
@@ -22,31 +24,29 @@ def main():
     argv = get_args()
     cn_s = pd.read_csv(argv.cn_s, sep='\t')
     cn_g1 = pd.read_csv(argv.cn_g1, sep='\t')
+    cn_g2 = pd.read_csv(argv.cn_g2, sep='\t')
     print('loaded data')
 
-    # make sure clone_id column is present if none are listed
-    if 'clone_id' not in cn_g1.columns:
-        cn_g1['clone_id'] = 'A'
+    # concate g1 and g2 phase cells together as they are both non-s phase
+    cn_g = pd.concat([cn_g1, cn_g2], ignore_index=True)
 
-    if 'library_id' not in cn_g1.columns:
-        cn_g1['library_id'] = 'A'
-
-    if 'library_id' not in cn_s.columns:
-        cn_s['library_id'] = 'A'
+    # use library_id as the clone_id when it is not provided
+    if 'clone_id' not in cn_g.columns:
+        cn_g['clone_id'] = cn_g['library_id']
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
-    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, 'library_id', argv.input_col]]
-    temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, 'library_id', argv.input_col]]
+    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, argv.copy_col, 'library_id', argv.input_col]]
+    temp_cn_g = cn_g[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, argv.copy_col, 'library_id', 'clone_id', argv.input_col]]
 
     print('creating scrt object')
     # create SPF object with input
-    scrt = scRT(temp_cn_s, temp_cn_g1, input_col=argv.input_col, rt_prior_col=None,
-                cn_state_col=argv.cn_col, gc_col=argv.gc_col)
+    scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.copy_col,
+                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method='g1_clones')
 
     print('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer(level=argv.infer_mode)
+    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=5)
     print('done running inference')
 
     print('cn_s.shape', cn_s.shape)

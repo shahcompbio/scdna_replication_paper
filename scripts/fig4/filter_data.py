@@ -5,70 +5,76 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('input', type=str, help='unfiltered cn data for all cells')
-    p.add_argument('s_out', type=str, help='cn data where all remaining cells have the same loci -- S-phase')
-    p.add_argument('g1_out', type=str, help='cn data where all remaining cells have the same loci -- G1-phase')
-    p.add_argument('g2_out', type=str, help='cn data where all remaining cells have the same loci -- G2-phase')
-
+    p.add_argument('output', type=str, help='cn data where all remaining cells have the same loci')
 
     return p.parse_args()
 
 
 def filter_data(df):
+    print("filtering based on gc, ideal, chrY")
     df2 = df.query('ideal==True')
     df2 = df2.query('chr!="Y"')
     df2 = df2.query('gc > 0')
 
-    mat2 = df2.pivot_table(index='cell_id', columns=['chr', 'start'], values='reads')
+    mat2 = df2.pivot_table(index='cell_id', columns=['chr', 'start', 'end', 'gc'], values='reads')
 
     # drop loci that have >5% NaNs and then any remaining cells with >5% NaNs
+    print("filtering bad loci")
     perc = 5.
     min_count = int(((100-perc)/100)*mat2.shape[0] + 1)
     mat3 = mat2.dropna(axis=1, thresh=min_count)
 
+    print('filtering bad cells')
     perc = 5.
     min_count = int(((100-perc)/100)*mat3.shape[1] + 1)
     mat3 = mat3.dropna(axis=0, thresh=min_count)
 
     # fill the remaining NaNs with the neighboring loci for that same cell
+    print('filling remaining NaNs')
     mat3 = mat3.fillna(axis=1, method='bfill').fillna(axis=1, method='ffill')
+    # compute reads per million for each cell
+    print('computing rpm')
+    mat_rpm = mat3.div(mat3.sum(axis=1), axis=0) * 1e6
 
     # limit original df to just include melted loci
+    print('melting and merging reads and rpm')
     df3 = mat3.reset_index().melt(id_vars='cell_id', value_name='reads')
+    df_rpm = mat_rpm.reset_index().melt(id_vars='cell_id', value_name='rpm')
+
+    # combine filtered reads and rpm into one df
+    df3 = pd.merge(df3, df_rpm)
 
     # merge using the interpolated read counts from df3
+    print('merging reads and rpm back into main df')
     df2.drop(columns=['reads'], inplace=True)
     df4 = pd.merge(df2, df3, how='right')
 
     # convert to matrix and interpolate states
-    mat4 = df4.pivot_table(index='cell_id', columns=['chr', 'start'], values='state')
+    print('repeating process for state')
+    mat4 = df4.pivot_table(index='cell_id', columns=['chr', 'start', 'end', 'gc'], values='state')
     mat4 = mat4.fillna(axis=1, method='bfill').fillna(axis=1, method='ffill')
     df5 = mat4.reset_index().melt(id_vars='cell_id', value_name='state')
+    print('merging state back into main df')
     df4.drop(columns=['state'], inplace=True)
     df6 = pd.merge(df4, df5, how='right')
 
-    return df6
+    print('repeating process for copy')
+    mat6 = df6.pivot_table(index='cell_id', columns=['chr', 'start', 'end', 'gc'], values='copy')
+    mat6 = mat6.fillna(axis=1, method='bfill').fillna(axis=1, method='ffill')
+    df7 = mat6.reset_index().melt(id_vars='cell_id', value_name='copy')
+    print('merging copy back into main df')
+    df6.drop(columns=['copy'], inplace=True)
+    df8 = pd.merge(df6, df7, how='right')
+
+    return df8
 
 
-def subset_cell_cycle(df):
-    df_s = df.query('cell_cycle_state=="S"')
-    df_g1 = df.query('cell_cycle_state=="G1"')
-    df_g2 = df.query('cell_cycle_state=="G2"')
-
-    return df_s, df_g1, df_g2
-
-
-def compute_rpm(df, input_col='reads', output_col='rpm', fill_columns=['cell_cycle_state', 'library_id']):
+def compute_rpm(df, input_col='reads', output_col='rpm'):
     df[output_col] = 0
     for cell_id, cell_cn in df.groupby('cell_id'):
         # compute reads per million for each cell
         cell_rpm = (cell_cn[input_col] * 1e6) / cell_cn[input_col].sum()
         df.loc[cell_cn.index, output_col] = cell_rpm
-
-        # make sure all loci for this cell have same cell cycle state (no NaNs)
-        # this is necessary because some bins only had NaNs filled for state & reads but not other columns
-        for col in fill_columns:
-            temp = cell_cn[col].fillna(method='bfill').fillna(method='ffill')
-            df.loc[cell_cn.index, col] = temp
 
     return df
 
@@ -82,11 +88,10 @@ if __name__ == '__main__':
     df = filter_data(df)
 
     # use raw read count to compute reads per million (each cell summs to 1 million reads)
-    df = compute_rpm(df)
+    # df = compute_rpm(df)
 
-    # split based on flow sorted cell cycle state
-    df_s, df_g1, df_g2 = subset_cell_cycle(df)
+    # remove all columns that might contain NaNs
+    df = df[['cell_id', 'chr', 'start', 'end', 'gc', 'reads', 'state', 'copy', 'rpm']]
 
-    df_s.to_csv(argv.s_out, sep='\t', index=False)
-    df_g1.to_csv(argv.g1_out, sep='\t', index=False)
-    df_g2.to_csv(argv.g2_out, sep='\t', index=False)
+    df.to_csv(argv.output, sep='\t', index=False)
+    
