@@ -32,6 +32,8 @@ align_metrics_data_urls = [
 rule all_fig4:
     input:
         'analysis/fig4/cn_s_pyro_infered.tsv',
+        'plots/fig4/cn_heatmaps.png',
+        'plots/fig4/scRT_heatmaps_pyro.png',
 
 
 # fetch the raw data
@@ -81,6 +83,24 @@ rule split_cell_cycle:
         '{input} {params} {output} &> {log}'
 
 
+rule plot_cn_heatmaps:
+    input:
+        s_phase = 'analysis/fig4/cn_s.tsv',
+        g1_phase = 'analysis/fig4/cn_g1.tsv',
+        g2_phase = 'analysis/fig4/cn_g2.tsv',
+    output: 'plots/fig4/cn_heatmaps.png'
+    params:
+        value_col = 'state',
+        dataset = 'flow-sorted'
+    log:
+        'logs/fig4/plot_cn_heatmaps.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig4/plot_s_vs_g_cn_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
 rule compute_cn_prior:
     input:
         cn_s = 'analysis/fig4/cn_s.tsv',
@@ -109,5 +129,22 @@ rule infer_scRT_pyro:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig4/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_inferred_cn_vs_scRT:
+    input: 'analysis/fig4/cn_s_pyro_infered.tsv'
+    output: 
+        plot1 = 'plots/fig4/scRT_heatmaps_pyro.png',
+        plot2 = 'plots/fig4/frac_rt_distributions_pyro.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'model_s_time'
+    log: 'logs/fig4/plot_inferred_cn_vs_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
