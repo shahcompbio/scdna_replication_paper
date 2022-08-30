@@ -34,6 +34,7 @@ rule all_fig4:
         'analysis/fig4/cn_s_pyro_infered.tsv',
         'plots/fig4/cn_heatmaps.png',
         'plots/fig4/scRT_heatmaps_pyro.png',
+        'analysis/fig4/cn_s_with_ccc_features.tsv',
 
 
 # fetch the raw data
@@ -101,18 +102,6 @@ rule plot_cn_heatmaps:
         ' ; deactivate'
 
 
-rule compute_cn_prior:
-    input:
-        cn_s = 'analysis/fig4/cn_s.tsv',
-        cn_g1 = 'analysis/fig4/cn_g1.tsv',
-        cn_g2 = 'analysis/fig4/cn_g2.tsv'
-    output: 'analysis/fig4/cn_s_with_cn_prior.tsv',
-    log: 'logs/fig4/compute_cn_prior.log'
-    shell:
-        'python scripts/fig4/compute_cn_prior.py '
-        '{input} {params} {output} &> {log}'
-
-
 rule infer_scRT_pyro:
     input:
         cn_s = 'analysis/fig4/cn_s.tsv',
@@ -146,5 +135,22 @@ rule plot_inferred_cn_vs_scRT:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig4/plot_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_ccc_features:
+    input:
+        cn_s = 'analysis/fig4/cn_s.tsv',
+        cn_g1 = 'analysis/fig4/cn_g1.tsv',
+        cn_g2 = 'analysis/fig4/cn_g2.tsv'
+    output:
+        cn_s = 'analysis/fig4/cn_s_with_ccc_features.tsv',
+        cn_g1 = 'analysis/fig4/cn_g1_with_ccc_features.tsv',
+        cn_g2 = 'analysis/fig4/cn_g2_with_ccc_features.tsv'
+    log: 'logs/fig4/compute_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
