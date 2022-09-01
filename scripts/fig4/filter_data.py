@@ -5,6 +5,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('input', type=str, help='unfiltered cn data for all cells')
+    p.add_argument('metrics_input', type=str, help='metrics data for all cells')
     p.add_argument('output', type=str, help='cn data where all remaining cells have the same loci')
 
     return p.parse_args()
@@ -69,29 +70,39 @@ def filter_data(df):
     return df8
 
 
-def compute_rpm(df, input_col='reads', output_col='rpm'):
-    df[output_col] = 0
-    for cell_id, cell_cn in df.groupby('cell_id'):
-        # compute reads per million for each cell
-        cell_rpm = (cell_cn[input_col] * 1e6) / cell_cn[input_col].sum()
-        df.loc[cell_cn.index, output_col] = cell_rpm
+def merge_metrics(df, metrics):
+    # subset to relevant metrics columns
+    met = metrics[['cell_id', 'sample_id', 'library_id', 'cell_cycle_state', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints']]
 
-    return df
+    # merge based on cell_id
+    df = pd.merge(df, met, on='cell_id')
+
+    # filter out any bad loci that get introduced from this merge
+    # not sure why this happens but for some reason I need to do it
+    mat = df.pivot_table(index='cell_id', columns=['chr', 'start', 'end', 'gc'], values='rpm')
+    mat.dropna(axis=1, inplace=True)
+    df2 = mat.reset_index().melt(id_vars='cell_id', value_name='rpm')
+    df.drop(columns=['rpm'], inplace=True)
+    df3 = pd.merge(df, df2, how='right')
+
+    return df3
+
 
 
 if __name__ == '__main__':
     argv = get_args()
 
     df = pd.read_csv(argv.input, sep='\t')
+    metrics = pd.read_csv(argv.metrics_input, sep='\t')
     
     # remove appropriate cells and loci
     df = filter_data(df)
 
-    # use raw read count to compute reads per million (each cell summs to 1 million reads)
-    # df = compute_rpm(df)
-
     # remove all columns that might contain NaNs
     df = df[['cell_id', 'chr', 'start', 'end', 'gc', 'reads', 'state', 'copy', 'rpm']]
+
+    # merge long-form copy number info with cell metrics
+    df = merge_metrics(df, metrics)
 
     df.to_csv(argv.output, sep='\t', index=False)
     

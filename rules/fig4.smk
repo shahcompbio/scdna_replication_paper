@@ -5,6 +5,8 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
+datasets = ['all', 'GM18507', 'T47D']
+
 training_data = pd.read_csv('/juno/work/shah/users/weinera2/projects/cell_cycle_classifier/cell_cycle_classifier/data/training/curated_feature_data_rt.csv')
 
 # paths on juno for reads, metics, and annotation metrics
@@ -31,10 +33,15 @@ align_metrics_data_urls = [
 
 rule all_fig4:
     input:
-        'analysis/fig4/cn_s_pyro_infered.tsv',
-        'plots/fig4/cn_heatmaps.png',
-        'plots/fig4/scRT_heatmaps_pyro.png',
-        'analysis/fig4/cn_s_with_ccc_features.tsv',
+        expand(
+            'plots/fig4/{dataset}/cn_heatmaps.png',
+            dataset=[d for d in datasets]
+        ),
+        expand(
+            'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
+            dataset=[d for d in datasets]
+        ),
+        # 'analysis/fig4/all/cn_data_features.tsv'
 
 
 # fetch the raw data
@@ -44,10 +51,10 @@ rule get_data:
         metrics_data_urls = metrics_data_urls,
         align_metrics_data_urls = align_metrics_data_urls,
     output:
-        cn_data = 'analysis/fig4/cn_data.tsv',
-        metrics_data = 'analysis/fig4/metrics_data.tsv',
-        align_metrics_data = 'analysis/fig4/align_metrics_data.tsv'
-    log: 'logs/fig4/get_data.log'
+        cn_data = 'analysis/fig4/all/cn_data.tsv',
+        metrics_data = 'analysis/fig4/all/metrics_data.tsv',
+        align_metrics_data = 'analysis/fig4/all/align_metrics_data.tsv'
+    log: 'logs/fig4/all/get_data.log'
     shell:
         'python scripts/fig4/get_data.py '
         '--cn_data_urls {input.cn_data_urls} '
@@ -61,24 +68,60 @@ rule get_data:
 
 # make sure all cells have same loci and no NaNs
 rule filter_data:
-    input: 'analysis/fig4/cn_data.tsv'
-    output: 'analysis/fig4/cn_data_filtered.tsv'
-    log: 'logs/fig4/filter_data.log'
+    input: 
+        cn_input = 'analysis/fig4/all/cn_data.tsv',
+        metrics_data = 'analysis/fig4/all/metrics_data.tsv'
+    output: 'analysis/fig4/all/cn_data_filtered.tsv'
+    log: 'logs/fig4/all/filter_data.log'
     shell:
         'python scripts/fig4/filter_data.py '
         '{input} {params} {output} &> {log}'
 
 
+rule compute_ccc_features:
+    input: 'analysis/fig4/all/cn_data_filtered.tsv'
+    output: 'analysis/fig4/all/cn_data_features.tsv'
+    log: 'logs/fig4/all/compute_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/compute_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+# split the cn and metrics data by sample_id which corresponds to cell line
+rule split_cell_line:
+    input:
+        cn_data = 'analysis/fig4/all/cn_data_features.tsv',
+        metrics_data = 'analysis/fig4/all/metrics_data.tsv'
+    output:
+        cn_T47D = 'analysis/fig4/T47D/cn_data_features.tsv',
+        metrics_T47D = 'analysis/fig4/T47D/metrics_data.tsv',
+        cn_GM18507 = 'analysis/fig4/GM18507/cn_data_features.tsv',
+        metrics_GM18507 = 'analysis/fig4/GM18507/metrics_data.tsv',
+    run:
+        cn = pd.read_csv(str(input.cn_data), sep='\t')
+        metrics = pd.read_csv(str(input.metrics_data), sep='\t')
+
+        cn_T47D = cn.query("sample_id=='SA1044'")
+        metrics_T47D = metrics.query("sample_id=='SA1044'")
+        cn_GM18507 = cn.query("sample_id=='SA928'")
+        metrics_GM18507 = metrics.query("sample_id=='SA928'")
+
+        cn_T47D.to_csv(str(output.cn_T47D), sep='\t', index=False)
+        metrics_T47D.to_csv(str(output.metrics_T47D), sep='\t', index=False)
+        cn_GM18507.to_csv(str(output.cn_GM18507), sep='\t', index=False)
+        metrics_GM18507.to_csv(str(output.metrics_GM18507), sep='\t', index=False)
+
+
 # use metrics file to split each cell in filtered cn data by cell cycle state
 rule split_cell_cycle:
-    input:
-        cn_data = 'analysis/fig4/cn_data_filtered.tsv',
-        metrics_data = 'analysis/fig4/metrics_data.tsv'
+    input: 'analysis/fig4/{dataset}/cn_data_features.tsv'
     output:
-        cn_s = 'analysis/fig4/cn_s.tsv',
-        cn_g1 = 'analysis/fig4/cn_g1.tsv',
-        cn_g2 = 'analysis/fig4/cn_g2.tsv'
-    log: 'logs/fig4/split_cell_cycle.log'
+        cn_s = 'analysis/fig4/{dataset}/cn_s.tsv',
+        cn_g1 = 'analysis/fig4/{dataset}/cn_g1.tsv',
+        cn_g2 = 'analysis/fig4/{dataset}/cn_g2.tsv'
+    log: 'logs/fig4/{dataset}/split_cell_cycle.log'
     shell:
         'python scripts/fig4/split_cell_cycle.py '
         '{input} {params} {output} &> {log}'
@@ -86,15 +129,15 @@ rule split_cell_cycle:
 
 rule plot_cn_heatmaps:
     input:
-        s_phase = 'analysis/fig4/cn_s.tsv',
-        g1_phase = 'analysis/fig4/cn_g1.tsv',
-        g2_phase = 'analysis/fig4/cn_g2.tsv',
-    output: 'plots/fig4/cn_heatmaps.png'
+        s_phase = 'analysis/fig4/{dataset}/cn_s.tsv',
+        g1_phase = 'analysis/fig4/{dataset}/cn_g1.tsv',
+        g2_phase = 'analysis/fig4/{dataset}/cn_g2.tsv',
+    output: 'plots/fig4/{dataset}/cn_heatmaps.png'
     params:
         value_col = 'state',
         dataset = 'flow-sorted'
     log:
-        'logs/fig4/plot_cn_heatmaps.log'
+        'logs/fig4/{dataset}/plot_cn_heatmaps.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/fig4/plot_s_vs_g_cn_heatmaps.py '
@@ -104,17 +147,17 @@ rule plot_cn_heatmaps:
 
 rule infer_scRT_pyro:
     input:
-        cn_s = 'analysis/fig4/cn_s.tsv',
-        cn_g1 = 'analysis/fig4/cn_g1.tsv',
-        cn_g2 = 'analysis/fig4/cn_g2.tsv'
-    output: 'analysis/fig4/cn_s_pyro_infered.tsv',
+        cn_s = 'analysis/fig4/{dataset}/cn_s.tsv',
+        cn_g1 = 'analysis/fig4/{dataset}/cn_g1.tsv',
+        cn_g2 = 'analysis/fig4/{dataset}/cn_g2.tsv'
+    output: 'analysis/fig4/{dataset}/cn_s_pyro_infered.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
         infer_mode = 'pyro'
-    log: 'logs/fig4/infer_scRT_pyro.log'
+    log: 'logs/fig4/{dataset}/infer_scRT_pyro.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig4/infer_scRT.py '
@@ -123,34 +166,17 @@ rule infer_scRT_pyro:
 
 
 rule plot_inferred_cn_vs_scRT:
-    input: 'analysis/fig4/cn_s_pyro_infered.tsv'
+    input: 'analysis/fig4/{dataset}/cn_s_pyro_infered.tsv'
     output: 
-        plot1 = 'plots/fig4/scRT_heatmaps_pyro.png',
-        plot2 = 'plots/fig4/frac_rt_distributions_pyro.png'
+        plot1 = 'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
+        plot2 = 'plots/fig4/{dataset}/frac_rt_distributions_pyro.png'
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
         frac_rt_col = 'model_s_time'
-    log: 'logs/fig4/plot_inferred_cn_vs_scRT.log'
+    log: 'logs/fig4/{dataset}/plot_inferred_cn_vs_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig4/plot_inferred_cn_vs_scRT.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
-
-
-rule compute_ccc_features:
-    input:
-        cn_s = 'analysis/fig4/cn_s.tsv',
-        cn_g1 = 'analysis/fig4/cn_g1.tsv',
-        cn_g2 = 'analysis/fig4/cn_g2.tsv'
-    output:
-        cn_s = 'analysis/fig4/cn_s_with_ccc_features.tsv',
-        cn_g1 = 'analysis/fig4/cn_g1_with_ccc_features.tsv',
-        cn_g2 = 'analysis/fig4/cn_g2_with_ccc_features.tsv'
-    log: 'logs/fig4/compute_ccc_features.log'
-    shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig4/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
