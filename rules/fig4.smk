@@ -45,7 +45,7 @@ rule all_fig4:
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
             dataset=[d for d in datasets]
         ),
-        # 'analysis/fig4/all/cn_data_features.tsv'
+        'plots/fig4/all/rt_corr.png',
 
 
 # fetch the raw data
@@ -220,4 +220,35 @@ rule plot_inferred_cn_vs_scRT_filtered:
         'python3 scripts/fig4/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+
+
+rule compute_rt_pseudobulks:
+    input: 
+        cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_filtered.tsv',
+        cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered_filtered.tsv',
+        cn_all = 'analysis/fig4/all/cn_s_pyro_infered_filtered.tsv'
+    output: 'analysis/fig4/all/rt_pseudobulks.tsv'
+    log: 'logs/fig4/all/compute_rt_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/compute_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_rt_profiles:
+    input: 'analysis/fig4/all/rt_pseudobulks.tsv'
+    output:
+        plot1 = 'plots/fig4/all/rt_diff_split.png',
+        plot2 = 'plots/fig4/all/rt_diff_joint.png',
+        plot3 = 'plots/fig4/all/rt_corr.png',
+        plot4 = 'plots/fig4/all/rt_split_chr1.png',
+        plot5 = 'plots/fig4/all/rt_joint_chr1.png',
+    log: 'logs/fig4/all/plot_rt_profiles.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/plot_rt_profiles.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
 
