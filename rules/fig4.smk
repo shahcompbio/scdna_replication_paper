@@ -41,6 +41,10 @@ rule all_fig4:
             'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
             dataset=[d for d in datasets]
         ),
+        expand(
+            'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
+            dataset=[d for d in datasets]
+        ),
         # 'analysis/fig4/all/cn_data_features.tsv'
 
 
@@ -180,3 +184,40 @@ rule plot_inferred_cn_vs_scRT:
         'python3 scripts/fig4/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+
+
+rule remove_nonreplicating_cells:
+    input: 
+        cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered.tsv',
+        cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered.tsv',
+        cn_all = 'analysis/fig4/all/cn_s_pyro_infered.tsv'
+    output:
+        cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_filtered.tsv',
+        cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered_filtered.tsv',
+        cn_all = 'analysis/fig4/all/cn_s_pyro_infered_filtered.tsv'
+    params:
+        frac_rt_col = 'cell_frac_rep'
+    log: 'logs/fig4/remove_nonreplicating_cells.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/remove_nonreplicating_cells.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_inferred_cn_vs_scRT_filtered:
+    input: 'analysis/fig4/{dataset}/cn_s_pyro_infered_filtered.tsv'
+    output: 
+        plot1 = 'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
+        plot2 = 'plots/fig4/{dataset}/frac_rt_distributions_pyro_filtered.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'cell_frac_rep'
+    log: 'logs/fig4/{dataset}/plot_inferred_cn_vs_scRT_filtered.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/plot_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
