@@ -46,6 +46,10 @@ def compute_rt_pseudobulks(cn_t, cn_gm, cn_all):
     # merge together
     merged_loci_metrics = pd.merge(pd.merge(pd.merge(loci_metrics_joint_t, loci_metrics_joint_gm), loci_metrics_t), loci_metrics_gm)
 
+    # compute the difference in RT between the two cell lines
+    merged_loci_metrics['rt_diff_split'] = merged_loci_metrics['rt_split_T47D'] - merged_loci_metrics['rt_split_GM18507']
+    merged_loci_metrics['rt_diff_joint'] = merged_loci_metrics['rt_joint_T47D'] - merged_loci_metrics['rt_joint_GM18507']
+
     return merged_loci_metrics
 
 

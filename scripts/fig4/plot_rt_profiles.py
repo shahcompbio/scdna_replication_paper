@@ -198,10 +198,6 @@ def main():
     df.chr = df.chr.astype('str')
     df.chr = df.chr.astype('category')
 
-    # compute the difference in RT between the two cell lines
-    df['rt_diff_split'] = df['rt_split_T47D'] - df['rt_split_GM18507']
-    df['rt_diff_joint'] = df['rt_joint_T47D'] - df['rt_joint_GM18507']
-
     # create separate plots
     plot_rt_corr(df, argv)
     plot_rt_diff(df, argv)
