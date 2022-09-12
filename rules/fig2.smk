@@ -169,10 +169,25 @@ rule plot_true_scRT_heatmap:
         ' ; deactivate'
 
 
+rule compute_ccc_features:
+    input: 
+        s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
+        g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
+    output: 
+        s_phase = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
+        g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
+    log: 'logs/fig2/{dataset}/compute_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/compute_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule infer_scRT_bulk:
     input:
-        cn_s = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
-        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
+        cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
+        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
     output: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
     params:
         input_col = 'true_reads_norm',
@@ -190,8 +205,8 @@ rule infer_scRT_bulk:
 
 rule infer_scRT_pyro:
     input:
-        cn_s = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
-        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
+        cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
+        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
     output: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
     params:
         input_col = 'true_reads_norm',

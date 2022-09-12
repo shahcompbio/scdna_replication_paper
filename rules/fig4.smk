@@ -252,3 +252,27 @@ rule plot_rt_profiles:
         'deactivate'
 
 
+# TODO: update this rule for computing T-width for the joint vs split versions of the model
+rule twidth_analysis_pyro:
+    input: 
+        'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv'
+    output: 
+        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
+        plot2 = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
+        A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
+        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
+        frac_rt_col = 'model_s_time',
+        true_frac_col = 'true_t',
+        rep_state = 'model_rep_state',
+        true_rep_state = 'true_rep',
+        infer_mode = 'pyro'
+    log: 'logs/fig2/{dataset}/twidth_analysis_pyro.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig2/twidth_analysis.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
