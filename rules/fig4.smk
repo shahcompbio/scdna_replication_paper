@@ -261,8 +261,8 @@ rule twidth_analysis_pyro:
         plot2 = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
+        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         frac_rt_col = 'model_s_time',
         true_frac_col = 'true_t',

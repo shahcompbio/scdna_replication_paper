@@ -5,7 +5,7 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
-bad_datasets = []
+bad_datasets = ['D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'P1', 'P2', 'P3', 'P4', 'P5']
 
 rule all_fig2:
     input:
@@ -222,8 +222,27 @@ rule infer_scRT_pyro:
         'deactivate'
 
 
+rule remove_nonreplicating_cells:
+    input: 
+        cn_pyro = 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
+        cn_bulk = 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv'
+    output:
+        cn_pyro = 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
+        cn_bulk = 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv'
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        pyro_rep_col = 'model_rep_state',
+        bulk_rep_col = 'rt_state'
+    log: 'logs/fig2/{dataset}/remove_nonreplicating_cells.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/remove_nonreplicating_cells.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule evaluate_model_performance_bulk:
-    input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv'
+    input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv'
     output: 
         plot1 = 'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
         plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps_bulk.png',
@@ -241,7 +260,7 @@ rule evaluate_model_performance_bulk:
 
 
 rule evaluate_model_performance_pyro:
-    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv'
+    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv'
     output: 
         plot1 = 'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
         plot2 = 'plots/fig2/{dataset}/scRT_accuracy_heatamps_pyro.png',
@@ -249,7 +268,7 @@ rule evaluate_model_performance_pyro:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_s_time'
+        frac_rt_col = 'cell_frac_rep'
     log: 'logs/fig2/{dataset}/evaluate_model_performance_pyro.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
@@ -259,10 +278,11 @@ rule evaluate_model_performance_pyro:
 
 
 rule compute_rt_pseudobulks_pyro:
-    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv'
+    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv'
     output: 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro.tsv'
     params:
-        rep_col = 'model_rep_state'
+        rep_col = 'model_rep_state',
+        true_rep_col = 'true_rep'
     log: 'logs/fig2/{dataset}/compute_rt_pseudobulks_pyro.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -272,10 +292,11 @@ rule compute_rt_pseudobulks_pyro:
 
 
 rule compute_rt_pseudobulks_bulk:
-    input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv'
+    input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv'
     output: 'analysis/fig2/{dataset}/scRT_pseudobulks_bulk.tsv'
     params:
-        rep_col = 'rt_state'
+        rep_col = 'rt_state',
+        true_rep_col = 'true_rep'
     log: 'logs/fig2/{dataset}/compute_rt_pseudobulks_bulk.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -285,7 +306,9 @@ rule compute_rt_pseudobulks_bulk:
 
 
 rule twidth_analysis_pyro:
-    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv'
+    input: 
+        cn = 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
+        pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro.tsv'
     output: 
         plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
         plot2 = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
@@ -293,7 +316,6 @@ rule twidth_analysis_pyro:
         dataset = lambda wildcards: wildcards.dataset,
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
-        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         frac_rt_col = 'model_s_time',
         true_frac_col = 'true_t',
         rep_state = 'model_rep_state',
@@ -308,7 +330,9 @@ rule twidth_analysis_pyro:
 
 
 rule twidth_analysis_bulk:
-    input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv'
+    input:
+        cn = 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv',
+        pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_bulk.tsv'
     output: 
         plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_bulk.png',
         plot2 = 'plots/fig2/{dataset}/twidth_curves_bulk.png',
@@ -316,7 +340,6 @@ rule twidth_analysis_bulk:
         dataset = lambda wildcards: wildcards.dataset,
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
-        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         frac_rt_col = 'frac_rt',
         true_frac_col = 'true_t',
         rep_state = 'rt_state',

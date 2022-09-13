@@ -14,10 +14,10 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells with true and inferred scRT data')
+    p.add_argument('pseduobulk', help='RT pseudobulk for this dataset')
     p.add_argument('dataset')
-    p.add_argument('A', type=float, help='steepness of inflection point when drawing RT state')
     p.add_argument('nb_r', type=float, help='amount of sequencing noise')
-    p.add_argument('rt_col', help='true replication time of each bin (i.e. mcf7rt')
+    p.add_argument('A', type=float, help='steepness of inflection point when drawing RT state')
     p.add_argument('frac_rt_col', help='inferred fraction replicated for each cell')
     p.add_argument('true_frac_col', help='true fraction replicated for each cell')
     p.add_argument('rep_state', help='inferred replication state for each bin')
@@ -281,10 +281,13 @@ def main():
     df.chr = df.chr.astype('str')
     df.chr = df.chr.astype('category')
 
+    # merge in pseudobulk RT columns into df
+    df2 = pd.read_csv(argv.pseduobulk, sep='\t')
+    df = pd.merge(df, df2)
+
     # compute time from scheduled replication for each bin
-    df['rt_hours'] = ((df[argv.rt_col] / 10.0) - 10.) * -1.
-    df['time_from_scheduled_rt'] = df['rt_hours'] - (df[argv.frac_rt_col] * 10.0)
-    df['true_time_from_scheduled_rt'] = df['rt_hours'] - (df[argv.true_frac_col] * 10.0)
+    df['time_from_scheduled_rt'] = df['pseduobulk_hours'] - (df[argv.frac_rt_col] * 10.0)
+    df['true_time_from_scheduled_rt'] = df['true_pseduobulk_hours'] - (df[argv.true_frac_col] * 10.0)
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
     ax = ax.flatten()
