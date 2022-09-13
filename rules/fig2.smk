@@ -316,7 +316,7 @@ rule twidth_analysis_pyro:
         dataset = lambda wildcards: wildcards.dataset,
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
-        frac_rt_col = 'model_s_time',
+        frac_rt_col = 'cell_frac_rep',
         true_frac_col = 'true_t',
         rep_state = 'model_rep_state',
         true_rep_state = 'true_rep',
