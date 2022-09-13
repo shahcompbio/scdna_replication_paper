@@ -5,7 +5,8 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
-bad_datasets = ['D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'P1', 'P2', 'P3', 'P4', 'P5']
+bad_datasets = []
+# ['D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'P1', 'P2', 'P3', 'P4', 'P5']
 
 rule all_fig2:
     input:
