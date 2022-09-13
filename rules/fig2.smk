@@ -52,14 +52,7 @@ rule all_fig2:
             ]
         ),
         expand(
-            'analysis/fig2/{dataset}/scRT_pseudobulks_pyro.tsv',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'analysis/fig2/{dataset}/scRT_pseudobulks_bulk.tsv',
+            'plots/fig2/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
@@ -237,6 +230,26 @@ rule remove_nonreplicating_cells:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig2/remove_nonreplicating_cells.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_ccc_features:
+    input:
+        cn_pyro = 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
+        cn_bulk = 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
+        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
+    output: 
+        plot1 = 'plots/fig2/{dataset}/ccc_features_hist.png',
+        plot2 = 'plots/fig2/{dataset}/ccc_features_scatter.png'
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        pyro_rep_col = 'model_rep_state',
+        bulk_rep_col = 'rt_state'
+    log: 'logs/fig2/{dataset}/plot_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/plot_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
