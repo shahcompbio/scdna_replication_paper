@@ -59,6 +59,14 @@ rule all_fig2:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig2/{dataset}/cn_vs_scRT_heatmaps_pyro.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        
 
 
 rule simulate_cell_cn_states:
@@ -289,6 +297,22 @@ rule evaluate_model_performance_pyro:
         'python3 scripts/fig2/evaluate_model_performance.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+
+
+rule plot_pyro_inferred_cn_vs_scRT:
+    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv'
+    output: 'plots/fig2/{dataset}/cn_vs_scRT_heatmaps_pyro.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'cell_frac_rep'
+    log: 'logs/fig2/{dataset}/plot_pyro_inferred_cn_vs_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/plot_pyro_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
 
 
 rule compute_rt_pseudobulks_pyro:
