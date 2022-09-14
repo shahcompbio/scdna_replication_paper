@@ -146,8 +146,8 @@ def model_g1(gc_profile, cn=None, num_cells=None, num_loci=None, u_guess=70., po
 
 
 def convert_rt_units(rt):
-    # make sure rt units range from 0-1
-    return (rt - rt.min()) / (rt.max() - rt.min())
+    # make sure rt units range from 0-1 with largest values being latest times
+    return 1 - ((rt - rt.min()) / (rt.max() - rt.min()))
 
 
 def simulate_s_cells(gc_profile, cn, rt, argv):
@@ -292,6 +292,11 @@ def main():
     reads_g_df = reads_g_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_raw')
     reads_g_df.chr = reads_g_df.chr.astype(str)
     df_g = pd.merge(df_g, reads_g_df)
+
+    # create observed cn state column to use for computing breakpoints
+    # this should serve as a proxy for hmmcopy state
+    df_s['observed_cn_state'] = df_s['true_G1_state'] * (df_s['true_rep'] + 1)
+    df_g['observed_cn_state'] = df_g['true_G1_state']
 
     df_s.to_csv(argv.s_out, sep='\t', index=False)
     df_g.to_csv(argv.g_out, sep='\t', index=False)

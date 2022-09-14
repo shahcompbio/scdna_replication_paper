@@ -193,7 +193,7 @@ rule infer_scRT_bulk:
     output: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
     params:
         input_col = 'true_reads_norm',
-        cn_col = 'true_G1_state',
+        cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         infer_mode = 'bulk'
@@ -212,7 +212,7 @@ rule infer_scRT_pyro:
     output: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
     params:
         input_col = 'true_reads_norm',
-        cn_col = 'true_G1_state',
+        cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         infer_mode = 'pyro'

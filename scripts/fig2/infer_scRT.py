@@ -42,7 +42,7 @@ def main():
 
     print('creating scrt object')
     # create SPF object with input
-    scrt = scRT(temp_cn_s, temp_cn_g1, input_col=argv.input_col, clone_col='clone_id', assign_col=argv.input_col, rt_prior_col=None,
+    scrt = scRT(temp_cn_s, temp_cn_g1, input_col=argv.input_col, clone_col='clone_id', assign_col=argv.cn_col, rt_prior_col=None,
                 cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method='g1_clones')
 
     print('running inference')

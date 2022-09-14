@@ -23,11 +23,6 @@ def main():
     cn_s = pd.read_csv(argv.cn_s_input, sep='\t')
     cn_g = pd.read_csv(argv.cn_g_input, sep='\t')
 
-    # create observed cn state column to use for computing breakpoints
-    # this should serve as a proxy for hmmcopy state
-    cn_s['observed_cn_state'] = cn_s['true_G1_state'] * (cn_s['true_rep'] + 1)
-    cn_g['observed_cn_state'] = cn_g['true_G1_state']
-
     # compute the number of reads and breakpoints for each cell
     for cn in [cn_s, cn_g]:
         for cell_id, cell_cn in cn.groupby('cell_id'):
