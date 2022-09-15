@@ -94,7 +94,7 @@ def dataset_metric_files_updated_classifier(wildcards):
     return files
 
 
-rule collect_cn_data:
+rule collect_cn_data_3:
     input: 
         hmm = dataset_cn_files,
         annotation = dataset_metric_files_updated_classifier
@@ -108,8 +108,26 @@ rule collect_cn_data:
         '--samples {params.samples} --output {output} &> {log}'
 
 
-rule compute_ccc_features:
-    input: 'analysis/fig3/{dataset}/cn_data.tsv'
+rule clone_assignments_3:
+    input: 
+        cn = 'analysis/fig3/{dataset}/cn_data.tsv',
+        clones ='data/fitness/fitness_cell_assignment_feb07_2020.tsv',
+        clones_2295 = 'data/signatures/2295_clones.tsv',
+        clones_SA1188 = 'data/signatures/SA1188_clones.tsv',
+    output: 'analysis/fig3/{dataset}/cn_data_clones.tsv'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        assign_col = 'copy'
+    log: 'logs/fig3/{dataset}/clone_assignments.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/clone_assignments.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_ccc_features_3:
+    input: 'analysis/fig3/{dataset}/cn_data_clones.tsv'
     output: 'analysis/fig3/{dataset}/cn_data_features.tsv'
     log: 'logs/fig3/{dataset}/compute_ccc_features.log'
     shell:
@@ -119,9 +137,7 @@ rule compute_ccc_features:
         'deactivate'
 
 
-# TODO: update script for plotting ccc features
-# copy over from fig2.smk and make changes
-rule plot_ccc_features:
+rule plot_ccc_features_3:
     input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
     output: 
         plot1 = 'plots/fig3/{dataset}/ccc_features_hist.png',
@@ -134,7 +150,7 @@ rule plot_ccc_features:
         'deactivate'
 
 
-rule get_s_phase_cells:
+rule get_s_phase_cells_3:
     input: 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv'
     output: 'analysis/fig3/{dataset}/s_phase_cells.tsv'
     run:
@@ -143,7 +159,7 @@ rule get_s_phase_cells:
         df.to_csv(str(output), sep='\t', index=False)
 
 
-rule get_non_s_phase_cells:
+rule get_non_s_phase_cells_3:
     input:
         cn = 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv',
         clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
@@ -174,7 +190,7 @@ rule get_non_s_phase_cells:
         df.to_csv(str(output), sep='\t', index=False)
 
 
-rule infer_scRT:
+rule infer_scRT_3:
     input:
         cn_s = 'analysis/fig3/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
@@ -191,7 +207,7 @@ rule infer_scRT:
         'deactivate'
 
 
-rule infer_scRT_g1:
+rule infer_scRT_g1_3:
     input:
         cn_s = 'analysis/fig3/{dataset}/g1_phase_cells.tsv',
         cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
@@ -208,7 +224,7 @@ rule infer_scRT_g1:
         'deactivate'
 
 
-rule plot_cn_heatmaps:
+rule plot_cn_heatmaps_3:
     input:
         s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
         g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
@@ -224,7 +240,7 @@ rule plot_cn_heatmaps:
         ' ; deactivate'
 
 
-rule plot_rt_heatmap:
+rule plot_rt_heatmap_3:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 'plots/fig3/{dataset}/rt_heatmap.png'
     params:
@@ -239,7 +255,7 @@ rule plot_rt_heatmap:
         ' ; deactivate'
 
 
-rule rt_clustering:
+rule rt_clustering_3:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 
         umap = 'plots/fig3/{dataset}/rt_clusters_umap.png',
@@ -258,7 +274,7 @@ rule rt_clustering:
         ' ; deactivate'
 
 
-rule compute_rt_pseudobulks:
+rule compute_rt_pseudobulks_3:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
     log: 'logs/fig3/{dataset}/compute_rt_pseudobulks.log'
@@ -269,7 +285,7 @@ rule compute_rt_pseudobulks:
         'deactivate'
 
 
-rule twidth_analysis:
+rule twidth_analysis_3:
     input: 
         scrt = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
         bulks = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'

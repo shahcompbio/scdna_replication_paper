@@ -49,7 +49,7 @@ rule all_fig4:
 
 
 # fetch the raw data
-rule get_data:
+rule get_data_4:
     input:
         cn_data_urls = cn_data_urls,
         metrics_data_urls = metrics_data_urls,
@@ -71,7 +71,7 @@ rule get_data:
 
 
 # make sure all cells have same loci and no NaNs
-rule filter_data:
+rule filter_data_4:
     input: 
         cn_input = 'analysis/fig4/all/cn_data.tsv',
         metrics_data = 'analysis/fig4/all/metrics_data.tsv'
@@ -82,7 +82,7 @@ rule filter_data:
         '{input} {params} {output} &> {log}'
 
 
-rule compute_ccc_features:
+rule compute_ccc_features_4:
     input: 'analysis/fig4/all/cn_data_filtered.tsv'
     output: 'analysis/fig4/all/cn_data_features.tsv'
     log: 'logs/fig4/all/compute_ccc_features.log'
@@ -94,7 +94,7 @@ rule compute_ccc_features:
 
 
 # split the cn and metrics data by sample_id which corresponds to cell line
-rule split_cell_line:
+rule split_cell_line_4:
     input:
         cn_data = 'analysis/fig4/all/cn_data_features.tsv',
         metrics_data = 'analysis/fig4/all/metrics_data.tsv'
@@ -119,7 +119,7 @@ rule split_cell_line:
 
 
 # use metrics file to split each cell in filtered cn data by cell cycle state
-rule split_cell_cycle:
+rule split_cell_cycle_4:
     input: 'analysis/fig4/{dataset}/cn_data_features.tsv'
     output:
         cn_s = 'analysis/fig4/{dataset}/cn_s.tsv',
@@ -131,7 +131,7 @@ rule split_cell_cycle:
         '{input} {params} {output} &> {log}'
 
 
-rule plot_cn_heatmaps:
+rule plot_cn_heatmaps_4:
     input:
         s_phase = 'analysis/fig4/{dataset}/cn_s.tsv',
         g1_phase = 'analysis/fig4/{dataset}/cn_g1.tsv',
@@ -149,7 +149,7 @@ rule plot_cn_heatmaps:
         ' ; deactivate'
 
 
-rule infer_scRT_pyro:
+rule infer_scRT_pyro_4:
     input:
         cn_s = 'analysis/fig4/{dataset}/cn_s.tsv',
         cn_g1 = 'analysis/fig4/{dataset}/cn_g1.tsv',
@@ -160,6 +160,7 @@ rule infer_scRT_pyro:
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
+        cn_prior_method = 'g1_cells',
         infer_mode = 'pyro'
     log: 'logs/fig4/{dataset}/infer_scRT_pyro.log'
     shell:
@@ -169,7 +170,7 @@ rule infer_scRT_pyro:
         'deactivate'
 
 
-rule plot_inferred_cn_vs_scRT:
+rule plot_inferred_cn_vs_scRT_4:
     input: 'analysis/fig4/{dataset}/cn_s_pyro_infered.tsv'
     output: 
         plot1 = 'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
@@ -186,7 +187,7 @@ rule plot_inferred_cn_vs_scRT:
         'deactivate'
 
 
-rule remove_nonreplicating_cells:
+rule remove_nonreplicating_cells_4:
     input: 
         cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered.tsv',
         cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered.tsv',
@@ -205,7 +206,7 @@ rule remove_nonreplicating_cells:
         'deactivate'
 
 
-rule plot_inferred_cn_vs_scRT_filtered:
+rule plot_inferred_cn_vs_scRT_filtered_4:
     input: 'analysis/fig4/{dataset}/cn_s_pyro_infered_filtered.tsv'
     output: 
         plot1 = 'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
@@ -222,7 +223,7 @@ rule plot_inferred_cn_vs_scRT_filtered:
         'deactivate'
 
 
-rule compute_rt_pseudobulks:
+rule compute_rt_pseudobulks_4:
     input: 
         cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_filtered.tsv',
         cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered_filtered.tsv',
@@ -236,7 +237,7 @@ rule compute_rt_pseudobulks:
         'deactivate'
 
 
-rule plot_rt_profiles:
+rule plot_rt_profiles_4:
     input: 'analysis/fig4/all/rt_pseudobulks.tsv'
     output:
         plot1 = 'plots/fig4/all/rt_diff_split.png',
@@ -253,26 +254,26 @@ rule plot_rt_profiles:
 
 
 # TODO: update this rule for computing T-width for the joint vs split versions of the model
-rule twidth_analysis_pyro:
-    input: 
-        'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv'
-    output: 
-        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
-        plot2 = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
-    params:
-        dataset = lambda wildcards: wildcards.dataset,
-        A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
-        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
-        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
-        frac_rt_col = 'model_s_time',
-        true_frac_col = 'true_t',
-        rep_state = 'model_rep_state',
-        true_rep_state = 'true_rep',
-        infer_mode = 'pyro'
-    log: 'logs/fig2/{dataset}/twidth_analysis_pyro.log'
-    shell:
-        'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig2/twidth_analysis.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
+# rule twidth_analysis_pyro_4:
+#     input: 
+#         'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv'
+#     output: 
+#         plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
+#         plot2 = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
+#     params:
+#         dataset = lambda wildcards: wildcards.dataset,
+#         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
+#         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
+#         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
+#         frac_rt_col = 'model_s_time',
+#         true_frac_col = 'true_t',
+#         rep_state = 'model_rep_state',
+#         true_rep_state = 'true_rep',
+#         infer_mode = 'pyro'
+#     log: 'logs/fig2/{dataset}/twidth_analysis_pyro.log'
+#     shell:
+#         'source ../scgenome/venv/bin/activate ; '
+#         'python3 scripts/fig2/twidth_analysis.py '
+#         '{input} {params} {output} &> {log} ; '
+#         'deactivate'
 

@@ -109,7 +109,7 @@ simulated_datasets:
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: 'mcf7rt'
-    A: 15
+    A: 10
     num_reads: 1000000
     num_cells_S: 400
     num_cells_G: 400
@@ -119,21 +119,22 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-  #D8:
-  #  nb_r: 100000
-  #  gc_col: 'gc'
-  #  gc_betas: [1.2, 0.0]
-  #  rt_col: 'mcf7rt'
-  #  A: 15
-  #  num_reads: 1000000
-  #  num_cells_S: 400
-  #  num_cells_G: 400
-  #  bin_size: 500000
-  #  clones: ['A']
-  #  clone_probs: [1]
-  #  states: [2]
-  #  state_probs: [1]
-  #  cell_CNA_prob: 0.05
+  # test effect of cell-specific CNAs in diploid background
+  D8:
+   nb_r: 100000
+   gc_col: 'gc'
+   gc_betas: [1.2, 0.0]
+   rt_col: 'mcf7rt'
+   A: 10
+   num_reads: 1000000
+   num_cells_S: 400
+   num_cells_G: 400
+   bin_size: 500000
+   clones: ['A']
+   clone_probs: [1]
+   states: [2]
+   state_probs: [1]
+   cell_CNA_prob: 0.02
   # polyclonal datasets
   P1:
     nb_r: 100000
@@ -149,7 +150,7 @@ simulated_datasets:
     clone_probs: [0.4, 0.3, 0.3]
     states: [1, 2, 3, 4, 5, 6, 7]
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-    cell_CNA_prob: 0.05
+    cell_CNA_prob: 0.00
   P2:
     nb_r: 100000
     gc_col: 'gc'
@@ -164,7 +165,7 @@ simulated_datasets:
     clone_probs: [0.4, 0.3, 0.3]
     states: [1, 2, 3, 4, 5, 6, 7]
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-    cell_CNA_prob: 0.10
+    cell_CNA_prob: 0.02
   P3:
     nb_r: 100000
     gc_col: 'gc'
@@ -179,13 +180,13 @@ simulated_datasets:
     clone_probs: [0.4, 0.3, 0.3]
     states: [1, 2, 3, 4, 5, 6, 7]
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-    cell_CNA_prob: 0.15
+    cell_CNA_prob: 0.05
   P4:
     nb_r: 100000
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: 'mcf7rt'
-    A: 10
+    A: 5
     num_reads: 1000000
     num_cells_S: 400
     num_cells_G: 400
@@ -194,20 +195,81 @@ simulated_datasets:
     clone_probs: [0.4, 0.3, 0.3]
     states: [1, 2, 3, 4, 5, 6, 7]
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-    cell_CNA_prob: 0.0
+    cell_CNA_prob: 0.00
   P5:
     nb_r: 100000
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: 'mcf7rt'
-    A: 10
+    A: 5
     num_reads: 1000000
     num_cells_S: 400
     num_cells_G: 400
     bin_size: 500000
-    clones: ['A', 'B', 'C', 'D', 'E']
-    clone_probs: [0.2, 0.2, 0.2, 0.2, 0.2]
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P6:
+    nb_r: 100000
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: 'mcf7rt'
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
     states: [1, 2, 3, 4, 5, 6, 7]
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
+  P7:
+    nb_r: 100000
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: 'mcf7rt'
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P8:
+    nb_r: 100000
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: 'mcf7rt'
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P9:
+    nb_r: 100000
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: 'mcf7rt'
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+
 

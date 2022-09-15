@@ -68,8 +68,7 @@ rule all_fig2:
         ),
         
 
-
-rule simulate_cell_cn_states:
+rule simulate_cell_cn_states_2:
     input:
         gc_rt_data = 'data/gc_rt_bin_sizes.csv',
         gc_map_data = 'data/gc_map_500kb.csv'
@@ -106,7 +105,7 @@ rule simulate_cell_cn_states:
         '&> {log}'
 
 
-rule simulate_reads_from_cn_pyro:
+rule simulate_reads_from_cn_pyro_2:
     input:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cn_states.tsv'
@@ -139,7 +138,7 @@ rule simulate_reads_from_cn_pyro:
         'deactivate'
 
 
-rule plot_cn_heatmaps:
+rule plot_cn_heatmaps_2:
     input:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
@@ -157,7 +156,7 @@ rule plot_cn_heatmaps:
         ' ; deactivate'
 
 
-rule plot_true_scRT_heatmap:
+rule plot_true_scRT_heatmap_2:
     input: 'analysis/fig2/{dataset}/s_phase_cells.tsv',
     output: 'plots/fig2/{dataset}/true_scRT_heatmap.png',
     params:
@@ -171,7 +170,7 @@ rule plot_true_scRT_heatmap:
         ' ; deactivate'
 
 
-rule compute_ccc_features:
+rule compute_ccc_features_2:
     input: 
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
@@ -186,7 +185,7 @@ rule compute_ccc_features:
         'deactivate'
 
 
-rule infer_scRT_bulk:
+rule infer_scRT_bulk_2:
     input:
         cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
@@ -196,6 +195,7 @@ rule infer_scRT_bulk:
         cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
+        cn_prior_method = 'diploid',  # irrelevant bc pyro model not invoked here
         infer_mode = 'bulk'
     log: 'logs/fig2/{dataset}/infer_scRT_bulk.log'
     shell:
@@ -205,7 +205,7 @@ rule infer_scRT_bulk:
         'deactivate'
 
 
-rule infer_scRT_pyro:
+rule infer_scRT_pyro_2:
     input:
         cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
@@ -215,6 +215,7 @@ rule infer_scRT_pyro:
         cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
+        cn_prior_method = 'g1_cells',
         infer_mode = 'pyro'
     log: 'logs/fig2/{dataset}/infer_scRT_pyro.log'
     shell:
@@ -224,7 +225,7 @@ rule infer_scRT_pyro:
         'deactivate'
 
 
-rule remove_nonreplicating_cells:
+rule remove_nonreplicating_cells_2:
     input: 
         cn_pyro = 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
         cn_bulk = 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv'
@@ -243,7 +244,7 @@ rule remove_nonreplicating_cells:
         'deactivate'
 
 
-rule plot_ccc_features:
+rule plot_ccc_features_2:
     input:
         cn_pyro = 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
         cn_bulk = 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
@@ -263,7 +264,7 @@ rule plot_ccc_features:
         'deactivate'
 
 
-rule evaluate_model_performance_bulk:
+rule evaluate_model_performance_bulk_2:
     input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv'
     output: 
         plot1 = 'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
@@ -281,7 +282,7 @@ rule evaluate_model_performance_bulk:
         'deactivate'
 
 
-rule evaluate_model_performance_pyro:
+rule evaluate_model_performance_pyro_2:
     input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv'
     output: 
         plot1 = 'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
@@ -299,7 +300,7 @@ rule evaluate_model_performance_pyro:
         'deactivate'
 
 
-rule plot_pyro_inferred_cn_vs_scRT:
+rule plot_pyro_inferred_cn_vs_scRT_2:
     input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv'
     output: 'plots/fig2/{dataset}/cn_vs_scRT_heatmaps_pyro.png'
     params:
@@ -315,7 +316,7 @@ rule plot_pyro_inferred_cn_vs_scRT:
 
 
 
-rule compute_rt_pseudobulks_pyro:
+rule compute_rt_pseudobulks_pyro_2:
     input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv'
     output: 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro.tsv'
     params:
@@ -329,7 +330,7 @@ rule compute_rt_pseudobulks_pyro:
         'deactivate'
 
 
-rule compute_rt_pseudobulks_bulk:
+rule compute_rt_pseudobulks_bulk_2:
     input: 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv'
     output: 'analysis/fig2/{dataset}/scRT_pseudobulks_bulk.tsv'
     params:
@@ -343,7 +344,7 @@ rule compute_rt_pseudobulks_bulk:
         'deactivate'
 
 
-rule twidth_analysis_pyro:
+rule twidth_analysis_pyro_2:
     input: 
         cn = 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro.tsv'
@@ -367,7 +368,7 @@ rule twidth_analysis_pyro:
         'deactivate'
 
 
-rule twidth_analysis_bulk:
+rule twidth_analysis_bulk_2:
     input:
         cn = 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_bulk.tsv'

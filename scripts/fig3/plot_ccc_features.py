@@ -18,7 +18,7 @@ def get_cell_metrics(cn):
     # get cell-level metrics with the updated cell cycle labels
     cell_metric_cols = [
         'cell_id', 'library_id', 'breakpoints', 
-        'num_reads', 'madn', 'lrs', 
+        'total_mapped_reads_hmmcopy', 'madn', 'lrs', 
         'corrected_madn', 'corrected_breakpoints',
         'is_s_phase_new', 'is_s_phase_prob_new'
     ]
