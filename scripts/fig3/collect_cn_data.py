@@ -13,6 +13,14 @@ def get_args():
 	return p.parse_args()
 
 
+def compute_reads_per_million(cn, reads_col='reads', rpm_col='rpm'):
+	for cell_id, cell_cn in cn.groupby('cell_id'):
+		x = cell_cn[reads_col].values
+		temp_rpm = x * 1e6 / sum(x)
+		cn.loc[cell_cn.index, rpm_col] = temp_rpm
+	return cn
+
+
 if __name__ == '__main__':
 	argv = get_args()
 	cn_pieces = []
@@ -35,7 +43,7 @@ if __name__ == '__main__':
 		)
 		piece = piece[['total_mapped_reads_hmmcopy', 'experimental_condition', 'is_s_phase', 'is_s_phase_prob', 'multiplier',
 					'quality', 'is_contaminated', 'cell_call', 'fastqscreen_grch37', 'fastqscreen_mm10', 'coverage_depth',
-					'is_s_phase_new', 'is_s_phase_prob_new', 'classifier_diff']]
+					'breakpoints', 'is_s_phase_new', 'is_s_phase_prob_new', 'classifier_diff']]
 		met_pieces.append(piece)
 
 	metrics = pd.concat(met_pieces)
@@ -116,5 +124,8 @@ if __name__ == '__main__':
 
 	# drop cell cycle state column because the mappings are inaccurate.. we only care about filtering on experimental condition
 	cn.drop(columns=['cell_cycle_state'], inplace=True)
+
+	# create new column for reads per million (normalize each cell's total read count to be the same)
+	cn = compute_reads_per_million(cn, reads_col='reads', rpm_col='rpm')
 
 	cn.to_csv(argv.output, sep='\t', index=False)

@@ -11,29 +11,36 @@ bad_datasets = ['SA1054', 'SA1055', 'SA1056']
 
 rule all_fig3:
     input:
+        # expand(
+        #     'plots/fig3/{dataset}/cn_heatmaps.png',
+        #     dataset=[
+        #         d for d in config['signatures_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/fig3/{dataset}/rt_heatmap.png',
+        #     dataset=[
+        #         d for d in config['signatures_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/fig3/{dataset}/rt_clusters_heatmap.png',
+        #     dataset=[
+        #         d for d in config['signatures_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/fig3/{dataset}/twidth_curves.png',
+        #     dataset=[
+        #         d for d in config['signatures_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
         expand(
-            'plots/fig3/{dataset}/cn_heatmaps.png',
-            dataset=[
-                d for d in config['signatures_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fig3/{dataset}/rt_heatmap.png',
-            dataset=[
-                d for d in config['signatures_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fig3/{dataset}/rt_clusters_heatmap.png',
-            dataset=[
-                d for d in config['signatures_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fig3/{dataset}/twidth_curves.png',
+            'plots/fig3/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['signatures_datasets']
                 if (d not in bad_datasets)
@@ -91,7 +98,7 @@ rule collect_cn_data:
     input: 
         hmm = dataset_cn_files,
         annotation = dataset_metric_files_updated_classifier
-    output: 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv'
+    output: 'analysis/fig3/{dataset}/cn_data.tsv'
     log: 'logs/fig3/{dataset}/collect_cn_data.log'
     params:
         samples = dataset_sample_ids
@@ -99,6 +106,32 @@ rule collect_cn_data:
         'python scripts/fig3/collect_cn_data.py '
         '--hmm {input.hmm} --annotation {input.annotation} '
         '--samples {params.samples} --output {output} &> {log}'
+
+
+rule compute_ccc_features:
+    input: 'analysis/fig3/{dataset}/cn_data.tsv'
+    output: 'analysis/fig3/{dataset}/cn_data_features.tsv'
+    log: 'logs/fig3/{dataset}/compute_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/compute_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+# TODO: update script for plotting ccc features
+# copy over from fig2.smk and make changes
+rule plot_ccc_features:
+    input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
+    output: 
+        plot1 = 'plots/fig3/{dataset}/ccc_features_hist.png',
+        plot2 = 'plots/fig3/{dataset}/ccc_features_scatter.png'
+    log: 'logs/fig2/{dataset}/plot_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
 rule get_s_phase_cells:
