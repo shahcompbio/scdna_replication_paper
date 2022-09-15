@@ -104,12 +104,6 @@ if __name__ == '__main__':
 		(cn['cell_call'].isin(['C1', 'C2']))
 	]
 
-	# quality filter shouldn't apply to S-phase cells
-	cn = cn[
-		(cn['quality'] >= 0.75) |
-		(cn['is_s_phase_prob'] >= 0.5)
-	]
-
 	for rm_cond in ['gDNA', 'GM', 'NCC', 'NTC']:
 		mask = ~cn['experimental_condition'].str.contains(rm_cond)
 		cn = cn[mask]
