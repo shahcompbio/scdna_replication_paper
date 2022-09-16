@@ -9,25 +9,35 @@
 		"latency" : "10",
         "logdir" : "logs/cluster"
 	},
-	"collect_cn_data" :
+	"collect_cn_data_3" :
 	{
 		"mem" : 96
 	},
-	"simulate_cell_cn_states" :
+	"simulate_cell_cn_states_2" :
 	{
 		"time" : "6:00",
 		"mem" : 128
 	},
-	"simulate_reads_from_cn_pyro" :
+	"simulate_reads_from_cn_pyro_2" :
 	{
 		"mem" : 128
 	},
-	"infer_scRT_bulk" :
+	"infer_scRT_bulk_2" :
 	{
 		"time" : "48:00",
 		"mem" : 128
 	},
-	"infer_scRT_pyro" :
+	"infer_scRT_pyro_2" :
+	{
+		"time" : "48:00",
+		"mem" : 128
+	},
+	"infer_scRT_pyro_3" :
+	{
+		"time" : "48:00",
+		"mem" : 128
+	},
+	"infer_scRT_pyro_4" :
 	{
 		"time" : "48:00",
 		"mem" : 128

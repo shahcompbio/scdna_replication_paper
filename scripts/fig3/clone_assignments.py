@@ -36,7 +36,7 @@ def main():
 
         # remove the 'a' or 'b' suffix from SA906 cell IDs in the clone mapping file
         if 'SA906' in argv.dataset:
-            clones['cell_id'] = clones['cell_id'].apply(lambda x: x.replace(dataset, 'SA906'))
+            clones['cell_id'] = clones['cell_id'].apply(lambda x: x.replace(argv.dataset, 'SA906'))
 
     # merge clone_id for the g1-phase cells (those with clone labels already)
     cn_g1 = pd.merge(cn, clones, on='cell_id')

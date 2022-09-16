@@ -190,7 +190,7 @@ rule get_non_s_phase_cells_3:
         df.to_csv(str(output), sep='\t', index=False)
 
 
-rule infer_scRT_3:
+rule infer_scRT_pyro_3:
     input:
         cn_s = 'analysis/fig3/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
