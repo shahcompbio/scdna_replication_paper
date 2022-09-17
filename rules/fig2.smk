@@ -215,7 +215,7 @@ rule infer_scRT_pyro_2:
         cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
-        cn_prior_method = 'g1_cells',
+        cn_prior_method = 'g1_composite',
         infer_mode = 'pyro'
     log: 'logs/fig2/{dataset}/infer_scRT_pyro.log'
     shell:

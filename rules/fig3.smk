@@ -11,20 +11,20 @@ bad_datasets = ['SA1054', 'SA1055', 'SA1056']
 
 rule all_fig3:
     input:
-        # expand(
-        #     'plots/fig3/{dataset}/cn_heatmaps.png',
-        #     dataset=[
-        #         d for d in config['signatures_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig3/{dataset}/rt_heatmap.png',
-        #     dataset=[
-        #         d for d in config['signatures_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fig3/{dataset}/cn_heatmaps.png',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/rt_heatmap.png',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         # expand(
         #     'plots/fig3/{dataset}/rt_clusters_heatmap.png',
         #     dataset=[
@@ -151,42 +151,20 @@ rule plot_ccc_features_3:
 
 
 rule get_s_phase_cells_3:
-    input: 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv'
+    input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
     output: 'analysis/fig3/{dataset}/s_phase_cells.tsv'
     run:
         df = pd.read_csv(str(input), sep='\t', index_col=False)
-        df = df.query('is_s_phase_prob_new >= 0.5 | is_s_phase_prob >= 0.5')
+        df = df.query('in_tree == False')
         df.to_csv(str(output), sep='\t', index=False)
 
 
 rule get_non_s_phase_cells_3:
-    input:
-        cn = 'analysis/fig3/{dataset}/{dataset}_cn_data.tsv',
-        clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
+    input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
     output: 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    params:
-        dataset = lambda wildcards: wildcards.dataset
     run:
-        df = pd.read_csv(str(input.cn), sep='\t', index_col=False)
-        #clones = pd.read_csv(str(input.clones), sep='\t', index_col=False)
-        dataset = str(params.dataset)
-
-        if dataset in ['2295', 'SA1188']:
-            clones = pd.read_csv('data/signatures/{}_clones.tsv'.format(dataset), sep='\t')
-        else:
-            # load in clones from fitness results
-            clones = pd.read_csv(str(input.clones))
-            clones = clones.drop(columns=['V1', 'datatag', 'sample_id'])
-            clones = clones.rename(columns={'single_cell_id': 'cell_id', 'letters': 'clone_id'})
-
-            # remove the 'a' or 'b' suffix from SA906 cell IDs in the clone mapping file
-            if 'SA906' in dataset:
-                clones['cell_id'] = clones['cell_id'].apply(lambda x: x.replace(dataset, 'SA906'))
-
-        df = df.query('is_s_phase_prob_new < 0.5 & is_s_phase_prob < 0.5')
-        # only use cells that have clone_id's assigned (and add clone_id column)
-        df = pd.merge(df, clones, on='cell_id')
-
+        df = pd.read_csv(str(input), sep='\t', index_col=False)
+        df = df.query('in_tree == True')
         df.to_csv(str(output), sep='\t', index=False)
 
 
@@ -196,26 +174,12 @@ rule infer_scRT_pyro_3:
         cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
     output: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
     params:
-        input_col = 'reads',
-        assign_col = 'copy',
-        infer_mode = 'cell'
-    log: 'logs/fig3/{dataset}/infer_scRT.log'
-    shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/infer_scRT.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
-
-
-rule infer_scRT_g1_3:
-    input:
-        cn_s = 'analysis/fig3/{dataset}/g1_phase_cells.tsv',
-        cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    output: 'analysis/fig3/{dataset}/g1_phase_cells_with_scRT.tsv',
-    params:
-        input_col = 'reads',
-        assign_col = 'copy',
-        infer_mode = 'clone'
+        input_col = 'rpm',
+        cn_col = 'state',
+        copy_col = 'copy',
+        gc_col = 'gc',
+        cn_prior_method = 'g1_composite',
+        infer_mode = 'pyro'
     log: 'logs/fig3/{dataset}/infer_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -244,8 +208,8 @@ rule plot_rt_heatmap_3:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 'plots/fig3/{dataset}/rt_heatmap.png'
     params:
-        value_col = 'rt_state',
-        sort_col = 'frac_rt',
+        value_col = 'model_rep_state',
+        sort_col = 'model_s_time',
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fig3/{dataset}/plot_rt_heatmap.log'
     shell:

@@ -76,6 +76,20 @@ rule all:
                 if (d not in bad_datasets_3)
             ]
         ),
+        expand(
+            'plots/fig3/{dataset}/cn_heatmaps.png',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets_3)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/rt_heatmap.png',
+            dataset=[
+                d for d in config['signatures_datasets']
+                if (d not in bad_datasets_3)
+            ]
+        ),
         # fig4 flow-sorted analysis
         expand(
             'plots/fig4/{dataset}/cn_heatmaps.png',

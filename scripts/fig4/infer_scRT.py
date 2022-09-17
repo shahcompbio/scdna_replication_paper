@@ -14,7 +14,7 @@ def get_args():
     p.add_argument('cn_col', help='column in that contains hmmcopy cn states')
     p.add_argument('copy_col', help='column in that contains hmmcopy cn states')
     p.add_argument('gc_col', help='column containing gc values')
-    p.add_argument('cn_prior_method', help='method for assigning the cn prior of each S-phase cell (i.e. g1_clones, g1_cells, diploid, etc)')
+    p.add_argument('cn_prior_method', help='method for assigning the cn prior of each S-phase cell (i.e. g1_clones, g1_composite, diploid, etc)')
     p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
 

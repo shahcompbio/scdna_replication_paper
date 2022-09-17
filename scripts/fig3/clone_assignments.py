@@ -45,6 +45,10 @@ def main():
     # TODO: make sure this is right
     cn_s = cn.loc[~cn['cell_id'].isin(cn_g1['cell_id'].unique())]
 
+    # note which cells were in the tree (had a clone assignment)
+    cn_g1['in_tree'] = True
+    cn_s['in_tree'] = False
+
     # compute conesensus clone profiles for assign_col
     clone_profiles = compute_consensus_clone_profiles(
         cn_g1, argv.assign_col, clone_col='clone_id', cell_col='cell_id', chr_col='chr',

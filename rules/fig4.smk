@@ -160,7 +160,7 @@ rule infer_scRT_pyro_4:
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
-        cn_prior_method = 'g1_cells',
+        cn_prior_method = 'g1_composite',
         infer_mode = 'pyro'
     log: 'logs/fig4/{dataset}/infer_scRT_pyro.log'
     shell:
