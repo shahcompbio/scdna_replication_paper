@@ -43,7 +43,7 @@ def main():
 
     print('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=2000)
+    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=20)
     print('done running inference')
 
     print('cn_s.shape', cn_s.shape)

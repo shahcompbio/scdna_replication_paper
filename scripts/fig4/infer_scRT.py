@@ -42,13 +42,24 @@ def main():
 
     print('creating scrt object')
     # create SPF object with input
+    # running model with g1_cells prior method to see how model should work
+    scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.copy_col,
+                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method='g1_clones')
+
+    print('running inference')
+    # run inference
+    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=20)
+    print('done running inference')
+
+    print('creating scrt object')
+    # create SPF object with input
+    # run with composite cn prior to see what's going wrong
     scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.copy_col,
                 cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method)
 
     print('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=2000)
-    print('done running inference')
+    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=20)
 
     print('cn_s.shape', cn_s.shape)
     print('cn_s_with_scrt.shape', cn_s_with_scrt.shape)
