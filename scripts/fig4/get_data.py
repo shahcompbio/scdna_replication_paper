@@ -52,7 +52,7 @@ def get_data(argv, sas='',):
     logging.info('library sizes:\n{}'.format(metrics_data.groupby('library_id').size()))
 
     cn_data = cn_data.merge(metrics_data[['cell_id']].drop_duplicates())
-    cn_data = cn_data.merge(metrics_data[['cell_id', 'experimental_condition', 'log_likelihood', 'MBRSM_dispersion',
+    cn_data = cn_data.merge(metrics_data[['cell_id', 'experimental_condition', 'median_insert_size', 'MBRSM_dispersion',
                                         'MBRSI_dispersion_non_integerness', 'mean_state_mads', 'mad_hmmcopy']])
 
     # Remap experimental conditions and filter

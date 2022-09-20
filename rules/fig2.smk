@@ -66,6 +66,13 @@ rule all_fig2:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig2/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         
 
 rule simulate_cell_cn_states_2:
@@ -196,7 +203,8 @@ rule infer_scRT_bulk_2:
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         cn_prior_method = 'diploid',  # irrelevant bc pyro model not invoked here
-        infer_mode = 'bulk'
+        infer_mode = 'bulk',
+        max_iter = 2000
     log: 'logs/fig2/{dataset}/infer_scRT_bulk.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -215,8 +223,30 @@ rule infer_scRT_pyro_2:
         cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
+        cn_prior_method = 'g1_clones',
+        infer_mode = 'pyro',
+        max_iter = 2000
+    log: 'logs/fig2/{dataset}/infer_scRT_pyro.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule infer_scRT_pyro_composite_2:
+    input:
+        cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
+        cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
+    output: 'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
+    params:
+        input_col = 'true_reads_norm',
+        cn_col = 'observed_cn_state',
+        gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
+        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         cn_prior_method = 'g1_composite',
-        infer_mode = 'pyro'
+        infer_mode = 'pyro',
+        max_iter = 20
     log: 'logs/fig2/{dataset}/infer_scRT_pyro.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -314,6 +344,20 @@ rule plot_pyro_inferred_cn_vs_scRT_2:
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
+
+rule plot_pyro_composite_inferred_cn_vs_scRT_2:
+    input: 'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_infered.tsv'
+    output: 'plots/fig2/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'cell_frac_rep'
+    log: 'logs/fig2/{dataset}/plot_pyro_composite_inferred_cn_vs_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/plot_pyro_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
 rule compute_rt_pseudobulks_pyro_2:

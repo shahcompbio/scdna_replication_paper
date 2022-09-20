@@ -27,6 +27,11 @@
 		"time" : "48:00",
 		"mem" : 128
 	},
+	"infer_scRT_pyro_composite_2" :
+	{
+		"time" : "48:00",
+		"mem" : 128
+	},
 	"infer_scRT_pyro_2" :
 	{
 		"time" : "48:00",

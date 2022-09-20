@@ -7,7 +7,8 @@ configfile: "config.yaml"
 samples = pd.read_csv('data/signatures/signatures_samples.tsv', sep='\t')
 
 # only look at SA039 and SA906 datasets from fitness paper
-bad_datasets = ['SA1054', 'SA1055', 'SA1056']
+# bad_datasets = ['SA1054', 'SA1055', 'SA1056']
+bad_datasets = []
 
 rule all_fig3:
     input:
@@ -178,7 +179,7 @@ rule infer_scRT_pyro_3:
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
-        cn_prior_method = 'g1_composite',
+        cn_prior_method = 'g1_clones',
         infer_mode = 'pyro'
     log: 'logs/fig3/{dataset}/infer_scRT.log'
     shell:

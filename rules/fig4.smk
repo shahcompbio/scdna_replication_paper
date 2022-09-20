@@ -10,31 +10,56 @@ datasets = ['all', 'GM18507', 'T47D']
 training_data = pd.read_csv('/juno/work/shah/users/weinera2/projects/cell_cycle_classifier/cell_cycle_classifier/data/training/curated_feature_data_rt.csv')
 
 # paths on juno for reads, metics, and annotation metrics
+# cn_data_urls = [
+#     '/work/shah/tantalus/SC-1563/results/results/hmmcopy_autoploidy/A90553C_multiplier0_reads.csv.gz',
+#     '/work/shah/tantalus/SC-1561/results/results/hmmcopy_autoploidy/A73044A_multiplier0_reads.csv.gz',
+#     '/work/shah/tantalus/SC-1583/results/results/hmmcopy_autoploidy/A96139A_multiplier0_reads.csv.gz',
+#     '/work/shah/tantalus/SC-1585/results/results/hmmcopy_autoploidy/A96147A_multiplier0_reads.csv.gz',
+# ]
+
+# metrics_data_urls = [
+#     '/work/shah/tantalus/SC-1563/results/results/hmmcopy_autoploidy/A90553C_multiplier0_metrics.csv.gz',
+#     '/work/shah/tantalus/SC-1561/results/results/hmmcopy_autoploidy/A73044A_multiplier0_metrics.csv.gz',
+#     '/work/shah/tantalus/SC-1583/results/results/hmmcopy_autoploidy/A96139A_multiplier0_metrics.csv.gz',
+#     '/work/shah/tantalus/SC-1585/results/results/hmmcopy_autoploidy/A96147A_multiplier0_metrics.csv.gz',
+# ]
+
+# align_metrics_data_urls = [
+#     '/work/shah/tantalus/SC-1563/results/results/alignment/A90553C_alignment_metrics.csv.gz',
+#     '/work/shah/tantalus/SC-1561/results/results/alignment/A73044A_alignment_metrics.csv.gz',
+#     '/work/shah/tantalus/SC-1583/results/results/alignment/A96139A_alignment_metrics.csv.gz',
+#     '/work/shah/tantalus/SC-1585/results/results/alignment/A96147A_alignment_metrics.csv.gz',
+# ]
+
 cn_data_urls = [
-    '/work/shah/tantalus/SC-1563/results/results/hmmcopy_autoploidy/A90553C_multiplier0_reads.csv.gz',
-    '/work/shah/tantalus/SC-1561/results/results/hmmcopy_autoploidy/A73044A_multiplier0_reads.csv.gz',
-    '/work/shah/tantalus/SC-1583/results/results/hmmcopy_autoploidy/A96139A_multiplier0_reads.csv.gz',
-    '/work/shah/tantalus/SC-1585/results/results/hmmcopy_autoploidy/A96147A_multiplier0_reads.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/78/11/17811/analyses/scdna-hmmcopy__0.0.4__27278/results/A90553C_reads.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/71/34/17134/analyses/scdna-hmmcopy__0.0.3__22933/results/A73044A_reads.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/78/12/17812/analyses/scdna-hmmcopy__0.0.4__27279/results/SA1044_reads.csv.gz',  # A96139A
+    '/juno/work/shah/isabl_data_lake/experiments/78/13/17813/analyses/scdna-hmmcopy__0.0.4__27280/results/SA1044_reads.csv.gz',  # A96147A
 ]
 
 metrics_data_urls = [
-    '/work/shah/tantalus/SC-1563/results/results/hmmcopy_autoploidy/A90553C_multiplier0_metrics.csv.gz',
-    '/work/shah/tantalus/SC-1561/results/results/hmmcopy_autoploidy/A73044A_multiplier0_metrics.csv.gz',
-    '/work/shah/tantalus/SC-1583/results/results/hmmcopy_autoploidy/A96139A_multiplier0_metrics.csv.gz',
-    '/work/shah/tantalus/SC-1585/results/results/hmmcopy_autoploidy/A96147A_multiplier0_metrics.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/78/11/17811/analyses/scdna-annotation__0.0.4__27286/results/A90553C_metrics.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/71/34/17134/analyses/scdna-annotation__0.0.3__22937/results/A73044A_metrics.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/78/12/17812/analyses/scdna-annotation__0.0.4__27287/results/SA1044_metrics.csv.gz',  # A96139A
+    '/juno/work/shah/isabl_data_lake/experiments/78/13/17813/analyses/scdna-annotation__0.0.4__27288/results/SA1044_metrics.csv.gz',  # A96147A
 ]
 
 align_metrics_data_urls = [
-    '/work/shah/tantalus/SC-1563/results/results/alignment/A90553C_alignment_metrics.csv.gz',
-    '/work/shah/tantalus/SC-1561/results/results/alignment/A73044A_alignment_metrics.csv.gz',
-    '/work/shah/tantalus/SC-1583/results/results/alignment/A96139A_alignment_metrics.csv.gz',
-    '/work/shah/tantalus/SC-1585/results/results/alignment/A96147A_alignment_metrics.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/78/11/17811/analyses/scdna-alignment__0.0.4__27195/results/A90553C_alignment_metrics.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/71/34/17134/analyses/scdna-alignment__0.0.3__22930/results/A73044A_alignment_metrics.csv.gz',
+    '/juno/work/shah/isabl_data_lake/experiments/78/12/17812/analyses/scdna-alignment__0.0.4__27196/results/SA1044_alignment_metrics.csv.gz',  # A96139A
+    '/juno/work/shah/isabl_data_lake/experiments/78/13/17813/analyses/scdna-alignment__0.0.4__27197/results/SA1044_alignment_metrics.csv.gz',  # A96147A
 ]
 
 rule all_fig4:
     input:
         expand(
             'plots/fig4/{dataset}/cn_heatmaps.png',
+            dataset=[d for d in datasets]
+        ),
+        expand(
+            'plots/fig4/{dataset}/cn_clone_heatmaps.png',
             dataset=[d for d in datasets]
         ),
         expand(
@@ -149,19 +174,50 @@ rule plot_cn_heatmaps_4:
         ' ; deactivate'
 
 
+rule cluster_into_clones_4:
+    input:
+        cn_g1 = 'analysis/fig4/{dataset}/cn_g1.tsv',
+        cn_g2 = 'analysis/fig4/{dataset}/cn_g2.tsv'
+    output: 'analysis/fig4/{dataset}/cn_g_with_clone_id.tsv'
+    params:
+        value_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig4/{dataset}/cluster_into_clones.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python scripts/fig4/cluster_into_clones.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule plot_cn_clone_heatmaps_4:
+    input:
+        s_phase = 'analysis/fig4/{dataset}/cn_s.tsv',
+        g_phase = 'analysis/fig4/{dataset}/cn_g_with_clone_id.tsv',
+    output: 'plots/fig4/{dataset}/cn_clone_heatmaps.png'
+    params:
+        value_col = 'state',
+        dataset = 'flow-sorted'
+    log:
+        'logs/fig4/{dataset}/plot_cn_clone_heatmaps.log'
+    shell:
+        'source ../scgenome/venv/bin/activate ; '
+        'python3 scripts/fig4/plot_cn_clone_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
 rule infer_scRT_pyro_4:
     input:
         cn_s = 'analysis/fig4/{dataset}/cn_s.tsv',
-        cn_g1 = 'analysis/fig4/{dataset}/cn_g1.tsv',
-        cn_g2 = 'analysis/fig4/{dataset}/cn_g2.tsv'
+        cn_g = 'analysis/fig4/{dataset}/cn_g_with_clone_id.tsv'
     output: 'analysis/fig4/{dataset}/cn_s_pyro_infered.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
-        cn_prior_method = 'g1_composite',
-        infer_mode = 'pyro'
+        cn_prior_method = 'g1_clones',
     log: 'logs/fig4/{dataset}/infer_scRT_pyro.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '

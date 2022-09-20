@@ -6,7 +6,8 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 
 bad_datasets = []
-bad_datasets_3 = ['SA1054', 'SA1055', 'SA1056']
+# bad_datasets_3 = ['SA1054', 'SA1055', 'SA1056']
+bad_datasets_3 = []
 datasets_4 = ['all', 'GM18507', 'T47D']
 
 rule all:
@@ -68,6 +69,13 @@ rule all:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig2/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         # fig3 hTERT cell lines
         expand(
             'plots/fig3/{dataset}/ccc_features_hist.png',
@@ -93,6 +101,10 @@ rule all:
         # fig4 flow-sorted analysis
         expand(
             'plots/fig4/{dataset}/cn_heatmaps.png',
+            dataset=[d for d in datasets_4]
+        ),
+        expand(
+            'plots/fig4/{dataset}/cn_clone_heatmaps.png',
             dataset=[d for d in datasets_4]
         ),
         expand(

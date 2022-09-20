@@ -25,6 +25,16 @@ def split_cell_cycle(cn):
     df_g1 = cn.query('cell_cycle_state=="G1"').reset_index(drop=True)
     df_g2 = cn.query('cell_cycle_state=="G2"').reset_index(drop=True)
 
+    # remove low quality G1/2 phase cells
+    df_g1 = df_g1.query('quality > 0.75').reset_index(drop=True)
+    df_g2 = df_g2.query('quality > 0.75').reset_index(drop=True)
+
+    # remove cells that might be in S-phase from G1/2 dfs
+    df_g1 = df_g1.query('is_s_phase_prob < 0.5').reset_index(drop=True)
+    df_g2 = df_g2.query('is_s_phase_prob < 0.5').reset_index(drop=True)
+    df_g1 = df_g1.query('corrected_madn < 0 | corrected_breakpoints < 0').reset_index(drop=True)
+    df_g2 = df_g2.query('corrected_madn < 0 | corrected_breakpoints < 0').reset_index(drop=True)
+
     return df_s, df_g1, df_g2
 
 
