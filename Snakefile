@@ -9,6 +9,7 @@ bad_datasets = []
 # bad_datasets_3 = ['SA1054', 'SA1055', 'SA1056']
 bad_datasets_3 = []
 datasets_4 = ['all', 'GM18507', 'T47D']
+bad_datasets_5 = []
 
 rule all:
     input:
@@ -80,21 +81,21 @@ rule all:
         expand(
             'plots/fig3/{dataset}/ccc_features_hist.png',
             dataset=[
-                d for d in config['signatures_datasets']
+                d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets_3)
             ]
         ),
         expand(
             'plots/fig3/{dataset}/cn_heatmaps.png',
             dataset=[
-                d for d in config['signatures_datasets']
+                d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets_3)
             ]
         ),
         expand(
             'plots/fig3/{dataset}/rt_heatmap.png',
             dataset=[
-                d for d in config['signatures_datasets']
+                d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets_3)
             ]
         ),
@@ -116,6 +117,28 @@ rule all:
             dataset=[d for d in datasets_4]
         ),
         'plots/fig4/all/rt_corr.png',
+        # fig5 signatures human tumors
+        expand(
+            'plots/fig5/{dataset}/ccc_features_hist.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets_5)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/cn_heatmaps.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets_5)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/rt_heatmap.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets_5)
+            ]
+        ),
 
 include: "rules/fig2.smk"
 include: "rules/fig3.smk"
