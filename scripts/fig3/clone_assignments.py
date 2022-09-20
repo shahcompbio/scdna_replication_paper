@@ -12,6 +12,9 @@ def get_args():
     p.add_argument('clones', help='clone assignments from the fitness paper (applies to most datasets)')
     p.add_argument('clones_2295', help='clone assignments for just the 2295 dataset')
     p.add_argument('clones_SA1188', help='clone assignments for just the SA1188 dataset')
+    p.add_argument('clones_SA1054', help='clone assignments for just the SA1054 dataset')
+    p.add_argument('clones_SA1055', help='clone assignments for just the SA1055 dataset')
+    p.add_argument('clones_SA1056', help='clone assignments for just the SA1056 dataset')
     p.add_argument('dataset', help='name of this dataset')
     p.add_argument('assign_col', help='column to use for assigning S-phase cells to G1 clones')
     p.add_argument('cn_out', help='same as cn input but with clone_id brought in from tree or assigned via correlation for each cell')
@@ -28,6 +31,12 @@ def main():
         clones = pd.read_csv(argv.clones_2295, sep='\t')
     elif argv.dataset == 'SA1188':
         clones = pd.read_csv(argv.clones_SA1188, sep='\t')
+    elif argv.dataset == 'SA1054':
+        clones = pd.read_csv(argv.clones_SA1054, sep='\t')
+    elif argv.dataset == 'SA1055':
+        clones = pd.read_csv(argv.clones_SA1055, sep='\t')
+    elif argv.dataset == 'SA1056':
+        clones = pd.read_csv(argv.clones_SA1056, sep='\t')
     else:
         # load in clones from fitness results
         clones = pd.read_csv(argv.clones)

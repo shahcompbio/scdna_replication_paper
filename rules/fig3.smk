@@ -115,6 +115,9 @@ rule clone_assignments_3:
         clones ='data/fitness/fitness_cell_assignment_feb07_2020.tsv',
         clones_2295 = 'data/signatures/2295_clones.tsv',
         clones_SA1188 = 'data/signatures/SA1188_clones.tsv',
+        clones_SA1054 = 'data/signatures/SA1054_clones.tsv',
+        clones_SA1055 = 'data/signatures/SA1055_clones.tsv',
+        clones_SA1056 = 'data/signatures/SA1056_clones.tsv'
     output: 'analysis/fig3/{dataset}/cn_data_clones.tsv'
     params:
         dataset = lambda wildcards: wildcards.dataset,

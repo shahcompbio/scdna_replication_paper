@@ -246,7 +246,7 @@ rule infer_scRT_pyro_composite_2:
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         cn_prior_method = 'g1_composite',
         infer_mode = 'pyro',
-        max_iter = 20
+        max_iter = 2000
     log: 'logs/fig2/{dataset}/infer_scRT_pyro.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -351,7 +351,7 @@ rule plot_pyro_composite_inferred_cn_vs_scRT_2:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'cell_frac_rep'
+        frac_rt_col = 'model_s_time'
     log: 'logs/fig2/{dataset}/plot_pyro_composite_inferred_cn_vs_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
