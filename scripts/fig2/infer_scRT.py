@@ -15,7 +15,7 @@ def get_args():
     p.add_argument('rt_col', help='column containing rt values')
     p.add_argument('cn_prior_method', help='method for assigning the cn prior of each S-phase cell (i.e. g1_clones, g1_composite, diploid, etc)')
     p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
-    p.add_argument('max_iter', help='max number of svi steps to take for each pyro model')
+    p.add_argument('max_iter', type=int, help='max number of svi steps to take for each pyro model')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
 
     return p.parse_args()
