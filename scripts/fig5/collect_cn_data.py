@@ -93,7 +93,7 @@ if __name__ == '__main__':
     cn = cn.query('gc > 0')
 
     # remove Y chromosome since we're dealing with female cell lines
-    cn = cn.query('chr != "Y"')
+    # cn = cn.query('chr != "Y"')
 
     # remove Y chromosome since we're dealing with female cell lines
     cn['library_id'] = cn['cell_id'].apply(lambda x: x.split('-')[1])
@@ -102,14 +102,9 @@ if __name__ == '__main__':
     print(argv.samples)
     sample_ids = list(argv.samples)
     sample_ids.append(argv.dataset)
-    # catch edge cases where cell_ids don't exactly match the sample or dataset id
-    if argv.dataset in ['SA906a', 'SA906b']:
-        sample_ids.append('SA906')
-    elif argv.dataset == 'SA1292':
-        sample_ids.append('AT135')
     cn = cn[cn['cell_id'].str.contains('|'.join(sample_ids))]
 
-    # filter out cells based on quality, experimental condition and contamination    
+    # filter out cells based on quality, experimental condition and contamination   
     cn = cn[
         (cn['cell_call'].isin(['C1', 'C2']))
     ]

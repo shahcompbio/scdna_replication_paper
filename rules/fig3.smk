@@ -4,7 +4,10 @@ import numpy as np
 np.random.seed(2794834348)
 
 configfile: "config.yaml"
-samples = pd.read_csv('data/signatures/signatures_samples.tsv', sep='\t')
+hmmcopy_samples = pd.read_csv('data/signatures/signatures-hmmcopy.csv')
+metrics_samples = pd.read_csv('data/signatures/signatures-annotation.csv')
+htert_hmmcopy = hmmcopy_samples.loc[hmmcopy_samples['isabl_patient_id']=='184-hTERT']
+htert_metrics = metrics_samples.loc[metrics_samples['isabl_patient_id']=='184-hTERT']
 
 # only look at SA039 and SA906 datasets from fitness paper
 # bad_datasets = ['SA1054', 'SA1055', 'SA1056']
@@ -49,71 +52,73 @@ rule all_fig3:
         ),
         
 
-def dataset_cn_files(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    library_ids = samples.loc[mask, 'library_id']
-    ticket_ids = samples.loc[mask, 'ticket_id']
-
-    files = expand(
-        config['ticket_dir_500kb'] + \
-            '/{ticket}/results/hmmcopy/{library}_reads.csv.gz',
-        zip, ticket=ticket_ids, library=library_ids
-    )
-    return files
-
-
-def dataset_sample_ids(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    sample_ids = samples.loc[mask, 'sample_id']
-    sample_ids = list(sample_ids)
-    return sample_ids
+def dataset_cn_files_3(wildcards):
+    if wildcards.dataset == 'OV2295':
+        files = hmmcopy_samples.loc[
+            hmmcopy_samples['isabl_patient_id']==wildcards.dataset].loc[
+            hmmcopy_samples['result_type']=='reads']['result_filepath'].values
+    else:
+        col = 'in_{}'.format(wildcards.dataset)
+        htert_hmmcopy[col] = list(
+            map(lambda x: x.startswith(wildcards.dataset), htert_hmmcopy['isabl_sample_id'])
+        )
+        files = htert_hmmcopy.loc[
+            htert_hmmcopy[col]==True].loc[
+            htert_hmmcopy['result_type']=='reads']['result_filepath'].values
+    
+    return expand(files)
 
 
-def dataset_metric_files(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    library_ids = samples.loc[mask, 'library_id']
-    ticket_ids = samples.loc[mask, 'ticket_id']
+def dataset_metric_files_3(wildcards):
+    if wildcards.dataset == 'OV2295':
+        files = metrics_samples.loc[
+            metrics_samples['isabl_patient_id']==wildcards.dataset].loc[
+            metrics_samples['result_type']=='metrics']['result_filepath'].values
+    else:
+        col = 'in_{}'.format(wildcards.dataset)
+        htert_metrics[col] = list(
+            map(lambda x: x.startswith(wildcards.dataset), htert_metrics['isabl_sample_id'])
+        )
+        files = htert_metrics.loc[
+            htert_metrics[col]==True].loc[
+            htert_metrics['result_type']=='metrics']['result_filepath'].values
+    
+    return expand(files)
 
-    files = expand(
-        config['ticket_dir_500kb'] + \
-            '/{ticket}/results/annotation/{library}_metrics.csv.gz',
-        zip, ticket=ticket_ids, library=library_ids
-    )
-    return files
 
-
-def dataset_metric_files_updated_classifier(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    library_ids = samples.loc[mask, 'library_id']
-    sample_ids = samples.loc[mask, 'isabl_sample_id']
-
-    files = expand(
-        '/juno/work/shah/users/weinera2/projects/all-dlp-classifier' + \
-            '/analysis/{sample}:{library}/merged_classifier_results.tsv',
-        zip, sample=sample_ids, library=library_ids
-    )
-    return files
+def dataset_sample_ids_3(wildcards):
+    if wildcards.dataset == 'OV2295':
+        sample_ids = metrics_samples.loc[metrics_samples['isabl_patient_id']==wildcards.dataset]['isabl_sample_id'].unique()
+    else:
+        col = 'in_{}'.format(wildcards.dataset)
+        htert_metrics[col] = list(
+            map(lambda x: x.startswith(wildcards.dataset), htert_metrics['isabl_sample_id'])
+        )
+        sample_ids = htert_metrics.loc[htert_metrics[col]==True]['isabl_sample_id'].unique()
+    
+    return expand(sample_ids)
 
 
 rule collect_cn_data_3:
     input: 
-        hmm = dataset_cn_files,
-        annotation = dataset_metric_files_updated_classifier
+        hmm = dataset_cn_files_3,
+        annotation = dataset_metric_files_3
     output: 'analysis/fig3/{dataset}/cn_data.tsv'
     log: 'logs/fig3/{dataset}/collect_cn_data.log'
     params:
-        samples = dataset_sample_ids
+        samples = dataset_sample_ids_3,
+        dataset = lambda wildcards: wildcards.dataset
     shell: 
         'python scripts/fig3/collect_cn_data.py '
         '--hmm {input.hmm} --annotation {input.annotation} '
-        '--samples {params.samples} --output {output} &> {log}'
+        '--samples {params.samples} --dataset {params.dataset} '
+        '--output {output} &> {log}'
 
 
 rule clone_assignments_3:
     input: 
         cn = 'analysis/fig3/{dataset}/cn_data.tsv',
-        clones = '../signaturesanalysis/data/cell_clones.tsv',
-        clones_2295 = 'data/signatures/2295_clones.tsv',
+        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
     output: 'analysis/fig3/{dataset}/cn_data_clones.tsv'
     params:
         dataset = lambda wildcards: wildcards.dataset,

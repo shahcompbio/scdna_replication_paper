@@ -10,7 +10,25 @@ fitness_rx_pairs:
   SA535:
     Rx: 'SA535_CISPLATIN_CombinedT'
     UnRx: 'SA535_CISPLATIN_CombinedU'
-signatures_cell_lines: ['SA039', 'SA906a', 'SA906b', 'SA1188', 'SA1054', 'SA1055', 'SA1056', '2295']
+signatures_cell_lines:
+  SA039:
+    type: 'hTERT WT'
+  SA906a:
+    type: 'hTERT TP53-/-'
+  SA906b:
+    type: 'hTERT TP53-/-'
+  SA1188:
+    type: 'hTERT BRCA2+/− TP53−/−'
+  SA1056:
+    type: 'hTERT BRCA2−/− TP53−/−'
+  SA1055:
+    type: 'hTERT BRCA2−/− TP53−/−'
+  SA1054:
+    type: 'hTERT BRCA1−/− TP53−/−'
+  SA1292:
+    type: 'hTERT BRCA1+/− TP53−/−'
+  OV2295:
+    type: 'HGSOC cell line'
 signatures_patient_tumors:
   SA1091:
     type: 'HGSOC'

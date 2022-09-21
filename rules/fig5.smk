@@ -4,7 +4,8 @@ import numpy as np
 np.random.seed(2794834348)
 
 configfile: "config.yaml"
-samples = pd.read_csv('data/signatures/signatures_samples.tsv', sep='\t')
+hmmcopy_samples = pd.read_csv('data/signatures/signatures-hmmcopy.csv')
+metrics_samples = pd.read_csv('data/signatures/signatures-annotation.csv')
 
 bad_datasets = []
 
@@ -17,13 +18,13 @@ rule all_fig5:
                 if (d not in bad_datasets)
             ]
         ),
-        expand(
-            'plots/fig5/{dataset}/rt_heatmap.png',
-            dataset=[
-                d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # expand(
+        #     'plots/fig5/{dataset}/rt_heatmap.png',
+        #     dataset=[
+        #         d for d in config['signatures_patient_tumors']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
         expand(
             'plots/fig5/{dataset}/ccc_features_hist.png',
             dataset=[
@@ -33,71 +34,45 @@ rule all_fig5:
         ),
         
 
-def dataset_cn_files(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    library_ids = samples.loc[mask, 'library_id']
-    ticket_ids = samples.loc[mask, 'ticket_id']
-
-    files = expand(
-        config['ticket_dir_500kb'] + \
-            '/{ticket}/results/hmmcopy/{library}_reads.csv.gz',
-        zip, ticket=ticket_ids, library=library_ids
-    )
-    return files
+def dataset_cn_files_5(wildcards):
+    files = hmmcopy_samples.loc[
+        hmmcopy_samples['isabl_patient_id']==wildcards.dataset].loc[
+        hmmcopy_samples['result_type']=='reads']['result_filepath'].values
+    return expand(files)
 
 
-def dataset_sample_ids(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    sample_ids = samples.loc[mask, 'sample_id']
-    sample_ids = list(sample_ids)
-    return sample_ids
+def dataset_metric_files_5(wildcards):
+    files = metrics_samples.loc[
+        metrics_samples['isabl_patient_id']==wildcards.dataset].loc[
+        metrics_samples['result_type']=='metrics']['result_filepath'].values
+    return expand(files)
 
 
-def dataset_metric_files(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    library_ids = samples.loc[mask, 'library_id']
-    ticket_ids = samples.loc[mask, 'ticket_id']
-
-    files = expand(
-        config['ticket_dir_500kb'] + \
-            '/{ticket}/results/annotation/{library}_metrics.csv.gz',
-        zip, ticket=ticket_ids, library=library_ids
-    )
-    return files
-
-
-def dataset_metric_files_updated_classifier(wildcards):
-    mask = samples['dataset_id'] == wildcards.dataset
-    library_ids = samples.loc[mask, 'library_id']
-    sample_ids = samples.loc[mask, 'isabl_sample_id']
-
-    files = expand(
-        '/juno/work/shah/users/weinera2/projects/all-dlp-classifier' + \
-            '/analysis/{sample}:{library}/merged_classifier_results.tsv',
-        zip, sample=sample_ids, library=library_ids
-    )
-    return files
+def dataset_sample_ids_5(wildcards):
+    sample_ids = metrics_samples.loc[metrics_samples['isabl_patient_id']==wildcards.dataset]['isabl_sample_id'].unique()
+    return expand(sample_ids)
 
 
 rule collect_cn_data_5:
     input: 
-        hmm = dataset_cn_files,
-        annotation = dataset_metric_files
+        hmm = dataset_cn_files_5,
+        annotation = dataset_metric_files_5
     output: 'analysis/fig5/{dataset}/cn_data.tsv'
     log: 'logs/fig5/{dataset}/collect_cn_data.log'
     params:
-        samples = dataset_sample_ids
+        samples = dataset_sample_ids_5,
+        dataset = lambda wildcards: wildcards.dataset
     shell: 
         'python scripts/fig5/collect_cn_data.py '
         '--hmm {input.hmm} --annotation {input.annotation} '
-        '--samples {params.samples} --output {output} &> {log}'
+        '--samples {params.samples} --dataset {params.dataset} '
+        '--output {output} &> {log}'
 
 
 rule clone_assignments_5:
     input: 
         cn = 'analysis/fig5/{dataset}/cn_data.tsv',
-        clones = '../signaturesanalysis/data/cell_clones.tsv',
-        clones_2295 = 'data/signatures/2295_clones.tsv',
+        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
     output: 'analysis/fig5/{dataset}/cn_data_clones.tsv'
     params:
         dataset = lambda wildcards: wildcards.dataset,
@@ -105,7 +80,7 @@ rule clone_assignments_5:
     log: 'logs/fig5/{dataset}/clone_assignments.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig5/clone_assignments.py '
+        'python3 scripts/fig3/clone_assignments.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -116,7 +91,7 @@ rule compute_ccc_features_5:
     log: 'logs/fig5/{dataset}/compute_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig5/compute_ccc_features.py '
+        'python3 scripts/fig3/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -126,7 +101,7 @@ rule plot_ccc_features_5:
     output: 
         plot1 = 'plots/fig5/{dataset}/ccc_features_hist.png',
         plot2 = 'plots/fig5/{dataset}/ccc_features_scatter.png'
-    log: 'logs/fig2/{dataset}/plot_ccc_features.log'
+    log: 'logs/fig5/{dataset}/plot_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig5/plot_ccc_features.py '
@@ -174,7 +149,7 @@ rule infer_scRT_pyro_5:
 
 rule plot_cn_heatmaps_5:
     input:
-        s_phase = 'analysis/fig5/{dataset}/s_phase_cells_with_scRT.tsv',
+        s_phase = 'analysis/fig5/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig5/{dataset}/g1_phase_cells.tsv'
     output: 'plots/fig5/{dataset}/cn_heatmaps.png'
     params:

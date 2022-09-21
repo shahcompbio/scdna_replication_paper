@@ -7,9 +7,9 @@ configfile: "config.yaml"
 
 bad_datasets = []
 # bad_datasets_3 = ['SA1054', 'SA1055', 'SA1056']
-bad_datasets_3 = []
+bad_datasets_3 = config['signatures_patient_tumors']
 datasets_4 = ['all', 'GM18507', 'T47D']
-bad_datasets_5 = []
+bad_datasets_5 = config['signatures_cell_lines']
 
 rule all:
     input:
@@ -132,14 +132,15 @@ rule all:
                 if (d not in bad_datasets_5)
             ]
         ),
-        expand(
-            'plots/fig3/{dataset}/rt_heatmap.png',
-            dataset=[
-                d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
-            ]
-        ),
+        # expand(
+        #     'plots/fig3/{dataset}/rt_heatmap.png',
+        #     dataset=[
+        #         d for d in config['signatures_patient_tumors']
+        #         if (d not in bad_datasets_5)
+        #     ]
+        # ),
 
 include: "rules/fig2.smk"
 include: "rules/fig3.smk"
 include: "rules/fig4.smk"
+include: "rules/fig5.smk"

@@ -13,6 +13,10 @@
 	{
 		"mem" : 96
 	},
+	"collect_cn_data_5" :
+	{
+		"mem" : 200
+	},
 	"simulate_cell_cn_states_2" :
 	{
 		"time" : "10:00",
@@ -43,6 +47,11 @@
 		"mem" : 128
 	},
 	"infer_scRT_pyro_4" :
+	{
+		"time" : "48:00",
+		"mem" : 128
+	},
+	"infer_scRT_pyro_5" :
 	{
 		"time" : "48:00",
 		"mem" : 128

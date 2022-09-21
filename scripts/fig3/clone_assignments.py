@@ -9,8 +9,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('cn', help='long-form cn_data for all cells in this dataset w/o clone assignments')
-    p.add_argument('clones', help='clone assignments from the signatures paper (applies to most datasets)')
-    p.add_argument('clones_2295', help='clone assignments for just the 2295 dataset')
+    p.add_argument('clones', help='clone assignments from the signatures paper')
     p.add_argument('dataset', help='name of this dataset')
     p.add_argument('assign_col', help='column to use for assigning S-phase cells to G1 clones')
     p.add_argument('cn_out', help='same as cn input but with clone_id brought in from tree or assigned via correlation for each cell')
@@ -23,23 +22,14 @@ def main():
 
     cn = pd.read_csv(argv.cn, sep='\t')
 
-    if argv.dataset == '2295':
-        clones = pd.read_csv(argv.clones_2295, sep='\t')
-    else:
-        # load in clones from signatures results
-        clones = pd.read_csv(argv.clones, sep='\t')
-        # clones = clones.drop(columns=['V1', 'datatag', 'sample_id'])
-        # clones = clones.rename(columns={'single_cell_id': 'cell_id', 'letters': 'clone_id'})
-
-        # # remove the 'a' or 'b' suffix from SA906 cell IDs in the clone mapping file
-        # if 'SA906' in argv.dataset:
-        #     clones['cell_id'] = clones['cell_id'].apply(lambda x: x.replace(argv.dataset, 'SA906'))
+    # load in clone assignments for each cell in this dataset
+    # assignments are from most recent version of signatures paper analysis
+    clones = pd.read_csv(argv.clones, sep='\t')
 
     # merge clone_id for the g1-phase cells (those with clone labels already)
     cn_g1 = pd.merge(cn, clones, on='cell_id')
     
     # need to assign clone_ids for the S-phase cells who do not appear in cn_g1
-    # TODO: make sure this is right
     cn_s = cn.loc[~cn['cell_id'].isin(cn_g1['cell_id'].unique())]
 
     # note which cells were in the tree (had a clone assignment)
