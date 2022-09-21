@@ -1,6 +1,5 @@
 ticket_dir_50kb: /juno/work/shah/users/weinera2/projects/hmmcopy/output
 ticket_dir_500kb: /work/shah/tantalus
-datasets: ['2295', 'SA039']
 fitness_datasets: ['SA000', 'SA001', 'SA039U', 'SA532', 'SA609',
                    'SA609X3X8a', 'SA906a', 'SA906b', 'SA1035U',
                    'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT']
@@ -47,7 +46,7 @@ signatures_patient_tumors:
     type: 'HGSOC'
     signature: 'HRD-Dup'
   SA1182:
-     type: 'HGSOC'
+    type: 'HGSOC'
     signature: 'FBI'
   SA1184:
     type: 'HGSOC'
