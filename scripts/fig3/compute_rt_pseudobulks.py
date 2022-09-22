@@ -8,6 +8,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('input', help='long-form copy number dataframe for S-phase cells with scRT data')
+    p.add_argument('rep_col', type=str, help='column name for replicated status of each bin in pyro model')
     p.add_argument('output', help='scRT pseudobulks')
 
     return p.parse_args()
@@ -18,7 +19,7 @@ def main():
 
     df = pd.read_csv(argv.input, sep='\t')
 
-    bulk_rt = compute_pseudobulk_rt_profiles(df, 'rt_value', output_col='pseduobulk', time_col='hours', clone_col='clone_id')
+    bulk_rt = compute_pseudobulk_rt_profiles(df, argv.rep_col, output_col='pseduobulk', time_col='hours', clone_col='clone_id')
 
     bulk_rt.to_csv(argv.output, sep='\t', index=False)
 

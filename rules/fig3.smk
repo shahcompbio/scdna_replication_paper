@@ -224,28 +224,61 @@ rule plot_rt_heatmap_3:
         ' ; deactivate'
 
 
-rule rt_clustering_3:
-    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
-    output: 
-        umap = 'plots/fig3/{dataset}/rt_clusters_umap.png',
-        kde = 'plots/fig3/{dataset}/rt_clusters_kde.png',
-        heatmap = 'plots/fig3/{dataset}/rt_clusters_heatmap.png',
-        df = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_clusters.tsv'
+rule plot_pyro_model_output_3:
+    input:
+        s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
+        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    output:
+        plot1 = 'plots/fig3/{dataset}/inferred_cn_rep_results.png',
+        plot2 = 'plots/fig3/{dataset}/s_vs_g_hmmcopy_states.png',
+        plot3 = 'plots/fig3/{dataset}/s_vs_g_rpm.png',
     params:
-        value_col = 'rt_state',
-        sort_col = 'frac_rt',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/rt_clustering.log'
+    log: 'logs/fig3/{dataset}/plot_pyro_model_output.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig3/rt_clustering.py '
-        '{input} {params} {output} &> {log}'
-        ' ; deactivate'
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule remove_nonreplicating_cells_3:
+    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
+    log: 'logs/fig3/{dataset}/remove_nonreplicating_cells.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/remove_nonreplicating_cells.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_filtered_pyro_model_output_3:
+    input:
+        s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    output:
+        plot1 = 'plots/fig3/{dataset}/inferred_cn_rep_results_filtered.png',
+        plot2 = 'plots/fig3/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
+        plot3 = 'plots/fig3/{dataset}/s_vs_g_rpm_filtered.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig3/{dataset}/plot_filtered_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
 rule compute_rt_pseudobulks_3:
-    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
+    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
     output: 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
+    params:
+        rep_col = 'model_rep_state',
     log: 'logs/fig3/{dataset}/compute_rt_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -256,11 +289,13 @@ rule compute_rt_pseudobulks_3:
 
 rule twidth_analysis_3:
     input: 
-        scrt = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
+        scrt = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         bulks = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
     output: 'plots/fig3/{dataset}/twidth_curves.png'
     params:
-        dataset = lambda wildcards: wildcards.dataset
+        dataset = lambda wildcards: wildcards.dataset,
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
     log: 'logs/fig3/{dataset}/twidth_analysis.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
