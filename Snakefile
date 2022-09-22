@@ -113,10 +113,21 @@ rule all:
             dataset=[d for d in datasets_4]
         ),
         expand(
+            'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite.png',
+            dataset=[d for d in datasets_4]
+        ),
+        expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
             dataset=[d for d in datasets_4]
         ),
+        expand(
+            'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
+            dataset=[d for d in datasets_4]
+        ),
         'plots/fig4/all/rt_corr.png',
+        'plots/fig4/all/rt_corr_composite.png',
+        'plots/fig4/all/twidth_curves.png',
+        'plots/fig4/all/twidth_curves_composite.png',
         # fig5 signatures human tumors
         expand(
             'plots/fig5/{dataset}/ccc_features_hist.png',
