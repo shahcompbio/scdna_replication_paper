@@ -109,22 +109,17 @@ rule plot_ccc_features_5:
         'deactivate'
 
 
-rule get_s_phase_cells_5:
+rule split_cell_cycle_5:
     input: 'analysis/fig5/{dataset}/cn_data_features.tsv'
-    output: 'analysis/fig5/{dataset}/s_phase_cells.tsv'
-    run:
-        df = pd.read_csv(str(input), sep='\t', index_col=False)
-        df = df.query('in_tree == False')
-        df.to_csv(str(output), sep='\t', index=False)
-
-
-rule get_non_s_phase_cells_5:
-    input: 'analysis/fig5/{dataset}/cn_data_features.tsv'
-    output: 'analysis/fig5/{dataset}/g1_phase_cells.tsv'
-    run:
-        df = pd.read_csv(str(input), sep='\t', index_col=False)
-        df = df.query('in_tree == True')
-        df.to_csv(str(output), sep='\t', index=False)
+    output:
+        cn_s = 'analysis/fig5/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fig5/{dataset}/g1_phase_cells.tsv'
+    log: 'logs/fig5/{dataset}/split_cell_cycle.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig5/split_cell_cycle.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
 rule infer_scRT_pyro_5:
@@ -176,3 +171,83 @@ rule plot_rt_heatmap_5:
         'python3 scripts/fig3/plot_rt_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
+
+
+rule plot_pyro_model_output_5:
+    input:
+        s_phase = 'analysis/fig5/{dataset}/s_phase_cells_with_scRT.tsv',
+        g1_phase = 'analysis/fig5/{dataset}/g1_phase_cells.tsv'
+    output:
+        plot1 = 'plots/fig5/{dataset}/inferred_cn_rep_results.png',
+        plot2 = 'plots/fig5/{dataset}/s_vs_g_hmmcopy_states.png',
+        plot3 = 'plots/fig5/{dataset}/s_vs_g_rpm.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig5/{dataset}/plot_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule remove_nonreplicating_cells_5:
+    input: 'analysis/fig5/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 'analysis/fig5/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
+    log: 'logs/fig5/{dataset}/remove_nonreplicating_cells.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/remove_nonreplicating_cells.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_filtered_pyro_model_output_5:
+    input:
+        s_phase = 'analysis/fig5/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        g1_phase = 'analysis/fig5/{dataset}/g1_phase_cells.tsv'
+    output:
+        plot1 = 'plots/fig5/{dataset}/inferred_cn_rep_results_filtered.png',
+        plot2 = 'plots/fig5/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
+        plot3 = 'plots/fig5/{dataset}/s_vs_g_rpm_filtered.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig5/{dataset}/plot_filtered_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_rt_pseudobulks_5:
+    input: 'analysis/fig5/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    output: 'analysis/fig5/{dataset}/scRT_pseudobulks.tsv'
+    params:
+        rep_col = 'model_rep_state',
+    log: 'logs/fig5/{dataset}/compute_rt_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/compute_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule twidth_analysis_5:
+    input: 
+        scrt = 'analysis/fig5/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        bulks = 'analysis/fig5/{dataset}/scRT_pseudobulks.tsv'
+    output: 'plots/fig5/{dataset}/twidth_curves.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
+    log: 'logs/fig5/{dataset}/twidth_analysis.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/twidth_analysis.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'

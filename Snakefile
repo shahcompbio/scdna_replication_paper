@@ -29,6 +29,13 @@ rule all:
             ]
         ),
         expand(
+            'plots/fig2/{dataset}/scRT_heatmaps_pyro_composite.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
@@ -37,6 +44,13 @@ rule all:
         ),
         expand(
             'plots/fig2/{dataset}/twidth_heatmaps_bulk.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig2/{dataset}/twidth_heatmaps_pyro_composite.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
@@ -99,6 +113,27 @@ rule all:
                 if (d not in bad_datasets_3)
             ]
         ),
+        expand(
+            'plots/fig3/{dataset}/inferred_cn_rep_results.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets_3)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/inferred_cn_rep_results_filtered.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets_3)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/twidth_curves.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets_3)
+            ]
+        ),
         # fig4 flow-sorted analysis
         expand(
             'plots/fig4/{dataset}/cn_heatmaps.png',
@@ -137,19 +172,40 @@ rule all:
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/cn_heatmaps.png',
+            'plots/fig5/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),
-        # expand(
-        #     'plots/fig3/{dataset}/rt_heatmap.png',
-        #     dataset=[
-        #         d for d in config['signatures_patient_tumors']
-        #         if (d not in bad_datasets_5)
-        #     ]
-        # ),
+        expand(
+            'plots/fig5/{dataset}/rt_heatmap.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets_5)
+            ]
+        ),
+        expand(
+            'plots/fig5/{dataset}/inferred_cn_rep_results.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets_5)
+            ]
+        ),
+        expand(
+            'plots/fig5/{dataset}/inferred_cn_rep_results_filtered.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets_5)
+            ]
+        ),
+        expand(
+            'plots/fig5/{dataset}/twidth_curves.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets_5)
+            ]
+        ),
 
 include: "rules/fig2.smk"
 include: "rules/fig3.smk"

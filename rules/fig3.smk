@@ -29,20 +29,27 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/fig3/{dataset}/rt_clusters_heatmap.png',
-        #     dataset=[
-        #         d for d in config['signatures_cell_lines']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fig3/{dataset}/twidth_curves.png',
-        #     dataset=[
-        #         d for d in config['signatures_cell_lines']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fig3/{dataset}/inferred_cn_rep_results.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/inferred_cn_rep_results_filtered.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig3/{dataset}/twidth_curves.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
         expand(
             'plots/fig3/{dataset}/ccc_features_hist.png',
             dataset=[
@@ -155,22 +162,17 @@ rule plot_ccc_features_3:
         'deactivate'
 
 
-rule get_s_phase_cells_3:
+rule split_cell_cycle_3:
     input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
-    output: 'analysis/fig3/{dataset}/s_phase_cells.tsv'
-    run:
-        df = pd.read_csv(str(input), sep='\t', index_col=False)
-        df = df.query('in_tree == False')
-        df.to_csv(str(output), sep='\t', index=False)
-
-
-rule get_non_s_phase_cells_3:
-    input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
-    output: 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    run:
-        df = pd.read_csv(str(input), sep='\t', index_col=False)
-        df = df.query('in_tree == True')
-        df.to_csv(str(output), sep='\t', index=False)
+    output:
+        cn_s = 'analysis/fig3/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    log: 'logs/fig3/{dataset}/split_cell_cycle.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/split_cell_cycle.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
 rule infer_scRT_pyro_3:

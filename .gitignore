@@ -136,9 +136,11 @@ logs/
 analysis/
 notebooks/
 plots/
+envs/
 err.txt
 out.txt
 .DS_Store
 ._.DS_Store
 data/gc_rt_bin_sizes.csv
+data/signatures/clone_trees/
 

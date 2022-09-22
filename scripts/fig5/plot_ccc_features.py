@@ -60,3 +60,13 @@ def plot_ccc_distributions(cell_metrics, argv):
 
 if __name__ == '__main__':
     argv = get_args()
+
+    # load in data
+    cn = pd.read_csv(argv.cn_input, sep='\t')
+   
+    # use ecf status to come up with good vs bad S-phase labels in cell_cycle_state column
+    cell_metrics = get_cell_metrics(cn)
+
+    # generate and save plots
+    plot_ccc_distributions(cell_metrics, argv)
+
