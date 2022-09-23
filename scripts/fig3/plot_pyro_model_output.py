@@ -80,10 +80,10 @@ def main():
     plot_model_results(cn_s, argv)
 
     # show hmmcopy state heatmaps for both S-phase and G1-phase cells
-    plot_hmmcopy(cn_s, cn_g1, argv)
+    plot_hmmcopy(cn_s, cn_g, argv)
 
     # show reads per million heatmaps for both S-phase and G1-phase cells
-    plot_rpm(cn_s, cn_g1, argv)
+    plot_rpm(cn_s, cn_g, argv)
 
 
 

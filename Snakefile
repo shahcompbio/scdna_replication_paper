@@ -36,21 +36,21 @@ rule all:
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
+            'plots/fig2/{dataset}/twidth_curves_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_heatmaps_bulk.png',
+            'plots/fig2/{dataset}/twidth_curves_bulk.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_heatmaps_pyro_composite.png',
+            'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)

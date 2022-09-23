@@ -32,21 +32,21 @@ rule all_fig2:
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
+            'plots/fig2/{dataset}/twidth_curves_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_heatmaps_bulk.png',
+            'plots/fig2/{dataset}/twidth_curves_bulk.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_heatmaps_pyro_composite.png',
+            'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
@@ -458,8 +458,8 @@ rule twidth_analysis_pyro_2:
         cn = 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro.tsv'
     output: 
-        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_pyro.png',
-        plot2 = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
+        tsv = 'plots/fig2/{dataset}/twidth_values_pyro.tsv',
+        plot = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
@@ -471,7 +471,7 @@ rule twidth_analysis_pyro_2:
         infer_mode = 'pyro'
     log: 'logs/fig2/{dataset}/twidth_analysis_pyro.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig2/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -482,8 +482,8 @@ rule twidth_analysis_bulk_2:
         cn = 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_bulk.tsv'
     output: 
-        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_bulk.png',
-        plot2 = 'plots/fig2/{dataset}/twidth_curves_bulk.png',
+        tsv = 'plots/fig2/{dataset}/twidth_values_bulk.tsv',
+        plot = 'plots/fig2/{dataset}/twidth_curves_bulk.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
@@ -495,7 +495,7 @@ rule twidth_analysis_bulk_2:
         infer_mode = 'bulk'
     log: 'logs/fig2/{dataset}/twidth_analysis_bulk.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig2/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -506,8 +506,8 @@ rule twidth_analysis_pyro_composite_2:
         cn = 'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro_composite.tsv'
     output: 
-        plot1 = 'plots/fig2/{dataset}/twidth_heatmaps_pyro_composite.png',
-        plot2 = 'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
+        tsv = 'plots/fig2/{dataset}/twidth_values_pyro_composite.tsv',
+        plot = 'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
         nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
@@ -516,10 +516,10 @@ rule twidth_analysis_pyro_composite_2:
         true_frac_col = 'true_t',
         rep_state = 'model_rep_state',
         true_rep_state = 'true_rep',
-        infer_mode = 'pyro composite'
+        infer_mode = 'pyro_composite'
     log: 'logs/fig2/{dataset}/twidth_analysis_pyro_composite.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig2/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
