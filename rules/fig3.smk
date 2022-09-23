@@ -44,6 +44,13 @@ rule all_fig3:
             ]
         ),
         expand(
+            'plots/fig3/{dataset}/inferred_cn_rep_results_nonrep.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/fig3/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
@@ -185,7 +192,7 @@ rule infer_scRT_pyro_3:
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
-        cn_prior_method = 'g1_clones',
+        cn_prior_method = 'g1_composite',
         infer_mode = 'pyro'
     log: 'logs/fig3/{dataset}/infer_scRT.log'
     shell:
@@ -246,7 +253,9 @@ rule plot_pyro_model_output_3:
 
 rule remove_nonreplicating_cells_3:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
-    output: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    output: 
+        good = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        bad = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
@@ -269,6 +278,24 @@ rule plot_filtered_pyro_model_output_3:
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fig3/{dataset}/plot_filtered_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_nonrep_pyro_model_output_3:
+    input:
+        s_phase = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
+        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    output:
+        plot1 = 'plots/fig3/{dataset}/inferred_cn_rep_results_nonrep.png',
+        plot2 = 'plots/fig3/{dataset}/s_vs_g_hmmcopy_states_nonrep.png',
+        plot3 = 'plots/fig3/{dataset}/s_vs_g_rpm_nonrep.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig3/{dataset}/plot_nonrep_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig3/plot_pyro_model_output.py '

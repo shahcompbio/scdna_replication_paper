@@ -8,7 +8,8 @@ def get_args():
     p.add_argument('input', type=str, help='pyro model output for s-phase cells')
     p.add_argument('frac_rt_col', type=str, help='column name for the fraction of replicated bins in a cell')
     p.add_argument('rep_col', type=str, help='column name for replicated status of each bin in pyro model')
-    p.add_argument('output', type=str, help='pyro model for s-phase cells after filtering')
+    p.add_argument('output_good', type=str, help='pyro model for s-phase cells after filtering')
+    p.add_argument('output_bad', type=str, help='pyro model results for bad cells that get removed')
 
     return p.parse_args()
 
@@ -32,9 +33,10 @@ def remove_nonreplicating_cells(cn, frac_rt_col='cell_frac_rep'):
     bad_cells_df = extreme_cells.loc[(extreme_cells['corrected_breakpoints']<0.0) | (extreme_cells['corrected_madn']<0.0)]
     bad_cells = bad_cells_df.cell_id.unique()
 
-    cn_filtered = cn[~cn['cell_id'].isin(bad_cells)].reset_index(drop=True)
+    cn_good = cn[~cn['cell_id'].isin(bad_cells)].reset_index(drop=True)
+    cn_bad = cn[cn['cell_id'].isin(bad_cells)].reset_index(drop=True)
 
-    return cn_filtered
+    return cn_good, cn_bad
 
 
 if __name__ == '__main__':
@@ -47,7 +49,11 @@ if __name__ == '__main__':
     cn = compute_cell_frac(cn, frac_rt_col=argv.frac_rt_col, rep_state_col=argv.rep_col)
 
     # remove same set of "bad" cells from all 3 datasets if they seem to be nonreplicating
-    cn_filtered = remove_nonreplicating_cells(cn, frac_rt_col=argv.frac_rt_col)
+    cn_filtered, cn_bad = remove_nonreplicating_cells(cn, frac_rt_col=argv.frac_rt_col)
 
     # return the filtered set of S-phase cells
-    cn_filtered.to_csv(argv.output, sep='\t', index=False)
+    cn_filtered.to_csv(argv.output_good, sep='\t', index=False)
+
+    # return the set of cells that get removed
+    cn_bad.to_csv(argv.output_bad, sep='\t', index=False)
+

@@ -30,57 +30,57 @@ signatures_cell_lines:
   OV2295:
     type: 'HGSOC cell line'
 signatures_patient_tumors:
-  # SA1091:
-  #   type: 'HGSOC'
-  #   signature: 'FBI'
+  SA1091:
+    type: 'HGSOC'
+    signature: 'FBI'
   SA1047:
     type: 'HGSOC'
     signature: 'TD'
-  # SA1093:
-  #   type: 'HGSOC'
-  #   signature: 'TD'
-  # SA1049:
-  #   type: 'HGSOC'
-  #   signature: 'FBI'
+  SA1093:
+    type: 'HGSOC'
+    signature: 'TD'
+  SA1049:
+    type: 'HGSOC'
+    signature: 'FBI'
   SA1096:
     type: 'HGSOC'
     signature: 'FBI'
-  # SA1162:
-  #   type: 'HGSOC'
-  #   signature: 'FBI'
-  # SA1050:
-  #   type: 'HGSOC'
-  #   signature: 'HRD-Dup'
-  # SA1051:
-  #   type: 'HGSOC'
-  #   signature: 'HRD-Dup'
-  # SA1052:
-  #   type: 'HGSOC'
-  #   signature: 'HRD-Dup'
-  # SA1053:
-  #   type: 'HGSOC'
-  #   signature: 'HRD-Dup'
-  # SA1181:
-  #   type: 'HGSOC'
-  #   signature: 'HRD-Dup'
-  # SA1182:
-  #   type: 'HGSOC'
-  #   signature: 'FBI'
-  # SA1184:
-  #   type: 'HGSOC'
-  #   signature: 'HRD-Dup'
-  # SA530:
-  #   type: 'TNBC'
-  #   signature: 'FBI'
-  # SA604:
-  #   type: 'TNBC'
-  #   signature: 'FBI'
-  # SA609:
-  #   type: 'TNBC'
-  #   signature: 'FBI'
-  # SA501:
-  #   type: 'TNBC'
-  #   signature: 'HRD-Dup'
+  SA1162:
+    type: 'HGSOC'
+    signature: 'FBI'
+  SA1050:
+    type: 'HGSOC'
+    signature: 'HRD-Dup'
+  SA1051:
+    type: 'HGSOC'
+    signature: 'HRD-Dup'
+  SA1052:
+    type: 'HGSOC'
+    signature: 'HRD-Dup'
+  SA1053:
+    type: 'HGSOC'
+    signature: 'HRD-Dup'
+  SA1181:
+    type: 'HGSOC'
+    signature: 'HRD-Dup'
+  SA1182:
+    type: 'HGSOC'
+    signature: 'FBI'
+  SA1184:
+    type: 'HGSOC'
+    signature: 'HRD-Dup'
+  SA530:
+    type: 'TNBC'
+    signature: 'FBI'
+  SA604:
+    type: 'TNBC'
+    signature: 'FBI'
+  SA609:
+    type: 'TNBC'
+    signature: 'FBI'
+  SA501:
+    type: 'TNBC'
+    signature: 'HRD-Dup'
   SA535:
     type: 'TNBC'
     signature: 'HRD-Dup'

@@ -4,8 +4,6 @@ import numpy as np
 np.random.seed(2794834348)
 
 configfile: "config.yaml"
-hmmcopy_samples = pd.read_csv('data/signatures/signatures-hmmcopy.csv')
-metrics_samples = pd.read_csv('data/signatures/signatures-annotation.csv')
 
 bad_datasets = []
 
@@ -32,40 +30,20 @@ rule all_fig5:
                 if (d not in bad_datasets)
             ]
         ),
-        
-
-def dataset_cn_files_5(wildcards):
-    files = hmmcopy_samples.loc[
-        hmmcopy_samples['isabl_patient_id']==wildcards.dataset].loc[
-        hmmcopy_samples['result_type']=='reads']['result_filepath'].values
-    return expand(files)
-
-
-def dataset_metric_files_5(wildcards):
-    files = metrics_samples.loc[
-        metrics_samples['isabl_patient_id']==wildcards.dataset].loc[
-        metrics_samples['result_type']=='metrics']['result_filepath'].values
-    return expand(files)
-
-
-def dataset_sample_ids_5(wildcards):
-    sample_ids = metrics_samples.loc[metrics_samples['isabl_patient_id']==wildcards.dataset]['isabl_sample_id'].unique()
-    return expand(sample_ids)
 
 
 rule collect_cn_data_5:
     input: 
-        hmm = dataset_cn_files_5,
-        annotation = dataset_metric_files_5
+        hmm = 'data/signatures/signatures-hmmcopy.csv',
+        annotation = 'data/signatures/signatures-annotation.csv'
     output: 'analysis/fig5/{dataset}/cn_data.tsv'
     log: 'logs/fig5/{dataset}/collect_cn_data.log'
     params:
-        samples = dataset_sample_ids_5,
         dataset = lambda wildcards: wildcards.dataset
     shell: 
         'python scripts/fig5/collect_cn_data.py '
         '--hmm {input.hmm} --annotation {input.annotation} '
-        '--samples {params.samples} --dataset {params.dataset} '
+        '--dataset {params.dataset} '
         '--output {output} &> {log}'
 
 
@@ -132,7 +110,7 @@ rule infer_scRT_pyro_5:
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
-        cn_prior_method = 'g1_clones',
+        cn_prior_method = 'g1_composite',
         infer_mode = 'pyro'
     log: 'logs/fig5/{dataset}/infer_scRT.log'
     shell:
@@ -193,7 +171,9 @@ rule plot_pyro_model_output_5:
 
 rule remove_nonreplicating_cells_5:
     input: 'analysis/fig5/{dataset}/s_phase_cells_with_scRT.tsv'
-    output: 'analysis/fig5/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    output: 
+        good = 'analysis/fig5/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        bad = 'analysis/fig5/{dataset}/model_nonrep_cells.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
@@ -216,6 +196,24 @@ rule plot_filtered_pyro_model_output_5:
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fig5/{dataset}/plot_filtered_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_nonrep_pyro_model_output_5:
+    input:
+        s_phase = 'analysis/fig5/{dataset}/model_nonrep_cells.tsv',
+        g1_phase = 'analysis/fig5/{dataset}/g1_phase_cells.tsv'
+    output:
+        plot1 = 'plots/fig5/{dataset}/inferred_cn_rep_results_nonrep.png',
+        plot2 = 'plots/fig5/{dataset}/s_vs_g_hmmcopy_states_nonrep.png',
+        plot3 = 'plots/fig5/{dataset}/s_vs_g_rpm_nonrep.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig5/{dataset}/plot_nonrep_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig3/plot_pyro_model_output.py '

@@ -43,7 +43,7 @@
 	},
 	"infer_scRT_pyro_3" :
 	{
-		"time" : "48:00",
+		"time" : "72:00",
 		"mem" : 128
 	},
 	"infer_scRT_pyro_composite_4" :
@@ -53,7 +53,7 @@
 	},
 	"infer_scRT_pyro_5" :
 	{
-		"time" : "48:00",
+		"time" : "72:00",
 		"mem" : 128
 	}
 }

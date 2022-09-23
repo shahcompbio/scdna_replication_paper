@@ -31,6 +31,15 @@ def main():
     if 'clone_id' not in cn_g.columns:
         cn_g['clone_id'] = cn_g['library_id']
 
+    # remove G1-phase clones containing <10 cells if using the composite prior
+    if argv.infer_mode == 'g1_composite':
+        counts = cn_g[['cell_id', 'clone_id']].drop_duplicates().clone_id.value_counts()
+        counts = counts.to_frame().reset_index()
+        counts.columns = ['clone_id', 'num_cells']
+        counts['freq'] = counts['num_cells'] / sum(counts['num_cells'])
+        bad_clones = counts.query('num_cells < 10').clone_id.values
+        cn_g = cn_g.loc[~cn_g['clone_id'].isin(bad_clones)]
+
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
     temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, argv.copy_col, 'library_id', argv.input_col]]
