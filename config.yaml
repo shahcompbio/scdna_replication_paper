@@ -10,6 +10,43 @@ fitness_rx_pairs:
   SA535:
     Rx: 'SA535_CISPLATIN_CombinedT'
     UnRx: 'SA535_CISPLATIN_CombinedU'
+permuted_datasets:
+  A:
+    rate: 0.01
+  B:
+    rate: 0.01
+  C:
+    rate: 0.01
+  D:
+    rate: 0.03
+  E:
+    rate: 0.03
+  F:
+    rate: 0.03
+  G:
+    rate: 0.05
+  H:
+    rate: 0.05
+  I:
+    rate: 0.05
+  J:
+    rate: 0.1
+  K:
+    rate: 0.1
+  L:
+    rate: 0.1
+  M:
+    rate: 0.2
+  N:
+    rate: 0.2
+  O:
+    rate: 0.2
+  P:
+    rate: 0.3
+  Q:
+    rate: 0.3
+  R:
+    rate: 0.3
 signatures_cell_lines:
   SA039:
     type: 'hTERT WT'

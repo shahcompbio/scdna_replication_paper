@@ -8,7 +8,10 @@ configfile: "config.yaml"
 bad_datasets = []
 # bad_datasets_3 = ['SA1054', 'SA1055', 'SA1056']
 bad_datasets_3 = config['signatures_patient_tumors']
+
 datasets_4 = ['all', 'GM18507', 'T47D']
+perm_datasets_4 = [y for x in [datasets_4, config['permuted_datasets']] for y in x]
+
 bad_datasets_5 = config['signatures_cell_lines']
 
 rule all:
@@ -148,7 +151,7 @@ rule all:
         ),
         expand(
             'plots/fig4/{dataset}/cn_clone_heatmaps.png',
-            dataset=[d for d in datasets_4]
+            dataset=[d for d in perm_datasets_4]
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
@@ -156,7 +159,7 @@ rule all:
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite.png',
-            dataset=[d for d in datasets_4]
+            dataset=[d for d in perm_datasets_4]
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
@@ -164,7 +167,7 @@ rule all:
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
-            dataset=[d for d in datasets_4]
+            dataset=[d for d in perm_datasets_4]
         ),
         'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',

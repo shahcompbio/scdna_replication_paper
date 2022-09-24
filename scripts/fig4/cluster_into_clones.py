@@ -53,6 +53,9 @@ if __name__ == '__main__':
     elif argv.dataset == 'all':
         min_k = 2
         max_k = 8
+    else:
+        min_k = 1
+        max_k = 8
 
     # split by cell cycle
     cn_g = cluster_into_clones(cn_g, min_k=min_k, max_k=max_k, value_col=argv.value_col)

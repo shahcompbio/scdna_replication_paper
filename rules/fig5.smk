@@ -238,7 +238,9 @@ rule twidth_analysis_5:
     input: 
         scrt = 'analysis/fig5/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         bulks = 'analysis/fig5/{dataset}/scRT_pseudobulks.tsv'
-    output: 'plots/fig5/{dataset}/twidth_curves.png'
+    output: 
+        output_tsv = 'analysis/fig5/{dataset}/twidth_values.tsv',
+        output_png = 'plots/fig5/{dataset}/twidth_curves.png'
     params:
         dataset = lambda wildcards: wildcards.dataset,
         frac_rt_col = 'cell_frac_rep',

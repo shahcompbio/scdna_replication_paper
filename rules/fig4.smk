@@ -7,6 +7,9 @@ configfile: "config.yaml"
 
 datasets = ['all', 'GM18507', 'T47D']
 
+# create list of datasets that also includes the permuted datasets
+perm_datasets = [y for x in [datasets, config['permuted_datasets']] for y in x]
+
 cn_data_urls = [
     '/juno/work/shah/isabl_data_lake/experiments/78/11/17811/analyses/scdna-hmmcopy__0.0.4__27278/results/A90553C_reads.csv.gz',
     '/juno/work/shah/isabl_data_lake/experiments/71/34/17134/analyses/scdna-hmmcopy__0.0.3__22933/results/A73044A_reads.csv.gz',
@@ -36,7 +39,7 @@ rule all_fig4:
         ),
         expand(
             'plots/fig4/{dataset}/cn_clone_heatmaps.png',
-            dataset=[d for d in datasets]
+            dataset=[d for d in perm_datasets]
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
@@ -44,7 +47,7 @@ rule all_fig4:
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite.png',
-            dataset=[d for d in datasets]
+            dataset=[d for d in perm_datasets]
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
@@ -52,7 +55,7 @@ rule all_fig4:
         ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
-            dataset=[d for d in datasets]
+            dataset=[d for d in perm_datasets]
         ),
         'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',
@@ -128,6 +131,20 @@ rule split_cell_line_4:
         metrics_T47D.to_csv(str(output.metrics_T47D), sep='\t', index=False)
         cn_GM18507.to_csv(str(output.cn_GM18507), sep='\t', index=False)
         metrics_GM18507.to_csv(str(output.metrics_GM18507), sep='\t', index=False)
+
+
+# TODO: write script that swaps the cell_cycle_state for x% of the G1/2-phase cells
+# make sure to change the random seed within the script according to the ascii value of each dataset id
+rule permute_cell_cycle_labels_4:
+    input: 'analysis/fig4/all/cn_data_features.tsv'
+    output: 'analysis/fig4/{dataset}/cn_data_features.tsv'
+    params:
+        permute_rate = lambda wildcards: config['permuted_datasets'][wildcards.dataset]['rate'],
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig4/{dataset}/permute_cell_cycle_labels.log'
+    shell:
+        'python scripts/fig4/permute_cell_cycle_labels.py '
+        '{input} {params} {output} &> {log}'
 
 
 # use metrics file to split each cell in filtered cn data by cell cycle state
@@ -266,40 +283,72 @@ rule plot_inferred_cn_vs_scRT_composite_4:
         'deactivate'
 
 
-rule remove_nonreplicating_cells_4:
-    input: 
-        cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered.tsv',
-        cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered.tsv',
-        cn_all = 'analysis/fig4/all/cn_s_pyro_infered.tsv'
+# rule remove_nonreplicating_cells_4:
+#     input: 
+#         cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered.tsv',
+#         cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered.tsv',
+#         cn_all = 'analysis/fig4/all/cn_s_pyro_infered.tsv'
+#     output:
+#         cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_filtered.tsv',
+#         cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered_filtered.tsv',
+#         cn_all = 'analysis/fig4/all/cn_s_pyro_infered_filtered.tsv'
+#     params:
+#         frac_rt_col = 'cell_frac_rep'
+#     log: 'logs/fig4/remove_nonreplicating_cells.log'
+#     shell:
+#         'source ../scdna_replication_tools/venv/bin/activate ; '
+#         'python3 scripts/fig4/remove_nonreplicating_cells.py '
+#         '{input} {params} {output} &> {log} ; '
+#         'deactivate'
+
+
+rule remove_nonreplicating_cells_simple_4:
+    input: 'analysis/fig4/{dataset}/cn_s_pyro_infered.tsv',
     output:
-        cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_filtered.tsv',
-        cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered_filtered.tsv',
-        cn_all = 'analysis/fig4/all/cn_s_pyro_infered_filtered.tsv'
+        good = 'analysis/fig4/{dataset}/cn_s_pyro_infered_filtered.tsv',
+        bad = 'analysis/fig4/{dataset}/model_nonrep_cells.tsv',
     params:
-        frac_rt_col = 'cell_frac_rep'
-    log: 'logs/fig4/remove_nonreplicating_cells.log'
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state'
+    log: 'logs/fig4/{dataset}/remove_nonreplicating_cells_simple.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig4/remove_nonreplicating_cells.py '
+        'python3 scripts/fig4/remove_nonreplicating_cells_simple.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule remove_nonreplicating_cells_composite_4:
-    input: 
-        cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_composite_infered.tsv',
-        cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_composite_infered.tsv',
-        cn_all = 'analysis/fig4/all/cn_s_pyro_composite_infered.tsv'
+# rule remove_nonreplicating_cells_composite_4:
+#     input: 
+#         cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_composite_infered.tsv',
+#         cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_composite_infered.tsv',
+#         cn_all = 'analysis/fig4/all/cn_s_pyro_composite_infered.tsv'
+#     output:
+#         cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_composite_filtered.tsv',
+#         cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered_composite_filtered.tsv',
+#         cn_all = 'analysis/fig4/all/cn_s_pyro_infered_composite_filtered.tsv'
+#     params:
+#         frac_rt_col = 'cell_frac_rep'
+#     log: 'logs/fig4/remove_nonreplicating_cells_composite.log'
+#     shell:
+#         'source ../scdna_replication_tools/venv/bin/activate ; '
+#         'python3 scripts/fig4/remove_nonreplicating_cells.py '
+#         '{input} {params} {output} &> {log} ; '
+#         'deactivate'
+
+
+rule remove_nonreplicating_cells_composite_simple_4:
+    input: 'analysis/fig4/{dataset}/cn_s_pyro_composite_infered.tsv',
     output:
-        cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_composite_filtered.tsv',
-        cn_GM18507 = 'analysis/fig4/GM18507/cn_s_pyro_infered_composite_filtered.tsv',
-        cn_all = 'analysis/fig4/all/cn_s_pyro_infered_composite_filtered.tsv'
+        good = 'analysis/fig4/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
+        bad = 'analysis/fig4/{dataset}/model_nonrep_cells_composite.tsv',
     params:
-        frac_rt_col = 'cell_frac_rep'
-    log: 'logs/fig4/remove_nonreplicating_cells_composite.log'
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state'
+    log: 'logs/fig4/{dataset}/remove_nonreplicating_cells_composite_simple.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig4/remove_nonreplicating_cells.py '
+        'python3 scripts/fig4/remove_nonreplicating_cells_simple.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
