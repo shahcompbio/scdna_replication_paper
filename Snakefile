@@ -169,10 +169,15 @@ rule all:
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
             dataset=[d for d in perm_datasets_4]
         ),
+        expand(
+            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv'
+            dataset=[d for d in config['permuted_datasets']]
+        ),
         'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',
         'plots/fig4/all/twidth_curves.png',
         'plots/fig4/all/twidth_curves_composite.png',
+        'plots/fig4/permuted/summary.png',
         # fig5 signatures human tumors
         expand(
             'plots/fig5/{dataset}/ccc_features_hist.png',

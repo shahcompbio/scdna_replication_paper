@@ -57,10 +57,15 @@ rule all_fig4:
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
             dataset=[d for d in perm_datasets]
         ),
+        expand(
+            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv'
+            dataset=[d for d in config['permuted_datasets']]
+        ),
         'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',
         'plots/fig4/all/twidth_curves.png',
         'plots/fig4/all/twidth_curves_composite.png',
+        'plots/fig4/permuted/summary.png',
 
 
 # fetch the raw data
@@ -133,8 +138,8 @@ rule split_cell_line_4:
         metrics_GM18507.to_csv(str(output.metrics_GM18507), sep='\t', index=False)
 
 
-# TODO: write script that swaps the cell_cycle_state for x% of the G1/2-phase cells
-# make sure to change the random seed within the script according to the ascii value of each dataset id
+# swaps the cell_cycle_state for x% of the G1/2-phase cells and pass into model
+# these datasets should evaluate how well the model performs as a classifier
 rule permute_cell_cycle_labels_4:
     input: 'analysis/fig4/all/cn_data_features.tsv'
     output: 'analysis/fig4/{dataset}/cn_data_features.tsv'
@@ -178,6 +183,7 @@ rule plot_cn_heatmaps_4:
         ' ; deactivate'
 
 
+# cluster all the g1/2-phase cells into clones (using K-means instead of sitka for now)
 rule cluster_into_clones_4:
     input:
         cn_g1 = 'analysis/fig4/{dataset}/cn_g1.tsv',
@@ -415,6 +421,19 @@ rule compute_rt_pseudobulks_composite_4:
         'deactivate'
 
 
+rule compute_rt_pseudobulks_permuted_composite_4:
+    input: 'analysis/fig4/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
+    output: 'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv'
+    params:
+        rep_col = 'model_rep_state'
+    log: 'logs/fig4/{dataset}/compute_rt_pseudobulks_composite.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/compute_rt_pseudobulks_simple.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule plot_rt_profiles_4:
     input: 'analysis/fig4/all/rt_pseudobulks.tsv'
     output:
@@ -447,7 +466,35 @@ rule plot_rt_profiles_composite_4:
         'deactivate'
 
 
-# TODO: update this rule for computing T-width for the joint vs split versions of the model
+rule analyze_permuted_datasets_4:
+    input: 
+        cn_good = expand(
+            'analysis/fig4/{dataset}/cn_s_pyro_infered_composite_filtered.tsv'
+            dataset=[d for d in config['permuted_datasets']]
+        ),
+        cn_bad = expand(
+            'analysis/fig4/{dataset}/model_nonrep_cells_composite.tsv',
+            dataset=[d for d in config['permuted_datasets']]
+        )
+    output:
+        summary = 'analysis/fig4/permuted/summary.tsv',
+        cell_metrics = 'analysis/fig4/permuted/cell_metrics.tsv',
+        summary_plots = 'plots/fig4/permuted/summary.png',
+        ccc_plots = 'plots/fig4/permuted/ccc_features.png',
+    log: 'logs/fig4/permuted/analyze_permuted_datasets.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/analyze_permuted_datasets.py '
+        '-cg {input.cn_good} '
+        '-cb {input.cn_bad} '
+        '-so {output.summary} '
+        '-mo {output.cell_metrics} '
+        '-sp {output.summary_plots} '
+        '-cp {output.ccc_plots} '
+        '&> {log} ; '
+        'deactivate'
+
+
 rule twidth_analysis_pyro_4:
     input: 
         cn_T47D = 'analysis/fig4/T47D/cn_s_pyro_infered_filtered.tsv',
