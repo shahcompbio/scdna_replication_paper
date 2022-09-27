@@ -243,6 +243,7 @@ rule twidth_analysis_5:
         output_png = 'plots/fig5/{dataset}/twidth_curves.png'
     params:
         dataset = lambda wildcards: wildcards.dataset,
+        infer_mode = 'pyro_composite',
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
     log: 'logs/fig5/{dataset}/twidth_analysis.log'

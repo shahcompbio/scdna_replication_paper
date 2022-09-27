@@ -58,14 +58,18 @@ rule all_fig4:
             dataset=[d for d in perm_datasets]
         ),
         expand(
-            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv'
-            dataset=[d for d in config['permuted_datasets']]
+            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv',
+            dataset=[
+                d for d in perm_datasets
+                if (d not in ['T47D', 'GM18507'])
+            ]
         ),
         'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',
         'plots/fig4/all/twidth_curves.png',
         'plots/fig4/all/twidth_curves_composite.png',
         'plots/fig4/permuted/summary.png',
+        'plots/fig4/permuted/rt_corr_composite.png'
 
 
 # fetch the raw data
@@ -466,10 +470,24 @@ rule plot_rt_profiles_composite_4:
         'deactivate'
 
 
+# def get_permuted_cn_good(wildcards):
+#     files = []
+#     for d in config['permuted_datasets']:
+#         files.append('analysis/fig4/{}/cn_s_pyro_infered_composite_filtered.tsv'.format(d))
+#     return expand(files)
+
+
+# def get_permuted_cn_bad(wildcards):
+#     files = []
+#     for d in config['permuted_datasets']:
+#         files.append('analysis/fig4/{}/model_nonrep_cells_composite.tsv'.format(d))
+#     return expand(files)
+
+
 rule analyze_permuted_datasets_4:
     input: 
         cn_good = expand(
-            'analysis/fig4/{dataset}/cn_s_pyro_infered_composite_filtered.tsv'
+            'analysis/fig4/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
             dataset=[d for d in config['permuted_datasets']]
         ),
         cn_bad = expand(
@@ -481,16 +499,46 @@ rule analyze_permuted_datasets_4:
         cell_metrics = 'analysis/fig4/permuted/cell_metrics.tsv',
         summary_plots = 'plots/fig4/permuted/summary.png',
         ccc_plots = 'plots/fig4/permuted/ccc_features.png',
+    params:
+        datasets = expand([d for d in config['permuted_datasets']]),
+        rates = expand([str(config['permuted_datasets'][d]['rate']) for d in config['permuted_datasets']])
     log: 'logs/fig4/permuted/analyze_permuted_datasets.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig4/analyze_permuted_datasets.py '
-        '-cg {input.cn_good} '
-        '-cb {input.cn_bad} '
-        '-so {output.summary} '
-        '-mo {output.cell_metrics} '
-        '-sp {output.summary_plots} '
-        '-cp {output.ccc_plots} '
+        '--cn_good {input.cn_good} '
+        '--cn_bad {input.cn_bad} '
+        '--datasets {params.datasets} '
+        '--rates {params.rates} '
+        '--summary_output {output.summary} '
+        '--metrics_output {output.cell_metrics} '
+        '--summary_plots {output.summary_plots} '
+        '--ccc_plots {output.ccc_plots} '
+        '&> {log} ; '
+        'deactivate'
+
+
+rule permuted_dataset_rt_profiles_4:
+    input: 
+        rt_all = 'analysis/fig4/all/rt_pseudobulks_composite.tsv',
+        rt_perm = expand(
+            'analysis/fig4/{dataset}/model_nonrep_cells_composite.tsv',
+            dataset=[d for d in config['permuted_datasets']]
+        )
+    output:
+        rt_table = 'analysis/fig4/permuted/rt_pseudobulks_composite.tsv',
+        cor_plot = 'plots/fig4/permuted/rt_corr_composite.png',
+    params:
+        datasets = expand([d for d in config['permuted_datasets']])
+    log: 'logs/fig4/permuted/permuted_dataset_rt_profiles.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/permuted_dataset_rt_profiles.py '
+        '--rt_all {input.rt_all} '
+        '--rt_perm {input.rt_perm} '
+        '--datasets {params.datasets} '
+        '--rt_table {output.rt_table} '
+        '--cor_plot {output.cor_plot} '
         '&> {log} ; '
         'deactivate'
 

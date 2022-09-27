@@ -1,6 +1,9 @@
 from argparse import ArgumentParser
+import string
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from scdna_replication_tools.compute_pseudobulk_rt_profiles import compute_pseudobulk_rt_profiles
 
 
@@ -9,6 +12,8 @@ def get_args():
 
     p.add_argument('-cg', '--cn_good', type=str, nargs='+', help='long-form dataframes for all cells thought to be replicating by the pyro model')
     p.add_argument('-cb', '--cn_bad', type=str, nargs='+', help='long-form dataframes for all cells thought to be non-replicating by the pyro model')
+    p.add_argument('-d', '--datasets', type=str, nargs='+', help='dataset ids')
+    p.add_argument('-r', '--rates', type=float, nargs='+', help='permutation rate for each dataset')
     p.add_argument('-so', '--summary_output', help='table for the accruacy of each permuted dataset')
     p.add_argument('-mo', '--metrics_output', help='table containing per-cell metrics for cells in all permuted datasets')
     p.add_argument('-sp', '--summary_plots', help='plot showing the model accuracy for catching mislabeled cells')
@@ -66,19 +71,18 @@ def make_plots(legend_df, metrics_df, argv):
 def main():
     argv = get_args()
 
-    df = pd.read_csv(argv.input, sep='\t')
-
     # build table that matches config file for each permuted dataset
-    rates = [0.01] * 3
-    rates.extend([0.03]*3)
-    rates.extend([0.05]*3)
-    rates.extend([0.1]*3)
-    rates.extend([0.2]*3)
-    rates.extend([0.3]*3)
+    # rates = [0.01] * 3
+    # rates.extend([0.03]*3)
+    # rates.extend([0.05]*3)
+    # rates.extend([0.1]*3)
+    # rates.extend([0.2]*3)
+    # rates.extend([0.3]*3)
     legend_df = pd.DataFrame({
-        'dataset': [*string.ascii_uppercase[:18]],
-        'rate': rates
+        'dataset': argv.datasets,
+        'rate': argv.rates
     })
+    print()
 
     # create a dict of DataFrames, one entry for each dataset
     all_cns = {}
@@ -110,6 +114,8 @@ def main():
         all_cns[dataset] = temp_cn
         all_metrics[dataset] = temp_metrics
 
+        i += 1
+
 
     # make one large metrics_df for all cells in all datasets
     metrics_df = []
@@ -121,8 +127,9 @@ def main():
 
     make_plots(legend_df, metrics_df, argv)
 
-
     legend_df.to_csv(argv.summary_output, sep='\t', index=False)
+
+    metrics_df.to_csv(argv.metrics_output, sep='\t', index=False)
 
 
 if __name__ == '__main__':

@@ -15,6 +15,7 @@
 	},
 	"collect_cn_data_5" :
 	{
+		"time" : "6:00",
 		"mem" : 200
 	},
 	"simulate_cell_cn_states_2" :
@@ -25,6 +26,10 @@
 	"simulate_reads_from_cn_pyro_2" :
 	{
 		"mem" : 128
+	},
+	"clone_assignments_5" :
+	{
+		"time" : "6:00"
 	},
 	"infer_scRT_bulk_2" :
 	{

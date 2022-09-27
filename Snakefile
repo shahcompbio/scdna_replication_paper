@@ -170,7 +170,7 @@ rule all:
             dataset=[d for d in perm_datasets_4]
         ),
         expand(
-            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv'
+            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv',
             dataset=[d for d in config['permuted_datasets']]
         ),
         'plots/fig4/all/rt_corr.png',
