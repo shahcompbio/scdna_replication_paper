@@ -520,9 +520,10 @@ rule analyze_permuted_datasets_4:
 
 rule permuted_dataset_rt_profiles_4:
     input: 
-        rt_all = 'analysis/fig4/all/rt_pseudobulks_composite.tsv',
+        # rt_ref = 'analysis/fig4/all/rt_pseudobulks_composite.tsv',
+        rt_ref = 'analysis/fig4/all/rt_pseudobulks.tsv',
         rt_perm = expand(
-            'analysis/fig4/{dataset}/model_nonrep_cells_composite.tsv',
+            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv',
             dataset=[d for d in config['permuted_datasets']]
         )
     output:
@@ -534,7 +535,7 @@ rule permuted_dataset_rt_profiles_4:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig4/permuted_dataset_rt_profiles.py '
-        '--rt_all {input.rt_all} '
+        '--rt_ref {input.rt_ref} '
         '--rt_perm {input.rt_perm} '
         '--datasets {params.datasets} '
         '--rt_table {output.rt_table} '

@@ -178,6 +178,7 @@ rule all:
         'plots/fig4/all/twidth_curves.png',
         'plots/fig4/all/twidth_curves_composite.png',
         'plots/fig4/permuted/summary.png',
+        'plots/fig4/permuted/rt_corr_composite.png',
         # fig5 signatures human tumors
         expand(
             'plots/fig5/{dataset}/ccc_features_hist.png',

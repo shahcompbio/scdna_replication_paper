@@ -60,5 +60,9 @@
 	{
 		"time" : "72:00",
 		"mem" : 128
+	},
+	"compute_rt_pseudobulks_composite_4" :
+	{
+		"time" : "6:00"
 	}
 }
