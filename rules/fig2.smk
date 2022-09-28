@@ -87,6 +87,7 @@ rule all_fig2:
                 if (d not in bad_datasets)
             ]
         ),
+        'plots/fig2/all/model_accuracies.png'
         
 
 rule simulate_cell_cn_states_2:
@@ -523,3 +524,55 @@ rule twidth_analysis_pyro_composite_2:
         'python3 scripts/fig2/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+
+
+rule model_accuracies_2:
+    input: 
+        cn_bulk = expand(
+            'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv',
+            dataset=[d for d in config['simulated_datasets']]
+        ),
+        cn_pyro_clone = expand(
+            'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
+            dataset=[d for d in config['simulated_datasets']]
+        ),
+        cn_pyro_comp = expand(
+            'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+            dataset=[d for d in config['simulated_datasets']]
+        )
+    output:
+        accuracy_table = 'analysis/fig2/all/model_accuracies.tsv',
+        accuracy_plot = 'plots/fig2/all/model_accuracies.png'
+    params:
+        datasets = expand([d for d in config['simulated_datasets']]),
+        A = expand([str(config['simulated_datasets'][d]['A']) for d in config['simulated_datasets']]),
+        cell_cna_prob = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
+        num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
+        nb_r = expand([str(config['simulated_datasets'][d]['nb_r']) for d in config['simulated_datasets']]),
+        bulk_rep_col = 'rt_state',
+        pyro_rep_col = 'model_rep_state',
+        pyro_cn_col = 'model_cn_state',
+        true_rep_col = 'true_rep',
+        true_cn_col = 'true_G1_state'
+    log: 'logs/fig2/all/model_accuracies.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig2/model_accuracies.py '
+        '--cn_bulk {input.cn_bulk} '
+        '--cn_clone {input.cn_pyro_clone} '
+        '--cn_comp {input.cn_pyro_comp} '
+        '--datasets {params.datasets} '
+        '--A {params.A} '
+        '--cell_cna_prob {params.cell_cna_prob} '
+        '--num_clones {params.num_clones} '
+        '--nb_r {params.nb_r} '
+        '--bulk_rep_col {params.bulk_rep_col} '
+        '--pyro_rep_col {params.pyro_rep_col} '
+        '--pyro_cn_col {params.pyro_cn_col} '
+        '--true_rep_col {params.true_rep_col} '
+        '--true_cn_col {params.true_cn_col} '
+        '--table {output.accuracy_table} '
+        '--plot {output.accuracy_plot} '
+        '&> {log} ; '
+        'deactivate'
+
