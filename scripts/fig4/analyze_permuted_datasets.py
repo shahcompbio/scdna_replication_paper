@@ -39,15 +39,15 @@ def make_plots(legend_df, metrics_df, argv):
     ax = ax.flatten()
 
     # barplot of the fraction of G1/2-cells accurately removed out of all those with swapped flow labels
-    sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[0])
-    ax[0].set_ylabel('Fraction of mislabeled\ncells detected by model')
-    ax[0].set_xlabel('Fraction of G1/2-phase cells mislabeled')
-    ax[0].set_title('Model accuracy')
+    sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[1])
+    ax[1].set_ylabel('Fraction of mislabeled\ncells detected by model')
+    ax[1].set_xlabel('Fraction of G1/2-phase cells mislabeled')
+    ax[1].set_title('Model accuracy')
 
     # distribution of cell_frac_rep values based on the true flow sorting states
-    sns.histplot(data=metrics_df.query("permuted==True"), x='cell_frac_rep', hue='true_cell_cycle_state', bins=20, multiple='stack')
-    ax[1].set_title('Cells mislabeled as S-phase')
-    ax[1].set_xlabel('Inferred fraction of replicated bins')
+    sns.histplot(data=metrics_df.query("permuted==True"), x='cell_frac_rep', hue='true_cell_cycle_state', bins=20, multiple='stack', ax=ax[0])
+    ax[0].set_title('Cells mislabeled as S-phase')
+    ax[0].set_xlabel('Inferred fraction of replicated bins')
 
     fig.savefig(argv.summary_plots, bbox_inches='tight')
 
@@ -82,7 +82,6 @@ def main():
         'dataset': argv.datasets,
         'rate': argv.rates
     })
-    print()
 
     # create a dict of DataFrames, one entry for each dataset
     all_cns = {}

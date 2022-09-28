@@ -218,7 +218,7 @@ rule all:
         expand(
             'plots/fig5/{dataset}/inferred_cn_rep_results_nonrep.png',
             dataset=[
-                d for d in config['signatures_cell_lines']
+                d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),

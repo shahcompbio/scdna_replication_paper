@@ -5,7 +5,7 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
-bad_datasets = []
+bad_datasets = ['SA535', 'SA609']
 
 rule all_fig5:
     input:
@@ -25,6 +25,34 @@ rule all_fig5:
         # ),
         expand(
             'plots/fig5/{dataset}/ccc_features_hist.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig5/{dataset}/inferred_cn_rep_results.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig5/{dataset}/inferred_cn_rep_results_filtered.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig5/{dataset}/inferred_cn_rep_results_nonrep.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fig5/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets)

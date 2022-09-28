@@ -30,8 +30,9 @@ def compute_cell_frac(cn, frac_rt_col='cell_frac_rep', rep_state_col='model_rep_
 def remove_nonreplicating_cells(cn, frac_rt_col='cell_frac_rep'):
     # use extreme_cell_frac status and cell cycle classifier features to nominate "bad" non-replicating cells
     extreme_cells = cn.loc[(cn['extreme_cell_frac']==True)]
-    bad_cells_df = extreme_cells.loc[(extreme_cells['corrected_breakpoints']<0.0) | (extreme_cells['corrected_madn']<0.0)]
-    bad_cells = bad_cells_df.cell_id.unique()
+    # bad_cells_df = extreme_cells.loc[(extreme_cells['corrected_breakpoints']<0.0) | (extreme_cells['corrected_madn']<0.0)]
+    # bad_cells = bad_cells_df.cell_id.unique()
+    bad_cells = extreme_cells.cell_id.unique()
 
     cn_good = cn[~cn['cell_id'].isin(bad_cells)].reset_index(drop=True)
     cn_bad = cn[cn['cell_id'].isin(bad_cells)].reset_index(drop=True)
