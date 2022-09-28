@@ -31,6 +31,22 @@
 	{
 		"time" : "6:00"
 	},
+	"compute_ccc_features_5" :
+	{
+		"time" : "6:00"
+	},
+	"plot_ccc_features_5" :
+	{
+		"time" : "6:00"
+	},
+	"split_cell_cycle_5" :
+	{
+		"time" : "6:00"
+	},
+	"plot_cn_heatmaps_5" :
+	{
+		"time" : "6:00"
+	},
 	"infer_scRT_bulk_2" :
 	{
 		"time" : "48:00",
@@ -62,6 +78,34 @@
 		"mem" : 128
 	},
 	"compute_rt_pseudobulks_composite_4" :
+	{
+		"time" : "6:00"
+	},
+	"plot_rt_heatmap_5" :
+	{
+		"time" : "6:00"
+	},
+	"plot_pyro_model_output_5" :
+	{
+		"time" : "6:00"
+	},
+	"remove_nonreplicating_cells_5" :
+	{
+		"time" : "6:00"
+	},
+	"plot_filtered_pyro_model_output_5" :
+	{
+		"time" : "6:00"
+	},
+	"plot_nonrep_pyro_model_output_5" :
+	{
+		"time" : "6:00"
+	},
+	"compute_rt_pseudobulks_5" :
+	{
+		"time" : "6:00"
+	},
+	"twidth_analysis_5" :
 	{
 		"time" : "6:00"
 	}

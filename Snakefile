@@ -144,6 +144,7 @@ rule all:
                 if (d not in bad_datasets_3)
             ]
         ),
+        'plots/fig3/brca2ko/twidth_curves.png',
         # fig4 flow-sorted analysis
         expand(
             'plots/fig4/{dataset}/cn_heatmaps.png',
