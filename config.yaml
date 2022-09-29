@@ -47,6 +47,18 @@ permuted_datasets:
     rate: 0.3
   R:
     rate: 0.3
+  S:
+    rate: 0.5
+  T:
+    rate: 0.5
+  U:
+    rate: 0.5
+  V:
+    rate: 0.75
+  W:
+    rate: 0.75
+  X:
+    rate: 0.75
 signatures_cell_lines:
   SA039:
     type: 'hTERT WT'
@@ -158,21 +170,6 @@ simulated_datasets:
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: 'mcf7rt'
-    A: 1
-    num_reads: 1000000
-    num_cells_S: 400
-    num_cells_G: 400
-    bin_size: 500000
-    clones: ['A']
-    clone_probs: [1]
-    states: [2]
-    state_probs: [1]
-    cell_CNA_prob: 0
-  D4:
-    nb_r: 100000
-    gc_col: 'gc'
-    gc_betas: [1.2, 0.0]
-    rt_col: 'mcf7rt'
     A: 15
     num_reads: 1000000
     num_cells_S: 400
@@ -183,7 +180,7 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-  D5:
+  D4:
     nb_r: 100000
     gc_col: 'gc'
     gc_betas: [0.1, 0.2, -1, 1, -0.25]
@@ -198,7 +195,7 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-  D6:
+  D5:
     nb_r: 10000
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
@@ -213,7 +210,7 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-  D7:
+  D6:
     nb_r: 1000000
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
@@ -229,21 +226,36 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   # test effect of cell-specific CNAs in diploid background
-  # D8:
-  #   nb_r: 100000
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: 'mcf7rt'
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
+  D7:
+    nb_r: 100000
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: 'mcf7rt'
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D8:
+    nb_r: 100000
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: 'mcf7rt'
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
   # polyclonal datasets
   P1:
     nb_r: 100000

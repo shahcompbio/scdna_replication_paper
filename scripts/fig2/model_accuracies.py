@@ -33,29 +33,33 @@ def make_figure(df, argv):
     fig, ax = plt.subplots(2, 5, figsize=(25, 8), tight_layout=True)
     ax = ax.flatten()
 
-    # barplots of cn and rep accuracies for each model, each x axis is a unique covariate of simulation
+    # barplots and scatterplots of cn and rep accuracies for each model, across different simulation params
+    # showing rep accuracies on the top row
     sns.barplot(data=df, x='dataset', y='rep_accuracy', hue='model', ax=ax[0])
     ax[0].set_ylim(0.7, 1.02)
-    
-    sns.barplot(data=df, x='dataset', y='cn_accuracy', hue='model', ax=ax[5])
-    ax[5].set_ylim(0.7, 1.02)
 
     sns.barplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', ax=ax[1])
     ax[1].set_ylim(0.7, 1.02)
-
-    sns.barplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', ax=ax[2])
+    
+    sns.barplot(data=df, x='num_clones', y='rep_accuracy', hue='model', ax=ax[2])
     ax[2].set_ylim(0.7, 1.02)
 
-    sns.barplot(data=df, x='num_clones', y='rep_accuracy', hue='model', ax=ax[3])
-    ax[3].set_ylim(0.7, 1.02)
+    sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='A', style='num_clones', ax=ax[3])
 
-    sns.barplot(data=df, x='num_clones', y='cn_accuracy', hue='model', ax=ax[4])
-    ax[4].set_ylim(0.7, 1.02)
+    sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='nb_r', style='num_clones', ax=ax[4])
 
-    # use scatterplots with hue, size, and style to efficiently show accuracies across multiple covariates at the same time
-    sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='A', style='num_clones', ax=ax[6])
-    sns.scatterplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', size='A', style='num_clones', ax=ax[7])
-    sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='nb_r', style='num_clones', ax=ax[8])
+    # showing cn accuracies on the bottom row
+    sns.barplot(data=df, x='dataset', y='cn_accuracy', hue='model', ax=ax[5])
+    ax[5].set_ylim(0.7, 1.02)
+
+    sns.barplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', ax=ax[6])
+    ax[6].set_ylim(0.7, 1.02)
+
+    sns.barplot(data=df, x='num_clones', y='cn_accuracy', hue='model', ax=ax[7])
+    ax[7].set_ylim(0.7, 1.02)
+    
+    sns.scatterplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', size='A', style='num_clones', ax=ax[8])
+    
     sns.scatterplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', size='nb_r', style='num_clones', ax=ax[9])
 
     fig.savefig(argv.plot, bbox_inches='tight')

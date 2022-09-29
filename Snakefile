@@ -94,6 +94,7 @@ rule all:
                 if (d not in bad_datasets)
             ]
         ),
+        'plots/fig2/all/model_accuracies.png',
         # fig3 hTERT cell lines
         expand(
             'plots/fig3/{dataset}/ccc_features_hist.png',
@@ -172,7 +173,10 @@ rule all:
         ),
         expand(
             'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv',
-            dataset=[d for d in config['permuted_datasets']]
+            dataset=[
+                d for d in perm_datasets_4
+                if (d not in ['T47D', 'GM18507'])
+            ]
         ),
         'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',

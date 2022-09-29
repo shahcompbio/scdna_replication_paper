@@ -119,7 +119,7 @@ if __name__ == '__main__':
     cn = cn.query('gc > 0')
 
     # remove Y chromosome since we're dealing with female cell lines
-    # cn = cn.query('chr != "Y"')
+    cn = cn.query('chr != "Y"')
 
     # remove Y chromosome since we're dealing with female cell lines
     cn['library_id'] = cn['cell_id'].apply(lambda x: x.split('-')[1])

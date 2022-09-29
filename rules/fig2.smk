@@ -459,7 +459,7 @@ rule twidth_analysis_pyro_2:
         cn = 'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro.tsv'
     output: 
-        tsv = 'plots/fig2/{dataset}/twidth_values_pyro.tsv',
+        tsv = 'analysis/fig2/{dataset}/twidth_values_pyro.tsv',
         plot = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
@@ -483,7 +483,7 @@ rule twidth_analysis_bulk_2:
         cn = 'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_bulk.tsv'
     output: 
-        tsv = 'plots/fig2/{dataset}/twidth_values_bulk.tsv',
+        tsv = 'analysis/fig2/{dataset}/twidth_values_bulk.tsv',
         plot = 'plots/fig2/{dataset}/twidth_curves_bulk.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
@@ -507,7 +507,7 @@ rule twidth_analysis_pyro_composite_2:
         cn = 'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
         pseudobulk = 'analysis/fig2/{dataset}/scRT_pseudobulks_pyro_composite.tsv'
     output: 
-        tsv = 'plots/fig2/{dataset}/twidth_values_pyro_composite.tsv',
+        tsv = 'analysis/fig2/{dataset}/twidth_values_pyro_composite.tsv',
         plot = 'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
