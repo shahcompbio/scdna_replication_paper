@@ -34,7 +34,7 @@ def main():
     counts = counts.to_frame().reset_index()
     counts.columns = ['clone_id', 'num_cells']
     counts['freq'] = counts['num_cells'] / sum(counts['num_cells'])
-    bad_clones = counts.query('freq < 0.01').clone_id.values
+    bad_clones = counts.query('num_cells < 10').clone_id.values
     cn_g = cn_g.loc[~cn_g['clone_id'].isin(bad_clones)]
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
@@ -50,7 +50,7 @@ def main():
 
     print('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=2000)
+    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=1500)
 
     print('cn_s.shape', cn_s.shape)
     print('cn_s_with_scrt.shape', cn_s_with_scrt.shape)

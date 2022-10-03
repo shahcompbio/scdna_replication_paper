@@ -82,9 +82,9 @@ signatures_patient_tumors:
   SA1091:
     type: 'HGSOC'
     signature: 'FBI'
-  SA1047:
-    type: 'HGSOC'
-    signature: 'TD'
+  # SA1047:
+  #   type: 'HGSOC'
+  #   signature: 'TD'
   SA1093:
     type: 'HGSOC'
     signature: 'TD'
@@ -94,9 +94,9 @@ signatures_patient_tumors:
   SA1096:
     type: 'HGSOC'
     signature: 'FBI'
-  SA1162:
-    type: 'HGSOC'
-    signature: 'FBI'
+  # SA1162:
+  #   type: 'HGSOC'
+  #   signature: 'FBI'
   SA1050:
     type: 'HGSOC'
     signature: 'HRD-Dup'
