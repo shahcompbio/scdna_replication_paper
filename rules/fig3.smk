@@ -64,7 +64,9 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/fig3/brca2ko/twidth_curves.png'
+        'plots/fig3/brca2ko/twidth_curves.png',
+        'plots/fig3/downsampled_twidth_scatter.png',
+        'plots/fig3/twidth_summary.png'
         
         
 
@@ -352,4 +354,63 @@ rule twidth_analysis_3:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig3/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule twidth_summary_3:
+    input: 
+        tw = expand(
+            'analysis/fig3/{dataset}/twidth_values.tsv',
+            dataset=[
+                'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'brca2ko'
+            ]
+        )
+    output:
+        output_tsv = 'analysis/fig3/twidth_values.tsv',
+        output_png = 'plots/fig3/twidth_summary.png'
+    params:
+        labels = expand(['WT', 'TP53-/-', 'TP53-/-', 'TP53-/-,BRCA1+/-', 'TP53-/-,BRCA1-/-', 'TP53-/-,BRCA2+/-', 'TP53-/-,BRCA2-/-']),
+        datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'brca2ko']),
+    log: 'logs/fig3/twidth_summary.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/twidth_summary.py '
+        '-i {input.tw} '
+        '-d {params.datasets} '
+        '-l {params.labels} '
+        '--table {output.output_tsv} '
+        '--plot {output.output_png} '
+        '&> {log} ; '
+        'deactivate'
+
+
+rule twidth_downsampling_3:
+    input:
+        cn_s = expand(
+            'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        )
+    output:
+        output_tsv = 'analysis/fig3/downsampled_twidth_values.tsv',
+        output_png = 'plots/fig3/downsampled_twidth_scatter.png'
+    params:
+        datasets = expand([d for d in config['signatures_cell_lines']]),
+        labels = expand([str(config['signatures_cell_lines'][d]['type']) for d in config['signatures_cell_lines']]),
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state'
+    log: 'logs/fig3/twidth_downsampling.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/twidth_downsampling.py '
+        '--cn_s {input.cn_s} '
+        '-d {params.datasets} '
+        '-l {params.labels} '
+        '--frac_rt_col {params.frac_rt_col} '
+        '--rep_col {params.rep_col} '
+        '--table {output.output_tsv} '
+        '--plot {output.output_png} '
+        '&> {log} ; '
         'deactivate'

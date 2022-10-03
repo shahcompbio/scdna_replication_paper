@@ -146,6 +146,8 @@ rule all:
             ]
         ),
         'plots/fig3/brca2ko/twidth_curves.png',
+        'plots/fig3/downsampled_twidth_scatter.png',
+        'plots/fig3/twidth_summary.png',
         # fig4 flow-sorted analysis
         expand(
             'plots/fig4/{dataset}/cn_heatmaps.png',

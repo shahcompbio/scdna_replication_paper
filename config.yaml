@@ -61,23 +61,23 @@ permuted_datasets:
     rate: 0.75
 signatures_cell_lines:
   SA039:
-    type: 'hTERT WT'
+    type: 'hTERT,WT'
   SA906a:
-    type: 'hTERT TP53-/-'
+    type: 'hTERT,TP53-/-'
   SA906b:
-    type: 'hTERT TP53-/-'
+    type: 'hTERT,TP53-/-'
   SA1188:
-    type: 'hTERT BRCA2+/− TP53−/−'
+    type: 'hTERT,BRCA2+/−,TP53−/−'
   SA1056:
-    type: 'hTERT BRCA2−/− TP53−/−'
+    type: 'hTERT,BRCA2−/−,TP53−/−'
   SA1055:
-    type: 'hTERT BRCA2−/− TP53−/−'
+    type: 'hTERT,BRCA2−/−,TP53−/−'
   SA1054:
-    type: 'hTERT BRCA1−/− TP53−/−'
+    type: 'hTERT,BRCA1−/−,TP53−/−'
   SA1292:
-    type: 'hTERT BRCA1+/− TP53−/−'
+    type: 'hTERT,BRCA1+/−,TP53−/−'
   OV2295:
-    type: 'HGSOC cell line'
+    type: 'HGSOC-line'
 signatures_patient_tumors:
   SA1091:
     type: 'HGSOC'
@@ -124,15 +124,15 @@ signatures_patient_tumors:
   SA604:
     type: 'TNBC'
     signature: 'FBI'
-  SA609:
-    type: 'TNBC'
-    signature: 'FBI'
+  # SA609:
+  #   type: 'TNBC'
+  #   signature: 'FBI'
   SA501:
     type: 'TNBC'
     signature: 'HRD-Dup'
-  SA535:
-    type: 'TNBC'
-    signature: 'HRD-Dup'
+  # SA535:
+  #   type: 'TNBC'
+  #   signature: 'HRD-Dup'
 simulated_datasets:
   # fully diploid datasets
   D1:
