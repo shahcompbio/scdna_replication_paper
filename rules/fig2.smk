@@ -92,7 +92,7 @@ rule all_fig2:
 
 rule simulate_cell_cn_states_2:
     input:
-        gc_rt_data = 'data/gc_rt_bin_sizes.csv',
+        gc_rt_data = 'data/gc_rt_bins.csv',
         gc_map_data = 'data/gc_map_500kb.csv'
     output:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cn_states.tsv',
