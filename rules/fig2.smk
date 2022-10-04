@@ -106,7 +106,6 @@ rule simulate_cell_cn_states_2:
         states = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['states'],
         state_probs = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['state_probs'],
         cell_CNA_prob = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['cell_CNA_prob'],
-        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col']
     log:
         'logs/fig2/{dataset}/simulate_cell_cn_states.log'
     shell:
@@ -121,7 +120,6 @@ rule simulate_cell_cn_states_2:
         '-s {params.states} '
         '-sp {params.state_probs} '
         '-cna {params.cell_CNA_prob} '
-        '-rt {params.rt_col} '
         '-so {output.s_phase} '
         '-go {output.g1_phase} '
         '&> {log}'
@@ -140,7 +138,8 @@ rule simulate_reads_from_cn_pyro_2:
         gc_betas = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_betas'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
-        num_reads = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_reads']
+        num_reads = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_reads'],
+        clones = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['clones']
     log:
         'logs/fig2/{dataset}/simulate_reads_from_cn_pyro.log'
     shell:

@@ -20,8 +20,9 @@ def get_args():
     p.add_argument('-nbr', '--nb_r', type=int, help='negative binomial rate for overdispersion')
     p.add_argument('-a', '--a', type=int, help='amplitude of sigmoid curve when generating rt noise')
     p.add_argument('-b', '--betas', type=float, nargs='+', help='list of beta coefficients for gc bias')
-    p.add_argument('-rt', '--rt_col', type=str, help='column in cn input containing appropriate replication timing values')
+    p.add_argument('-rt', '--rt_col', type=str, nargs='+', help='list of column in cn input containing appropriate replication timing values (one rt column per clone)')
     p.add_argument('-gc', '--gc_col', type=str, help='column in cn input containing GC content of each bin')
+    p.add_argument('-c', '--clones', type=str, nargs='+', help='list of unique clone ids')
     p.add_argument('-so', '--s_out', help='simulated S-phase cells')
     p.add_argument('-go', '--g_out', help='simulated G1/2-phase cells')
 
@@ -239,46 +240,105 @@ def main():
     df_s.chr = df_s.chr.astype(str)
     df_g.chr = df_g.chr.astype(str)
 
-    cn_s = pd.pivot_table(df_s, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
-    cn_g = pd.pivot_table(df_g, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
+    # extract a global gc profile that applies to all G1/2 and S-phase cells
     gc_profile = df_s[['chr', 'start', argv.gc_col]].drop_duplicates()[argv.gc_col]
-    rt_profile = df_s[['chr', 'start', argv.rt_col]].drop_duplicates()[argv.rt_col]
 
-    # S-phase: condition each model based in argv parameters and simulate read count
-    reads_norm, reads, rep, p_rep, t = simulate_s_cells(gc_profile, cn_s, rt_profile, argv)
+    # make sure there's exactly one rt column per clone before looping through clones
+    assert len(argv.rt_col) == len(argv.clones)
 
-    reads_norm_df = pd.DataFrame(reads_norm.numpy(), columns=cn_s.columns, index=cn_s.index)
-    reads_df = pd.DataFrame(reads.numpy(), columns=cn_s.columns, index=cn_s.index)
-    rep_df = pd.DataFrame(rep.numpy(), columns=cn_s.columns, index=cn_s.index)
-    p_rep_df = pd.DataFrame(p_rep.numpy(), columns=cn_s.columns, index=cn_s.index)
-    t_df = pd.DataFrame(t.numpy(), columns=['true_t'], index=cn_s.columns)
+    df_s_out = []
+    for (rt_col, clone_id) in zip(argv.rt_col, argv.clones):
+        # subset df_s to just S-phase cells belonging to this clone
+        clone_df_s = df_s.query('clone_id=={}'.format(clone_id))
 
-    print('reads_norm_df\n', reads_norm_df.head())
-    print('reads_df\n', reads_df.head())
-    print('rep_df\n', rep_df.head())
-    print('p_rep_df\n', p_rep_df.head())
-    print('t_df\n', t_df.head())
+        # pivot clone cn states into matrix
+        clone_cn_s = pd.pivot_table(clone_df_s, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
 
-    # merge normalized read count
-    reads_norm_df = reads_norm_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_norm')
-    reads_norm_df.chr = reads_norm_df.chr.astype(str)
-    df_s = pd.merge(df_s, reads_norm_df)
-    # merge raw reads before normalizing total read count
-    reads_df = reads_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_raw')
-    reads_df.chr = reads_df.chr.astype(str)
-    df_s = pd.merge(df_s, reads_df)
-    # merge true replication states
-    rep_df = rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_rep')
-    rep_df.chr = rep_df.chr.astype(str)
-    df_s = pd.merge(df_s, rep_df)
-    # merge probability of each bin being replicated
-    p_rep_df = p_rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_p_rep')
-    p_rep_df.chr = p_rep_df.chr.astype(str)
-    df_s = pd.merge(df_s, p_rep_df)
-    # merge s-phase times
-    df_s = pd.merge(df_s, t_df.reset_index(), on='cell_id')
+        # get rt profile that matches this clone
+        rt_profile = clone_df_s[['chr', 'start', rt_col]].drop_duplicates()[rt_col]
+
+        # S-phase: condition each model based in argv parameters and simulate read count
+        clone_reads_norm, clone_reads, clone_rep, clone_p_rep, clone_t = simulate_s_cells(gc_profile, clone_cn_s, rt_profile, argv)
+
+        # convert tensors to dataframes
+        clone_reads_norm_df = pd.DataFrame(clone_reads_norm.numpy(), columns=clone_cn_s.columns, index=clone_cn_s.index)
+        clone_reads_df = pd.DataFrame(clone_reads.numpy(), columns=clone_cn_s.columns, index=clone_cn_s.index)
+        clone_rep_df = pd.DataFrame(clone_rep.numpy(), columns=clone_cn_s.columns, index=clone_cn_s.index)
+        clone_p_rep_df = pd.DataFrame(clone_p_rep.numpy(), columns=clone_cn_s.columns, index=clone_cn_s.index)
+        clone_t_df = pd.DataFrame(clone_t.numpy(), columns=['true_t'], index=clone_cn_s.columns)
+
+        print('clone_reads_norm_df\n', clone_reads_norm_df.head())
+        print('clone_reads_df\n', clone_reads_df.head())
+        print('clone_rep_df\n', clone_rep_df.head())
+        print('clone_p_rep_df\n', clone_p_rep_df.head())
+        print('clone_t_df\n', clone_t_df.head())
+
+        # merge normalized read count
+        clone_reads_norm_df = clone_reads_norm_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_norm')
+        clone_reads_norm_df.chr = clone_reads_norm_df.chr.astype(str)
+        clone_df_s = pd.merge(clone_df_s, clone_reads_norm_df)
+        # merge raw reads before normalizing total read count
+        clone_reads_df = clone_reads_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_raw')
+        clone_reads_df.chr = clone_reads_df.chr.astype(str)
+        clone_df_s = pd.merge(clone_df_s, clone_reads_df)
+        # merge true replication states
+        clone_rep_df = clone_rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_rep')
+        clone_rep_df.chr = clone_rep_df.chr.astype(str)
+        clone_df_s = pd.merge(clone_df_s, clone_rep_df)
+        # merge probability of each bin being replicated
+        clone_p_rep_df = clone_p_rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_p_rep')
+        clone_p_rep_df.chr = clone_p_rep_df.chr.astype(str)
+        clone_df_s = pd.merge(clone_df_s, clone_p_rep_df)
+        # merge s-phase times
+        clone_df_s = pd.merge(clone_df_s, clone_t_df.reset_index(), on='cell_id')
+
+        # append clone_df_s to a list of df_s for all the output
+        df_s_out.append(clone_df_s)
+
+    # concatenate all the clones into one df
+    df_s_out = pd.concat(df_s_out, ignore_index=True)
+    df_s = df_s_out
+
+    # cn_s = pd.pivot_table(df_s, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
+    # gc_profile = df_s[['chr', 'start', argv.gc_col]].drop_duplicates()[argv.gc_col]
+    # rt_profile = df_s[['chr', 'start', argv.rt_col]].drop_duplicates()[argv.rt_col]
+
+    # # S-phase: condition each model based in argv parameters and simulate read count
+    # reads_norm, reads, rep, p_rep, t = simulate_s_cells(gc_profile, cn_s, rt_profile, argv)
+
+    # reads_norm_df = pd.DataFrame(reads_norm.numpy(), columns=cn_s.columns, index=cn_s.index)
+    # reads_df = pd.DataFrame(reads.numpy(), columns=cn_s.columns, index=cn_s.index)
+    # rep_df = pd.DataFrame(rep.numpy(), columns=cn_s.columns, index=cn_s.index)
+    # p_rep_df = pd.DataFrame(p_rep.numpy(), columns=cn_s.columns, index=cn_s.index)
+    # t_df = pd.DataFrame(t.numpy(), columns=['true_t'], index=cn_s.columns)
+
+    # print('reads_norm_df\n', reads_norm_df.head())
+    # print('reads_df\n', reads_df.head())
+    # print('rep_df\n', rep_df.head())
+    # print('p_rep_df\n', p_rep_df.head())
+    # print('t_df\n', t_df.head())
+
+    # # merge normalized read count
+    # reads_norm_df = reads_norm_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_norm')
+    # reads_norm_df.chr = reads_norm_df.chr.astype(str)
+    # df_s = pd.merge(df_s, reads_norm_df)
+    # # merge raw reads before normalizing total read count
+    # reads_df = reads_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_raw')
+    # reads_df.chr = reads_df.chr.astype(str)
+    # df_s = pd.merge(df_s, reads_df)
+    # # merge true replication states
+    # rep_df = rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_rep')
+    # rep_df.chr = rep_df.chr.astype(str)
+    # df_s = pd.merge(df_s, rep_df)
+    # # merge probability of each bin being replicated
+    # p_rep_df = p_rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_p_rep')
+    # p_rep_df.chr = p_rep_df.chr.astype(str)
+    # df_s = pd.merge(df_s, p_rep_df)
+    # # merge s-phase times
+    # df_s = pd.merge(df_s, t_df.reset_index(), on='cell_id')
 
     # G1-phase: condition each model based in argv parameters and simulate read count
+    cn_g = pd.pivot_table(df_g, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
     reads_norm_g, reads_g = simulate_g_cells(gc_profile, cn_g, argv)
     
     reads_norm_g_df = pd.DataFrame(reads_norm_g.numpy(), columns=cn_g.columns, index=cn_g.index)

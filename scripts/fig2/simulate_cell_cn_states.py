@@ -16,7 +16,6 @@ def get_args():
     p.add_argument('-s', '--states', type=int, nargs='+', help='list of unique copy number states')
     p.add_argument('-sp', '--state_probs', type=float, nargs='+', help='probability of each copy number state occurring')
     p.add_argument('-cna', '--cell_CNA_prob', type=float, help='probability of each chromosome having a cell-specific CNA')
-    p.add_argument('-rt', '--rt_col', type=str, help='column in ref_data containing appropriate replication timing values')
     p.add_argument('-so', '--s_out', help='simulated S-phase cells')
     p.add_argument('-go', '--g_out', help='simulated G1/2-phase cells')
 
@@ -50,7 +49,7 @@ def simulate_clone_profiles(ref_data, clones, states, state_probs, clone_cn_colu
     return clone_cn
 
 
-def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, state_probs, cell_CNA_prob, rt_col='mcf7rt',
+def simulate_cell_profiles(clone_cn, num_cells, clones, clone_probs, states, state_probs, cell_CNA_prob,
                            cell_id_prefix='cell_S', clone_cn_column='clone_cn_state', cell_cn_column='true_G1_state'):
     cell_cn = []
     for i in range(num_cells):
@@ -107,7 +106,7 @@ def main():
     print('simulating S-phase cells...')
     s_cells = simulate_cell_profiles(
         clone_cn, argv.num_cells_S, argv.clones, argv.clone_probs, argv.states, argv.state_probs, argv.cell_CNA_prob,
-        cell_id_prefix='cell_S', rt_col=argv.rt_col
+        cell_id_prefix='cell_S'
     )
     print('s_cells.head()\n', s_cells.head())
 

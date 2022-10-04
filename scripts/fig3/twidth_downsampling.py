@@ -111,10 +111,10 @@ def main():
     fig, ax = plt.subplots(1, 2, figsize=(10, 4), tight_layout=True)
     # cell_type_order = ['WT', 'TP53-/-', 'TP53-/-, BRCA1+/-', 'TP53-/-, BRCA1-/-', 'TP53-/-, BRCA2+/-', 'TP53-/-, BRCA2-/-']
     
-    sns.scatterplot(data=df.query('per_cell==False'), y='num_cells', x='T-width', hue='cell_type', ax=ax[0])
+    sns.scatterplot(data=t_width_df.query('per_cell==False'), y='num_cells', x='T-width', hue='cell_type', ax=ax[0])
     ax[0].set_title('Downsampling T-width')
 
-    sns.scatterplot(data=df.query('per_cell==False'), y='num_cells', x='T-width', hue='cell_type', ax=ax[1])
+    sns.scatterplot(data=t_width_df.query('per_cell==False'), y='num_cells', x='T-width', hue='cell_type', ax=ax[1])
     ax[1].set_title('Downsampling T-width (per-cell)')
 
     fig.savefig(argv.plot, bbox_inches='tight')
