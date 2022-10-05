@@ -529,7 +529,8 @@ rule permuted_dataset_rt_profiles_4:
         rt_table = 'analysis/fig4/permuted/rt_pseudobulks_composite.tsv',
         cor_plot = 'plots/fig4/permuted/rt_corr_composite.png',
     params:
-        datasets = expand([d for d in config['permuted_datasets']])
+        datasets = expand([d for d in config['permuted_datasets']]),
+
     log: 'logs/fig4/permuted/permuted_dataset_rt_profiles.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '

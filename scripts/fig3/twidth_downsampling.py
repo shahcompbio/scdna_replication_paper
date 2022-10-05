@@ -93,6 +93,8 @@ def main():
     num_cells = np.arange(25, 400, 25)
     t_width_df = []
     for dataset, chunk_df in df.groupby('dataset'):
+        # note the cell type for this dataset
+        cell_type = chunk_df['cell_type'].values[0]
         # only subsample the datasets with >375 S-phase cells
         if len(chunk_df.cell_id.unique()) > max(num_cells):
             # compute Twidth at smaller subsets
@@ -101,11 +103,15 @@ def main():
                     print('computing twidth for {} at size {} cells and sample {}'.format(dataset, n, i))
                     temp_df = subset_cells(chunk_df, num_cells=n)  # subset this dataset to the desired number of cells
                     temp_tw_df = compute_twidth_de_novo(temp_df, rep_col=argv.rep_col, frac_rep_col=argv.frac_rt_col, dataset=dataset)
+                    temp_tw_df['cell_type'] = cell_type
                     t_width_df.append(temp_tw_df)
         # compute T-width with no subsampling
         temp_tw_df = compute_twidth_de_novo(chunk_df, rep_col=argv.rep_col, frac_rep_col=argv.frac_rt_col, dataset=dataset)
         t_width_df.append(temp_tw_df)
     t_width_df = pd.concat(t_width_df, ignore_index=True)
+
+    # save a table of all the computed T-width values
+    t_width_df.to_csv(argv.table, sep='\t', index=False)
 
     # save figure of twidth curves
     fig, ax = plt.subplots(1, 2, figsize=(10, 4), tight_layout=True)
@@ -118,9 +124,6 @@ def main():
     ax[1].set_title('Downsampling T-width (per-cell)')
 
     fig.savefig(argv.plot, bbox_inches='tight')
-
-    # save a table of all the computed T-width values
-    t_width_df.to_csv(argv.table, sep='\t', index=False)
 
 
 if __name__ == '__main__':
