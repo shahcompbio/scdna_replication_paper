@@ -142,5 +142,8 @@ out.txt
 .DS_Store
 ._.DS_Store
 data/gc_rt_bin_sizes.csv
+data/gc_rt_bins.csv
+data/replication_timing/
+data/fitness/
 data/signatures/clone_trees/
 
