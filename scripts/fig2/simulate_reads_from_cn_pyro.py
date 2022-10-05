@@ -249,7 +249,7 @@ def main():
     df_s_out = []
     for (rt_col, clone_id) in zip(argv.rt_col, argv.clones):
         # subset df_s to just S-phase cells belonging to this clone
-        clone_df_s = df_s.query('clone_id=={}'.format(clone_id))
+        clone_df_s = df_s.query('clone_id=="{}"'.format(clone_id))
 
         # pivot clone cn states into matrix
         clone_cn_s = pd.pivot_table(clone_df_s, index=['chr', 'start'], columns='cell_id', values='true_G1_state')

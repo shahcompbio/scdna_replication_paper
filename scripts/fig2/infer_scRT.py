@@ -12,7 +12,6 @@ def get_args():
     p.add_argument('input_col', help='column in two cn dataframes to be used for matching S-phase cells to clones')
     p.add_argument('cn_col', help='column in that contains CN states for priors')
     p.add_argument('gc_col', help='column containing gc values')
-    p.add_argument('rt_col', help='column containing rt values')
     p.add_argument('cn_prior_method', help='method for assigning the cn prior of each S-phase cell (i.e. g1_clones, g1_composite, diploid, etc)')
     p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
     p.add_argument('max_iter', type=int, help='max number of svi steps to take for each pyro model')
@@ -39,7 +38,7 @@ def main():
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
-    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, 'library_id', argv.rt_col, argv.input_col]]
+    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, 'library_id', argv.input_col]]
     temp_cn_g1 = cn_g1[['cell_id', 'chr', 'start', 'end', argv.gc_col, 'clone_id', argv.cn_col, 'library_id', argv.input_col]]
 
     print('creating scrt object')

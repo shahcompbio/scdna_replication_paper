@@ -153,6 +153,7 @@ rule simulate_reads_from_cn_pyro_2:
         '-rt {params.rt_col} '
         '-a {params.A} '
         '-n {params.num_reads} '
+        '-c {params.clones} '
         '-so {output.s_phase} '
         '-go {output.g1_phase} '
         '&> {log} ; '
@@ -215,7 +216,6 @@ rule infer_scRT_bulk_2:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
-        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         cn_prior_method = 'diploid',  # irrelevant bc pyro model not invoked here
         infer_mode = 'bulk',
         max_iter = 2000
@@ -236,7 +236,6 @@ rule infer_scRT_pyro_2:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
-        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         cn_prior_method = 'g1_clones',
         infer_mode = 'pyro',
         max_iter = 2000
@@ -257,7 +256,6 @@ rule infer_scRT_pyro_composite_2:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
-        rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
         cn_prior_method = 'g1_composite',
         infer_mode = 'pyro',
         max_iter = 2000
