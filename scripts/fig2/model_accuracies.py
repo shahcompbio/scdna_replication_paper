@@ -10,9 +10,7 @@ from scdna_replication_tools.compute_pseudobulk_rt_profiles import compute_pseud
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('-cb', '--cn_bulk', type=str, nargs='+', help='model results from bulk inference method')
-    p.add_argument('-cl', '--cn_clone', type=str, nargs='+', help='model results from pyro with clone cn prior')
-    p.add_argument('-co', '--cn_comp', type=str, nargs='+', help='model results from pyro with composite cn prior')
+    p.add_argument('-i', '--input', type=str, help='table with path to model results for all datasets and inference methods')
     p.add_argument('-d', '--datasets', type=str, nargs='+', help='dataset ids')
     p.add_argument('-A', '--A', type=float, nargs='+', help='A params for each dataset')
     p.add_argument('-cna', '--cell_cna_prob', type=float, nargs='+', help='cell cna prob for each dataset')
@@ -80,11 +78,11 @@ def compute_accuracies(df,
     return rep_acc, cn_acc
 
 
-def load_data(argv, i, d):
-    # load the S-phase cells for a given dataset index i within the list provided in argv
-    df1 = pd.read_csv(argv.cn_bulk[i], sep='\t')
-    df2 = pd.read_csv(argv.cn_clone[i], sep='\t')
-    df3 = pd.read_csv(argv.cn_comp[i], sep='\t')
+def load_data(chunk):
+    # load the S-phase cells from each model version for a given dataset chunk
+    df1 = pd.read_csv(chunk['bulk_path'].values[0], sep='\t')
+    df2 = pd.read_csv(chunk['clone_path'].values[0], sep='\t')
+    df3 = pd.read_csv(chunk['comp_path'].values[0], sep='\t')
     return df1, df2, df3
 
 
@@ -100,10 +98,16 @@ def main():
         'nb_r': argv.nb_r
     })
 
+    # load table with paths to model results
+    input_df = pd.read_csv(argv.input, sep='\t')
+
+    # merge paths into legend_df
+    legend_df = pd.merge(legend_df, input_df)
+
     df = []
     i = 0
     for dataset, chunk in legend_df.groupby('dataset'):
-        df1, df2, df3 = load_data(argv, i, dataset)
+        df1, df2, df3 = load_data(chunk)
 
         # compute cn and rep accuracy for each method
         bulk_rep_acc, bulk_cn_acc = compute_accuracies(df1, model_rep_col=argv.bulk_rep_col, model_cn_col=None, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
