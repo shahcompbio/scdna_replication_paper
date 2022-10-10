@@ -527,8 +527,8 @@ rule twidth_analysis_pyro_composite_2:
 # takeaway is that rule_aggregate_model_results succeeds when =<20 files are provided 
 # but fails when >20 files are provided
 # dataset_list = [d for d in config['simulated_datasets'] if d.startswith('D1.0')]
-# dataset_list = ['D1.0', 'D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 'D1.8']
-dataset_list = ['D2.0', 'D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5']
+dataset_list = ['D1.0', 'D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 'D1.8']
+# dataset_list = ['D2.0', 'D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5']
 
 # def get_cn_bulk_paths():
 #     files = expand(
@@ -555,36 +555,50 @@ dataset_list = ['D2.0', 'D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5']
 
 
 # dataset_list = ['D1.6', 'D1.7', 'D1.8']
+# print(dataset_list)
+# rule aggregate_model_results:
+#     input: 
+#         cn_bulk = expand(
+#             'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv',
+#             dataset=dataset_list
+#         ),
+#         cn_pyro_clone = expand(
+#             'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
+#             dataset=dataset_list
+#         ),
+#         cn_pyro_comp = expand(
+#             'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+#             dataset=dataset_list
+#         )
+#     output: 'analysis/fig2/all/s_phase_model_results_paths.tsv'
+#     params:
+#         datasets = expand(dataset_list)
+#     run:
+#         df = []
+#         for dataset, bulk_path, clone_path, comp_path in zip(
+#                 params.datasets, input.cn_bulk, input.cn_pyro_clone, input.cn_pyro_comp
+#             ):
+#             temp_df = pd.DataFrame({
+#                 'dataset': [str(dataset)], 'bulk_path': [str(bulk_path)],
+#                 'clone_path': [str(clone_path)], 'comp_path': [str(comp_path)]
+#             })
+#             df.append(temp_df)
+#         df = pd.concat(df, ignore_index=True)
+#         df.to_csv(str(output), sep='\t', index=False)
+
+
 print(dataset_list)
 rule aggregate_model_results:
-    input: 
-        cn_bulk = expand(
-            'analysis/fig2/{dataset}/s_phase_cells_bulk_filtered.tsv',
-            dataset=dataset_list
-        ),
-        cn_pyro_clone = expand(
-            'analysis/fig2/{dataset}/s_phase_cells_pyro_filtered.tsv',
-            dataset=dataset_list
-        ),
-        cn_pyro_comp = expand(
-            'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
-            dataset=dataset_list
-        )
+    input: 'analysis/fig2/D1.1/s_phase_cells_pyro_composite_filtered.tsv'
     output: 'analysis/fig2/all/s_phase_model_results_paths.tsv'
     params:
         datasets = expand(dataset_list)
-    run:
-        df = []
-        for dataset, bulk_path, clone_path, comp_path in zip(
-                params.datasets, input.cn_bulk, input.cn_pyro_clone, input.cn_pyro_comp
-            ):
-            temp_df = pd.DataFrame({
-                'dataset': [str(dataset)], 'bulk_path': [str(bulk_path)],
-                'clone_path': [str(clone_path)], 'comp_path': [str(comp_path)]
-            })
-            df.append(temp_df)
-        df = pd.concat(df, ignore_index=True)
-        df.to_csv(str(output), sep='\t', index=False)
+    log: 'analysis/fig2/all/aggregate_model_results.log'
+    shell:
+        'python3 scripts/fig2/aggregate_model_results.py '
+        '-d {params.datasets} '
+        '-o {output} '
+         '&> {log}'
 
 
 
