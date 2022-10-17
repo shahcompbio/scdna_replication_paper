@@ -77,9 +77,13 @@
         "time" : "72:00",
         "mem" : 128
     },
+    "model_accuracies_2" :
+    {
+        "time" : "12:00"
+    },
     "twidth_downsampling_3" :
     {
-        "time" : "12:00" 
+        "time" : "12:00"
     },
     "compute_rt_pseudobulks_composite_4" :
     {

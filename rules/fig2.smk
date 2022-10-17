@@ -334,7 +334,7 @@ rule evaluate_model_performance_bulk_2:
         plot3 = 'plots/fig2/{dataset}/frac_rt_distributions_bulk.png'
     params:
         rep_col = 'rt_state',
-        cn_col = 'changepoint_segments',
+        cn_col = 'observed_cn_state',
         frac_rt_col = 'frac_rt'
     log: 'logs/fig2/{dataset}/evaluate_model_performance_bulk.log'
     shell:
@@ -527,7 +527,7 @@ rule twidth_analysis_pyro_composite_2:
 # takeaway is that rule_aggregate_model_results succeeds when =<20 files are provided 
 # but fails when >20 files are provided
 # dataset_list = [d for d in config['simulated_datasets'] if d.startswith('D1.0')]
-dataset_list = ['D1.0', 'D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 'D1.8']
+# dataset_list = ['D1.0', 'D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 'D1.8']
 # dataset_list = ['D2.0', 'D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5']
 
 # def get_cn_bulk_paths():
@@ -587,12 +587,11 @@ dataset_list = ['D1.0', 'D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 
 #         df.to_csv(str(output), sep='\t', index=False)
 
 
-print(dataset_list)
-rule aggregate_model_results:
+rule aggregate_model_results_2:
     input: 'analysis/fig2/D1.1/s_phase_cells_pyro_composite_filtered.tsv'
     output: 'analysis/fig2/all/s_phase_model_results_paths.tsv'
     params:
-        datasets = expand(dataset_list)
+        datasets = expand(config['simulated_datasets'])
     log: 'analysis/fig2/all/aggregate_model_results.log'
     shell:
         'python3 scripts/fig2/aggregate_model_results.py '
@@ -601,18 +600,17 @@ rule aggregate_model_results:
          '&> {log}'
 
 
-
 rule model_accuracies_2:
     input: 'analysis/fig2/all/s_phase_model_results_paths.tsv'
     output:
         accuracy_table = 'analysis/fig2/all/model_accuracies.tsv',
         accuracy_plot = 'plots/fig2/all/model_accuracies.png'
     params:
-        datasets = expand(dataset_list),
-        A = expand([str(config['simulated_datasets'][d]['A']) for d in dataset_list]),
-        cell_cna_prob = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in dataset_list]),
-        num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in dataset_list]),
-        nb_r = expand([str(config['simulated_datasets'][d]['nb_r']) for d in dataset_list]),
+        datasets = expand(config['simulated_datasets']),
+        A = expand([str(config['simulated_datasets'][d]['A']) for d in config['simulated_datasets']]),
+        cell_cna_prob = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
+        num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
+        nb_r = expand([str(config['simulated_datasets'][d]['nb_r']) for d in config['simulated_datasets']]),
         bulk_rep_col = 'rt_state',
         pyro_rep_col = 'model_rep_state',
         pyro_cn_col = 'model_cn_state',

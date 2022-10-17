@@ -17,7 +17,7 @@ def get_args():
     p.add_argument('-si', '--df_s', help='True somatic CN profiles for S-phase cells')
     p.add_argument('-gi', '--df_g', help='True somatic CN profiles for S-phase cells')
     p.add_argument('-n', '--num_reads', type=int, help='number of reads per cell')
-    p.add_argument('-nbr', '--nb_r', type=int, help='negative binomial rate for overdispersion')
+    p.add_argument('-nbr', '--nb_r', type=float, help='negative binomial rate for overdispersion')
     p.add_argument('-a', '--a', type=int, help='amplitude of sigmoid curve when generating rt noise')
     p.add_argument('-b', '--betas', type=float, nargs='+', help='list of beta coefficients for gc bias')
     p.add_argument('-rt', '--rt_col', type=str, nargs='+', help='list of column in cn input containing appropriate replication timing values (one rt column per clone)')

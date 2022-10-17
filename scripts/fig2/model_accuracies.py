@@ -33,28 +33,32 @@ def make_figure(df, argv):
 
     # barplots and scatterplots of cn and rep accuracies for each model, across different simulation params
     # showing rep accuracies on the top row
-    sns.barplot(data=df, x='dataset', y='rep_accuracy', hue='model', ax=ax[0])
-    ax[0].set_ylim(0.7, 1.02)
+    sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='model', ax=ax[0])
+    # ax[0].set_ylim(0.7, 1.02)
 
-    sns.barplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', ax=ax[1])
-    ax[1].set_ylim(0.7, 1.02)
+    sns.violinplot(data=df.query("num_clones==1"), x='cell_cna_prob', y='rep_accuracy', hue='model', ax=ax[1])
+    ax[1].set_title('Diploid')
+    # ax[1].set_ylim(0.7, 1.02)
     
-    sns.barplot(data=df, x='num_clones', y='rep_accuracy', hue='model', ax=ax[2])
-    ax[2].set_ylim(0.7, 1.02)
+    sns.violinplot(data=df.query("cell_cna_prob==0.02"), x='num_clones', y='rep_accuracy', hue='model', ax=ax[2])
+    ax[2].set_title('Cell CNA rate 2%')
+    # ax[2].set_ylim(0.7, 1.02)
 
     sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='A', style='num_clones', ax=ax[3])
 
     sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='nb_r', style='num_clones', ax=ax[4])
 
     # showing cn accuracies on the bottom row
-    sns.barplot(data=df, x='dataset', y='cn_accuracy', hue='model', ax=ax[5])
-    ax[5].set_ylim(0.7, 1.02)
+    sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='model', ax=ax[5])
+    # ax[5].set_ylim(0.7, 1.02)
 
-    sns.barplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', ax=ax[6])
-    ax[6].set_ylim(0.7, 1.02)
+    sns.violinplot(data=df.query("num_clones==1"), x='cell_cna_prob', y='cn_accuracy', hue='model', ax=ax[6])
+    ax[6].set_title('Diploid')
+    # ax[6].set_ylim(0.7, 1.02)
 
-    sns.barplot(data=df, x='num_clones', y='cn_accuracy', hue='model', ax=ax[7])
-    ax[7].set_ylim(0.7, 1.02)
+    sns.violinplot(data=df.query("cell_cna_prob==0.02"), x='num_clones', y='cn_accuracy', hue='model', ax=ax[7])
+    ax[7].set_title('Cell CNA rate 2%')
+    # ax[7].set_ylim(0.7, 1.02)
     
     sns.scatterplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', size='A', style='num_clones', ax=ax[8])
     
@@ -114,12 +118,15 @@ def main():
         pyro_clone_rep_acc, pyro_clone_cn_acc = compute_accuracies(df2, model_rep_col=argv.pyro_rep_col, model_cn_col=argv.pyro_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
         pyro_comp_rep_acc, pyro_comp_cn_acc = compute_accuracies(df3, model_rep_col=argv.pyro_rep_col, model_cn_col=argv.pyro_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
 
+        datatag = dataset.split('.')[0]
+
         # create a dataframe with the accuracies for this simulated dataset
         models = ['bulk', 'pyro_clone', 'pyro_comp']
         rep_accs = [bulk_rep_acc, pyro_clone_rep_acc, pyro_comp_rep_acc]
         cn_accs = [bulk_cn_acc, pyro_clone_cn_acc, pyro_comp_cn_acc]
         temp_df = pd.DataFrame({
-            'dataset': [dataset]*3, 'A': [chunk.A.values[0]]*3, 'nb_r': [chunk.nb_r.values[0]]*3,
+            'dataset': [dataset]*3, 'datatag': [datatag]*3,
+            'A': [chunk.A.values[0]]*3, 'nb_r': [chunk.nb_r.values[0]]*3,
             'cell_cna_prob': [chunk.cell_cna_prob.values[0]]*3, 'num_clones': [chunk.num_clones.values[0]]*3,
             'model': models, 'rep_accuracy': rep_accs, 'cn_accuracy': cn_accs
         })
