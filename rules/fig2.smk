@@ -588,7 +588,7 @@ rule twidth_analysis_pyro_composite_2:
 
 
 rule aggregate_model_results_2:
-    input: 'analysis/fig2/D1.1/s_phase_cells_pyro_composite_filtered.tsv'
+    input: 'analysis/fig2/D1.0/s_phase_cells_pyro_composite_filtered.tsv'
     output: 'analysis/fig2/all/s_phase_model_results_paths.tsv'
     params:
         datasets = expand(config['simulated_datasets'])

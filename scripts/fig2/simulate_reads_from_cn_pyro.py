@@ -29,17 +29,15 @@ def get_args():
     return p.parse_args()
 
 
-def make_gc_features(x, poly_degree):
+def make_gc_features(x, K):
     """Builds features i.e. a matrix with columns [x, x^2, x^3, x^4]."""
     x = x.unsqueeze(1)
-    return torch.cat([x ** i for i in reversed(range(0, poly_degree+1))], 1)
+    return torch.cat([x ** i for i in reversed(range(0, K+1))], 1)
 
 
-def model_s(gammas, cn0=None, rt0=None, num_cells=None, num_loci=None, data=None, etas=None, lambda_init=1e-1, t_alpha_prior=None, t_beta_prior=None, t_init=None, K=4):
+def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=None, u_guess=70., lambda_init=1e-1, t_alpha_prior=None, t_beta_prior=None, t_init=None,  K=4):
     with ignore_jit_warnings():
-        if data is not None:
-            num_loci, num_cells = data.shape
-        elif cn0 is not None:
+        if cn0 is not None:
             num_loci, num_cells = cn0.shape
         assert num_cells is not None
         assert num_loci is not None
@@ -76,21 +74,10 @@ def model_s(gammas, cn0=None, rt0=None, num_cells=None, num_loci=None, data=None
         elif t_init is not None:
             tau = pyro.param('expose_tau', t_init, constraint=constraints.unit_interval)
         else:
-            tau = pyro.sample('expose_tau', dist.Beta(torch.tensor([1.5]), torch.tensor([1.5])))
+            tau = pyro.sample('expose_tau', dist.Beta(torch.tensor([1.]), torch.tensor([1.])))
         
         # per cell reads per copy per bin
-        # u should be inversely related to tau and ploidy, positively related to reads
-        if cn0 is not None:
-            cell_ploidies = torch.mean(cn0.type(torch.float32), dim=0)
-        elif etas is not None:
-            temp_cn0 = torch.argmax(etas, dim=2).type(torch.float32)
-            cell_ploidies = torch.mean(temp_cn0, dim=0)
-        else:
-            cell_ploidies = torch.ones(num_cells) * 2.
-        u_guess = torch.mean(data.type(torch.float32), dim=0) / ((1 + tau) * cell_ploidies)
-        u_stdev = u_guess / 10.
-    
-        u = pyro.sample('expose_u', dist.Normal(u_guess, u_stdev))
+        u = pyro.sample('expose_u', dist.Normal(torch.tensor([u_guess]), torch.tensor([u_guess/10.])))
 
         # sample beta params for each cell based on which library the cell belongs to
         betas = pyro.sample('expose_betas', dist.Normal(beta_means, beta_stds).to_event(1))
@@ -104,6 +91,8 @@ def model_s(gammas, cn0=None, rt0=None, num_cells=None, num_loci=None, data=None
                 pi = pyro.sample('expose_pi', dist.Dirichlet(etas))
                 # sample cn state from categorical based on cn_prob
                 cn = pyro.sample('cn', dist.Categorical(pi), infer={"enumerate": "parallel"})
+            else:
+                cn = cn0
 
             # per cell per bin late or early 
             t_diff = tau.reshape(-1, num_cells) - rho.reshape(num_loci, -1)
@@ -132,7 +121,7 @@ def model_s(gammas, cn0=None, rt0=None, num_cells=None, num_loci=None, data=None
             # this avoids NaN errors when theta=0 at a given bin
             delta[delta<1] = 1
             
-            reads = pyro.sample('reads', dist.NegativeBinomial(delta, probs=lamb), obs=data)
+            reads = pyro.sample('reads', dist.NegativeBinomial(delta, probs=lamb), obs=None)
 
 
 
@@ -171,7 +160,7 @@ def model_g1(gammas, cn=None, num_cells=None, num_loci=None, u_guess=70., lambda
             # this avoids NaN errors when theta=0 at a given bin
             delta[delta<1] = 1
             
-            reads = pyro.sample('reads', dist.NegativeBinomial(delta, probs=lamb), obs=data)
+            reads = pyro.sample('reads', dist.NegativeBinomial(delta, probs=lamb), obs=None)
 
     return reads
 
@@ -248,7 +237,7 @@ def simulate_g_cells(gc_profile, cn, argv):
 
     model_trace = pyro.poutine.trace(conditioned_model)
 
-    samples = model_trace.get_trace(gc_profile, cn=cn, u_guess=u_guess, poly_degree=len(argv.betas)-1)
+    samples = model_trace.get_trace(gc_profile, cn=cn, u_guess=u_guess, K=len(argv.betas)-1)
 
     u = samples.nodes['expose_u']['value']
 
