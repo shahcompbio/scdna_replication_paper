@@ -17,7 +17,7 @@ def get_args():
     p.add_argument('-si', '--df_s', help='True somatic CN profiles for S-phase cells')
     p.add_argument('-gi', '--df_g', help='True somatic CN profiles for S-phase cells')
     p.add_argument('-n', '--num_reads', type=int, help='number of reads per cell')
-    p.add_argument('-nbr', '--nb_r', type=float, help='negative binomial rate for overdispersion')
+    p.add_argument('-l', '--lamb', type=float, help='negative binomial success probability term lambda (controls overdispersion)')
     p.add_argument('-a', '--a', type=int, help='amplitude of sigmoid curve when generating rt noise')
     p.add_argument('-b', '--betas', type=float, nargs='+', help='list of beta coefficients for gc bias')
     p.add_argument('-rt', '--rt_col', type=str, nargs='+', help='list of column in cn input containing appropriate replication timing values (one rt column per clone)')
@@ -35,9 +35,11 @@ def make_gc_features(x, poly_degree):
     return torch.cat([x ** i for i in reversed(range(0, poly_degree+1))], 1)
 
 
-def model_s(gc_profile, cn0=None, rt0=None, num_cells=None, num_loci=None, cn_prior=None, u_guess=70., nb_r_guess=10000., poly_degree=4):
+def model_s(gammas, cn0=None, rt0=None, num_cells=None, num_loci=None, data=None, etas=None, lambda_init=1e-1, t_alpha_prior=None, t_beta_prior=None, t_init=None, K=4):
     with ignore_jit_warnings():
-        if cn0 is not None:
+        if data is not None:
+            num_loci, num_cells = data.shape
+        elif cn0 is not None:
             num_loci, num_cells = cn0.shape
         assert num_cells is not None
         assert num_loci is not None
@@ -45,73 +47,96 @@ def model_s(gc_profile, cn0=None, rt0=None, num_cells=None, num_loci=None, cn_pr
     # controls the consistency of replicating on time
     a = pyro.sample('expose_a', dist.Gamma(torch.tensor([2.]), torch.tensor([0.2])))
     
-    # negative binomial dispersion
-    nb_r = pyro.param('expose_nb_r', torch.tensor([nb_r_guess]), constraint=constraints.positive)
+    # variance of negative binomial distribution is governed by the success probability of each trial
+    lamb = pyro.param('expose_lambda', torch.tensor([lambda_init]), constraint=constraints.unit_interval)
+
+    # gc bias params
+    beta_means = pyro.sample('expose_beta_means', dist.Normal(0., 1.).expand([1, K+1]).to_event(2))
+    beta_stds = pyro.param('expose_beta_stds', torch.logspace(start=0, end=-K, steps=(K+1)).reshape(1, -1).expand([1, K+1]),
+                           constraint=constraints.positive)
     
     # define cell and loci plates
     loci_plate = pyro.plate('num_loci', num_loci, dim=-2)
     cell_plate = pyro.plate('num_cells', num_cells, dim=-1)
 
-    betas = pyro.sample('expose_betas', dist.Normal(0., 1.).expand([poly_degree+1]).to_event(1))
-
-    if rt0 is not None:
-        # fix rt as constant when input into model
-        rt = rt0
+    if rho0 is not None:
+        # fix replication timing as constant when input into model
+        rho = rho0
     else:
         with loci_plate:
             # bulk replication timing profile
-            rt = pyro.sample('expose_rt', dist.Beta(torch.tensor([1.]), torch.tensor([1.])))
-
-    # fix cn as constant when input into model
-    if cn0 is not None:
-        cn = cn0
+            rho = pyro.sample('expose_rho', dist.Beta(torch.tensor([1.]), torch.tensor([1.])))
 
     with cell_plate:
 
-        # per cell replication time
-        time = pyro.sample('expose_time', dist.Beta(torch.tensor([1.]), torch.tensor([1.])))
-
+        # per cell time in S-phase (tau)
+        # draw from prior if provided
+        if (t_alpha_prior is not None) and (t_beta_prior is not None):
+            tau = pyro.sample('expose_tau', dist.Beta(t_alpha_prior, t_beta_prior))
+        elif t_init is not None:
+            tau = pyro.param('expose_tau', t_init, constraint=constraints.unit_interval)
+        else:
+            tau = pyro.sample('expose_tau', dist.Beta(torch.tensor([1.5]), torch.tensor([1.5])))
+        
         # per cell reads per copy per bin
-        u = pyro.sample('expose_u', dist.Normal(torch.tensor([u_guess]), torch.tensor([u_guess/10.])))
+        # u should be inversely related to tau and ploidy, positively related to reads
+        if cn0 is not None:
+            cell_ploidies = torch.mean(cn0.type(torch.float32), dim=0)
+        elif etas is not None:
+            temp_cn0 = torch.argmax(etas, dim=2).type(torch.float32)
+            cell_ploidies = torch.mean(temp_cn0, dim=0)
+        else:
+            cell_ploidies = torch.ones(num_cells) * 2.
+        u_guess = torch.mean(data.type(torch.float32), dim=0) / ((1 + tau) * cell_ploidies)
+        u_stdev = u_guess / 10.
+    
+        u = pyro.sample('expose_u', dist.Normal(u_guess, u_stdev))
+
+        # sample beta params for each cell based on which library the cell belongs to
+        betas = pyro.sample('expose_betas', dist.Normal(beta_means, beta_stds).to_event(1))
         
         with loci_plate:
 
             if cn0 is None:
-                if cn_prior is None:
-                    cn_prior = torch.ones(num_loci, num_cells, 13)
+                if etas is None:
+                    etas = torch.ones(num_loci, num_cells, 13)
                 # sample cn probabilities of each bin from Dirichlet
-                cn_prob = pyro.sample('expose_cn_prob', dist.Dirichlet(cn_prior))
+                pi = pyro.sample('expose_pi', dist.Dirichlet(etas))
                 # sample cn state from categorical based on cn_prob
-                cn = pyro.sample('cn', dist.Categorical(cn_prob), infer={"enumerate": "parallel"})
+                cn = pyro.sample('cn', dist.Categorical(pi), infer={"enumerate": "parallel"})
 
             # per cell per bin late or early 
-            t_diff = time.reshape(-1, num_cells) - rt.reshape(num_loci, -1)
+            t_diff = tau.reshape(-1, num_cells) - rho.reshape(num_loci, -1)
 
             # probability of having been replicated
-            p_rep = 1 / (1 + torch.exp(-a * t_diff))
+            phi = 1 / (1 + torch.exp(-a * t_diff))
 
             # binary replicated indicator
-            rep = pyro.sample('rep', dist.Bernoulli(p_rep), infer={"enumerate": "parallel"})
+            rep = pyro.sample('rep', dist.Bernoulli(phi), infer={"enumerate": "parallel"})
 
-            # copy number accounting for replication
-            rep_cn = cn * (1. + rep)
+            # total copy number accounting for replication
+            chi = cn * (1. + rep)
 
-            # copy number accounting for gc bias
-            gc_features = make_gc_features(gc_profile, poly_degree)
-            gc_rate = torch.exp(torch.sum(betas * gc_features, 1))
-            biased_cn = rep_cn * gc_rate.reshape(-1, 1)
+            # find the gc bias rate of each bin using betas
+            gc_features = make_gc_features(gammas, K).reshape(num_loci, 1, K+1)
+            omega = torch.exp(torch.sum(torch.mul(betas, gc_features), 2))
 
             # expected reads per bin per cell
-            expected_reads = (u * biased_cn)
+            theta = u * chi * omega
 
-            nb_p = expected_reads / (expected_reads + nb_r)
+            # use lambda and the expected read count to define the number of trials (delta)
+            # that should be drawn for each bin
+            delta = theta * (1 - lamb) / lamb
+
+            # replace all delta<1 values with 1 since delta should be >0
+            # this avoids NaN errors when theta=0 at a given bin
+            delta[delta<1] = 1
             
-            reads = pyro.sample('reads', dist.NegativeBinomial(nb_r, probs=nb_p), obs=None)
-
-    return reads
+            reads = pyro.sample('reads', dist.NegativeBinomial(delta, probs=lamb), obs=data)
 
 
-def model_g1(gc_profile, cn=None, num_cells=None, num_loci=None, u_guess=70., poly_degree=4):
+
+def model_g1(gammas, cn=None, num_cells=None, num_loci=None, u_guess=70., lambda_init=1e-1, K=4):
     with ignore_jit_warnings():
         if cn is not None:
             num_loci, num_cells = cn.shape
@@ -119,10 +144,10 @@ def model_g1(gc_profile, cn=None, num_cells=None, num_loci=None, u_guess=70., po
         assert num_loci is not None
     
     # negative binomial dispersion
-    nb_r = pyro.param('expose_nb_r', torch.tensor([10000.0]), constraint=constraints.positive)
+    lamb = pyro.param('expose_lambda', torch.tensor([lambda_init]), constraint=constraints.positive)
 
     # gc bias params
-    betas = pyro.sample('expose_betas', dist.Normal(0., 1.).expand([poly_degree+1]).to_event(1))
+    betas = pyro.sample('expose_betas', dist.Normal(0., 1.).expand([K+1]).to_event(1))
 
     with pyro.plate('num_cells', num_cells):
 
@@ -132,16 +157,21 @@ def model_g1(gc_profile, cn=None, num_cells=None, num_loci=None, u_guess=70., po
         with pyro.plate('num_loci', num_loci):
 
             # copy number accounting for gc bias
-            gc_features = make_gc_features(gc_profile, poly_degree)
-            gc_rate = torch.exp(torch.sum(betas * gc_features, 1))
-            biased_cn = cn * gc_rate.reshape(-1, 1)
-
+            gc_features = make_gc_features(gammas, K)
+            omega = torch.exp(torch.sum(betas * gc_features, 1))
+            
             # expected reads per bin per cell
-            expected_reads = (u * biased_cn)
+            theta = u * cn * omega
 
-            nb_p = expected_reads / (expected_reads + nb_r)
+            # use lambda and the expected read count to define the number of trials (delta)
+            # that should be drawn for each bin
+            delta = theta * (1 - lamb) / lamb
 
-            reads = pyro.sample('reads', dist.NegativeBinomial(nb_r, probs=nb_p), obs=None)
+            # replace all delta<1 values with 1 since delta should be >0
+            # this avoids NaN errors when theta=0 at a given bin
+            delta[delta<1] = 1
+            
+            reads = pyro.sample('reads', dist.NegativeBinomial(delta, probs=lamb), obs=data)
 
     return reads
 
@@ -172,16 +202,16 @@ def simulate_s_cells(gc_profile, cn, rt, argv):
         model_s,
         data={
             'expose_a': torch.tensor([argv.a]),
-            'expose_nb_r': torch.tensor([argv.nb_r]),
+            'expose_lambda': torch.tensor([argv.lamb]),
             'expose_betas': torch.tensor(argv.betas),
-            'expose_rt': rt_profile
+            'expose_rho': rt_profile
         })
 
     model_trace = pyro.poutine.trace(conditioned_model)
 
-    samples = model_trace.get_trace(gc_profile, cn0=cn, u_guess=u_guess, poly_degree=len(argv.betas)-1)
+    samples = model_trace.get_trace(gc_profile, cn0=cn, u_guess=u_guess, K=len(argv.betas)-1)
 
-    t = samples.nodes['expose_time']['value']
+    t = samples.nodes['expose_tau']['value']
     u = samples.nodes['expose_u']['value']
 
     t_diff = t.reshape(-1, num_cells) - rt_profile.reshape(num_loci, -1)
@@ -212,7 +242,7 @@ def simulate_g_cells(gc_profile, cn, argv):
     conditioned_model = poutine.condition(
         model_g1,
         data={
-            'expose_nb_r': torch.tensor([argv.nb_r]),
+            'expose_lambda': torch.tensor([argv.lamb]),
             'expose_betas': torch.tensor(argv.betas),
         })
 

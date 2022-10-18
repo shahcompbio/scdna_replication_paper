@@ -15,7 +15,7 @@ def get_args():
     p.add_argument('-A', '--A', type=float, nargs='+', help='A params for each dataset')
     p.add_argument('-cna', '--cell_cna_prob', type=float, nargs='+', help='cell cna prob for each dataset')
     p.add_argument('-nc', '--num_clones', type=int, nargs='+', help='number of clones for each dataset')
-    p.add_argument('-nbr', '--nb_r', type=float, nargs='+', help='negative binomial rate for each dataset')
+    p.add_argument('-l', '--lamb', type=float, nargs='+', help='negative binomial event probs lambda for each dataset')
     p.add_argument('-brc', '--bulk_rep_col', type=str, help='column containing the bulk model replication states')
     p.add_argument('-prc', '--pyro_rep_col', type=str, help='column containing the pyro model replication states')
     p.add_argument('-pcn', '--pyro_cn_col', type=str, help='column containing the pyro model copy number states')
@@ -46,7 +46,7 @@ def make_figure(df, argv):
 
     sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='A', style='num_clones', ax=ax[3])
 
-    sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='nb_r', style='num_clones', ax=ax[4])
+    sns.scatterplot(data=df, x='cell_cna_prob', y='rep_accuracy', hue='model', size='lambda', style='num_clones', ax=ax[4])
 
     # showing cn accuracies on the bottom row
     sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='model', ax=ax[5])
@@ -62,7 +62,7 @@ def make_figure(df, argv):
     
     sns.scatterplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', size='A', style='num_clones', ax=ax[8])
     
-    sns.scatterplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', size='nb_r', style='num_clones', ax=ax[9])
+    sns.scatterplot(data=df, x='cell_cna_prob', y='cn_accuracy', hue='model', size='lambda', style='num_clones', ax=ax[9])
 
     fig.savefig(argv.plot, bbox_inches='tight')
 
@@ -99,7 +99,7 @@ def main():
         'A': argv.A,
         'cell_cna_prob': argv.cell_cna_prob,
         'num_clones': argv.num_clones,
-        'nb_r': argv.nb_r
+        'lambda': argv.lamb
     })
 
     # load table with paths to model results
@@ -126,7 +126,7 @@ def main():
         cn_accs = [bulk_cn_acc, pyro_clone_cn_acc, pyro_comp_cn_acc]
         temp_df = pd.DataFrame({
             'dataset': [dataset]*3, 'datatag': [datatag]*3,
-            'A': [chunk.A.values[0]]*3, 'nb_r': [chunk.nb_r.values[0]]*3,
+            'A': [chunk.A.values[0]]*3, 'lambda': [chunk['lambda'].values[0]]*3,
             'cell_cna_prob': [chunk.cell_cna_prob.values[0]]*3, 'num_clones': [chunk.num_clones.values[0]]*3,
             'model': models, 'rep_accuracy': rep_accs, 'cn_accuracy': cn_accs
         })

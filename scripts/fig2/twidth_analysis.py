@@ -17,7 +17,7 @@ def get_args():
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells with true and inferred scRT data')
     p.add_argument('pseduobulk', help='RT pseudobulk for this dataset')
     p.add_argument('dataset')
-    p.add_argument('nb_r', type=float, help='amount of sequencing noise')
+    p.add_argument('lamb', type=float, help='amount of sequencing noise')
     p.add_argument('A', type=float, help='steepness of inflection point when drawing RT state')
     p.add_argument('frac_rt_col', help='inferred fraction replicated for each cell')
     p.add_argument('true_frac_col', help='true fraction replicated for each cell')
@@ -52,33 +52,33 @@ def main():
     fig, ax = plt.subplots(2, 2, figsize=(10, 10), tight_layout=True)
     ax = ax.flatten()
 
-    title_second_line = 'dataset: {}, A: {}, nb_r: {}, infer: {}'.format(
-        argv.dataset, argv.A, argv.nb_r, argv.infer_mode
+    title_second_line = 'dataset: {}, A: {}, lambda: {}, infer: {}'.format(
+        argv.dataset, argv.A, argv.lamb, argv.infer_mode
     )
 
     # compute T-width with inferred scRT states
     ax[1], Tw = compute_and_plot_twidth(df, tfs_col='time_from_scheduled_rt', rs_col=argv.rep_state, title='Inferred scRT heterogeneity\n{}'.format(title_second_line), ax=ax[1])
     t_width_df.append(pd.DataFrame({
-        'dataset': [argv.dataset], 'A': [argv.A], 'nb_r': [argv.nb_r], 'infer_mode': [argv.infer_mode], 'per_cell': [False], 'T-width': [Tw]
+        'dataset': [argv.dataset], 'A': [argv.A], 'lambda': [argv.lamb], 'infer_mode': [argv.infer_mode], 'per_cell': [False], 'T-width': [Tw]
     }))
 
     # compute T-width for true scRT states
     ax[0], Tw = compute_and_plot_twidth(df, tfs_col='true_time_from_scheduled_rt', rs_col=argv.true_rep_state, title='True scRT heterogeneity\n{}'.format(title_second_line), ax=ax[0])
     t_width_df.append(pd.DataFrame({
-        'dataset': [argv.dataset], 'A': [argv.A], 'nb_r': [argv.nb_r], 'infer_mode': ['ground_truth'], 'per_cell': [False], 'T-width': [Tw]
+        'dataset': [argv.dataset], 'A': [argv.A], 'lambda': [argv.lamb], 'infer_mode': ['ground_truth'], 'per_cell': [False], 'T-width': [Tw]
     }))
 
     # repeat the T-width calculations with per-cell==True
     # compute T-width with inferred scRT states
     ax[3], Tw = compute_and_plot_twidth(df, tfs_col='time_from_scheduled_rt', rs_col=argv.rep_state, title='Inferred scRT heterogeneity\n{}'.format(title_second_line), ax=ax[3], per_cell=True, alpha=0.1)
     t_width_df.append(pd.DataFrame({
-        'dataset': [argv.dataset], 'A': [argv.A], 'nb_r': [argv.nb_r], 'infer_mode': [argv.infer_mode], 'per_cell': [True], 'T-width': [Tw]
+        'dataset': [argv.dataset], 'A': [argv.A], 'lambda': [argv.lamb], 'infer_mode': [argv.infer_mode], 'per_cell': [True], 'T-width': [Tw]
     }))
 
     # compute T-width for true scRT states
     ax[2], Tw = compute_and_plot_twidth(df, tfs_col='true_time_from_scheduled_rt', rs_col=argv.true_rep_state, title='True scRT heterogeneity\n{}'.format(title_second_line), ax=ax[2], per_cell=True, alpha=0.1)
     t_width_df.append(pd.DataFrame({
-        'dataset': [argv.dataset], 'A': [argv.A], 'nb_r': [argv.nb_r], 'infer_mode': ['ground_truth'], 'per_cell': [True], 'T-width': [Tw]
+        'dataset': [argv.dataset], 'A': [argv.A], 'lambda': [argv.lamb], 'infer_mode': ['ground_truth'], 'per_cell': [True], 'T-width': [Tw]
     }))
 
     # save figure of all the T-width curves

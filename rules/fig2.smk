@@ -134,7 +134,7 @@ rule simulate_reads_from_cn_pyro_2:
         s_phase = 'analysis/fig2/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fig2/{dataset}/g1_phase_cells.tsv'
     params:
-        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
+        lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         gc_betas = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_betas'],
         rt_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['rt_col'],
@@ -148,7 +148,7 @@ rule simulate_reads_from_cn_pyro_2:
         'python3 scripts/fig2/simulate_reads_from_cn_pyro.py '
         '-si {input.s_phase} '
         '-gi {input.g1_phase} '
-        '-nbr {params.nb_r} '
+        '-l {params.lamb} '
         '-gc {params.gc_col} '
         '-b {params.gc_betas} '
         '-rt {params.rt_col} '
@@ -401,7 +401,7 @@ rule plot_pyro_composite_inferred_cn_vs_scRT_2:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_s_time'
+        frac_rt_col = 'cell_frac_rep'
     log: 'logs/fig2/{dataset}/plot_pyro_composite_inferred_cn_vs_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -461,7 +461,7 @@ rule twidth_analysis_pyro_2:
         plot = 'plots/fig2/{dataset}/twidth_curves_pyro.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
+        lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
         frac_rt_col = 'cell_frac_rep',
         true_frac_col = 'true_t',
@@ -485,7 +485,7 @@ rule twidth_analysis_bulk_2:
         plot = 'plots/fig2/{dataset}/twidth_curves_bulk.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
+        lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
         frac_rt_col = 'frac_rt',
         true_frac_col = 'true_t',
@@ -509,7 +509,7 @@ rule twidth_analysis_pyro_composite_2:
         plot = 'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        nb_r = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['nb_r'],
+        lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
         frac_rt_col = 'cell_frac_rep',
         true_frac_col = 'true_t',
@@ -610,7 +610,7 @@ rule model_accuracies_2:
         A = expand([str(config['simulated_datasets'][d]['A']) for d in config['simulated_datasets']]),
         cell_cna_prob = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
         num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
-        nb_r = expand([str(config['simulated_datasets'][d]['nb_r']) for d in config['simulated_datasets']]),
+        lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
         bulk_rep_col = 'rt_state',
         pyro_rep_col = 'model_rep_state',
         pyro_cn_col = 'model_cn_state',
@@ -625,7 +625,7 @@ rule model_accuracies_2:
         '--A {params.A} '
         '--cell_cna_prob {params.cell_cna_prob} '
         '--num_clones {params.num_clones} '
-        '--nb_r {params.nb_r} '
+        '--lamb {params.lamb} '
         '--bulk_rep_col {params.bulk_rep_col} '
         '--pyro_rep_col {params.pyro_rep_col} '
         '--pyro_cn_col {params.pyro_cn_col} '
