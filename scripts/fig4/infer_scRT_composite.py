@@ -15,6 +15,7 @@ def get_args():
     p.add_argument('gc_col', help='column containing gc values')
     p.add_argument('cn_prior_method', help='method for assigning the cn prior of each S-phase cell (i.e. g1_clones, g1_composite, diploid, etc)')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
+    p.add_argument('supp_output', help='supplementerary output tsv containing sample- and library-level params inferred by the model')
 
     return p.parse_args()
 
@@ -50,7 +51,7 @@ def main():
 
     print('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer_pyro_model(max_iter=1500)
+    cn_s_with_scrt, supp_output = scrt.infer_pyro_model(max_iter=1500)
 
     print('cn_s.shape', cn_s.shape)
     print('cn_s_with_scrt.shape', cn_s_with_scrt.shape)
@@ -63,6 +64,7 @@ def main():
 
     # save output files
     cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
+    supp_output.to_csv(argv.supp_output, sep='\t', index=False)
 
 
 if __name__ == '__main__':

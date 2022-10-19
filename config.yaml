@@ -150,3325 +150,2877 @@ simulated_datasets:
     states: [2]
     state_probs: [1]
     cell_CNA_prob: 0
-  # D1.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D1.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D2.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D3.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D4.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [0.1, 0.2, -1, 1, -0.25]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.0:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.1:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.2:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.3:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.4:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.5:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.6:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.7:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.8:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D5.9:
-  #   nb_r: 1e4
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.0:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.1:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.2:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.3:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.4:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.5:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.6:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.7:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.8:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D6.9:
-  #   nb_r: 1e6
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # # test effect of cell-specific CNAs in diploid background
-  # D7.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D7.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.02
-  # D8.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D8.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [1, 2, 3, 4, 5, 6]
-  #   state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
-  #   cell_CNA_prob: 0.05
-  # D9.0:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.1:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.2:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.3:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.4:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.5:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.6:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.7:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.8:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D9.9:
-  #   nb_r: 1e0
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.0:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.1:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.2:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.3:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.4:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.5:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.6:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.7:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.8:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D10.9:
-  #   nb_r: 1e1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.0:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.1:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.2:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.3:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.4:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.5:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.6:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.7:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.8:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D11.9:
-  #   nb_r: 1e2
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.0:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.1:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.2:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.3:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.4:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.5:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.6:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.7:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.8:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D12.9:
-  #   nb_r: 1e8
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.0:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.1:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.2:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.3:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.4:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.5:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.6:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.7:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.8:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # D13.9:
-  #   nb_r: 1e9
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A']
-  #   clone_probs: [1]
-  #   states: [2]
-  #   state_probs: [1]
-  #   cell_CNA_prob: 0
-  # # polyclonal datasets
-  # P1.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P1.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P2.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P2.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P3.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P3.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P4.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P4.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P5.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P5.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P6.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P6.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 5
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P7.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P7.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.00
-  # P8.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P8.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # P9.0:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.1:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.2:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.3:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.4:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.5:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.6:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.7:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.8:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # P9.9:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
-  #   A: 15
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C']
-  #   clone_probs: [0.4, 0.3, 0.3]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.05
-  # # four clones with different, yet similar RT profiles
-  # P10:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['gm06990_rt', 'gm12801_rt', 'gm12812_rt', 'gm12813_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C', 'D']
-  #   clone_probs: [0.25, 0.25, 0.25, 0.25]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
-  # # four clones which should have vastly different RT profiles
-  # # each RT comes from a different tissue of origin
-  # P11:
-  #   lambda: 1e-1
-  #   gc_col: 'gc'
-  #   gc_betas: [1.2, 0.0]
-  #   rt_col: ['bj_rt', 'mcf7_rt', 'hepg2_rt', 'gm12813_rt']
-  #   A: 10
-  #   num_reads: 1000000
-  #   num_cells_S: 400
-  #   num_cells_G: 400
-  #   bin_size: 500000
-  #   clones: ['A', 'B', 'C', 'D']
-  #   clone_probs: [0.25, 0.25, 0.25, 0.25]
-  #   states: [1, 2, 3, 4, 5, 6, 7]
-  #   state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
-  #   cell_CNA_prob: 0.02
+  D1.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D1.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D2.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D3.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D4.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  # vary overdispersion param
+  D5.0:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.1:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.2:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.3:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.4:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.5:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.6:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.7:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.8:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D5.9:
+    lambda: 1e-2
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.0:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.1:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.2:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.3:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.4:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.5:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.6:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.7:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.8:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D6.9:
+    lambda: 0.5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  # test effect of cell-specific CNAs in diploid background
+  D7.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D7.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.02
+  D8.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  D8.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [1, 2, 3, 4, 5, 6]
+    state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
+    cell_CNA_prob: 0.05
+  # take overdispersion param to the extremes
+  D9.0:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.1:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.2:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.3:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.4:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.5:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.6:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.7:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.8:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D9.9:
+    lambda: 0.9
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.0:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.1:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.2:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.3:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.4:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.5:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.6:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.7:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.8:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  D10.9:
+    lambda: 1e-5
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A']
+    clone_probs: [1]
+    states: [2]
+    state_probs: [1]
+    cell_CNA_prob: 0
+  # polyclonal datasets
+  P1.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P1.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P2.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P2.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P3.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P3.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P4.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P4.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P5.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P5.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P6.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P6.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 5
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P7.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P7.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.00
+  P8.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P8.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  P9.0:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.1:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.2:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.3:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.4:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.5:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.6:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.7:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.8:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  P9.9:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
+    A: 15
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C']
+    clone_probs: [0.4, 0.3, 0.3]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.05
+  # four clones with different, yet similar RT profiles
+  P10:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['gm06990_rt', 'gm12801_rt', 'gm12812_rt', 'gm12813_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C', 'D']
+    clone_probs: [0.25, 0.25, 0.25, 0.25]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
+  # four clones which should have vastly different RT profiles
+  # each RT comes from a different tissue of origin
+  P11:
+    lambda: 1e-1
+    gc_col: 'gc'
+    gc_betas: [1.2, 0.0]
+    rt_col: ['bj_rt', 'mcf7_rt', 'hepg2_rt', 'gm12813_rt']
+    A: 10
+    num_reads: 1000000
+    num_cells_S: 400
+    num_cells_G: 400
+    bin_size: 500000
+    clones: ['A', 'B', 'C', 'D']
+    clone_probs: [0.25, 0.25, 0.25, 0.25]
+    states: [1, 2, 3, 4, 5, 6, 7]
+    state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
+    cell_CNA_prob: 0.02
 
 

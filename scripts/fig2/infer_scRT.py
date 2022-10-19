@@ -16,6 +16,7 @@ def get_args():
     p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
     p.add_argument('max_iter', type=int, help='max number of svi steps to take for each pyro model')
     p.add_argument('cn_s_out', help='output tsv that is same as cn_input with inferred scRT added')
+    p.add_argument('supp_output', help='supplementerary output tsv containing sample- and library-level params inferred by the model')
 
     return p.parse_args()
 
@@ -48,7 +49,7 @@ def main():
 
     print('running inference')
     # run inference
-    cn_s_with_scrt = scrt.infer(level=argv.infer_mode)
+    cn_s_with_scrt, supp_output = scrt.infer(level=argv.infer_mode)
     print('done running inference')
 
     print('cn_s.shape', cn_s.shape)
@@ -62,6 +63,9 @@ def main():
 
     # save output files
     cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
+
+    # this will be an empty df when argv.infer_mode!='pyro'
+    supp_output.to_csv(argv.supp_output, sep='\t', index=False)
 
 
 if __name__ == '__main__':

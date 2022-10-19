@@ -6,86 +6,98 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 
 bad_datasets = []
+datasets = ['D1.0']
 # ['D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'P1', 'P2', 'P3', 'P4', 'P5']
 
 rule all_fig2:
     input:
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps_pyro_composite.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/twidth_curves_pyro.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/twidth_curves_bulk.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/cn_heatmaps.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/true_scRT_heatmap.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/ccc_features_hist.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/cn_vs_scRT_heatmaps_pyro.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         expand(
             'plots/fig2/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
+            dataset=datasets
+            # dataset=[
+            #     d for d in config['simulated_datasets']
+            #     if (d not in bad_datasets)
+            # ]
         ),
         'plots/fig2/all/model_accuracies.png'
         # 'analysis/fig2/all/s_phase_model_results_paths.tsv'
@@ -212,7 +224,9 @@ rule infer_scRT_bulk_2:
     input:
         cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
-    output: 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
+    output: 
+        main_out = 'analysis/fig2/{dataset}/s_phase_cells_bulk_infered.tsv',
+        supp_out = 'analysis/fig2/{dataset}/scRT_bulk_supp_output.tsv'  # should be an empty dataframe for bulk method
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -232,7 +246,9 @@ rule infer_scRT_pyro_2:
     input:
         cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
-    output: 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
+    output: 
+        main_out = 'analysis/fig2/{dataset}/s_phase_cells_pyro_infered.tsv',
+        supp_out = 'analysis/fig2/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -252,7 +268,9 @@ rule infer_scRT_pyro_composite_2:
     input:
         cn_s = 'analysis/fig2/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/fig2/{dataset}/g1_phase_cells_features.tsv'
-    output: 'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
+    output: 
+        main_out = 'analysis/fig2/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
+        supp_out = 'analysis/fig2/{dataset}/scRT_pyro_composite_supp_output.tsv'  # should contain sample- and library-level params
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',

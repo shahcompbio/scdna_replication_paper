@@ -165,7 +165,7 @@ rule plot_ccc_features_3:
     output: 
         plot1 = 'plots/fig3/{dataset}/ccc_features_hist.png',
         plot2 = 'plots/fig3/{dataset}/ccc_features_scatter.png'
-    log: 'logs/fig2/{dataset}/plot_ccc_features.log'
+    log: 'logs/fig3/{dataset}/plot_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig3/plot_ccc_features.py '
@@ -190,7 +190,9 @@ rule infer_scRT_pyro_3:
     input:
         cn_s = 'analysis/fig3/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    output: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
+    output:
+        main_out = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_out = 'analysis/fig3/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
     params:
         input_col = 'rpm',
         cn_col = 'state',

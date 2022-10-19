@@ -225,7 +225,9 @@ rule infer_scRT_pyro_4:
     input:
         cn_s = 'analysis/fig4/{dataset}/cn_s.tsv',
         cn_g = 'analysis/fig4/{dataset}/cn_g_with_clone_id.tsv'
-    output: 'analysis/fig4/{dataset}/cn_s_pyro_infered.tsv',
+    output:
+        main_out = 'analysis/fig4/{dataset}/cn_s_pyro_infered.tsv',
+        supp_out = 'analysis/fig4/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
     params:
         input_col = 'rpm',
         cn_col = 'state',
@@ -244,7 +246,9 @@ rule infer_scRT_pyro_composite_4:
     input:
         cn_s = 'analysis/fig4/{dataset}/cn_s.tsv',
         cn_g = 'analysis/fig4/{dataset}/cn_g_with_clone_id.tsv'
-    output: 'analysis/fig4/{dataset}/cn_s_pyro_composite_infered.tsv',
+    output:
+        main_out = 'analysis/fig4/{dataset}/cn_s_pyro_composite_infered.tsv',
+        supp_out = 'analysis/fig4/{dataset}/scRT_pyro_composite_supp_output.tsv'  # should contain sample- and library-level params
     params:
         input_col = 'rpm',
         cn_col = 'state',

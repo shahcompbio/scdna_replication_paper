@@ -132,7 +132,9 @@ rule infer_scRT_pyro_5:
     input:
         cn_s = 'analysis/fig5/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fig5/{dataset}/g1_phase_cells.tsv'
-    output: 'analysis/fig5/{dataset}/s_phase_cells_with_scRT.tsv',
+    output:
+        main_out = 'analysis/fig5/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_out = 'analysis/fig5/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
     params:
         input_col = 'rpm',
         cn_col = 'state',
