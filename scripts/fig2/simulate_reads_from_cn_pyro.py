@@ -48,10 +48,8 @@ def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=Non
     # variance of negative binomial distribution is governed by the success probability of each trial
     lamb = pyro.param('expose_lambda', torch.tensor([lambda_init]), constraint=constraints.unit_interval)
 
-    # gc bias params
-    beta_means = pyro.sample('expose_beta_means', dist.Normal(0., 1.).expand([1, K+1]).to_event(2))
-    beta_stds = pyro.param('expose_beta_stds', torch.logspace(start=0, end=-K, steps=(K+1)).reshape(1, -1).expand([1, K+1]),
-                           constraint=constraints.positive)
+    # gc bias params are set globally when simulating data
+    betas = pyro.sample('expose_betas', dist.Normal(0., 1.).expand([K+1]).to_event(1))
     
     # define cell and loci plates
     loci_plate = pyro.plate('num_loci', num_loci, dim=-2)
@@ -78,9 +76,6 @@ def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=Non
         
         # per cell reads per copy per bin
         u = pyro.sample('expose_u', dist.Normal(torch.tensor([u_guess]), torch.tensor([u_guess/10.])))
-
-        # sample beta params for each cell based on which library the cell belongs to
-        betas = pyro.sample('expose_betas', dist.Normal(beta_means, beta_stds).to_event(1))
         
         with loci_plate:
 
@@ -107,8 +102,8 @@ def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=Non
             chi = cn * (1. + rep)
 
             # find the gc bias rate of each bin using betas
-            gc_features = make_gc_features(gammas, K).reshape(num_loci, 1, K+1)
-            omega = torch.exp(torch.sum(torch.mul(betas, gc_features), 2))
+            gc_features = make_gc_features(gammas, K)
+            omega = torch.exp(torch.sum(betas * gc_features, 1)).reshape(-1, 1)
 
             # expected reads per bin per cell
             theta = u * chi * omega
@@ -147,8 +142,12 @@ def model_g1(gammas, cn=None, num_cells=None, num_loci=None, u_guess=70., lambda
 
             # copy number accounting for gc bias
             gc_features = make_gc_features(gammas, K)
-            omega = torch.exp(torch.sum(betas * gc_features, 1))
+            omega = torch.exp(torch.sum(betas * gc_features, 1)).reshape(-1, 1)
             
+            print('u.shape', u.shape)
+            print('cn.shape', cn.shape)
+            print('omega.shape', omega.shape)
+
             # expected reads per bin per cell
             theta = u * cn * omega
 
