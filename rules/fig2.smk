@@ -13,91 +13,80 @@ rule all_fig2:
     input:
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/scRT_heatmaps_pyro_composite.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/twidth_curves_pyro.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/twidth_curves_bulk.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/cn_heatmaps.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/true_scRT_heatmap.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/ccc_features_hist.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/cn_vs_scRT_heatmaps_pyro.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         expand(
             'plots/fig2/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
-            dataset=datasets
-            # dataset=[
-            #     d for d in config['simulated_datasets']
-            #     if (d not in bad_datasets)
-            # ]
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
         ),
         'plots/fig2/all/model_accuracies.png'
         # 'analysis/fig2/all/s_phase_model_results_paths.tsv'

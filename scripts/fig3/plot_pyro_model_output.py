@@ -33,10 +33,10 @@ def plot_model_results(cn_s, argv):
     fig, ax = plt.subplots(1, 4, figsize=(28, 7), tight_layout=True)
     ax = ax.flatten()
 
-    plot_clustered_cell_cn_matrix(ax[0], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_s_time')
-    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='clone_id', secondary_field_name='model_s_time')
-    plot_clustered_cell_cn_matrix(ax[2], cn_s, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_s_time')
-    plot_clustered_cell_cn_matrix(ax[3], cn_s, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_s_time', cmap=rt_cmap)
+    plot_clustered_cell_cn_matrix(ax[0], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[2], cn_s, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[3], cn_s, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
 
     ax[0].set_title('{}\nReads per million'.format(argv.dataset))
     ax[1].set_title('{}\nHMMCopy states'.format(argv.dataset))

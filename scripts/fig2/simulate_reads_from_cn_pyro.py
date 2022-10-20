@@ -178,6 +178,7 @@ def simulate_s_cells(gc_profile, cn, rt, argv):
     rt_profile = torch.tensor(convert_rt_units(rt.values))
 
     u_guess = float(argv.num_reads) / (1.5 * torch.mean(cn))
+    true_lambda = torch.tensor([argv.lamb])
 
     print('num_loci', num_loci)
     print('num_cells', num_cells)
@@ -190,14 +191,13 @@ def simulate_s_cells(gc_profile, cn, rt, argv):
         model_s,
         data={
             'expose_a': torch.tensor([argv.a]),
-            'expose_lambda': torch.tensor([argv.lamb]),
             'expose_betas': torch.tensor(argv.betas),
             'expose_rho': rt_profile
         })
 
     model_trace = pyro.poutine.trace(conditioned_model)
 
-    samples = model_trace.get_trace(gc_profile, cn0=cn, u_guess=u_guess, K=len(argv.betas)-1)
+    samples = model_trace.get_trace(gc_profile, cn0=cn, u_guess=u_guess, lambda_init=true_lambda, K=len(argv.betas)-1)
 
     t = samples.nodes['expose_tau']['value']
     u = samples.nodes['expose_u']['value']
@@ -226,17 +226,17 @@ def simulate_g_cells(gc_profile, cn, argv):
     cn = torch.tensor(cn.values)
 
     u_guess = float(argv.num_reads) / (1. * torch.mean(cn))
+    true_lambda = torch.tensor([argv.lamb])
 
     conditioned_model = poutine.condition(
         model_g1,
         data={
-            'expose_lambda': torch.tensor([argv.lamb]),
             'expose_betas': torch.tensor(argv.betas),
         })
 
     model_trace = pyro.poutine.trace(conditioned_model)
 
-    samples = model_trace.get_trace(gc_profile, cn=cn, u_guess=u_guess, K=len(argv.betas)-1)
+    samples = model_trace.get_trace(gc_profile, cn=cn, u_guess=u_guess, lambda_init=true_lambda, K=len(argv.betas)-1)
 
     u = samples.nodes['expose_u']['value']
 

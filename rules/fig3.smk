@@ -229,7 +229,7 @@ rule plot_rt_heatmap_3:
     output: 'plots/fig3/{dataset}/rt_heatmap.png'
     params:
         value_col = 'model_rep_state',
-        sort_col = 'model_s_time',
+        sort_col = 'model_tau',
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fig3/{dataset}/plot_rt_heatmap.log'
     shell:
