@@ -72,6 +72,11 @@
         "time" : "48:00",
         "mem" : 128
     },
+    "infer_scRT_pyro_4" :
+    {
+        "time" : "48:00",
+        "mem" : 128
+    },
     "infer_scRT_pyro_5" :
     {
         "time" : "72:00",

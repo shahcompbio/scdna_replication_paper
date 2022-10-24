@@ -41,18 +41,18 @@ rule all_fig4:
             'plots/fig4/{dataset}/cn_clone_heatmaps.png',
             dataset=[d for d in perm_datasets]
         ),
-        expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
-            dataset=[d for d in datasets]
-        ),
+        # expand(
+        #     'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
+        #     dataset=[d for d in datasets]
+        # ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite.png',
             dataset=[d for d in perm_datasets]
         ),
-        expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
-            dataset=[d for d in datasets]
-        ),
+        # expand(
+        #     'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
+        #     dataset=[d for d in datasets]
+        # ),
         expand(
             'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
             dataset=[d for d in perm_datasets]
@@ -64,9 +64,9 @@ rule all_fig4:
                 if (d not in ['T47D', 'GM18507'])
             ]
         ),
-        'plots/fig4/all/rt_corr.png',
+        # 'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',
-        'plots/fig4/all/twidth_curves.png',
+        # 'plots/fig4/all/twidth_curves.png',
         'plots/fig4/all/twidth_curves_composite.png',
         'plots/fig4/permuted/summary.png',
         'plots/fig4/permuted/rt_corr_composite.png'
@@ -271,7 +271,7 @@ rule plot_inferred_cn_vs_scRT_4:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_s_time'
+        frac_rt_col = 'model_tau'
     log: 'logs/fig4/{dataset}/plot_inferred_cn_vs_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -288,7 +288,7 @@ rule plot_inferred_cn_vs_scRT_composite_4:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_s_time'
+        frac_rt_col = 'model_tau'
     log: 'logs/fig4/{dataset}/plot_inferred_cn_vs_scRT_composite.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '

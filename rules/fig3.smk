@@ -261,10 +261,13 @@ rule remove_nonreplicating_cells_3:
     input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 
         good = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        bad = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
+        nonrep = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
+        lowqual = 'analysis/fig3/{dataset}/model_lowqual_cells.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        rpm_col = 'rpm'
     log: 'logs/fig3/{dataset}/remove_nonreplicating_cells.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
