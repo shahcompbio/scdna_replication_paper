@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import statsmodels.api as sm
 from argparse import ArgumentParser
 
 
@@ -15,6 +17,16 @@ def get_args():
     p.add_argument('output_lowqual', type=str, help='pyro model results for low quality cells that get removed')
 
     return p.parse_args()
+
+
+def autocorr(data, min_lag=10, max_lag=50):
+    acorr = sm.tsa.acf(data, nlags=max_lag)
+    return np.mean(acorr[min_lag-1:])
+
+
+def breakpoints(data):
+    temp_diff = np.diff(data)
+    return sum(np.where(temp_diff!=0, 1, 0))
 
 
 def compute_cell_frac(cn, frac_rt_col='cell_frac_rep', rep_state_col='model_rep_state'):

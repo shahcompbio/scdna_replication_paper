@@ -599,7 +599,7 @@ rule aggregate_model_results_2:
     output: 'analysis/fig2/all/s_phase_model_results_paths.tsv'
     params:
         datasets = expand(config['simulated_datasets'])
-    log: 'analysis/fig2/all/aggregate_model_results.log'
+    log: 'logs/fig2/all/aggregate_model_results.log'
     shell:
         'python3 scripts/fig2/aggregate_model_results.py '
         '-d {params.datasets} '
