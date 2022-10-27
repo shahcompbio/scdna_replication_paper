@@ -7,6 +7,7 @@ from scgenome.cnplot import plot_cell_cn_profile
 from matplotlib.colors import ListedColormap
 from scgenome import refgenome
 from sklearn import preprocessing
+from scipy.stats import hypergeom
 from argparse import ArgumentParser
 
 
@@ -247,11 +248,38 @@ def clone_spf_analysis(cn_s, cn_g, cn_gr, argv):
     clone_frac_s = num_cells_s / sum(num_cells_s)
     clone_frac_g = num_cells_g / sum(num_cells_g)
 
+    # statistical test to see which clones are enriched/depleted for S-phase cells
+    positive_pvals = np.zeros(len(clones))
+    for i, clone_id in enumerate(clones):
+
+        x = num_cells_s[i] # number of S-phase cells belonging to this clone
+        m = sum(num_cells_s) # total number of S-phase cells
+        n = sum(num_cells_g) # total number of G1/2-phase cells
+        k = int(clone_frac_g[i] * (n + m)) # expected number of G1/2 + S phase cells belonging to this clone
+        N = m + n  # total number of cells in entire population
+        # use hypergeometric survival function to see if this clone has
+        # more S-phase cells than expected (positively selected)
+        positive_pvals[i] = hypergeom(M=N, n=m, N=k).sf(x)  
+
+    # subtract positive pval from 1 to see if clone has 
+    # significantly fewer S-phase cells than expected
+    negative_pvals = 1 - positive_pvals
+
+    # divide by total number of hypotheses tested (Bonferroni correction)
+    positive_pvals *= 2 * len(clones)
+    negative_pvals *= 2 * len(clones)
+
     fig, ax = plt.subplots(1, 2, figsize=(10, 4), tight_layout=True)
 
     # draw scatterplot comparing the relative fraction of each clone in S vs G1/2 phases
+    pthresh = 1e-2
     for i, clone_id in enumerate(clones):
-        ax[0].scatter(x=clone_frac_g[i], y=clone_frac_s[i], c='C{}'.format(i), label=clone_id)
+        if positive_pvals[i] < pthresh:
+            ax[0].scatter(x=clone_frac_g[i], y=clone_frac_s[i], c='C{}'.format(i), label=clone_id, marker='^')
+        elif negative_pvals[i] < pthresh:
+            ax[0].scatter(x=clone_frac_g[i], y=clone_frac_s[i], c='C{}'.format(i), label=clone_id, marker='v')
+        else:
+            ax[0].scatter(x=clone_frac_g[i], y=clone_frac_s[i], c='C{}'.format(i), label=clone_id)
 
     # draw y=x line where we expect "neutral" clones to lie
     lims = [
