@@ -71,6 +71,13 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig3/{dataset}/subclonal_rt_diffs.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/fig3/brca2ko/twidth_curves.png',
         'plots/fig3/downsampled_twidth_scatter.png',
         'plots/fig3/twidth_summary.png'
@@ -332,6 +339,19 @@ rule compute_rt_pseudobulks_3:
         'deactivate'
 
 
+rule compute_cn_pseudobulks_3:
+    input: 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/fig3/{dataset}/cn_pseudobulks.tsv'
+    params:
+        cn_state_col = 'state',
+    log: 'logs/fig3/{dataset}/compute_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/compute_cn_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule plot_clone_rt_and_spf_3:
     input: 
         cn_s = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
@@ -349,6 +369,24 @@ rule plot_clone_rt_and_spf_3:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig3/plot_clone_rt_and_spf.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule subclonal_rt_diffs_3:
+    input:
+        rt = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv',
+        cn = 'analysis/fig3/{dataset}/cn_pseudobulks.tsv'
+    output:
+        tsv = 'analysis/fig3/{dataset}/subclonal_rt_diffs.tsv',
+        png = 'plots/fig3/{dataset}/subclonal_rt_diffs.png'
+    params:
+        rep_col = 'model_rep_state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig3/{dataset}/subclonal_rt_diffs.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fig3/subclonal_rt_diffs.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
