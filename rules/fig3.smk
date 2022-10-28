@@ -78,6 +78,13 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig3/{dataset}/rpm_umaps.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/fig3/brca2ko/twidth_curves.png',
         'plots/fig3/downsampled_twidth_scatter.png',
         'plots/fig3/twidth_summary.png'
@@ -322,6 +329,24 @@ rule plot_nonrep_pyro_model_output_3:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig3/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_rpm_umaps_3:
+    input:
+        s = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        g_tree = 'analysis/fig3/{dataset}/g1_phase_cells.tsv',
+        g_recovered = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
+        lowqual = 'analysis/fig3/{dataset}/model_lowqual_cells.tsv',
+    output: 'plots/fig3/{dataset}/rpm_umaps.png'
+    params:
+        value_col = 'rpm',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fig3/{dataset}/plot_rpm_umaps.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig3/plot_rpm_umaps.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
