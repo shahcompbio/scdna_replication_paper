@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 import umap
+import matplotlib.pyplot as plt
+import seaborn as sns
+from argparse import ArgumentParser
 
 
 def get_args():
