@@ -196,6 +196,9 @@ def main():
     ax.set_ylabel('Clone RT relative to reference\n<--later | earlier-->')
     fig.savefig(argv.out_png, bbox_inches='tight')
 
+    # add dataset name to table before saving
+    cna_rt_diffs['dataset'] = argv.dataset
+
     # save a table of the RT diffs at each subclonal CNA site for later analysis
     cna_rt_diffs.to_csv(argv.out_tsv, sep='\t', index=False)
 

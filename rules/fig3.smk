@@ -72,20 +72,13 @@ rule all_fig3:
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/subclonal_rt_diffs.png',
-            dataset=[
-                d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
             'plots/fig3/{dataset}/rpm_umaps.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/fig3/brca2ko/twidth_curves.png',
+        'plots/fig3/subclonal_rt_diffs_summary.png',
         'plots/fig3/downsampled_twidth_scatter.png',
         'plots/fig3/twidth_summary.png'
         
@@ -416,20 +409,26 @@ rule subclonal_rt_diffs_3:
         'deactivate'
 
 
-rule compute_rt_pseudobulks_brca2ko_merge_3:
-    input: 
-        SA1055 = 'analysis/fig3/SA1055/s_phase_cells_with_scRT_filtered.tsv',
-        SA1056 = 'analysis/fig3/SA1056/s_phase_cells_with_scRT_filtered.tsv'
-    output: 
-        cn = 'analysis/fig3/brca2ko/s_phase_cells_with_scRT_filtered.tsv',
-        rt_bulks = 'analysis/fig3/brca2ko/scRT_pseudobulks.tsv'
-    params:
-        rep_col = 'model_rep_state',
-    log: 'logs/fig3/brca2ko/compute_rt_pseudobulks_brca2ko_merge.log'
+rule subclonal_rt_diffs_summary_3:
+    input:
+        rt = expand(
+            'analysis/fig3/{dataset}/subclonal_rt_diffs.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in ['OV2295'])
+            ]
+        )
+    output:
+        tsv = 'analysis/fig3/subclonal_rt_diffs_summary.tsv',
+        png = 'plots/fig3/subclonal_rt_diffs_summary.png'
+    log: 'logs/fig3/subclonal_rt_diffs_summary.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/compute_rt_pseudobulks_brca2ko_merge.py '
-        '{input} {params} {output} &> {log} ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fig3/subclonal_rt_diffs_summary.py '
+        '-i {input} '
+        '--table {output.tsv} '
+        '--plot {output.png} '
+        '&> {log} ; '
         'deactivate'
 
 
@@ -458,15 +457,15 @@ rule twidth_summary_3:
         tw = expand(
             'analysis/fig3/{dataset}/twidth_values.tsv',
             dataset=[
-                'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'brca2ko'
+                'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
             ]
         )
     output:
         output_tsv = 'analysis/fig3/twidth_values.tsv',
         output_png = 'plots/fig3/twidth_summary.png'
     params:
-        labels = expand(['WT', 'TP53-/-', 'TP53-/-', 'TP53-/-,BRCA1+/-', 'TP53-/-,BRCA1-/-', 'TP53-/-,BRCA2+/-', 'TP53-/-,BRCA2-/-']),
-        datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'brca2ko']),
+        labels = expand(['WT', 'TP53-/-', 'TP53-/-', 'TP53-/-,BRCA1+/-', 'TP53-/-,BRCA1-/-', 'TP53-/-,BRCA2+/-', 'TP53-/-,BRCA2-/-', 'TP53-/-,BRCA2-/-']),
+        datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055']),
     log: 'logs/fig3/twidth_summary.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
