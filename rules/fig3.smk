@@ -432,6 +432,40 @@ rule subclonal_rt_diffs_summary_3:
         'deactivate'
 
 
+rule sample_rt_diffs_3:
+    input:
+        rt = expand(
+            'analysis/fig3/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
+            ]
+        ),
+        cn = expand(
+            'analysis/fig3/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
+            ]
+        )
+    output:
+        tsv = 'analysis/fig3/sample_rt_diffs_summary.tsv',
+        png = 'plots/fig3/sample_rt_diffs_summary.png'
+    params:
+        rep_col = 'model_rep_state',
+        datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055']),
+    log: 'logs/fig3/sample_rt_diffs.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fig3/sample_rt_diffs.py '
+        '-ir {input.rt} '
+        '-ic {input.cn} '
+        '-d {params.datasets} '
+        '-r {params.rep_col} '
+        '--table {output.tsv} '
+        '--plot {output.png} '
+        '&> {log} ; '
+        'deactivate'
+
+
 rule twidth_analysis_3:
     input: 
         scrt = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',

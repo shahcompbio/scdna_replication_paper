@@ -64,6 +64,12 @@ rule all_fig4:
                 if (d not in ['T47D', 'GM18507'])
             ]
         ),
+        expand(
+            'analysis/fig4/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                d for d in ['T47D', 'GM18507', 'all']
+            ]
+        ),
         # 'plots/fig4/all/rt_corr.png',
         'plots/fig4/all/rt_corr_composite.png',
         # 'plots/fig4/all/twidth_curves.png',
@@ -397,6 +403,19 @@ rule plot_inferred_cn_vs_scRT_composite_filtered_4:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fig4/plot_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_cn_pseudobulks_4:
+    input: 'analysis/fig4/{dataset}/cn_g_with_clone_id.tsv'
+    output: 'analysis/fig4/{dataset}/cn_pseudobulks.tsv'
+    params:
+        cn_state_col = 'state',
+    log: 'logs/fig4/{dataset}/compute_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fig4/compute_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
