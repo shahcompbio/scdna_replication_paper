@@ -10,8 +10,8 @@ from argparse import ArgumentParser
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('cn', type=str, help='table of CN pseudobulk profiles')
     p.add_argument('rt', type=str, help='table of RT pseudobulk profiles')
+    p.add_argument('cn', type=str, help='table of CN pseudobulk profiles')
     p.add_argument('rep_col', type=str, help='column for replication state (relevant for RT pseudobulk profile column names)')
     p.add_argument('dataset', type=str, help='name of this dataset')
     p.add_argument('out_tsv', type=str, help='Table of the number of cells per cell cycle phase and clone')
@@ -156,6 +156,10 @@ def main():
     argv = get_args()
     cn = pd.read_csv(argv.cn, sep='\t')
 
+    # drop the sample and dataset level cn pseudobulks
+    good_cn_cols = [c for c in cn.columns if c.startswith('clone') or c in ['chr', 'start', 'end']]
+    cn = cn[good_cn_cols]
+
     # set chr column to category
     cn.chr = cn.chr.astype(str)
     cn.chr = cn.chr.astype('category')
@@ -171,7 +175,8 @@ def main():
 
     # find all the columns containing clone RT profiles
     cols = [x for x in df.columns if x.startswith('pseduobulk_clone') and x.endswith(argv.rep_col)]
-    clones = [x.split('_')[1].replace('clone', '') for x in cols]
+    # find all the columns containing clone CN profiles
+    clones = [x.split('_')[1].replace('clone', 'clone_') for x in cols]
 
     # compute the CN ploidy of each clone
     ploidies = df[clones].mode()

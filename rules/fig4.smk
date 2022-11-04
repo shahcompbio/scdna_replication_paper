@@ -412,6 +412,7 @@ rule compute_cn_pseudobulks_4:
     output: 'analysis/fig4/{dataset}/cn_pseudobulks.tsv'
     params:
         cn_state_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fig4/{dataset}/compute_cn_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '

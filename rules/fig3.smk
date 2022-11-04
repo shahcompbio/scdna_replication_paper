@@ -78,6 +78,12 @@ rule all_fig3:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fig3/{dataset}/signals_heatmaps.png',
+            dataset=[
+               'OV2295', 'SA039'
+            ]
+        ),
         'plots/fig3/subclonal_rt_diffs_summary.png',
         'plots/fig3/downsampled_twidth_scatter.png',
         'plots/fig3/twidth_summary.png'
@@ -362,6 +368,7 @@ rule compute_cn_pseudobulks_3:
     output: 'analysis/fig3/{dataset}/cn_pseudobulks.tsv'
     params:
         cn_state_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fig3/{dataset}/compute_cn_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -543,3 +550,23 @@ rule twidth_downsampling_3:
         '--plot {output.output_png} '
         '&> {log} ; '
         'deactivate'
+
+
+rule signals_heatmaps:
+    input: 
+        ascn = 'analysis/schnapps-results/{dataset}/hscn.csv.gz',
+        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
+    output: 
+        figure = 'plots/fig3/{dataset}/signals_heatmaps.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+    log: 'logs/fig3/{dataset}/signals_heatmaps.log'
+    singularity: 'docker://marcjwilliams1/signals'
+    shell:
+        'Rscript scripts/fig3/signals_heatmaps.R '
+        '--ascn {input.ascn} '
+        '--clones {input.clones} '
+        '--dataset {params.dataset} '
+        '--heatmap {output.figure} '
+        '&> {log}'
+    # script: '../scripts/fig3/signals_heatmaps.R'
