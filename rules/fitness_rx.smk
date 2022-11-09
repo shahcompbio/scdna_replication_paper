@@ -20,52 +20,52 @@ samples = samples[samples['sample_id'].notna()]
 
 bad_datasets = []
 
-rule all_fig1_rx:
+rule all_fitness_rx:
     input:
         expand(
-            'plots/fig1_rx/{dataset}/cn_heatmaps.pdf',
+            'plots/fitness_rx/{dataset}/cn_heatmaps.pdf',
             dataset=[
                 d for d in config['fitness_rx_pairs']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig1_rx/{dataset}/clone_tree_heatmap.png',
+            'plots/fitness_rx/{dataset}/clone_tree_heatmap.png',
             dataset=[
                 d for d in config['fitness_rx_pairs']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig1_rx/{dataset}/consensus_clone_copynumber.pdf',
+            'plots/fitness_rx/{dataset}/consensus_clone_copynumber.pdf',
             dataset=[
                 d for d in config['fitness_rx_pairs']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig1_rx/{dataset}/clonal_evolution_rx.pdf',
+            'plots/fitness_rx/{dataset}/clonal_evolution_rx.pdf',
             dataset=[
                 d for d in config['fitness_rx_pairs']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig1_rx/{dataset}/clonal_evolution_unrx.pdf',
+            'plots/fitness_rx/{dataset}/clonal_evolution_unrx.pdf',
             dataset=[
                 d for d in config['fitness_rx_pairs']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig1_rx/{dataset}/total_SPF_vs_time.pdf',
+            'plots/fitness_rx/{dataset}/total_SPF_vs_time.pdf',
             dataset=[
                 d for d in config['fitness_rx_pairs']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig1_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.pdf',
+            'plots/fitness_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.pdf',
             dataset=[
                 d for d in config['fitness_rx_pairs']
                 if (d not in bad_datasets)
@@ -123,30 +123,30 @@ rule collect_cn_data:
     input: 
         hmm = dataset_cn_files,
         annotation = dataset_metric_files
-    output: 'analysis/fig1_rx/{dataset}/{dataset}_cn_data.tsv'
-    log: 'logs/fig1_rx/{dataset}/collect_cn_data.log'
+    output: 'analysis/fitness_rx/{dataset}/{dataset}_cn_data.tsv'
+    log: 'logs/fitness_rx/{dataset}/collect_cn_data.log'
     params:
         samples = dataset_sample_ids
     shell: 
-        'python scripts/fig1_rx/collect_cn_data.py '
+        'python scripts/fitness_rx/collect_cn_data.py '
         '--hmm {input.hmm} --annotation {input.annotation} '
         '--samples {params.samples} --output {output} &> {log}'
 
 
 rule assign_timepoints:
     input: 
-        cn = 'analysis/fig1_rx/{dataset}/{dataset}_cn_data.tsv',
+        cn = 'analysis/fitness_rx/{dataset}/{dataset}_cn_data.tsv',
         times = 'data/fitness/dlp_summaries_rebuttal.csv'
-    output: 'analysis/fig1_rx/{dataset}/{dataset}_cn_data_times.tsv'
-    log: 'logs/fig1_rx/{dataset}/assign_timepoints.log'
+    output: 'analysis/fitness_rx/{dataset}/{dataset}_cn_data_times.tsv'
+    log: 'logs/fitness_rx/{dataset}/assign_timepoints.log'
     shell:
-        'python3 scripts/fig1_rx/assign_timepoints.py '
+        'python3 scripts/fitness_rx/assign_timepoints.py '
         '{input} {output} &> {log}'
 
 
 rule get_s_phase_cells:
-    input: 'analysis/fig1_rx/{dataset}/{dataset}_cn_data_times.tsv'
-    output: 'analysis/fig1_rx/{dataset}/s_phase_cells.tsv'
+    input: 'analysis/fitness_rx/{dataset}/{dataset}_cn_data_times.tsv'
+    output: 'analysis/fitness_rx/{dataset}/s_phase_cells.tsv'
     run:
         df = pd.read_csv(str(input), sep='\t')
         df = df.query('is_s_phase_prob > 0.5')
@@ -155,9 +155,9 @@ rule get_s_phase_cells:
 
 rule get_non_s_phase_cells:
     input:
-        cn = 'analysis/fig1_rx/{dataset}/{dataset}_cn_data_times.tsv',
+        cn = 'analysis/fitness_rx/{dataset}/{dataset}_cn_data_times.tsv',
         clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
-    output: 'analysis/fig1_rx/{dataset}/non_s_phase_cells.tsv'
+    output: 'analysis/fitness_rx/{dataset}/non_s_phase_cells.tsv'
     run:
         df = pd.read_csv(str(input.cn), sep='\t')
         clones = pd.read_csv(str(input.clones))
@@ -181,29 +181,29 @@ rule get_non_s_phase_cells:
 
 rule infer_SPF:
     input:
-        cn_s = 'analysis/fig1_rx/{dataset}/s_phase_cells.tsv',
-        cn_g1 = 'analysis/fig1_rx/{dataset}/non_s_phase_cells.tsv'
+        cn_s = 'analysis/fitness_rx/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fitness_rx/{dataset}/non_s_phase_cells.tsv'
     output:
-        cn_s_out = 'analysis/fig1_rx/{dataset}/s_phase_cells_with_clones.tsv',
-        spf_table = 'analysis/fig1_rx/{dataset}/spf_table.tsv',
-        clone_copy = 'analysis/fig1_rx/{dataset}/clone_copy.tsv'
+        cn_s_out = 'analysis/fitness_rx/{dataset}/s_phase_cells_with_clones.tsv',
+        spf_table = 'analysis/fitness_rx/{dataset}/spf_table.tsv',
+        clone_copy = 'analysis/fitness_rx/{dataset}/clone_copy.tsv'
     params:
         input_col = 'copy'
-    log: 'logs/fig1_rx/{dataset}/infer_SPF.log'
+    log: 'logs/fitness_rx/{dataset}/infer_SPF.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig1_rx/infer_SPF.py '
+        'python3 scripts/fitness_rx/infer_SPF.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
 rule compute_consensus_clone_states:
-    input: 'analysis/fig1_rx/{dataset}/non_s_phase_cells.tsv'
-    output: 'analysis/fig1_rx/{dataset}/clone_states.tsv'
+    input: 'analysis/fitness_rx/{dataset}/non_s_phase_cells.tsv'
+    output: 'analysis/fitness_rx/{dataset}/clone_states.tsv'
     params:
         input_col = 'state',
         clone_col = 'clone_id'
-    log: 'logs/fig1_rx/{dataset}/compute_consensus_clone_states.log'
+    log: 'logs/fitness_rx/{dataset}/compute_consensus_clone_states.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/common/compute_consensus_clone_profiles.py '
@@ -213,53 +213,53 @@ rule compute_consensus_clone_states:
 
 rule plot_consensus_clone_copynumber:
     input:
-        clone_states = 'analysis/fig1_rx/{dataset}/clone_states.tsv',
-        clone_copy = 'analysis/fig1_rx/{dataset}/clone_copy.tsv'
-    output: 'plots/fig1_rx/{dataset}/consensus_clone_copynumber.pdf'
-    log: 'logs/fig1_rx/{dataset}/plot_consensus_clone_copynumber.log'
+        clone_states = 'analysis/fitness_rx/{dataset}/clone_states.tsv',
+        clone_copy = 'analysis/fitness_rx/{dataset}/clone_copy.tsv'
+    output: 'plots/fitness_rx/{dataset}/consensus_clone_copynumber.pdf'
+    log: 'logs/fitness_rx/{dataset}/plot_consensus_clone_copynumber.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig1_rx/plot_consensus_clone_copynumber.py '
+        'python3 scripts/fitness_rx/plot_consensus_clone_copynumber.py '
         '{input} {output} &> {log}'
         ' ; deactivate'
 
 
 rule plot_clone_tree_heatmap:
-    input: 'analysis/fig1_rx/{dataset}/clone_states.tsv',
-    output: 'plots/fig1_rx/{dataset}/clone_tree_heatmap.png'
+    input: 'analysis/fitness_rx/{dataset}/clone_states.tsv',
+    output: 'plots/fitness_rx/{dataset}/clone_tree_heatmap.png'
     params:
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig1_rx/{dataset}/plot_clone_tree_heatmap.log'
+    log: 'logs/fitness_rx/{dataset}/plot_clone_tree_heatmap.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig1_rx/plot_clone_tree_heatmap.py '
+        'python3 scripts/fitness_rx/plot_clone_tree_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
 
 
 rule plot_cn_heatmaps:
     input:
-        s_phase = 'analysis/fig1_rx/{dataset}/s_phase_cells_with_clones.tsv',
-        non_s_phase = 'analysis/fig1_rx/{dataset}/non_s_phase_cells.tsv'
-    output: 'plots/fig1_rx/{dataset}/cn_heatmaps.pdf'
+        s_phase = 'analysis/fitness_rx/{dataset}/s_phase_cells_with_clones.tsv',
+        non_s_phase = 'analysis/fitness_rx/{dataset}/non_s_phase_cells.tsv'
+    output: 'plots/fitness_rx/{dataset}/cn_heatmaps.pdf'
     params:
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig1_rx/{dataset}/plot_cn_heatmaps.log'
+    log: 'logs/fitness_rx/{dataset}/plot_cn_heatmaps.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig1_rx/plot_cn_heatmaps.py '
+        'python3 scripts/fitness_rx/plot_cn_heatmaps.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
 
 rule split_by_rx:
     input:
-        s_phase = 'analysis/fig1_rx/{dataset}/s_phase_cells_with_clones.tsv',
-        non_s_phase = 'analysis/fig1_rx/{dataset}/non_s_phase_cells.tsv'
+        s_phase = 'analysis/fitness_rx/{dataset}/s_phase_cells_with_clones.tsv',
+        non_s_phase = 'analysis/fitness_rx/{dataset}/non_s_phase_cells.tsv'
     output:
-        s_phase_rx = 'analysis/fig1_rx/{dataset}/s_phase_rx_cells_with_clones.tsv',
-        non_s_phase_rx = 'analysis/fig1_rx/{dataset}/non_s_phase_rx_cells.tsv',
-        s_phase_unrx = 'analysis/fig1_rx/{dataset}/s_phase_unrx_cells_with_clones.tsv',
-        non_s_phase_unrx = 'analysis/fig1_rx/{dataset}/non_s_phase_unrx_cells.tsv'
+        s_phase_rx = 'analysis/fitness_rx/{dataset}/s_phase_rx_cells_with_clones.tsv',
+        non_s_phase_rx = 'analysis/fitness_rx/{dataset}/non_s_phase_rx_cells.tsv',
+        s_phase_unrx = 'analysis/fitness_rx/{dataset}/s_phase_unrx_cells_with_clones.tsv',
+        non_s_phase_unrx = 'analysis/fitness_rx/{dataset}/non_s_phase_unrx_cells.tsv'
     params:
         rx_datasetname = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['Rx'],
         unrx_datasetname = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['UnRx']
@@ -280,70 +280,70 @@ rule split_by_rx:
 
 rule plot_clonal_evolution_unrx:
     input: 
-        s_phase = 'analysis/fig1_rx/{dataset}/s_phase_unrx_cells_with_clones.tsv',
-        non_s_phase = 'analysis/fig1_rx/{dataset}/non_s_phase_unrx_cells.tsv',
+        s_phase = 'analysis/fitness_rx/{dataset}/s_phase_unrx_cells_with_clones.tsv',
+        non_s_phase = 'analysis/fitness_rx/{dataset}/non_s_phase_unrx_cells.tsv',
         times = 'data/fitness/fitness_time_scale.tsv'
     output:
-        s_out = 'analysis/fig1_rx/{dataset}/s_phase_unrx_clone_time_counts.tsv',
-        non_s_out = 'analysis/fig1_rx/{dataset}/non_s_phase_unrx_clone_time_counts.tsv',
-        plot = 'plots/fig1_rx/{dataset}/clonal_evolution_unrx.pdf'
+        s_out = 'analysis/fitness_rx/{dataset}/s_phase_unrx_clone_time_counts.tsv',
+        non_s_out = 'analysis/fitness_rx/{dataset}/non_s_phase_unrx_clone_time_counts.tsv',
+        plot = 'plots/fitness_rx/{dataset}/clonal_evolution_unrx.pdf'
     params:
         dataset = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['UnRx']
-    log: 'logs/fig1_rx/{dataset}/plot_clonal_evolution.log'
+    log: 'logs/fitness_rx/{dataset}/plot_clonal_evolution.log'
     shell:
-        'python3 scripts/fig1_rx/plot_clonal_evolution.py '
+        'python3 scripts/fitness_rx/plot_clonal_evolution.py '
         '{input} {params} {output} &> {log}'
 
 
 rule plot_clonal_evolution_rx:
     input: 
-        s_phase = 'analysis/fig1_rx/{dataset}/s_phase_rx_cells_with_clones.tsv',
-        non_s_phase = 'analysis/fig1_rx/{dataset}/non_s_phase_rx_cells.tsv',
+        s_phase = 'analysis/fitness_rx/{dataset}/s_phase_rx_cells_with_clones.tsv',
+        non_s_phase = 'analysis/fitness_rx/{dataset}/non_s_phase_rx_cells.tsv',
         times = 'data/fitness/fitness_time_scale.tsv'
     output:
-        s_out = 'analysis/fig1_rx/{dataset}/s_phase_rx_clone_time_counts.tsv',
-        non_s_out = 'analysis/fig1_rx/{dataset}/non_s_phase_rx_clone_time_counts.tsv',
-        plot = 'plots/fig1_rx/{dataset}/clonal_evolution_rx.pdf'
+        s_out = 'analysis/fitness_rx/{dataset}/s_phase_rx_clone_time_counts.tsv',
+        non_s_out = 'analysis/fitness_rx/{dataset}/non_s_phase_rx_clone_time_counts.tsv',
+        plot = 'plots/fitness_rx/{dataset}/clonal_evolution_rx.pdf'
     params:
         dataset = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['Rx']
-    log: 'logs/fig1_rx/{dataset}/plot_clonal_evolution.log'
+    log: 'logs/fitness_rx/{dataset}/plot_clonal_evolution.log'
     shell:
-        'python3 scripts/fig1_rx/plot_clonal_evolution.py '
+        'python3 scripts/fitness_rx/plot_clonal_evolution.py '
         '{input} {params} {output} &> {log}'
 
 
 rule plot_total_SPF_vs_time:
     input:
-        s_phase_rx = 'analysis/fig1_rx/{dataset}/s_phase_rx_clone_time_counts.tsv',
-        non_s_phase_rx = 'analysis/fig1_rx/{dataset}/non_s_phase_rx_clone_time_counts.tsv',
-        s_phase_unrx = 'analysis/fig1_rx/{dataset}/s_phase_unrx_clone_time_counts.tsv',
-        non_s_phase_unrx = 'analysis/fig1_rx/{dataset}/non_s_phase_unrx_clone_time_counts.tsv'
-    output: 'plots/fig1_rx/{dataset}/total_SPF_vs_time.pdf'
+        s_phase_rx = 'analysis/fitness_rx/{dataset}/s_phase_rx_clone_time_counts.tsv',
+        non_s_phase_rx = 'analysis/fitness_rx/{dataset}/non_s_phase_rx_clone_time_counts.tsv',
+        s_phase_unrx = 'analysis/fitness_rx/{dataset}/s_phase_unrx_clone_time_counts.tsv',
+        non_s_phase_unrx = 'analysis/fitness_rx/{dataset}/non_s_phase_unrx_clone_time_counts.tsv'
+    output: 'plots/fitness_rx/{dataset}/total_SPF_vs_time.pdf'
     params:
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig1_rx/{dataset}/plot_total_SPF_vs_time.log'
+    log: 'logs/fitness_rx/{dataset}/plot_total_SPF_vs_time.log'
     shell:
-        'python3 scripts/fig1_rx/plot_total_SPF_vs_time.py '
+        'python3 scripts/fitness_rx/plot_total_SPF_vs_time.py '
         '{input} {params} {output} &> {log}'
 
 
 rule plot_first_unrx_SPF_vs_s_coeffs:
     input:
-        s_phase_rx = 'analysis/fig1_rx/{dataset}/s_phase_rx_clone_time_counts.tsv',
-        non_s_phase_rx = 'analysis/fig1_rx/{dataset}/non_s_phase_rx_clone_time_counts.tsv',
-        s_phase_unrx = 'analysis/fig1_rx/{dataset}/s_phase_unrx_clone_time_counts.tsv',
-        non_s_phase_unrx = 'analysis/fig1_rx/{dataset}/non_s_phase_unrx_clone_time_counts.tsv',
+        s_phase_rx = 'analysis/fitness_rx/{dataset}/s_phase_rx_clone_time_counts.tsv',
+        non_s_phase_rx = 'analysis/fitness_rx/{dataset}/non_s_phase_rx_clone_time_counts.tsv',
+        s_phase_unrx = 'analysis/fitness_rx/{dataset}/s_phase_unrx_clone_time_counts.tsv',
+        non_s_phase_unrx = 'analysis/fitness_rx/{dataset}/non_s_phase_unrx_clone_time_counts.tsv',
         s_coeffs = 'data/fitness/fitness_selection_coefficients.csv'
     output: 
-        pdf = 'plots/fig1_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.pdf',
-        tsv = 'analysis/fig1_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.tsv'
+        pdf = 'plots/fitness_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.pdf',
+        tsv = 'analysis/fitness_rx/{dataset}/first_unrx_SPF_vs_s_coeffs.tsv'
     params:
         dataset = lambda wildcards: wildcards.dataset,
         rx_name = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['Rx'],
         unrx_name = lambda wildcards: config['fitness_rx_pairs'][wildcards.dataset]['UnRx']
-    log: 'logs/fig1_rx/{dataset}/plot_first_unrx_SPF_vs_s_coeffs.log'
+    log: 'logs/fitness_rx/{dataset}/plot_first_unrx_SPF_vs_s_coeffs.log'
     shell:
-        'python3 scripts/fig1_rx/plot_first_unrx_SPF_vs_s_coeffs.py '
+        'python3 scripts/fitness_rx/plot_first_unrx_SPF_vs_s_coeffs.py '
         '{input} {params} {output} &> {log}'
 
 

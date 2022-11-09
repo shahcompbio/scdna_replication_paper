@@ -6,238 +6,237 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 
 bad_datasets = []
-# bad_datasets_3 = ['SA1054', 'SA1055', 'SA1056']
-bad_datasets_3 = config['signatures_patient_tumors']
+# bad_datasets_sl = ['SA1054', 'SA1055', 'SA1056']
+bad_datasets_sl = config['signatures_patient_tumors']
 
-datasets_4 = ['all', 'GM18507', 'T47D']
-perm_datasets_4 = [y for x in [datasets_4, config['permuted_datasets']] for y in x]
+datasets_lf = ['all', 'GM18507', 'T47D']
+perm_datasets_lf = [y for x in [datasets_lf, config['permuted_datasets']] for y in x]
 
-bad_datasets_5 = config['signatures_cell_lines']
+bad_datasets_st = config['signatures_cell_lines']
 
 rule all:
     input:
-        # fig2 simulated data
+        # simulated data
         expand(
-            'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
+            'plots/simulation/{dataset}/scRT_heatmaps_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
+            'plots/simulation/{dataset}/scRT_heatmaps_bulk.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/scRT_heatmaps_pyro_composite.png',
+            'plots/simulation/{dataset}/scRT_heatmaps_pyro_composite.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_curves_pyro.png',
+            'plots/simulation/{dataset}/twidth_curves_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_curves_bulk.png',
+            'plots/simulation/{dataset}/twidth_curves_bulk.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
+            'plots/simulation/{dataset}/twidth_curves_pyro_composite.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/cn_heatmaps.png',
+            'plots/simulation/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/true_scRT_heatmap.png',
+            'plots/simulation/{dataset}/true_scRT_heatmap.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/ccc_features_hist.png',
+            'plots/simulation/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/cn_vs_scRT_heatmaps_pyro.png',
+            'plots/simulation/{dataset}/cn_vs_scRT_heatmaps_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
+            'plots/simulation/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/fig2/all/model_accuracies.png',
-        # fig3 hTERT cell lines
+        'plots/simulation/all/model_accuracies.png',
+        # sig_lines are hTERT cell lines
         expand(
-            'plots/fig3/{dataset}/ccc_features_hist.png',
+            'plots/sig_lines/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/cn_heatmaps.png',
+            'plots/sig_lines/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/rt_heatmap.png',
+            'plots/sig_lines/{dataset}/rt_heatmap.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results_filtered.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results_nonrep.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results_nonrep.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/twidth_curves.png',
+            'plots/sig_lines/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
-        'plots/fig3/brca2ko/twidth_curves.png',
-        'plots/fig3/downsampled_twidth_scatter.png',
-        'plots/fig3/twidth_summary.png',
-        # fig4 flow-sorted analysis
+        'plots/sig_lines/downsampled_twidth_scatter.png',
+        'plots/sig_lines/twidth_summary.png',
+        # laks_flow: flow-sorted cell lines from Laks et al
         expand(
-            'plots/fig4/{dataset}/cn_heatmaps.png',
-            dataset=[d for d in datasets_4]
+            'plots/laks_flow/{dataset}/cn_heatmaps.png',
+            dataset=[d for d in datasets_lf]
         ),
         expand(
-            'plots/fig4/{dataset}/cn_clone_heatmaps.png',
-            dataset=[d for d in perm_datasets_4]
+            'plots/laks_flow/{dataset}/cn_clone_heatmaps.png',
+            dataset=[d for d in perm_datasets_lf]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
-            dataset=[d for d in datasets_4]
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro.png',
+            dataset=[d for d in datasets_lf]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite.png',
-            dataset=[d for d in perm_datasets_4]
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite.png',
+            dataset=[d for d in perm_datasets_lf]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
-            dataset=[d for d in datasets_4]
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_filtered.png',
+            dataset=[d for d in datasets_lf]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
-            dataset=[d for d in perm_datasets_4]
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
+            dataset=[d for d in perm_datasets_lf]
         ),
         expand(
-            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv',
+            'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
             dataset=[
-                d for d in perm_datasets_4
+                d for d in perm_datasets_lf
                 if (d not in ['T47D', 'GM18507'])
             ]
         ),
-        'plots/fig4/all/rt_corr.png',
-        'plots/fig4/all/rt_corr_composite.png',
-        'plots/fig4/all/twidth_curves.png',
-        'plots/fig4/all/twidth_curves_composite.png',
-        'plots/fig4/permuted/summary.png',
-        'plots/fig4/permuted/rt_corr_composite.png',
-        # fig5 signatures human tumors
+        'plots/laks_flow/all/rt_corr.png',
+        'plots/laks_flow/all/rt_corr_composite.png',
+        'plots/laks_flow/all/twidth_curves.png',
+        'plots/laks_flow/all/twidth_curves_composite.png',
+        'plots/laks_flow/permuted/summary.png',
+        'plots/laks_flow/permuted/rt_corr_composite.png',
+        # sig_tumors: signatures human tumors
         expand(
-            'plots/fig5/{dataset}/ccc_features_hist.png',
+            'plots/sig_tumors/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
+                if (d not in bad_datasets_st)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/cn_heatmaps.png',
+            'plots/sig_tumors/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
+                if (d not in bad_datasets_st)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/rt_heatmap.png',
+            'plots/sig_tumors/{dataset}/rt_heatmap.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
+                if (d not in bad_datasets_st)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/inferred_cn_rep_results.png',
+            'plots/sig_tumors/{dataset}/inferred_cn_rep_results.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
+                if (d not in bad_datasets_st)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/inferred_cn_rep_results_filtered.png',
+            'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
+                if (d not in bad_datasets_st)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/inferred_cn_rep_results_nonrep.png',
+            'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
+                if (d not in bad_datasets_st)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/twidth_curves.png',
+            'plots/sig_tumors/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets_5)
+                if (d not in bad_datasets_st)
             ]
         ),
 
-include: "rules/fig2.smk"
-include: "rules/fig3.smk"
-include: "rules/fig4.smk"
-include: "rules/fig5.smk"
+include: "rules/simulation.smk"
+include: "rules/sig_lines.smk"
+include: "rules/laks_flow.smk"
+include: "rules/sig_tumors.smk"
