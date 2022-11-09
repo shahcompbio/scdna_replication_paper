@@ -86,7 +86,7 @@ rule clone_assignments_st:
     log: 'logs/sig_tumors/{dataset}/clone_assignments.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/clone_assignments.py '
+        'python3 scripts/sig_lines/clone_assignments.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -97,7 +97,7 @@ rule compute_ccc_features_st:
     log: 'logs/sig_tumors/{dataset}/compute_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/compute_ccc_features.py '
+        'python3 scripts/sig_lines/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -145,7 +145,7 @@ rule infer_scRT_pyro_st:
     log: 'logs/sig_tumors/{dataset}/infer_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/infer_scRT.py '
+        'python3 scripts/sig_lines/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -161,7 +161,7 @@ rule plot_cn_heatmaps_st:
     log: 'logs/sig_tumors/{dataset}/plot_cn_heatmaps.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_s_vs_g_cn_heatmaps.py '
+        'python3 scripts/sig_lines/plot_s_vs_g_cn_heatmaps.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
 
@@ -176,7 +176,7 @@ rule plot_rt_heatmap_st:
     log: 'logs/sig_tumors/{dataset}/plot_rt_heatmap.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_rt_heatmap.py '
+        'python3 scripts/sig_lines/plot_rt_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
 
@@ -194,7 +194,7 @@ rule plot_pyro_model_output_st:
     log: 'logs/sig_tumors/{dataset}/plot_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_pyro_model_output.py '
+        'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -210,7 +210,7 @@ rule remove_nonreplicating_cells_st:
     log: 'logs/sig_tumors/{dataset}/remove_nonreplicating_cells.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/remove_nonreplicating_cells.py '
+        'python3 scripts/sig_lines/remove_nonreplicating_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -228,7 +228,7 @@ rule plot_filtered_pyro_model_output_st:
     log: 'logs/sig_tumors/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_pyro_model_output.py '
+        'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -246,7 +246,7 @@ rule plot_nonrep_pyro_model_output_st:
     log: 'logs/sig_tumors/{dataset}/plot_nonrep_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_pyro_model_output.py '
+        'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -259,7 +259,7 @@ rule compute_rt_pseudobulks_st:
     log: 'logs/sig_tumors/{dataset}/compute_rt_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/compute_rt_pseudobulks.py '
+        'python3 scripts/sig_lines/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -279,6 +279,6 @@ rule twidth_analysis_st:
     log: 'logs/sig_tumors/{dataset}/twidth_analysis.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/twidth_analysis.py '
+        'python3 scripts/sig_lines/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
