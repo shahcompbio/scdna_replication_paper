@@ -73,10 +73,9 @@ def plot_rt_accuracy(df, argv):
     acc_cmap = get_acc_cmap()
     plot_clustered_cell_cn_matrix(ax[0], df, 'rt_state_diff', cluster_field_name='clone_id', secondary_field_name='true_t', cmap=acc_cmap)
 
-    if 'change' in argv.cn_col:
-        chng_cmap = get_chng_cmap(int(max(df[argv.cn_col])))
-        plot_clustered_cell_cn_matrix(ax[1], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t', cmap=chng_cmap)
-        ax[1].set_title('Inferred changepoint segments')
+    if argv.cn_col=='observed_cn_state':
+        plot_clustered_cell_cn_matrix(ax[1], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
+        ax[1].set_title('True CN state')
     elif 'cn' in argv.cn_col:
         plot_clustered_cell_cn_matrix(ax[1], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
         ax[1].set_title('Inferred CN state')

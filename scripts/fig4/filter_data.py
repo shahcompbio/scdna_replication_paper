@@ -72,7 +72,7 @@ def filter_data(df):
 
 def merge_metrics(df, metrics):
     # subset to relevant metrics columns
-    met = metrics[['cell_id', 'sample_id', 'library_id', 'cell_cycle_state', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints']]
+    met = metrics[['cell_id', 'sample_id', 'library_id', 'cell_cycle_state', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints', 'is_s_phase_prob']]
 
     # merge based on cell_id
     df = pd.merge(df, met, on='cell_id')

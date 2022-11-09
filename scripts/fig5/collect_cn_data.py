@@ -5,9 +5,8 @@ import pandas as pd
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('--hmm', type=str, nargs='+', help='list of hmm reads data from different library and ticket ids')
-    p.add_argument('--annotation', type=str, nargs='+', help='list of annotation metrics data from different library and ticket ids')
-    p.add_argument('--samples', type=str, nargs='+', help='list of samples that should be included, all others (normal or controls) will be filtered out')
+    p.add_argument('--hmm', type=str, help='csv file of all the signatures hmmcopy paths in isabl')
+    p.add_argument('--annotation', type=str, help='csv file of all the signatures annotation metrics paths in isabl')
     p.add_argument('--dataset', type=str, help='name of this dataset -- used for filtering out control cells')
     p.add_argument('--output', type=str, help='output tsv file that combines all cells from same dataset into one file')
 
@@ -22,11 +21,38 @@ def compute_reads_per_million(cn, reads_col='reads', rpm_col='rpm'):
     return cn
 
 
+def dataset_cn_files(hmmcopy_samples, dataset):
+    files = hmmcopy_samples.loc[
+        hmmcopy_samples['isabl_patient_id']==dataset].loc[
+        hmmcopy_samples['result_type']=='reads']['result_filepath'].values
+    return list(files)
+
+
+def dataset_metric_files(metrics_samples, dataset):
+    files = metrics_samples.loc[
+        metrics_samples['isabl_patient_id']==dataset].loc[
+        metrics_samples['result_type']=='metrics']['result_filepath'].values
+    return list(files)
+
+
+def dataset_sample_ids(metrics_samples, dataset):
+    sample_ids = metrics_samples.loc[metrics_samples['isabl_patient_id']==dataset]['isabl_sample_id'].unique()
+    return list(sample_ids)
+
+
 if __name__ == '__main__':
     argv = get_args()
+
+    hmmcopy_samples = pd.read_csv(argv.hmm)
+    metrics_samples = pd.read_csv(argv.annotation)
+
+    hmm_files = dataset_cn_files(hmmcopy_samples, argv.dataset)
+    met_files = dataset_metric_files(metrics_samples, argv.dataset)
+    sample_ids = dataset_sample_ids(metrics_samples, argv.dataset)
+
     cn_pieces = []
 
-    for f in argv.hmm:
+    for f in hmm_files:
         piece = pd.read_csv(
             f, index_col=['chr', 'start', 'end', 'cell_id'],
             # dtype=str
@@ -38,7 +64,7 @@ if __name__ == '__main__':
     cn = cn.reset_index()
 
     met_pieces = []
-    for f in argv.annotation:
+    for f in met_files:
         piece = pd.read_csv(
             f, index_col=['cell_id'],
         )
@@ -99,17 +125,11 @@ if __name__ == '__main__':
     cn['library_id'] = cn['cell_id'].apply(lambda x: x.split('-')[1])
 
     # filter out control cells that don't contain one of the sample_ids in their cell_id
-    print(argv.samples)
-    sample_ids = list(argv.samples)
+    print(sample_ids)
     sample_ids.append(argv.dataset)
-    # catch edge cases where cell_ids don't exactly match the sample or dataset id
-    if argv.dataset in ['SA906a', 'SA906b']:
-        sample_ids.append('SA906')
-    elif argv.dataset == 'SA1292':
-        sample_ids.append('AT135')
     cn = cn[cn['cell_id'].str.contains('|'.join(sample_ids))]
 
-    # filter out cells based on quality, experimental condition and contamination    
+    # filter out cells based on quality, experimental condition and contamination   
     cn = cn[
         (cn['cell_call'].isin(['C1', 'C2']))
     ]

@@ -1,35 +1,136 @@
 {
-	"__default__" :
-	{
-	  	"queue" : "general",
-		"mem" : 64,
-		"threads" : 1,
-		"time" : "2:00",
-		"extra" : "",
-		"latency" : "10",
+    "__default__" :
+    {
+        "queue" : "general",
+        "mem" : 64,
+        "threads" : 1,
+        "time" : "2:00",
+        "extra" : "",
+        "latency" : "10",
         "logdir" : "logs/cluster"
-	},
-	"collect_cn_data" :
-	{
-		"mem" : 96
-	},
-	"simulate_cell_cn_states" :
-	{
-		"time" : "6:00",
-		"mem" : 128
-	},
-	"simulate_reads_from_cn_pyro" :
-	{
-		"mem" : 128
-	},
-	"infer_scRT_bulk" :
-	{
-		"time" : "48:00",
-		"mem" : 128
-	},
-	"infer_scRT_pyro" :
-	{
-		"time" : "48:00",
-		"mem" : 128
-	}
+    },
+    "collect_cn_data_3" :
+    {
+        "mem" : 96
+    },
+    "collect_cn_data_5" :
+    {
+        "time" : "6:00",
+        "mem" : 200
+    },
+    "simulate_cell_cn_states_2" :
+    {
+        "time" : "12:00",
+        "mem" : 128
+    },
+    "simulate_reads_from_cn_pyro_2" :
+    {
+        "mem" : 128
+    },
+    "clone_assignments_5" :
+    {
+        "time" : "6:00"
+    },
+    "compute_ccc_features_5" :
+    {
+        "time" : "6:00"
+    },
+    "plot_ccc_features_5" :
+    {
+        "time" : "6:00"
+    },
+    "split_cell_cycle_5" :
+    {
+        "time" : "6:00"
+    },
+    "plot_cn_heatmaps_5" :
+    {
+        "time" : "6:00"
+    },
+    "infer_scRT_bulk_2" :
+    {
+        "time" : "48:00",
+        "mem" : 128
+    },
+    "infer_scRT_pyro_composite_2" :
+    {
+        "time" : "48:00",
+        "mem" : 128
+    },
+    "infer_scRT_pyro_2" :
+    {
+        "time" : "48:00",
+        "mem" : 128
+    },
+    "infer_scRT_pyro_3" :
+    {
+        "time" : "72:00",
+        "mem" : 128
+    },
+    "infer_scRT_pyro_composite_4" :
+    {
+        "time" : "48:00",
+        "mem" : 128
+    },
+    "infer_scRT_pyro_4" :
+    {
+        "time" : "48:00",
+        "mem" : 128
+    },
+    "infer_scRT_pyro_5" :
+    {
+        "time" : "72:00",
+        "mem" : 128
+    },
+    "model_accuracies_2" :
+    {
+        "time" : "12:00"
+    },
+    "twidth_downsampling_3" :
+    {
+        "time" : "12:00"
+    },
+    "compute_cn_pseudobulks_3" :
+    {
+        "time" : "6:00"
+    },
+    "compute_rt_pseudobulks_composite_4" :
+    {
+        "time" : "6:00"
+    },
+    "plot_rt_heatmap_5" :
+    {
+        "time" : "6:00",
+        "mem" : 256
+    },
+    "plot_pyro_model_output_5" :
+    {
+        "time" : "6:00",
+        "mem" : 256
+    },
+    "remove_nonreplicating_cells_5" :
+    {
+        "time" : "6:00",
+        "mem" : 256
+    },
+    "plot_filtered_pyro_model_output_5" :
+    {
+        "time" : "6:00",
+        "mem" : 256
+    },
+    "plot_nonrep_pyro_model_output_5" :
+    {
+        "time" : "6:00",
+        "mem" : 256
+    },
+    "compute_rt_pseudobulks_5" :
+    {
+        "time" : "6:00",
+        "mem" : 256
+    },
+    "twidth_analysis_5" :
+    {
+        "time" : "6:00",
+        "mem" : 256
+    }
 }

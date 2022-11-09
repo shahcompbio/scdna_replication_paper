@@ -14,8 +14,7 @@ def get_args():
     p.add_argument('rep_col', help='column name for inferred replication states')
     p.add_argument('cn_col', help='column name for inferred copy number')
     p.add_argument('frac_rt_col', help='column name for time within S-phase (i.e. fraction replicated)')
-    p.add_argument('output_rt_state', help='heatmap comparing true and inferred rt_state values')
-    p.add_argument('output_frac_rt', help='plot for frac_rt distribution across all cells')
+    p.add_argument('output_rt_state', help='heatmaps of inferred cn and scRT states')
 
     return p.parse_args()
 
@@ -43,25 +42,6 @@ def plot_cn_and_rep_states(df, argv):
     fig.savefig(argv.output_rt_state, bbox_inches='tight')
 
 
-
-def plot_frac_rt_distributions(df, argv):
-    df_frac = df[['cell_id', argv.frac_rt_col, 'library_id', 'clone_id']].drop_duplicates().reset_index(drop=True)
-    
-    fig, ax = plt.subplots(1,3, figsize=(12, 4), tight_layout=True)
-    ax = ax.flatten()
-
-    # violinplot
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, ax=ax[0])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='library_id', multiple='stack', ax=ax[1])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2])
-
-    for i in range(3):
-        ax[i].set_xlabel('Time in S-phase')
-        ax[i].set_title('Distribution of cells\nwithin S-phase')
-
-    fig.savefig(argv.output_frac_rt, bbox_inches='tight')
-
-
 def main():
     argv = get_args()
     df = pd.read_csv(argv.cn_s, sep='\t')
@@ -72,7 +52,6 @@ def main():
 
     # create separate plots
     plot_cn_and_rep_states(df, argv)
-    plot_frac_rt_distributions(df, argv)
 
 
 if __name__ == '__main__':
