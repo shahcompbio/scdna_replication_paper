@@ -9,7 +9,7 @@
         "latency" : "10",
         "logdir" : "logs/cluster"
     },
-    "collect_cn_data_3" :
+    "collect_cn_data_sl" :
     {
         "mem" : 96
     },
@@ -62,7 +62,7 @@
         "time" : "48:00",
         "mem" : 128
     },
-    "infer_scRT_pyro_3" :
+    "infer_scRT_pyro_sl" :
     {
         "time" : "72:00",
         "mem" : 128
@@ -86,11 +86,11 @@
     {
         "time" : "12:00"
     },
-    "twidth_downsampling_3" :
+    "twidth_downsampling_sl" :
     {
         "time" : "12:00"
     },
-    "compute_cn_pseudobulks_3" :
+    "compute_cn_pseudobulks_sl" :
     {
         "time" : "6:00"
     },

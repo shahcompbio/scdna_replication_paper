@@ -6,8 +6,8 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 
 bad_datasets = []
-# bad_datasets_3 = ['SA1054', 'SA1055', 'SA1056']
-bad_datasets_3 = config['signatures_patient_tumors']
+# bad_datasets_sl = ['SA1054', 'SA1055', 'SA1056']
+bad_datasets_sl = config['signatures_patient_tumors']
 
 datasets_4 = ['all', 'GM18507', 'T47D']
 perm_datasets_4 = [y for x in [datasets_4, config['permuted_datasets']] for y in x]
@@ -95,59 +95,59 @@ rule all:
             ]
         ),
         'plots/simulation/all/model_accuracies.png',
-        # fig3 hTERT cell lines
+        # sig_lines are hTERT cell lines
         expand(
-            'plots/fig3/{dataset}/ccc_features_hist.png',
+            'plots/sig_lines/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/cn_heatmaps.png',
+            'plots/sig_lines/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/rt_heatmap.png',
+            'plots/sig_lines/{dataset}/rt_heatmap.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results_filtered.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results_nonrep.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results_nonrep.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/twidth_curves.png',
+            'plots/sig_lines/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets_3)
+                if (d not in bad_datasets_sl)
             ]
         ),
-        'plots/fig3/brca2ko/twidth_curves.png',
-        'plots/fig3/downsampled_twidth_scatter.png',
-        'plots/fig3/twidth_summary.png',
+        'plots/sig_lines/brca2ko/twidth_curves.png',
+        'plots/sig_lines/downsampled_twidth_scatter.png',
+        'plots/sig_lines/twidth_summary.png',
         # fig4 flow-sorted analysis
         expand(
             'plots/fig4/{dataset}/cn_heatmaps.png',
@@ -238,6 +238,6 @@ rule all:
         ),
 
 include: "rules/simulation.smk"
-include: "rules/fig3.smk"
+include: "rules/sig_lines.smk"
 include: "rules/fig4.smk"
 include: "rules/fig5.smk"

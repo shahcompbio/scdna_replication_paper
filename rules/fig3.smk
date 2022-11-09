@@ -13,91 +13,91 @@ htert_metrics = metrics_samples.loc[metrics_samples['isabl_patient_id']=='184-hT
 # bad_datasets = ['SA1054', 'SA1055', 'SA1056']
 bad_datasets = []
 
-rule all_fig3:
+rule all_sig_lines:
     input:
         expand(
-            'plots/fig3/{dataset}/cn_heatmaps.png',
+            'plots/sig_lines/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/rt_heatmap.png',
+            'plots/sig_lines/{dataset}/rt_heatmap.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results_filtered.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/inferred_cn_rep_results_nonrep.png',
+            'plots/sig_lines/{dataset}/inferred_cn_rep_results_nonrep.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/twidth_curves.png',
+            'plots/sig_lines/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/ccc_features_hist.png',
+            'plots/sig_lines/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/clone_rt.png',
+            'plots/sig_lines/{dataset}/clone_rt.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/rpm_umaps.png',
+            'plots/sig_lines/{dataset}/rpm_umaps.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/subclonal_rt_diffs.png',
+            'plots/sig_lines/{dataset}/subclonal_rt_diffs.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig3/{dataset}/signals_heatmaps.png',
+            'plots/sig_lines/{dataset}/signals_heatmaps.png',
             dataset=[
                'OV2295', 'SA039'
             ]
         ),
-        'plots/fig3/subclonal_rt_diffs_summary.png',
-        'plots/fig3/downsampled_twidth_scatter.png',
-        'plots/fig3/twidth_summary.png'
+        'plots/sig_lines/subclonal_rt_diffs_summary.png',
+        'plots/sig_lines/downsampled_twidth_scatter.png',
+        'plots/sig_lines/twidth_summary.png'
         
         
 
-def dataset_cn_files_3(wildcards):
+def dataset_cn_files_sl(wildcards):
     if wildcards.dataset == 'OV2295':
         files = hmmcopy_samples.loc[
             hmmcopy_samples['isabl_patient_id']==wildcards.dataset].loc[
@@ -114,7 +114,7 @@ def dataset_cn_files_3(wildcards):
     return expand(files)
 
 
-def dataset_metric_files_3(wildcards):
+def dataset_metric_files_sl(wildcards):
     if wildcards.dataset == 'OV2295':
         files = metrics_samples.loc[
             metrics_samples['isabl_patient_id']==wildcards.dataset].loc[
@@ -131,7 +131,7 @@ def dataset_metric_files_3(wildcards):
     return expand(files)
 
 
-def dataset_sample_ids_3(wildcards):
+def dataset_sample_ids_sl(wildcards):
     if wildcards.dataset == 'OV2295':
         sample_ids = metrics_samples.loc[metrics_samples['isabl_patient_id']==wildcards.dataset]['isabl_sample_id'].unique()
     else:
@@ -144,82 +144,82 @@ def dataset_sample_ids_3(wildcards):
     return expand(sample_ids)
 
 
-rule collect_cn_data_3:
+rule collect_cn_data_sl:
     input: 
-        hmm = dataset_cn_files_3,
-        annotation = dataset_metric_files_3
-    output: 'analysis/fig3/{dataset}/cn_data.tsv'
-    log: 'logs/fig3/{dataset}/collect_cn_data.log'
+        hmm = dataset_cn_files_sl,
+        annotation = dataset_metric_files_sl
+    output: 'analysis/sig_lines/{dataset}/cn_data.tsv'
+    log: 'logs/sig_lines/{dataset}/collect_cn_data.log'
     params:
-        samples = dataset_sample_ids_3,
+        samples = dataset_sample_ids_sl,
         dataset = lambda wildcards: wildcards.dataset
     shell: 
-        'python scripts/fig3/collect_cn_data.py '
+        'python scripts/sig_lines/collect_cn_data.py '
         '--hmm {input.hmm} --annotation {input.annotation} '
         '--samples {params.samples} --dataset {params.dataset} '
         '--output {output} &> {log}'
 
 
-rule clone_assignments_3:
+rule clone_assignments_sl:
     input: 
-        cn = 'analysis/fig3/{dataset}/cn_data.tsv',
+        cn = 'analysis/sig_lines/{dataset}/cn_data.tsv',
         clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
-    output: 'analysis/fig3/{dataset}/cn_data_clones.tsv'
+    output: 'analysis/sig_lines/{dataset}/cn_data_clones.tsv'
     params:
         dataset = lambda wildcards: wildcards.dataset,
         assign_col = 'copy'
-    log: 'logs/fig3/{dataset}/clone_assignments.log'
+    log: 'logs/sig_lines/{dataset}/clone_assignments.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/clone_assignments.py '
+        'python3 scripts/sig_lines/clone_assignments.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule compute_ccc_features_3:
-    input: 'analysis/fig3/{dataset}/cn_data_clones.tsv'
-    output: 'analysis/fig3/{dataset}/cn_data_features.tsv'
-    log: 'logs/fig3/{dataset}/compute_ccc_features.log'
+rule compute_ccc_features_sl:
+    input: 'analysis/sig_lines/{dataset}/cn_data_clones.tsv'
+    output: 'analysis/sig_lines/{dataset}/cn_data_features.tsv'
+    log: 'logs/sig_lines/{dataset}/compute_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/compute_ccc_features.py '
+        'python3 scripts/sig_lines/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule plot_ccc_features_3:
-    input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
+rule plot_ccc_features_sl:
+    input: 'analysis/sig_lines/{dataset}/cn_data_features.tsv'
     output: 
-        plot1 = 'plots/fig3/{dataset}/ccc_features_hist.png',
-        plot2 = 'plots/fig3/{dataset}/ccc_features_scatter.png'
-    log: 'logs/fig3/{dataset}/plot_ccc_features.log'
+        plot1 = 'plots/sig_lines/{dataset}/ccc_features_hist.png',
+        plot2 = 'plots/sig_lines/{dataset}/ccc_features_scatter.png'
+    log: 'logs/sig_lines/{dataset}/plot_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_ccc_features.py '
+        'python3 scripts/sig_lines/plot_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule split_cell_cycle_3:
-    input: 'analysis/fig3/{dataset}/cn_data_features.tsv'
+rule split_cell_cycle_sl:
+    input: 'analysis/sig_lines/{dataset}/cn_data_features.tsv'
     output:
-        cn_s = 'analysis/fig3/{dataset}/s_phase_cells.tsv',
-        cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    log: 'logs/fig3/{dataset}/split_cell_cycle.log'
+        cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
+    log: 'logs/sig_lines/{dataset}/split_cell_cycle.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/split_cell_cycle.py '
+        'python3 scripts/sig_lines/split_cell_cycle.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule infer_scRT_pyro_3:
+rule infer_scRT_pyro_sl:
     input:
-        cn_s = 'analysis/fig3/{dataset}/s_phase_cells.tsv',
-        cn_g1 = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+        cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     output:
-        main_out = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_out = 'analysis/fig3/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
+        main_out = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_out = 'analysis/sig_lines/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
     params:
         input_col = 'rpm',
         cn_col = 'state',
@@ -227,218 +227,218 @@ rule infer_scRT_pyro_3:
         gc_col = 'gc',
         cn_prior_method = 'g1_composite',
         infer_mode = 'pyro'
-    log: 'logs/fig3/{dataset}/infer_scRT.log'
+    log: 'logs/sig_lines/{dataset}/infer_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/infer_scRT.py '
+        'python3 scripts/sig_lines/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule plot_cn_heatmaps_3:
+rule plot_cn_heatmaps_sl:
     input:
-        s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
-        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    output: 'plots/fig3/{dataset}/cn_heatmaps.png'
+        s_phase = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
+    output: 'plots/sig_lines/{dataset}/cn_heatmaps.png'
     params:
         value_col = 'state',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/plot_cn_heatmaps.log'
+    log: 'logs/sig_lines/{dataset}/plot_cn_heatmaps.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_s_vs_g_cn_heatmaps.py '
+        'python3 scripts/sig_lines/plot_s_vs_g_cn_heatmaps.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
 
 
-rule plot_rt_heatmap_3:
-    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
-    output: 'plots/fig3/{dataset}/rt_heatmap.png'
+rule plot_rt_heatmap_sl:
+    input: 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 'plots/sig_lines/{dataset}/rt_heatmap.png'
     params:
         value_col = 'model_rep_state',
         sort_col = 'model_tau',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/plot_rt_heatmap.log'
+    log: 'logs/sig_lines/{dataset}/plot_rt_heatmap.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_rt_heatmap.py '
+        'python3 scripts/sig_lines/plot_rt_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
 
 
-rule plot_pyro_model_output_3:
+rule plot_pyro_model_output_sl:
     input:
-        s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv',
-        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+        s_phase = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     output:
-        plot1 = 'plots/fig3/{dataset}/inferred_cn_rep_results.png',
-        plot2 = 'plots/fig3/{dataset}/s_vs_g_hmmcopy_states.png',
-        plot3 = 'plots/fig3/{dataset}/s_vs_g_rpm.png',
+        plot1 = 'plots/sig_lines/{dataset}/inferred_cn_rep_results.png',
+        plot2 = 'plots/sig_lines/{dataset}/s_vs_g_hmmcopy_states.png',
+        plot3 = 'plots/sig_lines/{dataset}/s_vs_g_rpm.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/plot_pyro_model_output.log'
+    log: 'logs/sig_lines/{dataset}/plot_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_pyro_model_output.py '
+        'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule remove_nonreplicating_cells_3:
-    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT.tsv'
+rule remove_nonreplicating_cells_sl:
+    input: 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 
-        good = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        nonrep = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
-        lowqual = 'analysis/fig3/{dataset}/model_lowqual_cells.tsv',
+        good = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        nonrep = 'analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
+        lowqual = 'analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
         rpm_col = 'rpm'
-    log: 'logs/fig3/{dataset}/remove_nonreplicating_cells.log'
+    log: 'logs/sig_lines/{dataset}/remove_nonreplicating_cells.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/remove_nonreplicating_cells.py '
+        'python3 scripts/sig_lines/remove_nonreplicating_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule plot_filtered_pyro_model_output_3:
+rule plot_filtered_pyro_model_output_sl:
     input:
-        s_phase = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+        s_phase = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     output:
-        plot1 = 'plots/fig3/{dataset}/inferred_cn_rep_results_filtered.png',
-        plot2 = 'plots/fig3/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
-        plot3 = 'plots/fig3/{dataset}/s_vs_g_rpm_filtered.png',
+        plot1 = 'plots/sig_lines/{dataset}/inferred_cn_rep_results_filtered.png',
+        plot2 = 'plots/sig_lines/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
+        plot3 = 'plots/sig_lines/{dataset}/s_vs_g_rpm_filtered.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/plot_filtered_pyro_model_output.log'
+    log: 'logs/sig_lines/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_pyro_model_output.py '
+        'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule plot_nonrep_pyro_model_output_3:
+rule plot_nonrep_pyro_model_output_sl:
     input:
-        s_phase = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
-        g1_phase = 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
+        s_phase = 'analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
+        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     output:
-        plot1 = 'plots/fig3/{dataset}/inferred_cn_rep_results_nonrep.png',
-        plot2 = 'plots/fig3/{dataset}/s_vs_g_hmmcopy_states_nonrep.png',
-        plot3 = 'plots/fig3/{dataset}/s_vs_g_rpm_nonrep.png',
+        plot1 = 'plots/sig_lines/{dataset}/inferred_cn_rep_results_nonrep.png',
+        plot2 = 'plots/sig_lines/{dataset}/s_vs_g_hmmcopy_states_nonrep.png',
+        plot3 = 'plots/sig_lines/{dataset}/s_vs_g_rpm_nonrep.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/plot_nonrep_pyro_model_output.log'
+    log: 'logs/sig_lines/{dataset}/plot_nonrep_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_pyro_model_output.py '
+        'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule plot_rpm_umaps_3:
+rule plot_rpm_umaps_sl:
     input:
-        s = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        g_tree = 'analysis/fig3/{dataset}/g1_phase_cells.tsv',
-        g_recovered = 'analysis/fig3/{dataset}/model_nonrep_cells.tsv',
-        lowqual = 'analysis/fig3/{dataset}/model_lowqual_cells.tsv',
-    output: 'plots/fig3/{dataset}/rpm_umaps.png'
+        s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        g_tree = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv',
+        g_recovered = 'analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
+        lowqual = 'analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
+    output: 'plots/sig_lines/{dataset}/rpm_umaps.png'
     params:
         value_col = 'rpm',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/plot_rpm_umaps.log'
+    log: 'logs/sig_lines/{dataset}/plot_rpm_umaps.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_rpm_umaps.py '
+        'python3 scripts/sig_lines/plot_rpm_umaps.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule compute_rt_pseudobulks_3:
-    input: 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
-    output: 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
+rule compute_rt_pseudobulks_sl:
+    input: 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    output: 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv'
     params:
         rep_col = 'model_rep_state',
-    log: 'logs/fig3/{dataset}/compute_rt_pseudobulks.log'
+    log: 'logs/sig_lines/{dataset}/compute_rt_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/compute_rt_pseudobulks.py '
+        'python3 scripts/sig_lines/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule compute_cn_pseudobulks_3:
-    input: 'analysis/fig3/{dataset}/g1_phase_cells.tsv'
-    output: 'analysis/fig3/{dataset}/cn_pseudobulks.tsv'
+rule compute_cn_pseudobulks_sl:
+    input: 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv'
     params:
         cn_state_col = 'state',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/compute_cn_pseudobulks.log'
+    log: 'logs/sig_lines/{dataset}/compute_cn_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/compute_cn_pseudobulks.py '
+        'python3 scripts/sig_lines/compute_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule plot_clone_rt_and_spf_3:
+rule plot_clone_rt_and_spf_sl:
     input: 
-        cn_s = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        cn_g ='analysis/fig3/{dataset}/g1_phase_cells.tsv',
-        cn_g_recovered ='analysis/fig3/{dataset}/model_nonrep_cells.tsv',
-        rt = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
+        cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g ='analysis/sig_lines/{dataset}/g1_phase_cells.tsv',
+        cn_g_recovered ='analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
+        rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv'
     output:
-        tsv = 'analysis/fig3/{dataset}/cell_cycle_clone_counts.tsv',
-        clone_rt = 'plots/fig3/{dataset}/clone_rt.png',
-        clone_spf = 'plots/fig3/{dataset}/clone_spf.png'
+        tsv = 'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv',
+        clone_rt = 'plots/sig_lines/{dataset}/clone_rt.png',
+        clone_spf = 'plots/sig_lines/{dataset}/clone_spf.png'
     params:
         rep_col = 'model_rep_state',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/plot_clone_rt_and_spf.log'
+    log: 'logs/sig_lines/{dataset}/plot_clone_rt_and_spf.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/plot_clone_rt_and_spf.py '
+        'python3 scripts/sig_lines/plot_clone_rt_and_spf.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule subclonal_rt_diffs_3:
+rule subclonal_rt_diffs_sl:
     input:
-        rt = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv',
-        cn = 'analysis/fig3/{dataset}/cn_pseudobulks.tsv'
+        rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
+        cn = 'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv'
     output:
-        tsv = 'analysis/fig3/{dataset}/subclonal_rt_diffs.tsv',
-        png = 'plots/fig3/{dataset}/subclonal_rt_diffs.png'
+        tsv = 'analysis/sig_lines/{dataset}/subclonal_rt_diffs.tsv',
+        png = 'plots/sig_lines/{dataset}/subclonal_rt_diffs.png'
     params:
         rep_col = 'model_rep_state',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fig3/{dataset}/subclonal_rt_diffs.log'
+    log: 'logs/sig_lines/{dataset}/subclonal_rt_diffs.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/fig3/subclonal_rt_diffs.py '
+        'python3 scripts/sig_lines/subclonal_rt_diffs.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule subclonal_rt_diffs_summary_3:
+rule subclonal_rt_diffs_summary_sl:
     input:
         rt = expand(
-            'analysis/fig3/{dataset}/subclonal_rt_diffs.tsv',
+            'analysis/sig_lines/{dataset}/subclonal_rt_diffs.tsv',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in ['OV2295'])
             ]
         )
     output:
-        tsv = 'analysis/fig3/subclonal_rt_diffs_summary.tsv',
-        png = 'plots/fig3/subclonal_rt_diffs_summary.png'
-    log: 'logs/fig3/subclonal_rt_diffs_summary.log'
+        tsv = 'analysis/sig_lines/subclonal_rt_diffs_summary.tsv',
+        png = 'plots/sig_lines/subclonal_rt_diffs_summary.png'
+    log: 'logs/sig_lines/subclonal_rt_diffs_summary.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/fig3/subclonal_rt_diffs_summary.py '
+        'python3 scripts/sig_lines/subclonal_rt_diffs_summary.py '
         '-i {input} '
         '--table {output.tsv} '
         '--plot {output.png} '
@@ -446,30 +446,30 @@ rule subclonal_rt_diffs_summary_3:
         'deactivate'
 
 
-rule sample_rt_diffs_3:
+rule sample_rt_diffs_sl:
     input:
         rt = expand(
-            'analysis/fig3/{dataset}/scRT_pseudobulks.tsv',
+            'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
             dataset=[
                 'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
             ]
         ),
         cn = expand(
-            'analysis/fig3/{dataset}/cn_pseudobulks.tsv',
+            'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv',
             dataset=[
                 'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
             ]
         )
     output:
-        tsv = 'analysis/fig3/sample_rt_diffs_summary.tsv',
-        png = 'plots/fig3/sample_rt_diffs_summary.png'
+        tsv = 'analysis/sig_lines/sample_rt_diffs_summary.tsv',
+        png = 'plots/sig_lines/sample_rt_diffs_summary.png'
     params:
         rep_col = 'model_rep_state',
         datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055']),
-    log: 'logs/fig3/sample_rt_diffs.log'
+    log: 'logs/sig_lines/sample_rt_diffs.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/fig3/sample_rt_diffs.py '
+        'python3 scripts/sig_lines/sample_rt_diffs.py '
         '-ir {input.rt} '
         '-ic {input.cn} '
         '-d {params.datasets} '
@@ -480,44 +480,44 @@ rule sample_rt_diffs_3:
         'deactivate'
 
 
-rule twidth_analysis_3:
+rule twidth_analysis_sl:
     input: 
-        scrt = 'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        bulks = 'analysis/fig3/{dataset}/scRT_pseudobulks.tsv'
+        scrt = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        bulks = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv'
     output: 
-        output_tsv = 'analysis/fig3/{dataset}/twidth_values.tsv',
-        output_png = 'plots/fig3/{dataset}/twidth_curves.png'
+        output_tsv = 'analysis/sig_lines/{dataset}/twidth_values.tsv',
+        output_png = 'plots/sig_lines/{dataset}/twidth_curves.png'
     params:
         dataset = lambda wildcards: wildcards.dataset,
         infer_mode = 'pyro',
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
-    log: 'logs/fig3/{dataset}/twidth_analysis.log'
+    log: 'logs/sig_lines/{dataset}/twidth_analysis.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/twidth_analysis.py '
+        'python3 scripts/sig_lines/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-rule twidth_summary_3:
+rule twidth_summary_sl:
     input: 
         tw = expand(
-            'analysis/fig3/{dataset}/twidth_values.tsv',
+            'analysis/sig_lines/{dataset}/twidth_values.tsv',
             dataset=[
                 'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
             ]
         )
     output:
-        output_tsv = 'analysis/fig3/twidth_values.tsv',
-        output_png = 'plots/fig3/twidth_summary.png'
+        output_tsv = 'analysis/sig_lines/twidth_values.tsv',
+        output_png = 'plots/sig_lines/twidth_summary.png'
     params:
         labels = expand(['WT', 'TP53-/-', 'TP53-/-', 'TP53-/-,BRCA1+/-', 'TP53-/-,BRCA1-/-', 'TP53-/-,BRCA2+/-', 'TP53-/-,BRCA2-/-', 'TP53-/-,BRCA2-/-']),
         datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055']),
-    log: 'logs/fig3/twidth_summary.log'
+    log: 'logs/sig_lines/twidth_summary.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/twidth_summary.py '
+        'python3 scripts/sig_lines/twidth_summary.py '
         '-i {input.tw} '
         '-d {params.datasets} '
         '-l {params.labels} '
@@ -527,27 +527,27 @@ rule twidth_summary_3:
         'deactivate'
 
 
-rule twidth_downsampling_3:
+rule twidth_downsampling_sl:
     input:
         cn_s = expand(
-            'analysis/fig3/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+            'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         )
     output:
-        output_tsv = 'analysis/fig3/downsampled_twidth_values.tsv',
-        output_png = 'plots/fig3/downsampled_twidth_scatter.png'
+        output_tsv = 'analysis/sig_lines/downsampled_twidth_values.tsv',
+        output_png = 'plots/sig_lines/downsampled_twidth_scatter.png'
     params:
         datasets = expand([d for d in config['signatures_cell_lines']]),
         labels = expand([str(config['signatures_cell_lines'][d]['type']) for d in config['signatures_cell_lines']]),
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state'
-    log: 'logs/fig3/twidth_downsampling.log'
+    log: 'logs/sig_lines/twidth_downsampling.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/fig3/twidth_downsampling.py '
+        'python3 scripts/sig_lines/twidth_downsampling.py '
         '--cn_s {input.cn_s} '
         '-d {params.datasets} '
         '-l {params.labels} '
@@ -559,21 +559,21 @@ rule twidth_downsampling_3:
         'deactivate'
 
 
-rule signals_heatmaps:
+rule signals_heatmaps_sl:
     input: 
         ascn = 'analysis/schnapps-results/{dataset}/hscn.csv.gz',
         clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
     output: 
-        figure = 'plots/fig3/{dataset}/signals_heatmaps.png'
+        figure = 'plots/sig_lines/{dataset}/signals_heatmaps.png'
     params:
         dataset = lambda wildcards: wildcards.dataset,
-    log: 'logs/fig3/{dataset}/signals_heatmaps.log'
+    log: 'logs/sig_lines/{dataset}/signals_heatmaps.log'
     singularity: 'docker://marcjwilliams1/signals'
     shell:
-        'Rscript scripts/fig3/signals_heatmaps.R '
+        'Rscript scripts/sig_lines/signals_heatmaps.R '
         '--ascn {input.ascn} '
         '--clones {input.clones} '
         '--dataset {params.dataset} '
         '--heatmap {output.figure} '
         '&> {log}'
-    # script: '../scripts/fig3/signals_heatmaps.R'
+    # script: '../scripts/sig_lines/signals_heatmaps.R'
