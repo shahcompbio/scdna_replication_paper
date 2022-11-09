@@ -18,12 +18,12 @@
         "time" : "6:00",
         "mem" : 200
     },
-    "simulate_cell_cn_states_2" :
+    "simulate_cell_cn_states_sim" :
     {
         "time" : "12:00",
         "mem" : 128
     },
-    "simulate_reads_from_cn_pyro_2" :
+    "simulate_reads_from_cn_pyro_sim" :
     {
         "mem" : 128
     },
@@ -47,17 +47,17 @@
     {
         "time" : "6:00"
     },
-    "infer_scRT_bulk_2" :
+    "infer_scRT_bulk_sim" :
     {
         "time" : "48:00",
         "mem" : 128
     },
-    "infer_scRT_pyro_composite_2" :
+    "infer_scRT_pyro_composite_sim" :
     {
         "time" : "48:00",
         "mem" : 128
     },
-    "infer_scRT_pyro_2" :
+    "infer_scRT_pyro_sim" :
     {
         "time" : "48:00",
         "mem" : 128
@@ -82,7 +82,7 @@
         "time" : "72:00",
         "mem" : 128
     },
-    "model_accuracies_2" :
+    "model_accuracies_sim" :
     {
         "time" : "12:00"
     },

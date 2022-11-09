@@ -16,85 +16,85 @@ bad_datasets_5 = config['signatures_cell_lines']
 
 rule all:
     input:
-        # fig2 simulated data
+        # simulated data
         expand(
-            'plots/fig2/{dataset}/scRT_heatmaps_pyro.png',
+            'plots/simulation/{dataset}/scRT_heatmaps_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/scRT_heatmaps_bulk.png',
+            'plots/simulation/{dataset}/scRT_heatmaps_bulk.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/scRT_heatmaps_pyro_composite.png',
+            'plots/simulation/{dataset}/scRT_heatmaps_pyro_composite.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_curves_pyro.png',
+            'plots/simulation/{dataset}/twidth_curves_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_curves_bulk.png',
+            'plots/simulation/{dataset}/twidth_curves_bulk.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/twidth_curves_pyro_composite.png',
+            'plots/simulation/{dataset}/twidth_curves_pyro_composite.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/cn_heatmaps.png',
+            'plots/simulation/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/true_scRT_heatmap.png',
+            'plots/simulation/{dataset}/true_scRT_heatmap.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/ccc_features_hist.png',
+            'plots/simulation/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/cn_vs_scRT_heatmaps_pyro.png',
+            'plots/simulation/{dataset}/cn_vs_scRT_heatmaps_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
-            'plots/fig2/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
+            'plots/simulation/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/fig2/all/model_accuracies.png',
+        'plots/simulation/all/model_accuracies.png',
         # fig3 hTERT cell lines
         expand(
             'plots/fig3/{dataset}/ccc_features_hist.png',
@@ -237,7 +237,7 @@ rule all:
             ]
         ),
 
-include: "rules/fig2.smk"
+include: "rules/simulation.smk"
 include: "rules/fig3.smk"
 include: "rules/fig4.smk"
 include: "rules/fig5.smk"
