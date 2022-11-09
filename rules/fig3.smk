@@ -79,6 +79,13 @@ rule all_fig3:
             ]
         ),
         expand(
+            'plots/fig3/{dataset}/subclonal_rt_diffs.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/fig3/{dataset}/signals_heatmaps.png',
             dataset=[
                'OV2295', 'SA039'
