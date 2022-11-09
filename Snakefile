@@ -148,44 +148,44 @@ rule all:
         'plots/sig_lines/brca2ko/twidth_curves.png',
         'plots/sig_lines/downsampled_twidth_scatter.png',
         'plots/sig_lines/twidth_summary.png',
-        # fig4 flow-sorted analysis
+        # laks_flow: flow-sorted cell lines from Laks et al
         expand(
-            'plots/fig4/{dataset}/cn_heatmaps.png',
+            'plots/laks_flow/{dataset}/cn_heatmaps.png',
             dataset=[d for d in datasets_4]
         ),
         expand(
-            'plots/fig4/{dataset}/cn_clone_heatmaps.png',
+            'plots/laks_flow/{dataset}/cn_clone_heatmaps.png',
             dataset=[d for d in perm_datasets_4]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro.png',
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro.png',
             dataset=[d for d in datasets_4]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite.png',
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite.png',
             dataset=[d for d in perm_datasets_4]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro_filtered.png',
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_filtered.png',
             dataset=[d for d in datasets_4]
         ),
         expand(
-            'plots/fig4/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
             dataset=[d for d in perm_datasets_4]
         ),
         expand(
-            'analysis/fig4/{dataset}/rt_pseudobulks_composite.tsv',
+            'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
             dataset=[
                 d for d in perm_datasets_4
                 if (d not in ['T47D', 'GM18507'])
             ]
         ),
-        'plots/fig4/all/rt_corr.png',
-        'plots/fig4/all/rt_corr_composite.png',
-        'plots/fig4/all/twidth_curves.png',
-        'plots/fig4/all/twidth_curves_composite.png',
-        'plots/fig4/permuted/summary.png',
-        'plots/fig4/permuted/rt_corr_composite.png',
+        'plots/laks_flow/all/rt_corr.png',
+        'plots/laks_flow/all/rt_corr_composite.png',
+        'plots/laks_flow/all/twidth_curves.png',
+        'plots/laks_flow/all/twidth_curves_composite.png',
+        'plots/laks_flow/permuted/summary.png',
+        'plots/laks_flow/permuted/rt_corr_composite.png',
         # fig5 signatures human tumors
         expand(
             'plots/fig5/{dataset}/ccc_features_hist.png',
@@ -239,5 +239,5 @@ rule all:
 
 include: "rules/simulation.smk"
 include: "rules/sig_lines.smk"
-include: "rules/fig4.smk"
+include: "rules/laks_flow.smk"
 include: "rules/fig5.smk"

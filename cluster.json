@@ -67,12 +67,12 @@
         "time" : "72:00",
         "mem" : 128
     },
-    "infer_scRT_pyro_composite_4" :
+    "infer_scRT_pyro_composite_lf" :
     {
         "time" : "48:00",
         "mem" : 128
     },
-    "infer_scRT_pyro_4" :
+    "infer_scRT_pyro_lf" :
     {
         "time" : "48:00",
         "mem" : 128
@@ -94,7 +94,7 @@
     {
         "time" : "6:00"
     },
-    "compute_rt_pseudobulks_composite_4" :
+    "compute_rt_pseudobulks_composite_lf" :
     {
         "time" : "6:00"
     },
