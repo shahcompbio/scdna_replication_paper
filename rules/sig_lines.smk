@@ -72,7 +72,7 @@ rule all_sig_lines:
             ]
         ),
         expand(
-            'plots/sig_lines/{dataset}/rpm_umaps.png',
+            'plots/sig_lines/{dataset}/rpm_embedding.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
@@ -339,20 +339,20 @@ rule plot_nonrep_pyro_model_output_sl:
         'deactivate'
 
 
-rule plot_rpm_umaps_sl:
+rule plot_rpm_embedding_sl:
     input:
         s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         g_tree = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv',
         g_recovered = 'analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
         lowqual = 'analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
-    output: 'plots/sig_lines/{dataset}/rpm_umaps.png'
+    output: 'plots/sig_lines/{dataset}/rpm_embedding.png'
     params:
         value_col = 'rpm',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/sig_lines/{dataset}/plot_rpm_umaps.log'
+    log: 'logs/sig_lines/{dataset}/plot_rpm_embedding.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/sig_lines/plot_rpm_umaps.py '
+        'python3 scripts/sig_lines/plot_rpm_embedding.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 

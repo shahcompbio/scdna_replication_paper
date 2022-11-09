@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
-import umap
 import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
+from sklearn.decomposition import PCA
 
 
 def get_args():
@@ -15,7 +15,7 @@ def get_args():
     p.add_argument('lowqual', help='cn input tsv file for low quality cells')
     p.add_argument('value_col')
     p.add_argument('dataset')
-    p.add_argument('output_png', help='plot containinig umaps')
+    p.add_argument('output_png', help='plot containinig pca embeddings')
 
     return p.parse_args()
 
@@ -40,7 +40,7 @@ def main():
 
     # pivot to table of reads per million and create umap embedding of cells
     cn_mat = cn_all.pivot_table(index='cell_id', columns=['chr', 'start'], values=argv.value_col)
-    embedding = umap.UMAP(random_state=42).fit_transform(cn_mat.values)
+    embedding = PCA(random_state=42).fit_transform(cn_mat.values)
 
     # merege metric columns with embedding
     metric_cols = [
@@ -49,20 +49,20 @@ def main():
         'madn', 'lrs', 'corrected_madn', 'corrected_breakpoints', 'quality',
     ]
     metrics_df = cn_all[metric_cols].drop_duplicates()
-    umap_df = pd.DataFrame({
+    pca_df = pd.DataFrame({
         'cell_id': cn_mat.index, 'embedding_0': embedding[:, 0], 'embedding_1': embedding[:, 1]
     })
-    umap_df = pd.merge(umap_df, metrics_df)
+    pca_df = pd.merge(pca_df, metrics_df)
 
-    # create and save the umap embeddings
+    # create and save the pca embeddings
     fig, ax = plt.subplots(1, 2, figsize=(10, 4), tight_layout=True)
     ax = ax.flatten()
 
-    sns.scatterplot(data=umap_df, x='embedding_0', y='embedding_1', hue='clone_id', ax=ax[0])
-    sns.scatterplot(data=umap_df, x='embedding_0', y='embedding_1', hue='phase', ax=ax[1])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='clone_id', ax=ax[0])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='phase', ax=ax[1])
 
     for i in range(2):
-        ax[i].set_title('{} UMAP of read depth'.format(argv.dataset))
+        ax[i].set_title('{} PCA of read depth'.format(argv.dataset))
     
     fig.savefig(argv.output_png, bbox_inches='tight')
 
