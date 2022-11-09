@@ -186,51 +186,51 @@ rule all:
         'plots/laks_flow/all/twidth_curves_composite.png',
         'plots/laks_flow/permuted/summary.png',
         'plots/laks_flow/permuted/rt_corr_composite.png',
-        # fig5 signatures human tumors
+        # sig_tumors: signatures human tumors
         expand(
-            'plots/fig5/{dataset}/ccc_features_hist.png',
+            'plots/sig_tumors/{dataset}/ccc_features_hist.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/cn_heatmaps.png',
+            'plots/sig_tumors/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/rt_heatmap.png',
+            'plots/sig_tumors/{dataset}/rt_heatmap.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/inferred_cn_rep_results.png',
+            'plots/sig_tumors/{dataset}/inferred_cn_rep_results.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/inferred_cn_rep_results_filtered.png',
+            'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/inferred_cn_rep_results_nonrep.png',
+            'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
             ]
         ),
         expand(
-            'plots/fig5/{dataset}/twidth_curves.png',
+            'plots/sig_tumors/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_patient_tumors']
                 if (d not in bad_datasets_5)
@@ -240,4 +240,4 @@ rule all:
 include: "rules/simulation.smk"
 include: "rules/sig_lines.smk"
 include: "rules/laks_flow.smk"
-include: "rules/fig5.smk"
+include: "rules/sig_tumors.smk"

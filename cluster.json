@@ -13,7 +13,7 @@
     {
         "mem" : 96
     },
-    "collect_cn_data_5" :
+    "collect_cn_data_st" :
     {
         "time" : "6:00",
         "mem" : 200
@@ -27,23 +27,23 @@
     {
         "mem" : 128
     },
-    "clone_assignments_5" :
+    "clone_assignments_st" :
     {
         "time" : "6:00"
     },
-    "compute_ccc_features_5" :
+    "compute_ccc_features_st" :
     {
         "time" : "6:00"
     },
-    "plot_ccc_features_5" :
+    "plot_ccc_features_st" :
     {
         "time" : "6:00"
     },
-    "split_cell_cycle_5" :
+    "split_cell_cycle_st" :
     {
         "time" : "6:00"
     },
-    "plot_cn_heatmaps_5" :
+    "plot_cn_heatmaps_st" :
     {
         "time" : "6:00"
     },
@@ -77,7 +77,7 @@
         "time" : "48:00",
         "mem" : 128
     },
-    "infer_scRT_pyro_5" :
+    "infer_scRT_pyro_st" :
     {
         "time" : "72:00",
         "mem" : 128
@@ -98,37 +98,37 @@
     {
         "time" : "6:00"
     },
-    "plot_rt_heatmap_5" :
+    "plot_rt_heatmap_st" :
     {
         "time" : "6:00",
         "mem" : 256
     },
-    "plot_pyro_model_output_5" :
+    "plot_pyro_model_output_st" :
     {
         "time" : "6:00",
         "mem" : 256
     },
-    "remove_nonreplicating_cells_5" :
+    "remove_nonreplicating_cells_st" :
     {
         "time" : "6:00",
         "mem" : 256
     },
-    "plot_filtered_pyro_model_output_5" :
+    "plot_filtered_pyro_model_output_st" :
     {
         "time" : "6:00",
         "mem" : 256
     },
-    "plot_nonrep_pyro_model_output_5" :
+    "plot_nonrep_pyro_model_output_st" :
     {
         "time" : "6:00",
         "mem" : 256
     },
-    "compute_rt_pseudobulks_5" :
+    "compute_rt_pseudobulks_st" :
     {
         "time" : "6:00",
         "mem" : 256
     },
-    "twidth_analysis_5" :
+    "twidth_analysis_st" :
     {
         "time" : "6:00",
         "mem" : 256
