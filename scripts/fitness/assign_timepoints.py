@@ -21,8 +21,13 @@ def main():
     # get rid of useless columns
     time_df = time_df[['library_id', 'label', 'datasetname', 'timepoint', 'sample_id']]
 
+    # make sure chromosome column is set to the appropriate dtype
+    cn['chr'] = cn['chr'].astype(str)
+    cn['chr'] = cn['chr'].astype('category')
+
     # create library_id columns using cell_ids in the CN dataframes
-    cn['library_id'] = cn['cell_id'].apply(lambda x: x.split('-')[1])
+    if 'library_id' not in cn.columns:
+        cn['library_id'] = cn['cell_id'].apply(lambda x: x.split('-')[1])
 
     # merge time info with cn now using library_id as common column
     cn_out = pd.merge(cn, time_df)
