@@ -108,7 +108,6 @@ if __name__ == '__main__':
 
     # change dtype of chromosome column
     cn['chr'] = cn['chr'].astype(str)
-    cn['chr'] = cn['chr'].astype('category')
 
     # compute the fraction of replicated bins within each cell
     cn = compute_cell_frac(cn, frac_rt_col=argv.frac_rt_col, rep_state_col=argv.rep_col)

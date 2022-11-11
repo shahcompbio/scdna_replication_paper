@@ -154,7 +154,6 @@ rule get_g1_phase_cells_f:
 
         # make sure chromosome column is set to the appropriate dtype
         df['chr'] = df['chr'].astype(str)
-        df['chr'] = df['chr'].astype('category')
 
         clones.rename(columns={'single_cell_id': 'cell_id',
                             'letters': 'clone_id',
@@ -184,9 +183,7 @@ rule get_s_phase_cells_f:
 
         # make sure chromosome column is set to the appropriate dtype
         cn['chr'] = cn['chr'].astype(str)
-        cn['chr'] = cn['chr'].astype('category')
         cn_tree['chr'] = cn_tree['chr'].astype(str)
-        cn_tree['chr'] = cn_tree['chr'].astype('category')
 
         cells_in_tree = cn_tree['cell_id'].unique()
 

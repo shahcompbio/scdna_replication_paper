@@ -28,9 +28,7 @@ def main():
 
     # make sure chromosome column is set to the appropriate dtype
     cn_s['chr'] = cn_s['chr'].astype(str)
-    cn_s['chr'] = cn_s['chr'].astype('category')
     cn_g['chr'] = cn_g['chr'].astype(str)
-    cn_g['chr'] = cn_g['chr'].astype('category')
 
     # use library_id as the clone_id when it is not provided
     if 'clone_id' not in cn_g.columns:

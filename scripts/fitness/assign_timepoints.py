@@ -23,7 +23,6 @@ def main():
 
     # make sure chromosome column is set to the appropriate dtype
     cn['chr'] = cn['chr'].astype(str)
-    cn['chr'] = cn['chr'].astype('category')
 
     # create library_id columns using cell_ids in the CN dataframes
     if 'library_id' not in cn.columns:

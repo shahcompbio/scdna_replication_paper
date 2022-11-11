@@ -94,7 +94,8 @@ if __name__ == '__main__':
     
     # make sure chromosome column is set to the appropriate dtype
     df['chr'] = df['chr'].astype(str)
-    df['chr'] = df['chr'].astype('category')
+    # for some reason it has to be set to a string when pivoting into a table
+    # df['chr'] = df['chr'].astype('category')
 
     metrics = df[['cell_id', 'sample_id', 'library_id', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints', 'is_s_phase_prob']].drop_duplicates()
 
