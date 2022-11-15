@@ -18,7 +18,7 @@ samples = samples[samples['mem_jira_ticket'].notna()]
 samples = samples[samples['library_id'].notna()]
 samples = samples[samples['sample_id'].notna()]
 
-bad_datasets = []
+bad_datasets = ['SA609', 'SA609X3X8a', 'SA906a']
 
 rule all_fitness:
     input:
@@ -43,6 +43,34 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'analysis/fitness/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'analysis/fitness/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness/{dataset}/rpm_embedding.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness/{dataset}/clone_spf.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ), 
         # expand(
         #     'plots/fitness/{dataset}/clone_tree_heatmap.png',
         #     dataset=[
@@ -213,9 +241,29 @@ rule infer_scRT_pyro_f:
         'deactivate'
 
 
+# merge timepoints back in with scRT output
+rule merge_scRT_metrics_f:
+    input:
+        df1 = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
+        df2 = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv'
+    output: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv'
+    run:
+        df1 = pd.read_csv(str(input.df1), sep='\t')  # S-phase cells with timepoints mapped to libraries
+        df2 = pd.read_csv(str(input.df2), sep='\t')  # scRT model output without timepoints
+
+        # get a mapping of library ID to timepoint & other labels
+        lost_metrics = df1[['library_id', 'datasetname', 'label', 'timepoint']].drop_duplicates().reset_index(drop=True)
+
+        # merge timepoint back in with scRT model output
+        df_out = pd.merge(df2, lost_metrics)
+
+        df_out.to_csv(str(output), sep='\t', index=False)
+
+
+
 rule plot_cn_heatmaps_f:
     input:
-        s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv',
+        s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv',
         g1_phase = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
     output: 'plots/fitness/{dataset}/cn_heatmaps.png'
     params:
@@ -230,7 +278,7 @@ rule plot_cn_heatmaps_f:
 
 
 rule plot_rt_heatmap_f:
-    input: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv'
+    input: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv'
     output: 'plots/fitness/{dataset}/rt_heatmap.png'
     params:
         value_col = 'model_rep_state',
@@ -246,7 +294,7 @@ rule plot_rt_heatmap_f:
 
 rule plot_pyro_model_output_f:
     input:
-        s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv',
+        s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv',
         g1_phase = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
     output:
         plot1 = 'plots/fitness/{dataset}/inferred_cn_rep_results.png',
@@ -263,7 +311,7 @@ rule plot_pyro_model_output_f:
 
 
 rule remove_nonreplicating_cells_f:
-    input: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv'
+    input: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv'
     output: 
         good = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         nonrep = 'analysis/fitness/{dataset}/model_nonrep_cells.tsv',
@@ -298,6 +346,71 @@ rule plot_filtered_pyro_model_output_f:
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
+
+rule plot_rpm_embedding_f:
+    input:
+        s = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        g_tree = 'analysis/fitness/{dataset}/g1_phase_cells.tsv',
+        g_recovered = 'analysis/fitness/{dataset}/model_nonrep_cells.tsv',
+        lowqual = 'analysis/fitness/{dataset}/model_lowqual_cells.tsv',
+    output: 'plots/fitness/{dataset}/rpm_embedding.png'
+    params:
+        value_col = 'rpm',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fitness/{dataset}/plot_rpm_embedding.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_rpm_embedding.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_rt_pseudobulks_f:
+    input: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    output: 'analysis/fitness/{dataset}/scRT_pseudobulks.tsv'
+    params:
+        rep_col = 'model_rep_state',
+    log: 'logs/fitness/{dataset}/compute_rt_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/compute_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_cn_pseudobulks_f:
+    input: 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/fitness/{dataset}/cn_pseudobulks.tsv'
+    params:
+        cn_state_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fitness/{dataset}/compute_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/compute_cn_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_clone_rt_and_spf_f:
+    input: 
+        cn_s = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g ='analysis/fitness/{dataset}/g1_phase_cells.tsv',
+        cn_g_recovered ='analysis/fitness/{dataset}/model_nonrep_cells.tsv',
+        rt = 'analysis/fitness/{dataset}/scRT_pseudobulks.tsv'
+    output:
+        tsv = 'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
+        clone_rt = 'plots/fitness/{dataset}/clone_rt.png',
+        clone_spf = 'plots/fitness/{dataset}/clone_spf.png'
+    params:
+        rep_col = 'model_rep_state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fitness/{dataset}/plot_clone_rt_and_spf.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_clone_rt_and_spf.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
 # rule infer_SPF:
