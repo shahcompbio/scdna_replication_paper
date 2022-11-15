@@ -151,7 +151,7 @@ def plot_cell_cn_profile2(ax, cn_data, value_field_name, cn_field_name=None, max
 
 
 def plot_clone_rt_profiles(rt, argv):
-    cols = [x for x in rt.columns if x.startswith('pseudobulk_clone') and x.endswith(argv.rep_col)]
+    cols = [x for x in rt.columns if x.startswith('pseduobulk_clone') and x.endswith(argv.rep_col)]
     clones = [x.split('_')[1].replace('clone', '') for x in cols]
 
     fig, ax = plt.subplots(4, 1, figsize=(16,16), tight_layout=True)
@@ -171,7 +171,7 @@ def plot_clone_rt_profiles(rt, argv):
         
         # compute distance between this clone's RT and the reference clone (A)
         if clone_id != 'A':
-            rt['temp_diff_rt'] = rt[col] - rt['pseudobulk_cloneA_{}'.format(argv.rep_col)]
+            rt['temp_diff_rt'] = rt[col] - rt['pseduobulk_cloneA_{}'.format(argv.rep_col)]
 
             # plot the whole genome
             plot_cell_cn_profile2(
