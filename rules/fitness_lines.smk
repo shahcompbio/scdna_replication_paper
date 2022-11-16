@@ -31,7 +31,7 @@ rule all_fitness:
             ]
         ),
         expand(
-            'analysis/fitness_lines/{dataset}/cn_pseudobulks.tsv',
+            'plots/fitness_lines/{dataset}/cn_pseudobulks.png',
             dataset=[
                 d for d in config['fitness_lines']
                 if (d not in bad_datasets)
@@ -79,7 +79,7 @@ rule remove_nonreplicating_cells_fl:
         'deactivate'
 
 
-rule plot_filtered_pyro_model_output_sl:
+rule plot_filtered_pyro_model_output_fl:
     input:
         s_phase = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         g1_phase = 'analysis/fitness_lines/{dataset}/g1_phase_cells.tsv'
@@ -140,7 +140,7 @@ rule plot_cn_heatmaps_fl:
         ' ; deactivate'
 
 
-rule plot_clone_rt_and_spf_sl:
+rule plot_clone_rt_and_spf_fl:
     input: 
         cn_s = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         cn_g ='analysis/fitness_lines/{dataset}/g1_phase_cells.tsv',
@@ -161,7 +161,7 @@ rule plot_clone_rt_and_spf_sl:
         'deactivate'
 
 
-rule plot_clones_vs_time:
+rule plot_clones_vs_time_fl:
     input: 'analysis/fitness_lines/{dataset}/cell_cycle_clone_counts.tsv'
     output: 
         plot1 = 'plots/fitness_lines/{dataset}/clones_vs_time.png',
@@ -170,5 +170,16 @@ rule plot_clones_vs_time:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness_lines/plot_clones_vs_time.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_cn_pseudobulks_fl:
+    input: 'analysis/fitness_lines/{dataset}/cn_pseudobulks.tsv'
+    output: 'plots/fitness_lines/{dataset}/cn_pseudobulks.png'
+    log: 'logs/fitness_lines/{dataset}/plot_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness_lines/plot_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
