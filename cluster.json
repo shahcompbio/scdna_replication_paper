@@ -104,6 +104,10 @@
     {
         "time" : "6:00"
     },
+    "compute_cn_pseudobulks_fl" :
+    {
+        "time" : "6:00"
+    },
     "compute_rt_pseudobulks_composite_lf" :
     {
         "time" : "6:00"

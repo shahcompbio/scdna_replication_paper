@@ -24,6 +24,10 @@ def main():
     # get rid of useless columns
     time_df = time_df[['library_id', 'label', 'timepoint']]
 
+    # manually filter out low quality libraries
+    bad_libraries = ['A96216A']
+    time_df = time_df.loc[~time_df['library_id'].isin(bad_libraries)]
+
     # make sure chromosome column is set to the appropriate dtype
     cn_s['chr'] = cn_s['chr'].astype(str)
     cn_g['chr'] = cn_g['chr'].astype(str)
@@ -37,6 +41,8 @@ def main():
     # merge time info with cn now using library_id as common column
     cn_s_out = pd.merge(cn_s, time_df)
     cn_g_out = pd.merge(cn_g, time_df)
+
+    # filter out libraries that only have a few
 
     cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
     cn_g_out.to_csv(argv.cn_g_out, sep='\t', index=False)

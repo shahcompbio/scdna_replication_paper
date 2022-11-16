@@ -31,14 +31,19 @@ rule all_fitness:
             ]
         ),
         expand(
-             'analysis/fitness_lines/{dataset}/cn_pseudobulks.tsv',
+            'analysis/fitness_lines/{dataset}/cn_pseudobulks.tsv',
             dataset=[
                 d for d in config['fitness_lines']
                 if (d not in bad_datasets)
             ]
         ),
-
-
+        expand(
+            'plots/fitness_lines/{dataset}/clones_vs_time.png',
+            dataset=[
+                d for d in config['fitness_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 # use the model output files from sig_lines.smk to assign S-phase cells to timepoints
 rule assign_timepoints_fl:
@@ -152,5 +157,18 @@ rule plot_clone_rt_and_spf_sl:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness_lines/plot_clone_rt_and_spf.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_clones_vs_time:
+    input: 'analysis/fitness_lines/{dataset}/cell_cycle_clone_counts.tsv'
+    output: 
+        plot1 = 'plots/fitness_lines/{dataset}/clones_vs_time.png',
+        plot2 = 'plots/fitness_lines/{dataset}/total_cells_vs_time.png'
+    log: 'logs/fitness_lines/{dataset}/plot_clones_vs_time.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness_lines/plot_clones_vs_time.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
