@@ -10,6 +10,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('input', type=str, help='matrix of cn pseudobulks')
+    p.add_argument('dataset')
     p.add_argument('plot1', type=str, help='pseudobulk cn profiles including dataset-level bulk, sorted by clone_id')
     p.add_argument('plot2', type=str, help='pseudobulk cn profiles with only clones, sorted by clustering')
 
@@ -25,7 +26,7 @@ def plot_sorted(bulk_df, argv):
     labels = plot_data.columns.get_level_values(0).values
     ax.set_yticks(np.arange(len(labels)))
     ax.set_yticklabels(labels)
-    ax.set_title('Pseudobulk CN Profiles')
+    ax.set_title('{}: Pseudobulk CN Profiles'.format(argv.dataset))
 
     fig.savefig(argv.plot1, bbox_inches='tight')
 
@@ -39,7 +40,7 @@ def plot_clustered(bulk_df, argv):
     labels = plot_data.columns.get_level_values(0).values
     ax.set_yticks(np.arange(len(labels)))
     ax.set_yticklabels(labels)
-    ax.set_title('Pseudobulk CN Profiles')
+    ax.set_title('{}: Pseudobulk CN Profiles'.format(argv.dataset))
 
     fig.savefig(argv.plot2, bbox_inches='tight')
 
@@ -47,7 +48,7 @@ def plot_clustered(bulk_df, argv):
 def main():
     argv = get_args()
     # load long-form dataframes from different cell cycle phases
-    bulk_df = pd.read_csv(argv.input, sep='\t')
+    bulk_cn = pd.read_csv(argv.input, sep='\t')
 
     # treat each pseudobulk profile as a unique cell_id
     bulk_df = bulk_cn.melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='state')

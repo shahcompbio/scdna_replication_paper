@@ -31,7 +31,7 @@ rule all_fitness:
             ]
         ),
         expand(
-            'plots/fitness_lines/{dataset}/cn_pseudobulks.png',
+            'plots/fitness_lines/{dataset}/cn_pseudobulks1.png',
             dataset=[
                 d for d in config['fitness_lines']
                 if (d not in bad_datasets)
@@ -166,6 +166,8 @@ rule plot_clones_vs_time_fl:
     output: 
         plot1 = 'plots/fitness_lines/{dataset}/clones_vs_time.png',
         plot2 = 'plots/fitness_lines/{dataset}/total_cells_vs_time.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness_lines/{dataset}/plot_clones_vs_time.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -176,7 +178,11 @@ rule plot_clones_vs_time_fl:
 
 rule plot_cn_pseudobulks_fl:
     input: 'analysis/fitness_lines/{dataset}/cn_pseudobulks.tsv'
-    output: 'plots/fitness_lines/{dataset}/cn_pseudobulks.png'
+    output: 
+        plot1 = 'plots/fitness_lines/{dataset}/cn_pseudobulks1.png',
+        plot2 = 'plots/fitness_lines/{dataset}/cn_pseudobulks2.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness_lines/{dataset}/plot_cn_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '

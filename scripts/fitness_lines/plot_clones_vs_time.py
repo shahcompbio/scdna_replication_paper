@@ -9,6 +9,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('input', type=str, help='Table of the number of cells per cell cycle phase and clone')
+    p.add_argument('dataset')
     p.add_argument('output_clones', type=str, help='figure showing the evolution of clones over time for each phase')
     p.add_argument('output_total', type=str, help='figure showing total number of cells at each timepoint')
 
@@ -34,8 +35,8 @@ def plot_clone_stackplots(df, argv):
     ax[0].stackplot(timepoints, clone_frac_g_vs_time, labels=clone_legend)
     ax[1].stackplot(timepoints, clone_frac_s_vs_time, labels=clone_legend)
     ax[0].set_ylabel('Clone fraction')
-    ax[0].set_title('G1/2-phase')
-    ax[1].set_title('S-phase')
+    ax[0].set_title('{}: G1/2-phase'.format(argv.dataset))
+    ax[1].set_title('{}: S-phase'.format(argv.dataset))
     ax[1].legend(title='Clone ID')
 
     fig.savefig(argv.output_clones, bbox_inches='tight')
@@ -56,7 +57,7 @@ def plot_total_cell_count_stackplot(df, argv):
 
     ax.stackplot(timepoints, total_counts, labels=phase_legend)
     ax.set_ylabel('# cells')
-    ax.set_title('Total cell count per timepoint')
+    ax.set_title('{}: total cell count'.format(argv.dataset))
     ax.legend(title='Phase')
 
     fig.savefig(argv.output_total, bbox_inches='tight')
