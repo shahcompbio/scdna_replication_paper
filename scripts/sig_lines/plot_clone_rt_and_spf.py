@@ -205,13 +205,14 @@ def compute_fracs_and_pvals(df):
     """
     clones = df['clone_id'].unique()
     
-    # create arrays of clone counts within each cell cycle phase
-    num_cells_s = df.query("cell_cycle=='S'")['num_cells'].values
-    num_cells_g_tree = df.query("cell_cycle=='G1/2 tree'")['num_cells'].values
-    num_cells_g_rec = df.query("cell_cycle=='G1/2 recovered'")['num_cells'].values
-    # treat both the tree and recovered G1/2-phase cells as being nonreplicating here
-    num_cells_g = num_cells_g_tree + num_cells_g_rec
-    
+    num_cells_s = np.zeros(len(clones))
+    num_cells_g = np.zeros(len(clones))
+    for i, clone_id in enumerate(clones):
+        num_cells_s[i] = df.query('cell_cycle=="S"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
+        ngt = df.query('cell_cycle=="G1/2 tree"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
+        ngr = df.query('cell_cycle=="G1/2 recovered"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
+        num_cells_g[i] = ngt + ngr
+        
     # convert clone counts to clone frequencies within each cell cycle phase
     clone_frac_s = num_cells_s / sum(num_cells_s)
     clone_frac_g = num_cells_g / sum(num_cells_g)
@@ -245,6 +246,7 @@ def compute_fracs_and_pvals(df):
     })
     
     return df_out
+    
 
 def library_wrapper_fracs_and_pvals(df):
     ''' Compute clone cell cycle fractions within each library '''

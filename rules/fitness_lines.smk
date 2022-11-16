@@ -30,6 +30,13 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+             'analysis/fitness_lines/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 
