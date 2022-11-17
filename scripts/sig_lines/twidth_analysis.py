@@ -9,7 +9,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells with true and inferred scRT data')
-    p.add_argument('bulk_rt', help='pseduobulk RT information')
+    p.add_argument('bulk_rt', help='pseudobulk RT information')
     p.add_argument('dataset')
     p.add_argument('infer_mode', help='pyro model or bulk')
     p.add_argument('frac_rt_col', help='column denoting the fraction of replicated loci per cell (its time in S-phase)')
@@ -25,12 +25,12 @@ def main():
     df = pd.read_csv(argv.cn_s, sep='\t')
 
     bulk_rt = pd.read_csv(argv.bulk_rt, sep='\t')
-    bulk_rt = bulk_rt[['chr', 'start', 'pseduobulk_hours']]
+    bulk_rt = bulk_rt[['chr', 'start', 'pseudobulk_hours']]
 
     df = pd.merge(df, bulk_rt)
 
     # compute time from scheduled replication column
-    df['time_from_scheduled_rt'] = df['pseduobulk_hours'] - (df[argv.frac_rt_col] * 10.0)
+    df['time_from_scheduled_rt'] = df['pseudobulk_hours'] - (df[argv.frac_rt_col] * 10.0)
 
     # find the number of S-phase cells used to compute the Twidth curve
     num_cells = len(df.cell_id.unique())
