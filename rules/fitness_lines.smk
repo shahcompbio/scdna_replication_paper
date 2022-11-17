@@ -7,7 +7,7 @@ configfile: "config.yaml"
 
 bad_datasets = []
 
-rule all_fitness:
+rule all_fitness_lines:
     input:
         expand(
             'plots/fitness_lines/{dataset}/inferred_cn_rep_results_filtered.png',
@@ -18,6 +18,13 @@ rule all_fitness:
         ),
         expand(
             'plots/fitness_lines/{dataset}/clone_spf.png',
+            dataset=[
+                d for d in config['fitness_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness_lines/{dataset}/clone_rt.png',
             dataset=[
                 d for d in config['fitness_lines']
                 if (d not in bad_datasets)

@@ -30,6 +30,13 @@ rule all_sig_lines:
             ]
         ),
         expand(
+            'plots/sig_lines/{dataset}/cn_pseudobulks1.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/sig_lines/{dataset}/inferred_cn_rep_results.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
@@ -380,6 +387,21 @@ rule compute_cn_pseudobulks_sl:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/sig_lines/compute_cn_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_cn_pseudobulks_sl:
+    input: 'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv'
+    output: 
+        plot1 = 'plots/sig_lines/{dataset}/cn_pseudobulks1.png',
+        plot2 = 'plots/sig_lines/{dataset}/cn_pseudobulks2.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_lines/{dataset}/plot_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/sig_lines/plot_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 

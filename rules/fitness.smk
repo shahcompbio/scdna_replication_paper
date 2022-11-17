@@ -51,7 +51,7 @@ rule all_fitness:
             ]
         ),
         expand(
-            'analysis/fitness/{dataset}/cn_pseudobulks.tsv',
+            'plots/fitness/{dataset}/cn_pseudobulks1.png',
             dataset=[
                 d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
@@ -70,7 +70,14 @@ rule all_fitness:
                 d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
             ]
-        ), 
+        ),
+        expand(
+            'plots/fitness/{dataset}/clone_rt.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         # expand(
         #     'plots/fitness/{dataset}/clone_tree_heatmap.png',
         #     dataset=[
@@ -388,6 +395,21 @@ rule compute_cn_pseudobulks_f:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness/compute_cn_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_cn_pseudobulks_f:
+    input: 'analysis/fitness/{dataset}/cn_pseudobulks.tsv'
+    output: 
+        plot1 = 'plots/fitness/{dataset}/cn_pseudobulks1.png',
+        plot2 = 'plots/fitness/{dataset}/cn_pseudobulks2.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fitness/{dataset}/plot_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
