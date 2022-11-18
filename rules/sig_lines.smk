@@ -79,6 +79,13 @@ rule all_sig_lines:
             ]
         ),
         expand(
+            'plots/sig_lines/{dataset}/frac_rt_distributions.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/sig_lines/{dataset}/rpm_embedding.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
@@ -225,8 +232,10 @@ rule infer_scRT_pyro_sl:
         cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     output:
-        main_out = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_out = 'analysis/sig_lines/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
+        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_with_scRT.tsv',
+        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
@@ -342,6 +351,23 @@ rule plot_nonrep_pyro_model_output_sl:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/sig_lines/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_inferred_cn_vs_scRT_filtered_sl:
+    input: 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    output: 
+        plot1 = 'plots/sig_lines/{dataset}/cn_scRT_heatmaps.png',
+        plot2 = 'plots/sig_lines/{dataset}/frac_rt_distributions.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'cell_frac_rep'
+    log: 'logs/sig_lines/{dataset}/plot_inferred_cn_vs_scRT_filtered.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/sig_lines/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 

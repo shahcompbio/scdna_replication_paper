@@ -232,8 +232,10 @@ rule infer_scRT_pyro_lf:
         cn_s = 'analysis/laks_flow/{dataset}/cn_s.tsv',
         cn_g = 'analysis/laks_flow/{dataset}/cn_g_with_clone_id.tsv'
     output:
-        main_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered.tsv',
-        supp_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
+        main_s_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered.tsv',
+        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered.tsv',
+        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
@@ -253,8 +255,10 @@ rule infer_scRT_pyro_composite_lf:
         cn_s = 'analysis/laks_flow/{dataset}/cn_s.tsv',
         cn_g = 'analysis/laks_flow/{dataset}/cn_g_with_clone_id.tsv'
     output:
-        main_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv',
-        supp_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_output.tsv'  # should contain sample- and library-level params
+        main_s_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv',
+        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_s_output.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_infered.tsv',
+        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_g_output.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',

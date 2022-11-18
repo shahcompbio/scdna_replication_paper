@@ -214,8 +214,10 @@ rule infer_scRT_bulk_sim:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output: 
-        main_out = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv',
-        supp_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_output.tsv'  # should be an empty dataframe for bulk method
+        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_bulk_infered.tsv',
+        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_bulk_supp_s_output.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_bulk_infered.tsv',
+        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_bulk_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -235,9 +237,11 @@ rule infer_scRT_pyro_sim:
     input:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
-    output: 
-        main_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_infered.tsv',
-        supp_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
+    output:
+        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_pyro_infered.tsv',
+        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_pyro_infered.tsv',
+        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -257,9 +261,11 @@ rule infer_scRT_pyro_composite_sim:
     input:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
-    output: 
-        main_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
-        supp_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_output.tsv'  # should contain sample- and library-level params
+    output:
+        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
+        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_s_output.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_pyro_composite_infered.tsv',
+        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',

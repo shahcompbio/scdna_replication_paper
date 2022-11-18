@@ -45,6 +45,13 @@ rule all_fitness_lines:
             ]
         ),
         expand(
+            'plots/fitness_lines/{dataset}/frac_rt_distributions.png',
+            dataset=[
+                d for d in config['fitness_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/fitness_lines/{dataset}/clones_vs_time.png',
             dataset=[
                 d for d in config['fitness_lines']
@@ -100,6 +107,23 @@ rule plot_filtered_pyro_model_output_fl:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/common/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_inferred_cn_vs_scRT_filtered_fl:
+    input: 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
+    output: 
+        plot1 = 'plots/fitness_lines/{dataset}/cn_scRT_heatmaps.png',
+        plot2 = 'plots/fitness_lines/{dataset}/frac_rt_distributions.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'cell_frac_rep'
+    log: 'logs/fitness_lines/{dataset}/plot_inferred_cn_vs_scRT_filtered.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness_lines/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 

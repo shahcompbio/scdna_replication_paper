@@ -22,34 +22,34 @@ bad_datasets = ['SA609', 'SA609X3X8a', 'SA906a']
 
 rule all_fitness:
     input:
-        expand(
-            'plots/fitness/{dataset}/s_vs_g_rpm_filtered.png',
-            dataset=[
-                d for d in config['fitness_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fitness/{dataset}/inferred_cn_rep_results.png',
-            dataset=[
-                d for d in config['fitness_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fitness/{dataset}/rt_heatmap.png',
-            dataset=[
-                d for d in config['fitness_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'analysis/fitness/{dataset}/scRT_pseudobulks.tsv',
-            dataset=[
-                d for d in config['fitness_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # expand(
+        #     'plots/fitness/{dataset}/s_vs_g_rpm_filtered.png',
+        #     dataset=[
+        #         d for d in config['fitness_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/fitness/{dataset}/inferred_cn_rep_results.png',
+        #     dataset=[
+        #         d for d in config['fitness_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/fitness/{dataset}/rt_heatmap.png',
+        #     dataset=[
+        #         d for d in config['fitness_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'analysis/fitness/{dataset}/scRT_pseudobulks.tsv',
+        #     dataset=[
+        #         d for d in config['fitness_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
         expand(
             'plots/fitness/{dataset}/cn_pseudobulks1.png',
             dataset=[
@@ -57,50 +57,29 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
+        # expand(
+        #     'plots/fitness/{dataset}/rpm_embedding.png',
+        #     dataset=[
+        #         d for d in config['fitness_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
         expand(
-            'plots/fitness/{dataset}/rpm_embedding.png',
-            dataset=[
-                d for d in config['fitness_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fitness/{dataset}/clone_spf.png',
-            dataset=[
-                d for d in config['fitness_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/fitness/{dataset}/clone_rt.png',
+            'plots/fitness/{dataset}/ccc_features_scatter.png',
             dataset=[
                 d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         # expand(
-        #     'plots/fitness/{dataset}/clone_tree_heatmap.png',
+        #     'plots/fitness/{dataset}/clone_spf.png',
         #     dataset=[
         #         d for d in config['fitness_datasets']
         #         if (d not in bad_datasets)
         #     ]
         # ),
         # expand(
-        #     'plots/fitness/{dataset}/consensus_clone_copynumber.pdf',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fitness/{dataset}/clonal_evolution.pdf',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fitness/{dataset}/s_predictiveness.pdf',
+        #     'plots/fitness/{dataset}/clone_rt.png',
         #     dataset=[
         #         d for d in config['fitness_datasets']
         #         if (d not in bad_datasets)
@@ -178,53 +157,57 @@ rule assign_timepoints_f:
         '{input} {output} &> {log}'
 
 
-rule get_g1_phase_cells_f:
-    input:
-        cn = 'analysis/fitness/{dataset}/cn_data_times.tsv',
-        clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
-    output: 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
-    run:
-        df = pd.read_csv(str(input.cn), sep='\t')
-        clones = pd.read_csv(str(input.clones))
-
-        # make sure chromosome column is set to the appropriate dtype
-        df['chr'] = df['chr'].astype(str)
-
-        clones.rename(columns={'single_cell_id': 'cell_id',
-                            'letters': 'clone_id',
-                            'datatag': 'dataset_id'},
-                        inplace=True)
-        clones.drop(columns=['sample_id', 'V1'], inplace=True)
-
-        # force clone cell_ids to match for the SA906 datasets
-        clones['cell_id'] = clones['cell_id'].str.replace('SA906a', 'SA906', regex=False)
-        clones['cell_id'] = clones['cell_id'].str.replace('SA906b', 'SA906', regex=False)
-
-        # df = df.query('is_s_phase_prob <= 0.5')
-        # only use cells that have clone_id's assigned (and add clone_id column)
-        df = pd.merge(df, clones)
-
-        df.to_csv(str(output), sep='\t', index=False)
-
-
-rule get_s_phase_cells_f:
+rule clone_assignments_f:
     input: 
         cn = 'analysis/fitness/{dataset}/cn_data_times.tsv',
-        cn_tree = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
-    output: 'analysis/fitness/{dataset}/s_phase_cells.tsv'
-    run:
-        cn = pd.read_csv(str(input.cn), sep='\t')  # all cells in this dataset
-        cn_tree = pd.read_csv(str(input.cn_tree), sep='\t')  # all cells that belong in the tree
+        clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
+    output: 'analysis/fitness/{dataset}/cn_data_clones.tsv'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        assign_col = 'copy'
+    log: 'logs/fitness/{dataset}/clone_assignments.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/clone_assignments.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
-        # make sure chromosome column is set to the appropriate dtype
-        cn['chr'] = cn['chr'].astype(str)
-        cn_tree['chr'] = cn_tree['chr'].astype(str)
 
-        cells_in_tree = cn_tree['cell_id'].unique()
+rule compute_ccc_features_f:
+    input: 'analysis/fitness/{dataset}/cn_data_clones.tsv'
+    output: 'analysis/fitness/{dataset}/cn_data_features.tsv'
+    log: 'logs/fitness/{dataset}/compute_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/compute_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
-        # all cells which don't appear in the tree could be replicating
-        cn_out = cn.loc[~cn['cell_id'].isin(cells_in_tree)]
-        cn_out.to_csv(str(output), sep='\t', index=False)
+
+rule plot_ccc_features_f:
+    input: 'analysis/fitness/{dataset}/cn_data_features.tsv'
+    output: 
+        plot1 = 'plots/fitness/{dataset}/ccc_features_hist.png',
+        plot2 = 'plots/fitness/{dataset}/ccc_features_scatter.png'
+    log: 'logs/fitness/{dataset}/plot_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule split_cell_cycle_sl:
+    input: 'analysis/fitness/{dataset}/cn_data_features.tsv'
+    output:
+        cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
+    log: 'logs/fitness/{dataset}/split_cell_cycle.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/split_cell_cycle.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
 rule infer_scRT_pyro_f:
@@ -232,8 +215,10 @@ rule infer_scRT_pyro_f:
         cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
     output:
-        main_out = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_out = 'analysis/fitness/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
+        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_with_scRT.tsv',
+        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
