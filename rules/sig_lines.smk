@@ -598,4 +598,3 @@ rule signals_heatmaps_sl:
         '--dataset {params.dataset} '
         '--heatmap {output.figure} '
         '&> {log}'
-    # script: '../scripts/sig_lines/signals_heatmaps.R'
