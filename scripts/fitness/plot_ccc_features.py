@@ -63,6 +63,9 @@ if __name__ == '__main__':
 
     # load in data
     cn = pd.read_csv(argv.cn_input, sep='\t')
+
+    if 'is_s_phase' not in cn.columns:
+        cn['is_s_phase'] = cn['is_s_phase_prob'].apply(lambda x: True if x>0.5 else False)
    
     # use ecf status to come up with good vs bad S-phase labels in cell_cycle_state column
     cell_metrics = get_cell_metrics(cn)

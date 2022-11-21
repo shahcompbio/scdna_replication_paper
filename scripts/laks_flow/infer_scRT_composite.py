@@ -49,7 +49,7 @@ def main():
     # create SPF object with input
     # run with composite cn prior to see what's going wrong
     scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.copy_col,
-                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=20)
+                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=1500)
 
     print('running inference')
     # run inference

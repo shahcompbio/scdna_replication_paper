@@ -18,7 +18,7 @@ samples = samples[samples['mem_jira_ticket'].notna()]
 samples = samples[samples['library_id'].notna()]
 samples = samples[samples['sample_id'].notna()]
 
-bad_datasets = ['SA609', 'SA609X3X8a', 'SA906a']
+bad_datasets = []
 
 rule all_fitness:
     input:
@@ -52,6 +52,13 @@ rule all_fitness:
         # ),
         expand(
             'plots/fitness/{dataset}/cn_pseudobulks1.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness/{dataset}/cn_heatmaps.png',
             dataset=[
                 d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
@@ -197,11 +204,13 @@ rule plot_ccc_features_f:
         'deactivate'
 
 
-rule split_cell_cycle_sl:
+rule split_cell_cycle_f:
     input: 'analysis/fitness/{dataset}/cn_data_features.tsv'
     output:
         cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
+    params:
+        dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/split_cell_cycle.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -252,10 +261,9 @@ rule merge_scRT_metrics_f:
         df_out.to_csv(str(output), sep='\t', index=False)
 
 
-
 rule plot_cn_heatmaps_f:
     input:
-        s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv',
+        s_phase = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
     output: 'plots/fitness/{dataset}/cn_heatmaps.png'
     params:

@@ -57,13 +57,13 @@ rule all_laks_flow:
             'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
             dataset=[d for d in perm_datasets]
         ),
-        expand(
-            'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
-            dataset=[
-                d for d in perm_datasets
-                if (d not in ['T47D', 'GM18507'])
-            ]
-        ),
+        # expand(
+        #     'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
+        #     dataset=[
+        #         d for d in perm_datasets
+        #         if (d not in ['T47D', 'GM18507'])
+        #     ]
+        # ),
         expand(
             'analysis/laks_flow/{dataset}/cn_pseudobulks.tsv',
             dataset=[
@@ -71,11 +71,11 @@ rule all_laks_flow:
             ]
         ),
         # 'plots/laks_flow/all/rt_corr.png',
-        'plots/laks_flow/all/rt_corr_composite.png',
+        # 'plots/laks_flow/all/rt_corr_composite.png',
         # 'plots/laks_flow/all/twidth_curves.png',
-        'plots/laks_flow/all/twidth_curves_composite.png',
-        'plots/laks_flow/permuted/summary.png',
-        'plots/laks_flow/permuted/rt_corr_composite.png'
+        # 'plots/laks_flow/all/twidth_curves_composite.png',
+        # 'plots/laks_flow/permuted/summary.png',
+        # 'plots/laks_flow/permuted/rt_corr_composite.png'
 
 
 # fetch the raw data

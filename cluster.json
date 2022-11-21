@@ -4,7 +4,7 @@
         "queue" : "general",
         "mem" : 64,
         "threads" : 1,
-        "time" : "2:00",
+        "time" : "6:00",
         "extra" : "",
         "latency" : "10",
         "logdir" : "logs/cluster"
@@ -41,6 +41,10 @@
         "time" : "6:00"
     },
     "plot_ccc_features_st" :
+    {
+        "time" : "6:00"
+    },
+    "plot_ccc_features_f" :
     {
         "time" : "6:00"
     },

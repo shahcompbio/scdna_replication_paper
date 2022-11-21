@@ -22,7 +22,7 @@ def main():
 
     # treat each library as a unique clone when computing the cell cycle classifier features
     cn_temp, cell_features = compute_ccc_features(
-        cn, cell_col='cell_id', rpm_col='rpm', clone_col='library_id', madn_col='madn',
+        cn, cell_col='cell_id', rpm_col='rpm', clone_col='clone_id', madn_col='madn',
         lrs_col='lrs', num_reads_col='total_mapped_reads_hmmcopy', bk_col='breakpoints'
     )
 
