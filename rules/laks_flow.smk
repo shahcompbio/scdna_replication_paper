@@ -50,6 +50,15 @@ rule all_laks_flow:
             dataset=[d for d in perm_datasets]
         ),
         # expand(
+        #     'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_g.png',
+        #     dataset=[d for d in perm_datasets]
+        # ),
+        expand(
+            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_g.png',
+            dataset=[d for d in ['T47D']]
+        ),
+        
+        # expand(
         #     'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_filtered.png',
         #     dataset=[d for d in datasets]
         # ),
@@ -290,6 +299,23 @@ rule plot_inferred_cn_vs_scRT_lf:
         'deactivate'
 
 
+rule plot_inferred_cn_g_vs_scRT_lf:
+    input: 'analysis/laks_flow/{dataset}/cn_g_pyro_infered.tsv'
+    output: 
+        plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_g.png',
+        plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro_g.png'
+    params:
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'model_tau'
+    log: 'logs/laks_flow/{dataset}/plot_inferred_cn_g_vs_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule plot_inferred_cn_vs_scRT_composite_lf:
     input: 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv'
     output: 
@@ -307,72 +333,61 @@ rule plot_inferred_cn_vs_scRT_composite_lf:
         'deactivate'
 
 
-# rule remove_nonreplicating_cells_lf:
-#     input: 
-#         cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_infered.tsv',
-#         cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_infered.tsv',
-#         cn_all = 'analysis/laks_flow/all/cn_s_pyro_infered.tsv'
-#     output:
-#         cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_infered_filtered.tsv',
-#         cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_infered_filtered.tsv',
-#         cn_all = 'analysis/laks_flow/all/cn_s_pyro_infered_filtered.tsv'
-#     params:
-#         frac_rt_col = 'cell_frac_rep'
-#     log: 'logs/laks_flow/remove_nonreplicating_cells.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv/bin/activate ; '
-#         'python3 scripts/laks_flow/remove_nonreplicating_cells.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
-
-
-rule remove_nonreplicating_cells_simple_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_infered.tsv',
-    output:
-        good = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_filtered.tsv',
-        bad = 'analysis/laks_flow/{dataset}/model_nonrep_cells.tsv',
+rule plot_inferred_cn_g_vs_scRT_composite_lf:
+    input: 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_infered.tsv'
+    output: 
+        plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_g.png',
+        plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro_composite_g.png'
     params:
-        frac_rt_col = 'cell_frac_rep',
-        rep_col = 'model_rep_state'
-    log: 'logs/laks_flow/{dataset}/remove_nonreplicating_cells_simple.log'
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        frac_rt_col = 'model_tau'
+    log: 'logs/laks_flow/{dataset}/plot_inferred_cn_g_vs_scRT_composite.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/laks_flow/remove_nonreplicating_cells_simple.py '
+        'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
 
-# rule remove_nonreplicating_cells_composite_lf:
-#     input: 
-#         cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_composite_infered.tsv',
-#         cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_composite_infered.tsv',
-#         cn_all = 'analysis/laks_flow/all/cn_s_pyro_composite_infered.tsv'
-#     output:
-#         cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_infered_composite_filtered.tsv',
-#         cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_infered_composite_filtered.tsv',
-#         cn_all = 'analysis/laks_flow/all/cn_s_pyro_infered_composite_filtered.tsv'
-#     params:
-#         frac_rt_col = 'cell_frac_rep'
-#     log: 'logs/laks_flow/remove_nonreplicating_cells_composite.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv/bin/activate ; '
-#         'python3 scripts/laks_flow/remove_nonreplicating_cells.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
-
-
-rule remove_nonreplicating_cells_composite_simple_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv',
+rule revise_cell_cycle_labels_lf:
+    input: 
+        cn_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered.tsv',
+        cn_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered.tsv',
     output:
-        good = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
-        bad = 'analysis/laks_flow/{dataset}/model_nonrep_cells_composite.tsv',
+        out_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_filtered.tsv',
+        out_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered_filtered.tsv',
+        out_lowqual = 'analysis/laks_flow/{dataset}/cn_lowqual_pyro_infered_filtered.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
-        rep_col = 'model_rep_state'
-    log: 'logs/laks_flow/{dataset}/remove_nonreplicating_cells_composite_simple.log'
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        rpm_col = 'rpm'
+    log: 'logs/laks_flow/{dataset}/revise_cell_cycle_labels.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/laks_flow/remove_nonreplicating_cells_simple.py '
+        'python3 scripts/laks_flow/revise_cell_cycle_labels.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule revise_cell_cycle_labels_composite_lf:
+    input: 
+        cn_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv',
+        cn_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_infered.tsv',
+    output:
+        out_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
+        out_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered_composite_filtered.tsv',
+        out_lowqual = 'analysis/laks_flow/{dataset}/cn_lowqual_pyro_infered_composite_filtered.tsv',
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        rpm_col = 'rpm'
+    log: 'logs/laks_flow/{dataset}/revise_cell_cycle_labels_composite.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/laks_flow/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -514,12 +529,12 @@ rule plot_rt_profiles_composite_lf:
 
 rule analyze_permuted_datasets_lf:
     input: 
-        cn_good = expand(
+        cn_s = expand(
             'analysis/laks_flow/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
             dataset=[d for d in config['permuted_datasets']]
         ),
-        cn_bad = expand(
-            'analysis/laks_flow/{dataset}/model_nonrep_cells_composite.tsv',
+        cn_g = expand(
+            'analysis/laks_flow/{dataset}/cn_g_pyro_infered_composite_filtered.tsv',
             dataset=[d for d in config['permuted_datasets']]
         )
     output:
