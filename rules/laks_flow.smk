@@ -57,7 +57,6 @@ rule all_laks_flow:
             'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_g.png',
             dataset=[d for d in ['T47D']]
         ),
-        
         # expand(
         #     'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_filtered.png',
         #     dataset=[d for d in datasets]
@@ -65,6 +64,10 @@ rule all_laks_flow:
         expand(
             'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
             dataset=[d for d in perm_datasets]
+        ),
+        expand(
+            'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
+            dataset=[d for d in ['T47D']]
         ),
         # expand(
         #     'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
