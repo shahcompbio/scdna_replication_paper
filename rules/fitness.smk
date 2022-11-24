@@ -22,34 +22,34 @@ bad_datasets = []
 
 rule all_fitness:
     input:
-        # expand(
-        #     'plots/fitness/{dataset}/s_vs_g_rpm_filtered.png',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fitness/{dataset}/inferred_cn_rep_results.png',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fitness/{dataset}/rt_heatmap.png',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'analysis/fitness/{dataset}/scRT_pseudobulks.tsv',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fitness/{dataset}/s_vs_g_rpm_filtered.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness/{dataset}/inferred_cn_rep_results.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness/{dataset}/rt_heatmap.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'analysis/fitness/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         expand(
             'plots/fitness/{dataset}/cn_pseudobulks1.png',
             dataset=[
@@ -64,13 +64,13 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/fitness/{dataset}/rpm_embedding.png',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fitness/{dataset}/rpm_embedding.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         expand(
             'plots/fitness/{dataset}/ccc_features_scatter.png',
             dataset=[
@@ -78,20 +78,20 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/fitness/{dataset}/clone_spf.png',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/fitness/{dataset}/clone_rt.png',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fitness/{dataset}/clone_spf.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness/{dataset}/clone_rt.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         
 
 def dataset_cn_files(wildcards):
@@ -224,10 +224,10 @@ rule infer_scRT_pyro_f:
         cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
     output:
-        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_with_scRT.tsv',
-        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
+        main_s_out = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_s_out = 'analysis/fitness/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT.tsv',
+        supp_g_out = 'analysis/fitness/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
@@ -310,21 +310,23 @@ rule plot_pyro_model_output_f:
         'deactivate'
 
 
-rule remove_nonreplicating_cells_f:
-    input: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv'
-    output: 
-        good = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        nonrep = 'analysis/fitness/{dataset}/model_nonrep_cells.tsv',
-        lowqual = 'analysis/fitness/{dataset}/model_lowqual_cells.tsv',
+rule revise_cell_cycle_labels_lf:
+    input: 
+        cn_s = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv',
+        cn_g = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT.tsv',
+    output:
+        out_s = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        out_g = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
+        out_lowqual = 'analysis/fitness/{dataset}/model_lowqual_cells.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
         rpm_col = 'rpm'
-    log: 'logs/fitness/{dataset}/remove_nonreplicating_cells.log'
+    log: 'logs/fitness/{dataset}/revise_cell_cycle_labels.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/common/remove_nonreplicating_cells.py '
+        'python3 scripts/laks_flow/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -332,7 +334,7 @@ rule remove_nonreplicating_cells_f:
 rule plot_filtered_pyro_model_output_f:
     input:
         s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        g1_phase = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
+        g1_phase = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
     output:
         plot1 = 'plots/fitness/{dataset}/inferred_cn_rep_results_filtered.png',
         plot2 = 'plots/fitness/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
@@ -350,8 +352,7 @@ rule plot_filtered_pyro_model_output_f:
 rule plot_rpm_embedding_f:
     input:
         s = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        g_tree = 'analysis/fitness/{dataset}/g1_phase_cells.tsv',
-        g_recovered = 'analysis/fitness/{dataset}/model_nonrep_cells.tsv',
+        g = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
         lowqual = 'analysis/fitness/{dataset}/model_lowqual_cells.tsv',
     output: 'plots/fitness/{dataset}/rpm_embedding.png'
     params:
@@ -410,8 +411,7 @@ rule plot_cn_pseudobulks_f:
 rule plot_clone_rt_and_spf_f:
     input: 
         cn_s = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        cn_g ='analysis/fitness/{dataset}/g1_phase_cells.tsv',
-        cn_g_recovered ='analysis/fitness/{dataset}/model_nonrep_cells.tsv',
+        cn_g = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
         rt = 'analysis/fitness/{dataset}/scRT_pseudobulks.tsv'
     output:
         tsv = 'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',

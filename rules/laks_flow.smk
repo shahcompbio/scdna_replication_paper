@@ -53,10 +53,6 @@ rule all_laks_flow:
         #     'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_g.png',
         #     dataset=[d for d in perm_datasets]
         # ),
-        expand(
-            'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_g.png',
-            dataset=[d for d in ['T47D']]
-        ),
         # expand(
         #     'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_filtered.png',
         #     dataset=[d for d in datasets]
@@ -69,25 +65,25 @@ rule all_laks_flow:
             'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
             dataset=[d for d in ['T47D']]
         ),
-        # expand(
-        #     'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
-        #     dataset=[
-        #         d for d in perm_datasets
-        #         if (d not in ['T47D', 'GM18507'])
-        #     ]
-        # ),
+        expand(
+            'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
+            dataset=[
+                d for d in perm_datasets
+                if (d not in ['T47D', 'GM18507'])
+            ]
+        ),
         expand(
             'analysis/laks_flow/{dataset}/cn_pseudobulks.tsv',
             dataset=[
                 d for d in ['T47D', 'GM18507', 'all']
             ]
         ),
-        # 'plots/laks_flow/all/rt_corr.png',
-        # 'plots/laks_flow/all/rt_corr_composite.png',
-        # 'plots/laks_flow/all/twidth_curves.png',
-        # 'plots/laks_flow/all/twidth_curves_composite.png',
-        # 'plots/laks_flow/permuted/summary.png',
-        # 'plots/laks_flow/permuted/rt_corr_composite.png'
+        'plots/laks_flow/all/rt_corr.png',
+        'plots/laks_flow/all/rt_corr_composite.png',
+        'plots/laks_flow/all/twidth_curves.png',
+        'plots/laks_flow/all/twidth_curves_composite.png',
+        'plots/laks_flow/permuted/summary.png',
+        'plots/laks_flow/permuted/rt_corr_composite.png'
 
 
 # fetch the raw data
@@ -244,9 +240,9 @@ rule infer_scRT_pyro_lf:
         cn_s = 'analysis/laks_flow/{dataset}/cn_s.tsv',
         cn_g = 'analysis/laks_flow/{dataset}/cn_g_with_clone_id.tsv'
     output:
-        main_s_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered.tsv',
+        main_s_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred.tsv',
         supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/cn_g_pyro_inferred.tsv',
         supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'rpm',
@@ -267,9 +263,9 @@ rule infer_scRT_pyro_composite_lf:
         cn_s = 'analysis/laks_flow/{dataset}/cn_s.tsv',
         cn_g = 'analysis/laks_flow/{dataset}/cn_g_with_clone_id.tsv'
     output:
-        main_s_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv',
+        main_s_out = 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_inferred.tsv',
         supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_infered.tsv',
+        main_g_out = 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_inferred.tsv',
         supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_g_output.tsv',
     params:
         input_col = 'rpm',
@@ -286,7 +282,7 @@ rule infer_scRT_pyro_composite_lf:
 
 
 rule plot_inferred_cn_vs_scRT_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_infered.tsv'
+    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred.tsv'
     output: 
         plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro.png',
         plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro.png'
@@ -303,7 +299,7 @@ rule plot_inferred_cn_vs_scRT_lf:
 
 
 rule plot_inferred_cn_g_vs_scRT_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_g_pyro_infered.tsv'
+    input: 'analysis/laks_flow/{dataset}/cn_g_pyro_inferred.tsv'
     output: 
         plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_g.png',
         plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro_g.png'
@@ -320,7 +316,7 @@ rule plot_inferred_cn_g_vs_scRT_lf:
 
 
 rule plot_inferred_cn_vs_scRT_composite_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv'
+    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_inferred.tsv'
     output: 
         plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite.png',
         plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro_composite.png'
@@ -337,7 +333,7 @@ rule plot_inferred_cn_vs_scRT_composite_lf:
 
 
 rule plot_inferred_cn_g_vs_scRT_composite_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_infered.tsv'
+    input: 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_inferred.tsv'
     output: 
         plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_g.png',
         plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro_composite_g.png'
@@ -355,12 +351,12 @@ rule plot_inferred_cn_g_vs_scRT_composite_lf:
 
 rule revise_cell_cycle_labels_lf:
     input: 
-        cn_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered.tsv',
-        cn_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered.tsv',
+        cn_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred.tsv',
+        cn_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_inferred.tsv',
     output:
-        out_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_filtered.tsv',
-        out_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered_filtered.tsv',
-        out_lowqual = 'analysis/laks_flow/{dataset}/cn_lowqual_pyro_infered_filtered.tsv',
+        out_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred_filtered.tsv',
+        out_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_inferred_filtered.tsv',
+        out_lowqual = 'analysis/laks_flow/{dataset}/cn_lowqual_pyro_inferred_filtered.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
@@ -376,12 +372,12 @@ rule revise_cell_cycle_labels_lf:
 
 rule revise_cell_cycle_labels_composite_lf:
     input: 
-        cn_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_infered.tsv',
-        cn_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_infered.tsv',
+        cn_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_composite_inferred.tsv',
+        cn_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_composite_inferred.tsv',
     output:
-        out_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
-        out_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_infered_composite_filtered.tsv',
-        out_lowqual = 'analysis/laks_flow/{dataset}/cn_lowqual_pyro_infered_composite_filtered.tsv',
+        out_s = 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred_composite_filtered.tsv',
+        out_g = 'analysis/laks_flow/{dataset}/cn_g_pyro_inferred_composite_filtered.tsv',
+        out_lowqual = 'analysis/laks_flow/{dataset}/cn_lowqual_pyro_inferred_composite_filtered.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
@@ -396,7 +392,7 @@ rule revise_cell_cycle_labels_composite_lf:
 
 
 rule plot_inferred_cn_vs_scRT_filtered_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_filtered.tsv'
+    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred_filtered.tsv'
     output: 
         plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_filtered.png',
         plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro_filtered.png'
@@ -413,7 +409,7 @@ rule plot_inferred_cn_vs_scRT_filtered_lf:
 
 
 rule plot_inferred_cn_vs_scRT_composite_filtered_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_composite_filtered.tsv'
+    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred_composite_filtered.tsv'
     output: 
         plot1 = 'plots/laks_flow/{dataset}/scRT_heatmaps_pyro_composite_filtered.png',
         plot2 = 'plots/laks_flow/{dataset}/frac_rt_distributions_pyro_composite_filtered.png'
@@ -445,9 +441,9 @@ rule compute_cn_pseudobulks_lf:
 
 rule compute_rt_pseudobulks_lf:
     input: 
-        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_infered_filtered.tsv',
-        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_infered_filtered.tsv',
-        cn_all = 'analysis/laks_flow/all/cn_s_pyro_infered_filtered.tsv'
+        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_inferred_filtered.tsv',
+        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_inferred_filtered.tsv',
+        cn_all = 'analysis/laks_flow/all/cn_s_pyro_inferred_filtered.tsv'
     output: 'analysis/laks_flow/all/rt_pseudobulks.tsv'
     log: 'logs/laks_flow/all/compute_rt_pseudobulks.log'
     shell:
@@ -459,9 +455,9 @@ rule compute_rt_pseudobulks_lf:
 
 rule compute_rt_pseudobulks_composite_lf:
     input: 
-        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_infered_composite_filtered.tsv',
-        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_infered_composite_filtered.tsv',
-        cn_all = 'analysis/laks_flow/all/cn_s_pyro_infered_composite_filtered.tsv'
+        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_all = 'analysis/laks_flow/all/cn_s_pyro_inferred_composite_filtered.tsv'
     output: 'analysis/laks_flow/all/rt_pseudobulks_composite.tsv'
     log: 'logs/laks_flow/all/compute_rt_pseudobulks_composite.log'
     shell:
@@ -472,7 +468,7 @@ rule compute_rt_pseudobulks_composite_lf:
 
 
 rule compute_rt_pseudobulks_permuted_composite_lf:
-    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
+    input: 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred_composite_filtered.tsv',
     output: 'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv'
     params:
         rep_col = 'model_rep_state'
@@ -519,7 +515,7 @@ rule plot_rt_profiles_composite_lf:
 # def get_permuted_cn_good(wildcards):
 #     files = []
 #     for d in config['permuted_datasets']:
-#         files.append('analysis/laks_flow/{}/cn_s_pyro_infered_composite_filtered.tsv'.format(d))
+#         files.append('analysis/laks_flow/{}/cn_s_pyro_inferred_composite_filtered.tsv'.format(d))
 #     return expand(files)
 
 
@@ -533,11 +529,11 @@ rule plot_rt_profiles_composite_lf:
 rule analyze_permuted_datasets_lf:
     input: 
         cn_s = expand(
-            'analysis/laks_flow/{dataset}/cn_s_pyro_infered_composite_filtered.tsv',
+            'analysis/laks_flow/{dataset}/cn_s_pyro_inferred_composite_filtered.tsv',
             dataset=[d for d in config['permuted_datasets']]
         ),
         cn_g = expand(
-            'analysis/laks_flow/{dataset}/cn_g_pyro_infered_composite_filtered.tsv',
+            'analysis/laks_flow/{dataset}/cn_g_pyro_inferred_composite_filtered.tsv',
             dataset=[d for d in config['permuted_datasets']]
         )
     output:
@@ -552,8 +548,8 @@ rule analyze_permuted_datasets_lf:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/laks_flow/analyze_permuted_datasets.py '
-        '--cn_good {input.cn_good} '
-        '--cn_bad {input.cn_bad} '
+        '--cn_good {input.cn_s} '
+        '--cn_bad {input.cn_g} '
         '--datasets {params.datasets} '
         '--rates {params.rates} '
         '--summary_output {output.summary} '
@@ -592,9 +588,9 @@ rule permuted_dataset_rt_profiles_lf:
 
 rule twidth_analysis_pyro_lf:
     input: 
-        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_infered_filtered.tsv',
-        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_infered_filtered.tsv',
-        cn_all = 'analysis/laks_flow/all/cn_s_pyro_infered_filtered.tsv',
+        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_inferred_filtered.tsv',
+        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_inferred_filtered.tsv',
+        cn_all = 'analysis/laks_flow/all/cn_s_pyro_inferred_filtered.tsv',
         pseudobulk = 'analysis/laks_flow/all/rt_pseudobulks.tsv'
     output: 
         output_tsv = 'analysis/laks_flow/all/twidth_values.tsv',
@@ -612,9 +608,9 @@ rule twidth_analysis_pyro_lf:
 
 rule twidth_analysis_pyro_composite_lf:
     input: 
-        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_infered_composite_filtered.tsv',
-        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_infered_composite_filtered.tsv',
-        cn_all = 'analysis/laks_flow/all/cn_s_pyro_infered_composite_filtered.tsv',
+        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_all = 'analysis/laks_flow/all/cn_s_pyro_inferred_composite_filtered.tsv',
         pseudobulk = 'analysis/laks_flow/all/rt_pseudobulks_composite.tsv'
     output: 
         output_tsv = 'analysis/laks_flow/all/twidth_values_composite.tsv',

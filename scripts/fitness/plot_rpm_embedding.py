@@ -10,8 +10,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('s_phase', help='cn input tsv file for s phase cells')
-    p.add_argument('g_tree', help='cn input tsv file for g1/2 phase in the initiall tree')
-    p.add_argument('g_recovered', help='cn input tsv file for g1/2 phase cells recovered by the model')
+    p.add_argument('g_phase', help='cn input tsv file for g1/2 phase cells')
     p.add_argument('lowqual', help='cn input tsv file for low quality cells')
     p.add_argument('value_col')
     p.add_argument('dataset')
@@ -25,18 +24,16 @@ def main():
 
     # load data
     cn_s = pd.read_csv(argv.s_phase, sep='\t')
-    cn_g = pd.read_csv(argv.g_tree, sep='\t')
-    cn_g_recovered = pd.read_csv(argv.g_recovered, sep='\t')
+    cn_g = pd.read_csv(argv.g_phase, sep='\t')
     cn_lowqual = pd.read_csv(argv.lowqual, sep='\t')
 
     # create column to denote cell cycle state or quality
     cn_s['phase'] = 'S'
-    cn_g['phase'] = 'G1/2 tree'
-    cn_g_recovered['phase'] = 'G1/2 recovered'
+    cn_g['phase'] = 'G1/2'
     cn_lowqual['phase'] = 'low quality'
 
     # concat into one dataframe
-    cn_all = pd.concat([cn_s, cn_g, cn_g_recovered, cn_lowqual], ignore_index=True)
+    cn_all = pd.concat([cn_s, cn_g, cn_lowqual], ignore_index=True)
 
     # pivot to table of reads per million and create umap embedding of cells
     cn_mat = cn_all.pivot_table(index='cell_id', columns=['chr', 'start'], values=argv.value_col)
