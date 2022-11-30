@@ -322,7 +322,7 @@ def clone_spf_analysis(cn_s, cn_g, argv):
         Line2D([0], [0], marker='v', color='w', label='depleted', markerfacecolor='k', markersize=10)
     ]
     timepoint_legend_elements = clone_legend_elements.copy()
-    for i, c in enumerate(df2.clone_id.unique()):
+    for i, c in enumerate(sorted(df2.clone_id.unique())):
         color = 'C{}'.format(i)
         clone_cmap[c] = color
         clone_legend_elements.append(Patch(facecolor=color, label=c))

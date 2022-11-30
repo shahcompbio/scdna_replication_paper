@@ -92,6 +92,13 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fitness/{dataset}/clones_vs_time.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         
 
 def dataset_cn_files(wildcards):
@@ -310,7 +317,7 @@ rule plot_pyro_model_output_f:
         'deactivate'
 
 
-rule revise_cell_cycle_labels_lf:
+rule revise_cell_cycle_labels_f:
     input: 
         cn_s = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv',
         cn_g = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT.tsv',
@@ -326,7 +333,7 @@ rule revise_cell_cycle_labels_lf:
     log: 'logs/fitness/{dataset}/revise_cell_cycle_labels.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/laks_flow/revise_cell_cycle_labels.py '
+        'python3 scripts/fitness/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -424,6 +431,21 @@ rule plot_clone_rt_and_spf_f:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness/plot_clone_rt_and_spf.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_clones_vs_time_f:
+    input: 'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv'
+    output: 
+        plot1 = 'plots/fitness/{dataset}/clones_vs_time.png',
+        plot2 = 'plots/fitness/{dataset}/total_cells_vs_time.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fitness/{dataset}/plot_clones_vs_time.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_clones_vs_time.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
