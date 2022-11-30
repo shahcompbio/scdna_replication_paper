@@ -18,7 +18,7 @@ samples = samples[samples['mem_jira_ticket'].notna()]
 samples = samples[samples['library_id'].notna()]
 samples = samples[samples['sample_id'].notna()]
 
-bad_datasets = []
+bad_datasets = ['SA609', 'SA535_CISPLATIN_CombinedT', 'SA535_CISPLATIN_CombinedU', 'SA000', 'SA039U']
 
 rule all_fitness:
     input:

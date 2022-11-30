@@ -209,11 +209,11 @@ def compute_fracs_and_pvals(df):
     num_cells_g = np.zeros(len(clones))
     for i, clone_id in enumerate(clones):
         num_cells_s[i] = df.query('cell_cycle=="S"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
-        ngt = df.query('cell_cycle=="G1/2 tree"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
-        ngr = df.query('cell_cycle=="G1/2 recovered"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
-        num_cells_g[i] = ngt + ngr
+        num_cells_g[i] = df.query('cell_cycle=="G1/2"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
         
     # convert clone counts to clone frequencies within each cell cycle phase
+    print('num_cells_s', num_cells_s)
+    print('num_cells_g', num_cells_g)
     clone_frac_s = num_cells_s / sum(num_cells_s)
     clone_frac_g = num_cells_g / sum(num_cells_g)
     
@@ -252,6 +252,8 @@ def timepoint_wrapper_fracs_and_pvals(df):
     ''' Compute clone cell cycle fractions within each timepoint '''
     df_out = []
     for timepoint, chunk in df.groupby('timepoint'):
+        print('timepoint', timepoint)
+        print('chunk', chunk, sep='\n')
         temp_out = compute_fracs_and_pvals(chunk)
         temp_out['timepoint'] = timepoint
         df_out.append(temp_out)
@@ -289,13 +291,9 @@ def clone_spf_analysis(cn_s, cn_g, argv):
                 absent_df.append(pd.DataFrame({
                     'cell_cycle': ['S'], 'clone_id': [clone_id], 'timepoint': [timepoint], 'num_cells': [0]
                 }))
-            if clone_id not in df2.query("cell_cycle=='G1/2 recovered'").query("timepoint=='{}'".format(timepoint))['clone_id'].values:
+            if clone_id not in df2.query("cell_cycle=='G1/2'").query("timepoint=='{}'".format(timepoint))['clone_id'].values:
                 absent_df.append(pd.DataFrame({
-                    'cell_cycle': ['G1/2 recovered'], 'clone_id': [clone_id], 'timepoint': [timepoint], 'num_cells': [0]
-                }))
-            if clone_id not in df2.query("cell_cycle=='G1/2 tree'").query("timepoint=='{}'".format(timepoint))['clone_id'].values:
-                absent_df.append(pd.DataFrame({
-                    'cell_cycle': ['G1/2 tree'], 'clone_id': [clone_id], 'timepoint': [timepoint], 'num_cells': [0]
+                    'cell_cycle': ['G1/2'], 'clone_id': [clone_id], 'timepoint': [timepoint], 'num_cells': [0]
                 }))
     
     # concatenate into one dataframe
@@ -304,6 +302,7 @@ def clone_spf_analysis(cn_s, cn_g, argv):
         df2 = pd.concat([df2, absent_df], ignore_index=True)
 
     # compute cell cycle fractions per clone & timepoint along with p-values
+    print('DataFrame prior to calculating p-values', df2, sep='\n')
     df2 = timepoint_wrapper_fracs_and_pvals(df2)
 
     # Bonferroni correction of p-values by the total number of hypotheses tested
