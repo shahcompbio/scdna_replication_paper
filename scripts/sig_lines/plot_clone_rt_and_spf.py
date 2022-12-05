@@ -18,7 +18,6 @@ def get_args():
 
     p.add_argument('cn_s', type=str, help='full df for S-phase cells')
     p.add_argument('cn_g', type=str, help='full df for G1/2-phase cells')
-    p.add_argument('cn_gr', type=str, help='full df for G1/2-phase cells that were passed to PERT as S-phase and subsequently recovered')
     p.add_argument('rt', type=str, help='table of RT pseudobulk profiles')
     p.add_argument('rep_col', type=str, help='column for replication state (relevant for RT pseudobulk profile column names)')
     p.add_argument('dataset', type=str, help='name of this dataset')
@@ -210,9 +209,7 @@ def compute_fracs_and_pvals(df):
     num_cells_g = np.zeros(len(clones))
     for i, clone_id in enumerate(clones):
         num_cells_s[i] = df.query('cell_cycle=="S"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
-        ngt = df.query('cell_cycle=="G1/2 tree"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
-        ngr = df.query('cell_cycle=="G1/2 recovered"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
-        num_cells_g[i] = ngt + ngr
+        num_cells_g[i] = df.query('cell_cycle=="G1/2"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
         
     # convert clone counts to clone frequencies within each cell cycle phase
     clone_frac_s = num_cells_s / sum(num_cells_s)
@@ -260,19 +257,18 @@ def library_wrapper_fracs_and_pvals(df):
     return df_out
 
 
-def clone_spf_analysis(cn_s, cn_g, cn_gr, argv):
+def clone_spf_analysis(cn_s, cn_g, argv):
     # add column to denote phase of each df
     cn_s['cell_cycle'] = 'S'
-    cn_gr['cell_cycle'] = 'G1/2 recovered'
-    cn_g['cell_cycle'] = 'G1/2 tree'
+    cn_g['cell_cycle'] = 'G1/2'
 
     # rename the clone_id column to match the cells in the tree
     cn_s['clone_id'] = cn_s['assigned_clone_id']
-    cn_gr['clone_id'] = cn_gr['assigned_clone_id']
+    cn_g['clone_id'] = cn_g['assigned_clone_id']
 
     # concatenate all cells into one df but only store relevant columns
     coi = ['cell_id', 'cell_cycle', 'clone_id', 'library_id']
-    df = pd.concat([cn_s[coi], cn_gr[coi], cn_g[coi]], ignore_index=True)
+    df = pd.concat([cn_s[coi], cn_g[coi]], ignore_index=True)
     df = df.sort_values(['clone_id', 'cell_cycle', 'library_id']).drop_duplicates(ignore_index=True)
 
     # count the number of cells belonging to each clone and cell cycle phase
@@ -292,13 +288,9 @@ def clone_spf_analysis(cn_s, cn_g, cn_gr, argv):
                 absent_df.append(pd.DataFrame({
                     'cell_cycle': ['S'], 'clone_id': [clone_id], 'library_id': [library_id], 'num_cells': [0]
                 }))
-            if clone_id not in df2.query("cell_cycle=='G1/2 recovered'").query("library_id=='{}'".format(library_id))['clone_id'].values:
+            if clone_id not in df2.query("cell_cycle=='G1/2'").query("library_id=='{}'".format(library_id))['clone_id'].values:
                 absent_df.append(pd.DataFrame({
-                    'cell_cycle': ['G1/2 recovered'], 'clone_id': [clone_id], 'library_id': [library_id], 'num_cells': [0]
-                }))
-            if clone_id not in df2.query("cell_cycle=='G1/2 tree'").query("library_id=='{}'".format(library_id))['clone_id'].values:
-                absent_df.append(pd.DataFrame({
-                    'cell_cycle': ['G1/2 tree'], 'clone_id': [clone_id], 'library_id': [library_id], 'num_cells': [0]
+                    'cell_cycle': ['G1/2'], 'clone_id': [clone_id], 'library_id': [library_id], 'num_cells': [0]
                 }))
     
     # concatenate into one dataframe
@@ -380,7 +372,6 @@ def main():
     # load long-form dataframes from different cell cycle phases
     cn_s = pd.read_csv(argv.cn_s, sep='\t')
     cn_g = pd.read_csv(argv.cn_g, sep='\t')
-    cn_gr = pd.read_csv(argv.cn_gr, sep='\t')
 
     # load pseudobulk RT profiles
     rt = pd.read_csv(argv.rt, sep='\t')
@@ -389,8 +380,6 @@ def main():
     cn_s.chr = cn_s.chr.astype('category')
     cn_g.chr = cn_g.chr.astype('str')
     cn_g.chr = cn_g.chr.astype('category')
-    cn_gr.chr = cn_gr.chr.astype('str')
-    cn_gr.chr = cn_gr.chr.astype('category')
     rt.chr = rt.chr.astype('str')
     rt.chr = rt.chr.astype('category')
 
@@ -402,7 +391,7 @@ def main():
 
     # plot S-phase fractions at the clone and sample levels
     # save both the plot and table used to make the plot
-    clone_spf_analysis(cn_s, cn_g, cn_gr, argv)
+    clone_spf_analysis(cn_s, cn_g, argv)
 
 
 if __name__ == '__main__':

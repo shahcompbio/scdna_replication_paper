@@ -51,13 +51,6 @@ rule all_sig_lines:
             ]
         ),
         expand(
-            'plots/sig_lines/{dataset}/inferred_cn_rep_results_nonrep.png',
-            dataset=[
-                d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
             'plots/sig_lines/{dataset}/twidth_curves.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
@@ -232,10 +225,10 @@ rule infer_scRT_pyro_sl:
         cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     output:
-        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_with_scRT.tsv',
-        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
+        main_s_out = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_s_out = 'analysis/sig_lines/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT.tsv',
+        supp_g_out = 'analysis/sig_lines/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
@@ -253,7 +246,7 @@ rule infer_scRT_pyro_sl:
 
 rule plot_cn_heatmaps_sl:
     input:
-        s_phase = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        s_phase = 'analysis/sig_lines/{dataset}/s_phase_cells.tsv',
         g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     output: 'plots/sig_lines/{dataset}/cn_heatmaps.png'
     params:
@@ -300,21 +293,23 @@ rule plot_pyro_model_output_sl:
         'deactivate'
 
 
-rule remove_nonreplicating_cells_sl:
-    input: 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv'
-    output: 
-        good = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        nonrep = 'analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
-        lowqual = 'analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
+rule revise_cell_cycle_labels_sl:
+    input: 
+        cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        cn_g = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT.tsv',
+    output:
+        out_s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        out_g = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
+        out_lowqual = 'analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
         rpm_col = 'rpm'
-    log: 'logs/sig_lines/{dataset}/remove_nonreplicating_cells.log'
+    log: 'logs/sig_lines/{dataset}/revise_cell_cycle_labels.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/sig_lines/remove_nonreplicating_cells.py '
+        'python3 scripts/sig_lines/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -322,7 +317,7 @@ rule remove_nonreplicating_cells_sl:
 rule plot_filtered_pyro_model_output_sl:
     input:
         s_phase = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
+        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv'
     output:
         plot1 = 'plots/sig_lines/{dataset}/inferred_cn_rep_results_filtered.png',
         plot2 = 'plots/sig_lines/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
@@ -330,24 +325,6 @@ rule plot_filtered_pyro_model_output_sl:
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_lines/{dataset}/plot_filtered_pyro_model_output.log'
-    shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
-        'python3 scripts/sig_lines/plot_pyro_model_output.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
-
-
-rule plot_nonrep_pyro_model_output_sl:
-    input:
-        s_phase = 'analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
-        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
-    output:
-        plot1 = 'plots/sig_lines/{dataset}/inferred_cn_rep_results_nonrep.png',
-        plot2 = 'plots/sig_lines/{dataset}/s_vs_g_hmmcopy_states_nonrep.png',
-        plot3 = 'plots/sig_lines/{dataset}/s_vs_g_rpm_nonrep.png',
-    params:
-        dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/sig_lines/{dataset}/plot_nonrep_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/sig_lines/plot_pyro_model_output.py '
@@ -375,8 +352,7 @@ rule plot_inferred_cn_vs_scRT_filtered_sl:
 rule plot_rpm_embedding_sl:
     input:
         s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        g_tree = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv',
-        g_recovered = 'analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
+        g = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
         lowqual = 'analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
     output: 'plots/sig_lines/{dataset}/rpm_embedding.png'
     params:
@@ -435,8 +411,7 @@ rule plot_cn_pseudobulks_sl:
 rule plot_clone_rt_and_spf_sl:
     input: 
         cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        cn_g ='analysis/sig_lines/{dataset}/g1_phase_cells.tsv',
-        cn_g_recovered ='analysis/sig_lines/{dataset}/model_nonrep_cells.tsv',
+        cn_g ='analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
         rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv'
     output:
         tsv = 'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv',
