@@ -14,15 +14,11 @@ from argparse import ArgumentParser
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('cn_g_u_in', type=str, help='filtered g1/2-phase cn data for untreated sample')
-    p.add_argument('cn_g_t_in', type=str, help='filtered g1/2-phase cn data for treated sample')
-    p.add_argument('cn_s_u_in', type=str, help='filtered s-phase cn data for untreated sample')
-    p.add_argument('cn_s_t_in', type=str, help='filtered s-phase cn data for treated sample')
+    p.add_argument('cn_g_in', type=str, help='filtered g1/2-phase cn data with sitka clones')
+    p.add_argument('cn_s_in', type=str, help='filtered s-phase cn data with sitka clones')
     p.add_argument('num_clusters', type=int)
-    p.add_argument('cn_g_u_out', type=str, help='filtered g1/2-phase cn data for untreated sample with new clone_id added')
-    p.add_argument('cn_g_t_out', type=str, help='filtered g1/2-phase cn data for treated sample with new clone_id added')
-    p.add_argument('cn_s_u_out', type=str, help='filtered s-phase cn data for untreated sample with new clone_id added')
-    p.add_argument('cn_s_t_out', type=str, help='filtered s-phase cn data for treated sample with new clone_id added')
+    p.add_argument('cn_g_out', type=str, help='filtered g1/2-phase cn data with new clone_id added')
+    p.add_argument('cn_s_out', type=str, help='filtered s-phase cn data with new clone_id added')
 
     return p.parse_args()
 
@@ -75,20 +71,8 @@ if __name__ == '__main__':
     argv = get_args()
 
     # load in data from both cell cycle phases and treatment groups
-    cn_g_u = pd.read_csv(argv.cn_g_u_in, sep='\t')
-    cn_g_t = pd.read_csv(argv.cn_g_t_in, sep='\t')
-    cn_s_u = pd.read_csv(argv.cn_s_u_in, sep='\t')
-    cn_s_t = pd.read_csv(argv.cn_s_t_in, sep='\t')
-
-    # label which cells are treated vs untreated so I can split later
-    cn_g_u['treated'] = False
-    cn_s_u['treated'] = False
-    cn_g_t['treated'] = True
-    cn_s_t['treated'] = True
-
-    # combine both treated and untreated cells into one dataframe
-    cn_g = pd.concat([cn_g_t, cn_g_u], ignore_index=True)
-    cn_s = pd.concat([cn_s_t, cn_s_u], ignore_index=True)
+    cn_g = pd.read_csv(argv.cn_g_in, sep='\t')
+    cn_s = pd.read_csv(argv.cn_s_in, sep='\t')
 
     # use matrix of reads per million as input for clustering
     rpm_mat = pd.pivot_table(cn_g, values='rpm', columns='cell_id', index=['chr', 'start'])
@@ -117,15 +101,7 @@ if __name__ == '__main__':
         clone_col='clone_id', cell_col='cell_id', chr_col='chr', start_col='start'
     )
 
-    # separate back into treated vs untreated
-    cn_g_u_out = cn_g.loc[cn_g['treated']==False]
-    cn_g_t_out = cn_g.loc[cn_g['treated']==True]
-    cn_s_u_out = cn_s.loc[cn_s['treated']==False]
-    cn_s_t_out = cn_s.loc[cn_s['treated']==True]
-
-    # return one cn dataframe for each cell cycle state and treatment group
-    cn_g_u_out.to_csv(argv.cn_g_u_out, sep='\t', index=False)
-    cn_g_t_out.to_csv(argv.cn_g_t_out, sep='\t', index=False)
-    cn_s_u_out.to_csv(argv.cn_s_u_out, sep='\t', index=False)
-    cn_s_t_out.to_csv(argv.cn_s_t_out, sep='\t', index=False)
+    # return one cn dataframe for each cell cycle state
+    cn_g.to_csv(argv.cn_g_out, sep='\t', index=False)
+    cn_s.to_csv(argv.cn_s_out, sep='\t', index=False)
 

@@ -81,21 +81,21 @@ rule all_fitness:
         expand(
             'plots/fitness/{dataset}/clone_spf.png',
             dataset=[
-                d for d in config['fitness_datasets']
+                d for d in config['fitness_rx_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
             'plots/fitness/{dataset}/clone_rt.png',
             dataset=[
-                d for d in config['fitness_datasets']
+                d for d in config['fitness_rx_datasets']
                 if (d not in bad_datasets)
             ]
         ),
         expand(
             'plots/fitness/{dataset}/clones_vs_time.png',
             dataset=[
-                d for d in config['fitness_datasets']
+                d for d in config['fitness_rx_datasets']
                 if (d not in bad_datasets)
             ]
         ),
@@ -148,6 +148,21 @@ rule collect_cn_data_f:
         '--hmm {input.hmm} --annotation {input.annotation} '
         '--samples {params.samples} --dataset {params.dataset} '
         '--output {output} &> {log}'
+
+
+rule merge_treatment_groups_f:
+    input:
+        SA1035U = 'analysis/fitness/SA1035U/cn_data.tsv',
+        SA1035T = 'analysis/fitness/SA1035T/cn_data.tsv',
+        SA535U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/cn_data.tsv',
+        SA535T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/cn_data.tsv'
+    output:
+        SA1035 = 'analysis/fitness/SA1035/cn_data.tsv',
+        SA535 = 'analysis/fitness/SA535/cn_data.tsv'
+    log: 'logs/fitness/merge_treatment_groups.log'
+    shell:
+        'python scripts/fitness/merge_treatment_groups.py '
+        '{input} {params} {output} &> {log}'
 
 
 # make sure all cells have same loci and no NaNs
@@ -228,18 +243,14 @@ rule split_cell_cycle_f:
 
 rule recluster_cells_SA1035_f:
     input: 
-        g_U = 'analysis/fitness/SA1035U/g1_phase_cells_init_clusters.tsv',
-        g_T = 'analysis/fitness/SA1035T/g1_phase_cells_init_clusters.tsv',
-        s_U = 'analysis/fitness/SA1035U/s_phase_cells_init_clusters.tsv',
-        s_T = 'analysis/fitness/SA1035T/s_phase_cells_init_clusters.tsv'
+        cn_g1 = 'analysis/fitness/SA1035/g1_phase_cells_init_clusters.tsv',
+        cn_s = 'analysis/fitness/SA1035/s_phase_cells_init_clusters.tsv'
     output:
-        g_U = 'analysis/fitness/SA1035U/g1_phase_cells.tsv',
-        g_T = 'analysis/fitness/SA1035T/g1_phase_cells.tsv',
-        s_U = 'analysis/fitness/SA1035U/s_phase_cells.tsv',
-        s_T = 'analysis/fitness/SA1035T/s_phase_cells.tsv'
+        cn_g1 = 'analysis/fitness/SA1035/g1_phase_cells.tsv',
+        cn_s = 'analysis/fitness/SA1035/s_phase_cells.tsv',
     params:
         num_clusters = 6
-    log: 'logs/fitness/SA1035U/recluster_cells.log'
+    log: 'logs/fitness/SA1035/recluster_cells.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness/recluster_cells.py '
@@ -249,18 +260,14 @@ rule recluster_cells_SA1035_f:
 
 rule recluster_cells_SA535_f:
     input: 
-        g_U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/g1_phase_cells_init_clusters.tsv',
-        g_T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/g1_phase_cells_init_clusters.tsv',
-        s_U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/s_phase_cells_init_clusters.tsv',
-        s_T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/s_phase_cells_init_clusters.tsv'
+        cn_g1 = 'analysis/fitness/SA535/g1_phase_cells_init_clusters.tsv',
+        cn_s = 'analysis/fitness/SA535/s_phase_cells_init_clusters.tsv'
     output:
-        g_U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/g1_phase_cells.tsv',
-        g_T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/g1_phase_cells.tsv',
-        s_U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/s_phase_cells.tsv',
-        s_T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/s_phase_cells.tsv'
+        cn_g1 = 'analysis/fitness/SA535/g1_phase_cells.tsv',
+        cn_s = 'analysis/fitness/SA535/s_phase_cells.tsv',
     params:
         num_clusters = 5
-    log: 'logs/fitness/SA535_CISPLATIN_CombinedU/recluster_cells.log'
+    log: 'logs/fitness/SA535/recluster_cells.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness/recluster_cells.py '
@@ -298,11 +305,11 @@ rule merge_scRT_metrics_f:
         df2 = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT.tsv'
     output: 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv'
     run:
-        df1 = pd.read_csv(str(input.df1), sep='\t')  # S-phase cells with timepoints mapped to libraries
+        df1 = pd.read_csv(str(input.df1), sep='\t')  # S-phase cells with timepoints and treatement status mapped to libraries
         df2 = pd.read_csv(str(input.df2), sep='\t')  # scRT model output without timepoints
 
         # get a mapping of library ID to timepoint & other labels
-        lost_metrics = df1[['library_id', 'datasetname', 'label', 'timepoint']].drop_duplicates().reset_index(drop=True)
+        lost_metrics = df1[['library_id', 'datasetname', 'label', 'timepoint', 'treated']].drop_duplicates().reset_index(drop=True)
 
         # merge timepoint back in with scRT model output
         df_out = pd.merge(df2, lost_metrics)
@@ -376,6 +383,30 @@ rule revise_cell_cycle_labels_f:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness/revise_cell_cycle_labels.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+# split each sample back into treated and untreated groups for plotting and downstream analysis
+rule split_by_rx_f:
+    input:
+        cn_s_SA1035 = 'analysis/fitness/SA1035/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA1035 = 'analysis/fitness/SA1035/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA535 = 'analysis/fitness/SA535/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA535 = 'analysis/fitness/SA535/g1_phase_cells_with_scRT_filtered.tsv',
+    output:
+        cn_s_SA1035U = 'analysis/fitness/SA1035U/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA1035U = 'analysis/fitness/SA1035U/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA1035T = 'analysis/fitness/SA1035T/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA1035T = 'analysis/fitness/SA1035T/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA535U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA535U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA535T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA535T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/g1_phase_cells_with_scRT_filtered.tsv',
+    log: 'logs/fitness/split_by_rx.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/split_by_rx.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
