@@ -95,7 +95,7 @@ rule all_fitness:
         expand(
             'plots/fitness/{dataset}/clones_vs_time.png',
             dataset=[
-                d for d in config['fitness_rx_datasets']
+                d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
             ]
         ),
@@ -508,14 +508,33 @@ rule plot_clone_rt_and_spf_f:
         'deactivate'
 
 
-rule plot_clones_vs_time_f:
-    input: 'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv'
+rule plot_clones_vs_time_SA535_f:
+    input: 
+        treated = 'analysis/fitness/SA535_CISPLATIN_CombinedT/cell_cycle_clone_counts.tsv',
+        untreated = 'analysis/fitness/SA535_CISPLATIN_CombinedU/cell_cycle_clone_counts.tsv'
     output: 
-        plot1 = 'plots/fitness/{dataset}/clones_vs_time.png',
-        plot2 = 'plots/fitness/{dataset}/total_cells_vs_time.png'
+        plot1 = 'plots/fitness/SA535/clones_vs_time.png',
+        plot2 = 'plots/fitness/SA535/total_cells_vs_time.png'
     params:
-        dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/fitness/{dataset}/plot_clones_vs_time.log'
+        dataset = 'SA535'
+    log: 'logs/fitness/SA535/plot_clones_vs_time.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_clones_vs_time.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_clones_vs_time_SA1035_f:
+    input: 
+        treated = 'analysis/fitness/SA1035T/cell_cycle_clone_counts.tsv',
+        untreated = 'analysis/fitness/SA1035U/cell_cycle_clone_counts.tsv'
+    output: 
+        plot1 = 'plots/fitness/SA1035/clones_vs_time.png',
+        plot2 = 'plots/fitness/SA1035/total_cells_vs_time.png'
+    params:
+        dataset = 'SA1035'
+    log: 'logs/fitness/SA1035/plot_clones_vs_time.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness/plot_clones_vs_time.py '
