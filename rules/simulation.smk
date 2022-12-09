@@ -214,10 +214,10 @@ rule infer_scRT_bulk_sim:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output: 
-        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_bulk_infered.tsv',
-        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_bulk_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_bulk_infered.tsv',
-        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_bulk_supp_g_output.tsv',
+        main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
+        supp_s_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_s_output.tsv',
+        main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_bulk_inferred.tsv',
+        supp_g_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -238,10 +238,10 @@ rule infer_scRT_pyro_sim:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output:
-        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_pyro_infered.tsv',
-        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_pyro_infered.tsv',
-        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
+        main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
+        supp_s_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_inferred.tsv',
+        supp_g_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -262,10 +262,10 @@ rule infer_scRT_pyro_composite_sim:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output:
-        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
-        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_pyro_composite_infered.tsv',
-        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_composite_supp_g_output.tsv',
+        main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
+        supp_s_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_s_output.tsv',
+        main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_composite_inferred.tsv',
+        supp_g_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -283,8 +283,8 @@ rule infer_scRT_pyro_composite_sim:
 
 rule remove_nonreplicating_cells_sim:
     input: 
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_infered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv'
+        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv'
     output:
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
         cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv'
@@ -302,8 +302,8 @@ rule remove_nonreplicating_cells_sim:
 
 rule remove_nonreplicating_cells_composite_sim:
     input: 
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv'
+        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv'
     output:
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
         cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_composite_filtered.tsv'
@@ -321,8 +321,8 @@ rule remove_nonreplicating_cells_composite_sim:
 
 rule plot_ccc_features_sim:
     input:
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_infered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv',
+        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/ccc_features_hist.png',
