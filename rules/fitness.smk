@@ -99,6 +99,7 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
+        'plots/fitness/fitness_proxy_s_coefficients.png'
         
 
 def dataset_cn_files(wildcards):
@@ -539,6 +540,21 @@ rule plot_clones_vs_time_SA1035_f:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/fitness/plot_clones_vs_time.py '
         '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_fitness_proxy_s_coefficients_f:
+    input:
+        SA1035_treated = 'analysis/fitness/SA1035T/cell_cycle_clone_counts.tsv',
+        SA1035_untreated = 'analysis/fitness/SA1035U/cell_cycle_clone_counts.tsv',
+        SA535_treated = 'analysis/fitness/SA535_CISPLATIN_CombinedT/cell_cycle_clone_counts.tsv',
+        SA535_untreated = 'analysis/fitness/SA535_CISPLATIN_CombinedU/cell_cycle_clone_counts.tsv'
+    output: 'plots/fitness/fitness_proxy_s_coefficients.png'
+    log: 'logs/fitness/fitness_proxy_s_coefficients.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_fitness_proxy_s_coefficients.py '
+        '{input} {output} &> {log} ; '
         'deactivate'
 
 
