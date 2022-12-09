@@ -33,6 +33,16 @@ def rename_none_clone(cn):
     return cn
 
 
+def remove_small_clones(cn, min_cells=10):
+    """ Remove clones with fewer than min_cells cells. """
+    # get clone sizes
+    clone_sizes = cn.groupby('clone_id').size()
+    # get clones with fewer than min_cells cells
+    small_clones = clone_sizes[clone_sizes < min_cells].index
+    # remove small clones
+    cn = cn.loc[~cn['clone_id'].isin(small_clones)]
+    return cn
+
 def main():
     argv = get_args()
 
@@ -44,6 +54,9 @@ def main():
 
     # merge clone_id for the g1-phase cells (those with clone labels already)
     cn_g1 = pd.merge(cn, clones, on='cell_id')
+
+    # remove small clones
+    cn_g1 = remove_small_clones(cn_g1)
 
     # rename 'None' clone to the next available clone id
     cn_g1 = rename_none_clone(cn_g1)
