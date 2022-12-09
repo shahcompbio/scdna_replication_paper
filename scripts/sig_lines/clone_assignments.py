@@ -35,13 +35,14 @@ def rename_none_clone(cn):
 
 def remove_small_clones(cn, min_cells=10):
     """ Remove clones with fewer than min_cells cells. """
-    # get clone sizes
-    clone_sizes = cn.groupby('clone_id').size()
+    # get the number of unique cells belonging to each clone
+    clone_sizes = cn[['cell_id', 'clone_id']].drop_duplicates()['clone_id'].value_counts()
     # get clones with fewer than min_cells cells
     small_clones = clone_sizes[clone_sizes < min_cells].index
     # remove small clones
     cn = cn.loc[~cn['clone_id'].isin(small_clones)]
     return cn
+
 
 def main():
     argv = get_args()
