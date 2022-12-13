@@ -5,7 +5,7 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
-bad_datasets = ['SA039']
+bad_datasets = []
 
 rule all_fitness_lines:
     input:

@@ -393,10 +393,10 @@ def main():
     # plot pseudoublk RT profiles
     plot_clone_rt_profiles(rt, argv)
 
-    # if the dataset starts with SA1035, rename clone F to A as they are nearly identical to one another
-    if argv.dataset.startswith('SA1035'):
-        cn_s.loc[cn_s.clone_id == 'F', 'clone_id'] = 'A'
-        cn_g.loc[cn_g.clone_id == 'F', 'clone_id'] = 'A'
+    # if the dataset is SA906b, merge clone L into clone I as they have nearly identical CN profiles
+    if argv.dataset.startswith('SA906b'):
+        cn_s.loc[cn_s.clone_id == 'L', 'clone_id'] = 'I'
+        cn_g.loc[cn_g.clone_id == 'L', 'clone_id'] = 'I'
 
     # plot S-phase fractions at the clone and sample levels
     # save both the plot and table used to make the plot
