@@ -64,7 +64,7 @@ def main():
     
     # only merge when cn_g_with_scrt is not empty
     if argv.infer_mode == 'pyro':
-        cn_g_out = pd.merge(cn_g, cn_g_with_scrt)
+        cn_g_out = pd.merge(cn_g1, cn_g_with_scrt)
         print('cn_g_out.shape', cn_g_out.shape)
     else:
         cn_g_out = cn_g_with_scrt

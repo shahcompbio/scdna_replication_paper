@@ -4,7 +4,7 @@ import pandas as pd
 np.random.seed(2794834348)
 
 configfile: "config.yaml"
-samples1 = pd.read_csv('data/fitness/dlp_summaries_rebuttal.csv')
+samples1 = pd.read_csv('data/fitness/dlp_summaries_fitness_rx.csv')
 samples2 = pd.read_csv('data/fitness/fitness_pseudobulk_qc_status.tsv', sep='\t')
 
 # drop sample_id column from samples2
@@ -18,7 +18,7 @@ samples = samples[samples['mem_jira_ticket'].notna()]
 samples = samples[samples['library_id'].notna()]
 samples = samples[samples['sample_id'].notna()]
 
-bad_datasets = ['SA609', 'SA000', 'SA039U']
+bad_datasets = []
 
 rule all_fitness:
     input:
@@ -92,13 +92,13 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
-        expand(
-            'plots/fitness/{dataset}/clones_vs_time.png',
-            dataset=[
-                d for d in config['fitness_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # expand(
+        #     'plots/fitness/{dataset}/clones_vs_time.png',
+        #     dataset=[
+        #         d for d in config['fitness_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
         'plots/fitness/fitness_proxy_s_coefficients.png'
         
 
@@ -156,10 +156,15 @@ rule merge_treatment_groups_f:
         SA1035U = 'analysis/fitness/SA1035U/cn_data.tsv',
         SA1035T = 'analysis/fitness/SA1035T/cn_data.tsv',
         SA535U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/cn_data.tsv',
-        SA535T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/cn_data.tsv'
+        SA535T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/cn_data.tsv',
+        SA609U = 'analysis/fitness/SA609U/cn_data.tsv',
+        SA609T = 'analysis/fitness/SA609T/cn_data.tsv',
+        SA609U2 = 'analysis/fitness/SA609U2/cn_data.tsv',
+        SA609T2 = 'analysis/fitness/SA609T2/cn_data.tsv'
     output:
         SA1035 = 'analysis/fitness/SA1035/cn_data.tsv',
-        SA535 = 'analysis/fitness/SA535/cn_data.tsv'
+        SA535 = 'analysis/fitness/SA535/cn_data.tsv',
+        SA609 = 'analysis/fitness/SA609/cn_data.tsv'
     log: 'logs/fitness/merge_treatment_groups.log'
     shell:
         'python scripts/fitness/merge_treatment_groups.py '
@@ -179,7 +184,7 @@ rule filter_data_f:
 rule assign_timepoints_f:
     input: 
         cn = 'analysis/fitness/{dataset}/cn_data_filtered.tsv',
-        times = 'data/fitness/dlp_summaries_rebuttal.csv'
+        times = 'data/fitness/dlp_summaries_fitness_rx.csv'
     output: 'analysis/fitness/{dataset}/cn_data_times.tsv'
     log: 'logs/fitness/{dataset}/assign_timepoints.log'
     shell:
@@ -276,6 +281,23 @@ rule recluster_cells_SA535_f:
         'deactivate'
 
 
+rule recluster_cells_SA609_f:
+    input: 
+        cn_g1 = 'analysis/fitness/SA609/g1_phase_cells_init_clusters.tsv',
+        cn_s = 'analysis/fitness/SA609/s_phase_cells_init_clusters.tsv'
+    output:
+        cn_g1 = 'analysis/fitness/SA609/g1_phase_cells.tsv',
+        cn_s = 'analysis/fitness/SA609/s_phase_cells.tsv',
+    params:
+        num_clusters = 6
+    log: 'logs/fitness/SA609/recluster_cells.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/recluster_cells.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule infer_scRT_pyro_f:
     input:
         cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
@@ -289,7 +311,7 @@ rule infer_scRT_pyro_f:
         input_col = 'rpm',
         cn_col = 'state',
         gc_col = 'gc',
-        cn_prior_method = 'g1_clones',
+        cn_prior_method = 'g1_composite',
         infer_mode = 'pyro'
     log: 'logs/fitness/{dataset}/infer_scRT.log'
     shell:
@@ -310,7 +332,7 @@ rule merge_scRT_metrics_f:
         df2 = pd.read_csv(str(input.df2), sep='\t')  # scRT model output without timepoints
 
         # get a mapping of library ID to timepoint & other labels
-        lost_metrics = df1[['library_id', 'datasetname', 'label', 'timepoint', 'treated']].drop_duplicates().reset_index(drop=True)
+        lost_metrics = df1[['library_id', 'datasetname', 'label', 'timepoint', 'treated', 'line']].drop_duplicates().reset_index(drop=True)
 
         # merge timepoint back in with scRT model output
         df_out = pd.merge(df2, lost_metrics)
@@ -395,6 +417,8 @@ rule split_by_rx_f:
         cn_g_SA1035 = 'analysis/fitness/SA1035/g1_phase_cells_with_scRT_filtered.tsv',
         cn_s_SA535 = 'analysis/fitness/SA535/s_phase_cells_with_scRT_filtered.tsv',
         cn_g_SA535 = 'analysis/fitness/SA535/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA609 = 'analysis/fitness/SA609/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA609 = 'analysis/fitness/SA609/g1_phase_cells_with_scRT_filtered.tsv',
     output:
         cn_s_SA1035U = 'analysis/fitness/SA1035U/s_phase_cells_with_scRT_filtered.tsv',
         cn_g_SA1035U = 'analysis/fitness/SA1035U/g1_phase_cells_with_scRT_filtered.tsv',
@@ -404,6 +428,14 @@ rule split_by_rx_f:
         cn_g_SA535U = 'analysis/fitness/SA535_CISPLATIN_CombinedU/g1_phase_cells_with_scRT_filtered.tsv',
         cn_s_SA535T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/s_phase_cells_with_scRT_filtered.tsv',
         cn_g_SA535T = 'analysis/fitness/SA535_CISPLATIN_CombinedT/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA609U = 'analysis/fitness/SA609U/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA609U = 'analysis/fitness/SA609U/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA609T = 'analysis/fitness/SA609T/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA609T = 'analysis/fitness/SA609T/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA609U2 = 'analysis/fitness/SA609U2/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA609U2 = 'analysis/fitness/SA609U2/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s_SA609T2 = 'analysis/fitness/SA609T2/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g_SA609T2 = 'analysis/fitness/SA609T2/g1_phase_cells_with_scRT_filtered.tsv',
     log: 'logs/fitness/split_by_rx.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -543,6 +575,9 @@ rule plot_clones_vs_time_SA1035_f:
         'deactivate'
 
 
+# TODO: make custom rule for plotting clones vs time for SA609 (show both lines)
+
+# TODO: create framework for plotting fitness proxies vs time for SA609
 rule plot_fitness_proxy_s_coefficients_f:
     input:
         SA1035_treated = 'analysis/fitness/SA1035T/cell_cycle_clone_counts.tsv',

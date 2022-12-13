@@ -70,7 +70,7 @@ def filter_data(df):
 
 def merge_metrics(df, metrics):
     # subset to relevant metrics columns
-    met = metrics[['cell_id', 'sample_id', 'library_id', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints', 'is_s_phase_prob', 'treated']]
+    met = metrics[['cell_id', 'sample_id', 'library_id', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints', 'is_s_phase_prob', 'treated', 'line']]
 
     # merge based on cell_id
     df = pd.merge(df, met, on='cell_id')
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     # for some reason it has to be set to a string when pivoting into a table
     # df['chr'] = df['chr'].astype('category')
 
-    metrics = df[['cell_id', 'sample_id', 'library_id', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints', 'is_s_phase_prob', 'treated']].drop_duplicates()
+    metrics = df[['cell_id', 'sample_id', 'library_id', 'quality', 'total_mapped_reads_hmmcopy', 'breakpoints', 'is_s_phase_prob', 'treated', 'line']].drop_duplicates()
 
     # remove rpm column since I'll need to recalculate only using the good loci
     df = df.drop(columns=['rpm'])
