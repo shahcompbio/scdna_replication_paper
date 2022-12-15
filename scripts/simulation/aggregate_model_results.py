@@ -14,9 +14,9 @@ def get_args():
 def main():
     argv = get_args()
 
-    bulk_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/fig2/{}/s_phase_cells_bulk_filtered.tsv'
-    pyro_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/fig2/{}/s_phase_cells_pyro_filtered.tsv'
-    comp_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/fig2/{}/s_phase_cells_pyro_composite_filtered.tsv'
+    bulk_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_bulk_filtered.tsv'
+    pyro_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_pyro_filtered.tsv'
+    comp_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_pyro_composite_filtered.tsv'
     
     df = []
     for d in argv.datasets:

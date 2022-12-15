@@ -23,6 +23,11 @@
         "time" : "6:00",
         "mem" : 200
     },
+    "filter_data_f":
+    {
+        "time" : "6:00",
+        "mem" : 200
+    },
     "simulate_cell_cn_states_sim" :
     {
         "time" : "12:00",
@@ -55,6 +60,10 @@
     "plot_cn_heatmaps_st" :
     {
         "time" : "6:00"
+    },
+    "plot_cn_heatmaps_f" :
+    {
+        "mem" : 128
     },
     "infer_scRT_bulk_sim" :
     {
