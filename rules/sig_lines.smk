@@ -278,7 +278,7 @@ rule plot_rt_heatmap_sl:
 rule plot_pyro_model_output_sl:
     input:
         s_phase = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT.tsv',
-        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
+        g1_phase = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT.tsv'
     output:
         plot1 = 'plots/sig_lines/{dataset}/inferred_cn_rep_results.png',
         plot2 = 'plots/sig_lines/{dataset}/s_vs_g_hmmcopy_states.png',

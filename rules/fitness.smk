@@ -374,7 +374,7 @@ rule plot_rt_heatmap_f:
 rule plot_pyro_model_output_f:
     input:
         s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_scRT_times.tsv',
-        g1_phase = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
+        g1_phase = 'analysis/fitness/{dataset}/g1_phase_cells_with_scRT.tsv'
     output:
         plot1 = 'plots/fitness/{dataset}/inferred_cn_rep_results.png',
         plot2 = 'plots/fitness/{dataset}/s_vs_g_hmmcopy_states.png',
