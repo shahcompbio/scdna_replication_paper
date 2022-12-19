@@ -123,7 +123,8 @@
     },
     "compute_cn_pseudobulks_f" :
     {
-        "mem" : 128
+        "mem" : 128,
+        "time" : "12:00"
     },
     "compute_rt_pseudobulks_composite_lf" :
     {

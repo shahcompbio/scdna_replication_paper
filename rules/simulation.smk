@@ -88,6 +88,7 @@ rule all_simulation:
                 if (d not in bad_datasets)
             ]
         ),
+        'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/model_accuracies.png'
         # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
@@ -419,6 +420,22 @@ rule plot_pyro_composite_inferred_cn_vs_scRT_sim:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/simulation/plot_pyro_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule true_vs_inferred_heatmaps_sim:
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+    output: 'plots/simulation/{dataset}/true_vs_inferred_heatmaps.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        true_frac_col = 'true_t',
+        rep_state = 'model_rep_state',
+        true_rep_state = 'true_rep'
+    log: 'logs/simulation/{dataset}/true_vs_inferred_heatmaps.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/simulation/true_vs_inferred_heatmaps.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 

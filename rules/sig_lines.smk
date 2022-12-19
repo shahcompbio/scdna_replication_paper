@@ -93,11 +93,19 @@ rule all_sig_lines:
             ]
         ),
         expand(
+            'plots/sig_lines/{dataset}/phase_changes_confusion.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/sig_lines/{dataset}/signals_heatmaps.png',
             dataset=[
                'OV2295', 'SA039'
             ]
         ),
+        'plots/sig_lines/phase_changes_cohort_confusion.png',
         'plots/sig_lines/subclonal_rt_diffs_summary.png',
         'plots/sig_lines/downsampled_twidth_scatter.png',
         'plots/sig_lines/twidth_summary.png'
@@ -599,3 +607,47 @@ rule signals_heatmaps_sl:
         '--dataset {params.dataset} '
         '--heatmap {output.figure} '
         '&> {log}'
+    
+
+rule phase_changes_sl:
+    input:
+        cn_g ='analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
+        cn_s ='analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        cn_lowqual ='analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
+        cn_g_init = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv',
+        cn_s_init = 'analysis/sig_lines/{dataset}/s_phase_cells.tsv',
+    output:
+        output_tsv = 'analysis/sig_lines/{dataset}/phase_changes.tsv',
+        plot1 = 'plots/sig_lines/{dataset}/phase_changes_confusion.png',
+        plot2 = 'plots/sig_lines/{dataset}/phase_changes_features.png'
+    log: 'logs/sig_lines/{dataset}/phase_changes.log'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        frac_rt_col = 'cell_frac_rep',
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/sig_lines/phase_changes.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+rule phase_changes_cohort_sl:
+    input:
+        expand(
+            'analysis/sig_lines/{dataset}/phase_changes.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        )
+    output:
+        plot1 = 'plots/sig_lines/phase_changes_cohort_confusion.png',
+        plot2 = 'plots/sig_lines/phase_changes_cohort_features.png'
+    log: 'logs/sig_lines/phase_changes_cohort.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/sig_lines/phase_changes_cohort.py '
+        '--input {input} '
+        '--plot1 {output.plot1} '
+        '--plot2 {output.plot2} '
+        '&> {log} ; '
+        'deactivate'
