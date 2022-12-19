@@ -102,7 +102,7 @@
     },
     "infer_scRT_pyro_f" :
     {
-        "time" : "72:00",
+        "time" : "120:00",
         "mem" : 128
     },
     "model_accuracies_sim" :
@@ -120,6 +120,10 @@
     "compute_cn_pseudobulks_fl" :
     {
         "time" : "6:00"
+    },
+    "compute_cn_pseudobulks_f" :
+    {
+        "mem" : 128
     },
     "compute_rt_pseudobulks_composite_lf" :
     {
