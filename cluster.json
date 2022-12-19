@@ -164,5 +164,9 @@
     {
         "time" : "6:00",
         "mem" : 256
+    },
+    "phase_changes_sl":
+    {
+        "time" : "12:00"
     }
 }
