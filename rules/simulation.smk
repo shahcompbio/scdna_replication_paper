@@ -89,7 +89,8 @@ rule all_simulation:
             ]
         ),
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
-        'plots/simulation/all/model_accuracies.png'
+        'plots/simulation/all/model_accuracies.png',
+        'plots/simulation/all/clone_specific_rt.png',
         # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
 
@@ -666,3 +667,15 @@ rule model_accuracies_sim:
         '&> {log} ; '
         'deactivate'
 
+
+rule clone_specific_rt_sim:
+    input:
+        P10 = 'analysis/simulation/P10/scRT_pseudobulks_pyro_composite.tsv',
+        P11 = 'analysis/simulation/P11/scRT_pseudobulks_pyro_composite.tsv'
+    output: 'plots/simulation/all/clone_specific_rt.png'
+    log: 'logs/simulation/all/clone_specific_rt.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/simulation/clone_specific_rt.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
