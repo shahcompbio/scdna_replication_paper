@@ -8,8 +8,8 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('-i', '--input', type=str, nargs='+', help='tables with phase calls and cell features where each table is a unique dataset')
-    p.add_argument('plot1', type=str, help='confusion matrix comparing the phase calls of all models')
-    p.add_argument('plot2', type=str, help='violin plots of the features across different phase calls')
+    p.add_argument('-p1', '--plot1', type=str, help='confusion matrix comparing the phase calls of all models')
+    p.add_argument('-p2', '--plot2', type=str, help='violin plots of the features across different phase calls')
 
     return p.parse_args()
 
