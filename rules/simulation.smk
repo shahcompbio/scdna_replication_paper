@@ -89,7 +89,7 @@ rule all_simulation:
             ]
         ),
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
-        'plots/simulation/all/model_accuracies.png',
+        'plots/simulation/all/model_accuracies1.png',
         'plots/simulation/all/clone_specific_rt.png',
         # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
@@ -635,11 +635,12 @@ rule model_accuracies_sim:
     input: 'analysis/simulation/all/s_phase_model_results_paths.tsv'
     output:
         accuracy_table = 'analysis/simulation/all/model_accuracies.tsv',
-        accuracy_plot = 'plots/simulation/all/model_accuracies.png'
+        accuracy_plot1 = 'plots/simulation/all/model_accuracies1.png',
+        accuracy_plot2 = 'plots/simulation/all/model_accuracies2.png',
     params:
         datasets = expand(config['simulated_datasets']),
         A = expand([str(config['simulated_datasets'][d]['A']) for d in config['simulated_datasets']]),
-        cell_cna_prob = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
+        cell_cna_rate = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
         num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
         bulk_rep_col = 'rt_state',
@@ -649,12 +650,12 @@ rule model_accuracies_sim:
         true_cn_col = 'true_G1_state'
     log: 'logs/simulation/all/model_accuracies.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/model_accuracies.py '
         '--input {input} '
         '--datasets {params.datasets} '
         '--A {params.A} '
-        '--cell_cna_prob {params.cell_cna_prob} '
+        '--cell_cna_rate {params.cell_cna_rate} '
         '--num_clones {params.num_clones} '
         '--lamb {params.lamb} '
         '--bulk_rep_col {params.bulk_rep_col} '
@@ -663,7 +664,8 @@ rule model_accuracies_sim:
         '--true_rep_col {params.true_rep_col} '
         '--true_cn_col {params.true_cn_col} '
         '--table {output.accuracy_table} '
-        '--plot {output.accuracy_plot} '
+        '--plot1 {output.accuracy_plot1} '
+        '--plot2 {output.accuracy_plot2} '
         '&> {log} ; '
         'deactivate'
 
