@@ -93,7 +93,7 @@ def main():
 
     # plot the heatmap, including the first 2 digits of the correlation values
     sns.heatmap(corr, square=True, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='.2f')
-    plt.title('Pairwise correlation between pseudobulk RT profiles\nSimulated datasets P10 and P11 with clone-specific RT')
+    plt.title('Pseudobulk RT correlations\nSimulated datasets P10 and P11 with clone-specific RT')
 
     # save the figure
     fig.savefig(argv.output, bbox_inches='tight', dpi=300)
