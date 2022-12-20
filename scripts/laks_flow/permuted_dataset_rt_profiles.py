@@ -81,36 +81,55 @@ def main():
 
     # merge each permuted dataset's relevant RT columns into rt_wide
     rt_wide = ref_rt.copy()
-    bulk_rt_cols = ['gc', 'rt_joint_T47D', 'rt_joint_GM18507']
+    bulk_rt_cols = ['rt_joint_T47D', 'rt_joint_GM18507']
 
     for dataset, temp_rt in all_rts.groupby('dataset'):
         # rename columns in temp_rt to reflect the current dataset
-        t_col = 'rt_T47D_{}'.format(dataset)
-        gm_col = 'rt_GM18507_{}'.format(dataset)
-        all_col = 'rt_all_{}'.format(dataset)
-        bulk_rt_cols.extend([t_col, gm_col, all_col])
+        t_col = 'T47D_{}'.format(dataset)
+        gm_col = 'GM18507_{}'.format(dataset)
+        bulk_rt_cols.extend([t_col, gm_col])
         temp_rt = temp_rt.rename(columns={
             'rt_T47D': t_col,
             'rt_GM18507': gm_col,
-            'rt_all': all_col
         })
         
         # merge the columns using loci
-        temp_rt = temp_rt[['chr', 'start', t_col, gm_col, all_col]]
+        temp_rt = temp_rt[['chr', 'start', t_col, gm_col]]
         rt_wide = pd.merge(rt_wide, temp_rt)
-
-
-    # compute the pairwise correlation between all bulk rt columns
-    rt_corrs = rt_wide[sorted(bulk_rt_cols)].corr()
-
-    # plot the correlations as a heatmap
-    fig, ax = plt.subplots(1, 1, figsize=(16, 12))
-    sns.heatmap(rt_corrs, annot=False, ax=ax)
-    ax.set_title('Correlation between pseudobulk RT profiles in permuted datasets')
-    fig.savefig(argv.cor_plot, bbox_inches='tight')
-
+    
     # save the table used to compute the correlations
     rt_wide.to_csv(argv.rt_table, sep='\t', index=False)
+
+    # remove columns that should not appear in the correlation matrix
+    bad_columns = ['chr', 'start', 'end', 'gc', 'rt_split_T47D', 'rt_split_GM18507', 'rt_diff_split', 'rt_diff_joint']
+    rt_wide = rt_wide.drop(columns=bad_columns)
+
+    # rename the reference dataset columns with no permuted cells
+    rt_wide = rt_wide.rename(columns={
+        'rt_joint_T47D': 'T47D',
+        'rt_joint_GM18507': 'GM18507',
+    })
+
+    # replace all the underscores with spaces in the column names
+    rt_wide.columns = [col.replace('_', ' ') for col in rt_wide.columns]
+
+    # compute the pairwise correlation between all bulk rt columns
+    # sort the columns before computing the correlaiton to ensure the same order
+    corr = rt_wide[sorted(rt_wide.columns)].corr()
+
+    # plot the correlation matrix as a heatmap
+    fig = plt.figure(figsize=(10, 10))
+
+    # mask the upper triangle of the heatmap
+    mask = np.zeros_like(corr, dtype=bool)
+    mask[np.triu_indices_from(mask)] = True
+
+    # plot the heatmap, including the mask and whitespace between the cells but not digit annotations
+    sns.heatmap(corr, square=True, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=False)
+    plt.title('Pseudobulk RT correlations\nPermuted datasets')
+
+    # save the figure
+    fig.savefig(argv.cor_plot, bbox_inches='tight', dpi=300)
 
 
 if __name__ == '__main__':
