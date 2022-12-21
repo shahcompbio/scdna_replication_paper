@@ -78,6 +78,7 @@ rule all_laks_flow:
                 d for d in ['T47D', 'GM18507', 'all']
             ]
         ),
+        'plots/laks_flow/all/rpm_umap.png',
         'plots/laks_flow/all/rt_corr.png',
         'plots/laks_flow/all/rt_corr_composite.png',
         'plots/laks_flow/all/twidth_curves.png',
@@ -387,6 +388,21 @@ rule revise_cell_cycle_labels_composite_lf:
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
         'python3 scripts/laks_flow/revise_cell_cycle_labels.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule rpm_umap_lf:
+    input: 
+        cn_s = 'analysis/laks_flow/all/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_g = 'analysis/laks_flow/all/cn_g_pyro_inferred_composite_filtered.tsv',
+    output: 'plots/laks_flow/all/rpm_umap.png'
+    params:
+        rpm_col = 'rpm'
+    log: 'logs/laks_flow/all/rpm_umap.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/laks_flow/rpm_umap.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
