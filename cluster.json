@@ -103,7 +103,7 @@
     "infer_scRT_pyro_f" :
     {
         "time" : "120:00",
-        "mem" : 128
+        "mem" : 256
     },
     "model_accuracies_sim" :
     {
