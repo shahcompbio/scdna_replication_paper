@@ -18,7 +18,11 @@ def get_args():
 
 
 def plot_sorted(bulk_df, argv):
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+     # find the unique number of cells in bulk_df
+    n_cells = len(bulk_df['cell_id'].unique())
+
+    # make a figure that has the height corresponding to the number of cells
+    fig, ax = plt.subplots(1, 1, figsize=(10, n_cells*0.5))
     
     plot_data = plot_clustered_cell_cn_matrix(
         ax, bulk_df, 'state', cluster_field_name='cluster_id', secondary_field_name='clone_id'
@@ -32,10 +36,17 @@ def plot_sorted(bulk_df, argv):
 
 
 def plot_clustered(bulk_df, argv):
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+    # subset to just the clone cn profiles (not the dataset or sample level bulks)
+    bulk_df = bulk_df.query('cluster_id=="clone"')
+
+    # find the unique number of cells in bulk_df
+    n_cells = len(bulk_df['cell_id'].unique())
+
+    # make a figure that has the height corresponding to the number of cells
+    fig, ax = plt.subplots(1, 1, figsize=(10, n_cells*0.5))
 
     plot_data = plot_clustered_cell_cn_matrix(
-        ax, bulk_df.query('cluster_id=="clone"'), 'state', cluster_field_name='cluster_id'
+        ax, bulk_df, 'state', cluster_field_name='cluster_id'
     )
     labels = plot_data.columns.get_level_values(0).values
     ax.set_yticks(np.arange(len(labels)))
@@ -57,6 +68,9 @@ def main():
     bulk_df['cluster_id'] = bulk_df['cell_id'].apply(lambda x: x.split('_')[0])
     # name of the dataset, sample or clone
     bulk_df['clone_id'] = bulk_df['cell_id'].apply(lambda x: x.split('_')[1])
+
+    # replace underscores with spaces in cell_id column
+    bulk_df['cell_id'] = bulk_df['cell_id'].apply(lambda x: x.replace('_', ' '))
 
     # plot cn profiles with dataset and sample bulks, sorted by clone_id
     plot_sorted(bulk_df, argv)
