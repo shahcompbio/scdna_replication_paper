@@ -92,13 +92,13 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/fitness/{dataset}/clones_vs_time.png',
-        #     dataset=[
-        #         d for d in config['fitness_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/fitness/{dataset}/clones_vs_time.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/fitness/fitness_proxy_s_coefficients.png'
         
 
@@ -575,7 +575,25 @@ rule plot_clones_vs_time_SA1035_f:
         'deactivate'
 
 
-# TODO: make custom rule for plotting clones vs time for SA609 (show both lines)
+# TODO: make sure this rule works as intended
+rule plot_clones_vs_time_SA609_f:
+    input:
+        treated = 'analysis/fitness/SA609T/cell_cycle_clone_counts.tsv',
+        untreated = 'analysis/fitness/SA609U/cell_cycle_clone_counts.tsv',
+        treated2 = 'analysis/fitness/SA609T2/cell_cycle_clone_counts.tsv',
+        untreated2 = 'analysis/fitness/SA609U2/cell_cycle_clone_counts.tsv'
+    output:
+        plot1 = 'plots/fitness/SA609/clones_vs_time.png',
+        plot2 = 'plots/fitness/SA609/total_cells_vs_time.png'
+    params:
+        dataset = 'SA609'
+    log: 'logs/fitness/SA609/plot_clones_vs_time.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/fitness/plot_clones_vs_time_SA609.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
 
 # TODO: create framework for plotting fitness proxies vs time for SA609
 rule plot_fitness_proxy_s_coefficients_f:

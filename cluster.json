@@ -145,6 +145,10 @@
         "time" : "6:00",
         "mem" : 256
     },
+    "revise_cell_cycle_labels_f" :
+    {
+        "mem": 128
+    },
     "plot_filtered_pyro_model_output_st" :
     {
         "time" : "6:00",
