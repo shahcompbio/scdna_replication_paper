@@ -169,8 +169,24 @@
         "time" : "6:00",
         "mem" : 256
     },
-    "phase_changes_sl":
+    "phase_changes_sl" :
     {
         "time" : "12:00"
+    },
+    "plot_rpm_embedding_f" :
+    {
+        "mem": 128
+    },
+    "split_by_rx_f" :
+    {
+        "mem": 256
+    },
+    "plot_filtered_pyro_model_output_f" :
+    {
+        "mem": 256
+    },
+    "compute_rt_pseudobulks_f" :
+    {
+        "mem": 256
     }
 }

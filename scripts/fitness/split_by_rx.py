@@ -54,14 +54,14 @@ def main():
     cn_g_SA535T = cn_g_SA535.loc[cn_g_SA535['treated']==True]
 
     # split SA609 dataframes by both treatment and line
-    cn_s_SA609U = cn_s_SA609.loc[cn_s_SA609['treated']==False & cn_s_SA609['line']==1]
-    cn_g_SA609U = cn_g_SA609.loc[cn_g_SA609['treated']==False & cn_g_SA609['line']==1]
-    cn_s_SA609T = cn_s_SA609.loc[cn_s_SA609['treated']==True & cn_s_SA609['line']==1]
-    cn_g_SA609T = cn_g_SA609.loc[cn_g_SA609['treated']==True & cn_g_SA609['line']==1]
-    cn_s_SA609U2 = cn_s_SA609.loc[cn_s_SA609['treated']==False & cn_s_SA609['line']==2]
-    cn_g_SA609U2 = cn_g_SA609.loc[cn_g_SA609['treated']==False & cn_g_SA609['line']==2]
-    cn_s_SA609T2 = cn_s_SA609.loc[cn_s_SA609['treated']==True & cn_s_SA609['line']==2]
-    cn_g_SA609T2 = cn_g_SA609.loc[cn_g_SA609['treated']==True & cn_g_SA609['line']==2]
+    cn_s_SA609U = cn_s_SA609.loc[(cn_s_SA609['treated']==False) & (cn_s_SA609['line']==1)]
+    cn_g_SA609U = cn_g_SA609.loc[(cn_g_SA609['treated']==False) & (cn_g_SA609['line']==1)]
+    cn_s_SA609T = cn_s_SA609.loc[(cn_s_SA609['treated']==True) & (cn_s_SA609['line']==1)]
+    cn_g_SA609T = cn_g_SA609.loc[(cn_g_SA609['treated']==True) & (cn_g_SA609['line']==1)]
+    cn_s_SA609U2 = cn_s_SA609.loc[(cn_s_SA609['treated']==False) & (cn_s_SA609['line']==2)]
+    cn_g_SA609U2 = cn_g_SA609.loc[(cn_g_SA609['treated']==False) & (cn_g_SA609['line']==2)]
+    cn_s_SA609T2 = cn_s_SA609.loc[(cn_s_SA609['treated']==True) & (cn_s_SA609['line']==2)]
+    cn_g_SA609T2 = cn_g_SA609.loc[(cn_g_SA609['treated']==True) & (cn_g_SA609['line']==2)]
 
     # save samples that are now split by both cell cycle and treatement status
     cn_s_SA1035U.to_csv(argv.SA1035U_s_out, sep='\t', index=False)

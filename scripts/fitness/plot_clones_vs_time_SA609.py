@@ -202,7 +202,7 @@ def main():
     earliest_timepoints = sorted(df_U.timepoint_int.unique())[0:3]
     # add data from the earliest untreated timepiont to the treated dataframe
     df_T = pd.concat([df_U[df_U.timepoint_int.isin(earliest_timepoints)], df_T], ignore_index=True)
-    df_T2 = pd.concat([df_U2[df_U2.timepoint_int.isin(earliest_timepoints)], df_T2], ignore_index=True)
+    df_T2 = pd.concat([df_U[df_U.timepoint_int.isin(earliest_timepoints)], df_T2], ignore_index=True)
     df_U2 = pd.concat([df_U[df_U.timepoint_int.isin(earliest_timepoints)], df_U2], ignore_index=True)
 
     # find the set of clone_ids that appear in the union of all samples
