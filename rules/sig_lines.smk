@@ -102,7 +102,8 @@ rule all_sig_lines:
         expand(
             'plots/sig_lines/{dataset}/signals_heatmaps.png',
             dataset=[
-               'OV2295', 'SA039'
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
             ]
         ),
         'plots/sig_lines/phase_changes_cohort_confusion.png',
@@ -592,7 +593,7 @@ rule twidth_downsampling_sl:
 
 rule signals_heatmaps_sl:
     input: 
-        ascn = 'analysis/schnapps-results/{dataset}/hscn.csv.gz',
+        ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
         clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
     output: 
         figure = 'plots/sig_lines/{dataset}/signals_heatmaps.png'
