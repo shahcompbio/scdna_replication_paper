@@ -19,7 +19,7 @@ def main():
     time_df = pd.read_csv(argv.time_legend)
 
     # get rid of useless columns
-    time_df = time_df[['library_id', 'label', 'datasetname', 'timepoint', 'sample_id']]
+    time_df = time_df[['library_id', 'label', 'datasetname', 'timepoint']]
 
     # make sure chromosome column is set to the appropriate dtype
     cn['chr'] = cn['chr'].astype(str)
