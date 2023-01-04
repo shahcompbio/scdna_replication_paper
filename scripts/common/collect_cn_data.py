@@ -26,6 +26,7 @@ if __name__ == '__main__':
     argv = get_args()
     cn_pieces = []
 
+    # load the hmmcopy reads data
     for f in argv.hmm:
         piece = pd.read_csv(
             f, index_col=['chr', 'start', 'end', 'cell_id'],
@@ -37,6 +38,7 @@ if __name__ == '__main__':
     cn = pd.concat(cn_pieces)
     cn = cn.reset_index()
 
+    # load the hmmcopy annotation data
     met_pieces = []
     for f in argv.annotation:
         piece = pd.read_csv(
@@ -55,6 +57,10 @@ if __name__ == '__main__':
     metrics.rename(columns={'index': 'cell_id'}, inplace=True)
 
     metrics = metrics.loc[:, ~metrics.columns.duplicated()]
+
+    # add columns for sample and library id
+    metrics['library_id'] = metrics['cell_id'].apply(lambda x: x.split('-')[1])
+    metrics['sample_id'] = metrics['cell_id'].apply(lambda x: x.split('-')[0])
 
     # Remap experimental conditions and filter
     conditions = {
@@ -82,6 +88,7 @@ if __name__ == '__main__':
     metrics = metrics.merge(conditions, how='left')
     metrics = metrics.drop_duplicates()
 
+    # merge the hmmcopy reads and annotation data
     cn = cn.merge(metrics, on='cell_id')
     cn = cn.loc[:, ~cn.columns.duplicated()]
     cn.drop_duplicates(inplace=True)
@@ -95,12 +102,7 @@ if __name__ == '__main__':
     # remove Y chromosome since we're dealing with female cell lines
     cn = cn.query('chr != "Y"')
 
-    # remove Y chromosome since we're dealing with female cell lines
-    cn['library_id'] = cn['cell_id'].apply(lambda x: x.split('-')[1])
-    cn['sample_id'] = cn['cell_id'].apply(lambda x: x.split('-')[0])
-
     # filter out control cells that don't contain one of the sample_ids in their cell_id
-    print(argv.samples)
     sample_ids = list(argv.samples)
     sample_ids.append(argv.dataset)
     # catch edge cases where cell_ids don't exactly match the sample or dataset id
@@ -108,24 +110,33 @@ if __name__ == '__main__':
         sample_ids.append('SA906')
     elif argv.dataset == 'SA1292':
         sample_ids.append('AT135')
+    elif 'SA609' in argv.dataset:
+        sample_ids.append('SA609')
+    elif 'SA1035' in argv.dataset:
+        sample_ids.append('SA1035')
+    elif 'SA535' in argv.dataset:
+        sample_ids.append('SA535')
+    print('sample_ids in list', sample_ids)
+    print('sample_ids in cn', cn['sample_id'].unique())
+
+    # remove cells that don't contain one of the sample_ids in their cell_id
     cn = cn[cn['cell_id'].str.contains('|'.join(sample_ids))]
 
     # filter out cells based on quality, experimental condition and contamination    
     cn = cn[
         (cn['cell_call'].isin(['C1', 'C2']))
     ]
-
     for rm_cond in ['gDNA', 'GM', 'NCC', 'NTC']:
         mask = ~cn['experimental_condition'].str.contains(rm_cond)
         cn = cn[mask]
 
-    # convert is_contaminated to boolean first
+    # convert is_contaminated to boolean before filtering
     cn['is_contaminated'] = cn['is_contaminated'].astype('bool')
     cn = cn[~cn['is_contaminated']]
 
-    print("shape before filtering mouse bins", cn.shape)
+    print("number of cells before filtering mouse bins", len(cn['cell_id'].unique()))
     cn = cn[cn['fastqscreen_mm10'] < cn['fastqscreen_grch37']]
-    print("shape after filtering mouse bins", cn.shape)
+    print("number of cells after filtering mouse bins", len(cn['cell_id'].unique()))
 
     # drop cell cycle state column because the mappings are inaccurate.. we only care about filtering on experimental condition
     cn.drop(columns=['cell_cycle_state'], inplace=True)
@@ -133,4 +144,5 @@ if __name__ == '__main__':
     # create new column for reads per million (normalize each cell's total read count to be the same)
     cn = compute_reads_per_million(cn, reads_col='reads', rpm_col='rpm')
 
+    # save the output
     cn.to_csv(argv.output, sep='\t', index=False)
