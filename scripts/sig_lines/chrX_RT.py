@@ -311,7 +311,6 @@ def plot_clone_rt_diffs_SA1055(rt, argv):
     ''' compute RT difference between the SA1055 clones based on allelic state '''
     # list of clones that are allelically balanced
     ref_rt_clones_SA1055 = [
-        'SA1055_pseudobulk_cloneD_model_rep_state',
         'SA1055_pseudobulk_cloneE_model_rep_state',
         'SA1055_pseudobulk_cloneF_model_rep_state',
         'SA1055_pseudobulk_cloneG_model_rep_state',
@@ -324,6 +323,7 @@ def plot_clone_rt_diffs_SA1055(rt, argv):
         'SA1055_pseudobulk_cloneA_model_rep_state',
         'SA1055_pseudobulk_cloneB_model_rep_state',
         'SA1055_pseudobulk_cloneC_model_rep_state',
+        'SA1055_pseudobulk_cloneD_model_rep_state',
     ]
 
     # subset the RT dataframe to only include the clones of interest or the ref clones
@@ -345,7 +345,7 @@ def plot_clone_rt_diffs_SA1055(rt, argv):
         rt_diff_columns_SA1055.append(temp_diff_col)
 
     # for every rt_diff_column, plot the RT difference vs chrX
-    fig, ax = plt.subplots(1, 3, figsize=(9,4), tight_layout=True)
+    fig, ax = plt.subplots(1, 4, figsize=(12,4), tight_layout=True)
     ax = ax.flatten()
 
     for i, col in enumerate(rt_diff_columns_SA1055):
