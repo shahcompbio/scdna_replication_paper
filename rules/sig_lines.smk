@@ -109,7 +109,8 @@ rule all_sig_lines:
         'plots/sig_lines/phase_changes_cohort_confusion.png',
         'plots/sig_lines/subclonal_rt_diffs_summary.png',
         'plots/sig_lines/downsampled_twidth_scatter.png',
-        'plots/sig_lines/twidth_summary.png'
+        'plots/sig_lines/twidth_summary.png',
+        'plots/sig_lines/clone_RT_X_profiles.png',
         
         
 
@@ -631,6 +632,7 @@ rule phase_changes_sl:
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
+
 rule phase_changes_cohort_sl:
     input:
         expand(
@@ -650,5 +652,34 @@ rule phase_changes_cohort_sl:
         '--input {input} '
         '--plot1 {output.plot1} '
         '--plot2 {output.plot2} '
+        '&> {log} ; '
+        'deactivate'
+
+
+rule chrX_RT_sl:
+    input:
+        expand(
+            'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        )
+    output:
+        sample_rt_profiles = 'plots/sig_lines/sample_RT_X_profiles.png',
+        sample_rt_diffs = 'plots/sig_lines/sample_RT_X_diffs.png',
+        clone_rt_profiles = 'plots/sig_lines/clone_RT_X_profiles.png',
+        clone_rt_diffs_SA1054 = 'plots/sig_lines/SA1054/clone_RT_X_diffs.png',
+        clone_rt_diffs_SA1055 = 'plots/sig_lines/SA1055/clone_RT_X_diffs.png',
+    log: 'logs/sig_lines/chrX_RT.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/chrX_RT.py '
+        '--input {input} '
+        '--sample_rt_profiles {output.sample_rt_profiles} '
+        '--sample_rt_diffs {output.sample_rt_diffs} '
+        '--clone_rt_profiles {output.clone_rt_profiles} '
+        '--clone_rt_diffs_SA1054 {output.clone_rt_diffs_SA1054} '
+        '--clone_rt_diffs_SA1055 {output.clone_rt_diffs_SA1055} '
         '&> {log} ; '
         'deactivate'
