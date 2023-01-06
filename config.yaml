@@ -66,15 +66,15 @@ signatures_cell_lines:
   SA906b:
     type: 'hTERT,TP53-/-'
   SA1188:
-    type: 'hTERT,BRCA2+/−,TP53−/−'
-  SA1056:
-    type: 'hTERT,BRCA2−/−,TP53−/−'
-  SA1055:
-    type: 'hTERT,BRCA2−/−,TP53−/−'
-  SA1054:
-    type: 'hTERT,BRCA1−/−,TP53−/−'
+    type: 'hTERT,BRCA2+/-,TP53-/-'
   SA1292:
-    type: 'hTERT,BRCA1+/−,TP53−/−'
+    type: 'hTERT,BRCA1+/-,TP53-/-'
+  SA1056:
+    type: 'hTERT,BRCA2-/-,TP53-/-'
+  SA1055:
+    type: 'hTERT,BRCA2-/-,TP53-/-'
+  SA1054:
+    type: 'hTERT,BRCA1-/-,TP53-/-'
   OV2295:
     type: 'HGSOC-line'
 signatures_patient_tumors:

@@ -111,6 +111,7 @@ rule all_sig_lines:
         'plots/sig_lines/downsampled_twidth_scatter.png',
         'plots/sig_lines/twidth_summary.png',
         'plots/sig_lines/clone_RT_X_profiles.png',
+        'plots/sig_lines/clone_corrs.png',
         
         
 
@@ -681,5 +682,36 @@ rule chrX_RT_sl:
         '--clone_rt_profiles {output.clone_rt_profiles} '
         '--clone_rt_diffs_SA1054 {output.clone_rt_diffs_SA1054} '
         '--clone_rt_diffs_SA1055 {output.clone_rt_diffs_SA1055} '
+        '&> {log} ; '
+        'deactivate'
+
+
+rule cn_and_rt_correlations:
+    input:
+        rt = expand(
+            'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        cn = expand(
+            'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        )
+    output:
+        sample_corrs = 'plots/sig_lines/sample_corrs.png',
+        clone_corrs = 'plots/sig_lines/clone_corrs.png',
+    log: 'logs/sig_lines/cn_and_rt_correlations.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/cn_and_rt_correlations.py '
+        '--input_cn {input.cn} '
+        '--input_rt {input.rt} '
+        '--sample_corrs {output.sample_corrs} '
+        '--clone_corrs {output.clone_corrs} '
         '&> {log} ; '
         'deactivate'
