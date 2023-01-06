@@ -1,12 +1,10 @@
-import matplotlib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scgenome import refgenome
-from sklearn import preprocessing
-from statannot import add_stat_annotation
 from argparse import ArgumentParser
+from scipy.spatial.distance import squareform, pdist
+
 
 def get_args():
     p = ArgumentParser()
@@ -90,18 +88,27 @@ def plot_sample_corrs(cn, rt, sample_cn_cols, sample_rt_cols, argv):
     ''' Create a figure that shows the correlation between the sample CN and RT profiles. '''
     fig, ax = plt.subplots(1, 2, figsize=(12,6), tight_layout=True)
 
-    # correlation between copy number profiles
-    cn_corrs = cn[sample_cn_cols].corr()
-    mask = np.zeros_like(cn_corrs, dtype=bool)
+    # pairwise distance between copy number profiles
+    cn_dist = pd.DataFrame(
+        squareform(pdist(cn.T.loc[sample_cn_cols])),
+        columns = sample_cn_cols,
+        index = sample_cn_cols
+    )
+    # subtract the max value from the distance matrix to make the heatmap more intuitive
+    # this way the larger the value, the more similar the profiles
+    cn_dist = cn_dist.max().max() - cn_dist
+    # mask the upper triangle of the heatmap
+    mask = np.zeros_like(cn_dist, dtype=bool)
     mask[np.triu_indices_from(mask)] = True
-    sns.heatmap(cn_corrs, square=True, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='.2f', ax=ax[0])
-    ax[0].set_title('Correlation in sample CN')
+    # plot the heatmap
+    sns.heatmap(cn_dist, square=False, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='1.0f', ax=ax[0])
+    ax[0].set_title('Similarity in sample CN')
 
     # correlation between RT profiles
     rt_corrs = rt[sample_rt_cols].corr()
     mask = np.zeros_like(rt_corrs, dtype=bool)
     mask[np.triu_indices_from(mask)] = True
-    sns.heatmap(rt_corrs, square=True, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='.2f', ax=ax[1])
+    sns.heatmap(rt_corrs, square=False, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='.2f', ax=ax[1])
     ax[1].set_title('Correlation in sample RT')
 
     # only include the sample_id prefix in the xticklabels and yticklabels
@@ -116,12 +123,21 @@ def plot_clone_corrs(cn, rt, clone_cn_cols, clone_rt_cols, argv):
     ''' Create figure that shows the correlation between the clone CN and RT profiles across all samples. '''
     fig, ax = plt.subplots(1, 2, figsize=(12,6), tight_layout=True)
 
-    # correlation between copy number profiles
-    cn_corrs = cn[clone_cn_cols].corr()
-    mask = np.zeros_like(cn_corrs, dtype=bool)
+    # pairwise distance between copy number profiles
+    cn_dist = pd.DataFrame(
+        squareform(pdist(cn.T.loc[clone_cn_cols])),
+        columns = clone_cn_cols,
+        index = clone_cn_cols
+    )
+    # subtract the max value from the distance matrix to make the heatmap more intuitive
+    # this way the larger the value, the more similar the profiles
+    cn_dist = cn_dist.max().max() - cn_dist
+    # mask the upper triangle of the heatmap
+    mask = np.zeros_like(cn_dist, dtype=bool)
     mask[np.triu_indices_from(mask)] = True
-    sns.heatmap(cn_corrs, square=False, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, ax=ax[0])
-    ax[0].set_title('Correlation in clone CN')
+    # plot the heatmap
+    sns.heatmap(cn_dist, square=False, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, ax=ax[0])
+    ax[0].set_title('Similarity in clone CN')
 
     # correlation between RT profiles
     rt_corrs = rt[clone_rt_cols].corr()
