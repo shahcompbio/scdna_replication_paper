@@ -9,7 +9,6 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('-i', '--input', type=str, nargs='+', help='long-form scRT results every dataset')
-    p.add_argument('--table', help='table of cell time in S-phase results across the whole cohort')
     p.add_argument('--plot', help='histogram of cell time in S-phase across the whole cohort')
 
     return p.parse_args()
@@ -44,12 +43,14 @@ def main():
     # load the data across the entire cohort
     df = load_data(argv)
 
-    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
+    fig, ax = plt.subplots(2, 2, figsize=(8, 8), tight_layout=True)
     ax = ax.flatten()
 
-    # violinplot
+    # plot both a histogram and kdeplot
     sns.histplot(data=df, x='cell_frac_rep', hue='dataset', ax=ax[0])
     sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', ax=ax[1])
+    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, ax=ax[2])
+    sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, ax=ax[3])
 
     for i in range(2):
         ax[i].set_xlabel('Inferred fraction of replicated bins')
