@@ -52,16 +52,16 @@ def main():
     pca_df = pd.merge(pca_df, metrics_df)
 
     # create and save the pca embeddings
-    fig, ax = plt.subplots(1, 2, figsize=(10, 4), tight_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
     ax = ax.flatten()
 
-    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='clone_id', ax=ax[0])
-    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='phase', ax=ax[1])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='clone_id', alpha=0.5, ax=ax[0])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='phase', alpha=0.5, ax=ax[1])
 
     for i in range(2):
         ax[i].set_title('{} PCA of read depth'.format(argv.dataset))
     
-    fig.savefig(argv.output_png, bbox_inches='tight')
+    fig.savefig(argv.output_png, bbox_inches='tight', dpi=300)
 
 
 if __name__ == '__main__':

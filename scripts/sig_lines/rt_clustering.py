@@ -95,7 +95,7 @@ def plot_umaps(rt, embedding, clusterer, argv):
     ax[1].legend(title='Clone ID')
     ax[2].legend(title='RT cluster')
 
-    fig.savefig(argv.output_umap, bbox_inches='tight')
+    fig.savefig(argv.output_umap, bbox_inches='tight', dpi=300)
 
 
 def plot_kde(summary, argv):
@@ -103,7 +103,7 @@ def plot_kde(summary, argv):
     sns.kdeplot(data=summary, x=argv.sort_col, hue='hdbscan_cluster', ax=ax)
     ax.set_xlabel('% Replicated')
     ax.set_title(argv.dataset)
-    fig.savefig(argv.output_kde, bbox_inches='tight')
+    fig.savefig(argv.output_kde, bbox_inches='tight', dpi=300)
 
 
 def plot_heatmaps(df, clusterer, argv):
@@ -122,7 +122,7 @@ def plot_heatmaps(df, clusterer, argv):
         ax[i].set_title('{}, RT cluster {}'.format(argv.dataset, rt_cluster))
         i += 1
 
-    fig.savefig(argv.output_heatmap, bbox_inches='tight')
+    fig.savefig(argv.output_heatmap, bbox_inches='tight', dpi=300)
 
 
 

@@ -40,14 +40,14 @@ def plot_cn_and_rep_states(df, argv):
     ax[0].set_title('Inferred CN states')
     ax[1].set_title('Inferred replication states')
 
-    fig.savefig(argv.output_rt_state, bbox_inches='tight')
+    fig.savefig(argv.output_rt_state, bbox_inches='tight', dpi=300)
 
 
 
 def plot_frac_rt_distributions(df, argv):
     df_frac = df[['cell_id', argv.frac_rt_col, 'library_id', 'clone_id']].drop_duplicates().reset_index(drop=True)
     
-    fig, ax = plt.subplots(1,3, figsize=(12, 4), tight_layout=True)
+    fig, ax = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
     ax = ax.flatten()
 
     # violinplot
@@ -56,10 +56,10 @@ def plot_frac_rt_distributions(df, argv):
     sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2])
 
     for i in range(3):
-        ax[i].set_xlabel('Time in S-phase')
+        ax[i].set_xlabel('Inferred fraction of replicated bins')
         ax[i].set_title('Distribution of cells\nwithin S-phase')
 
-    fig.savefig(argv.output_frac_rt, bbox_inches='tight')
+    fig.savefig(argv.output_frac_rt, bbox_inches='tight', dpi=300)
 
 
 def main():

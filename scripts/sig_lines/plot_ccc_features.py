@@ -39,7 +39,7 @@ def plot_ccc_distributions(cell_metrics, argv):
     sns.histplot(data=cell_metrics, x='lrs', hue='in_tree', multiple='stack', ax=ax[4])
     sns.histplot(data=cell_metrics, x='corrected_breakpoints', hue='in_tree', multiple='stack', ax=ax[5])
 
-    fig.savefig(argv.plot1, bbox_inches='tight')
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
     # plot pairwise scatterplots of all three features colored by cell cycle cstate
     fig, ax = plt.subplots(3, 3, figsize=(12, 12), tight_layout=True)
@@ -55,7 +55,7 @@ def plot_ccc_distributions(cell_metrics, argv):
     sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='lrs', hue='library_id', alpha=0.3, ax=ax[7])
     sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='corrected_madn', hue='library_id', alpha=0.3, ax=ax[8])
 
-    fig.savefig(argv.plot2, bbox_inches='tight')
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
 
 if __name__ == '__main__':

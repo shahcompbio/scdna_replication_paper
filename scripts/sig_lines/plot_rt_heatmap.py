@@ -126,7 +126,7 @@ def plot_true_rt_state(df, argv):
         ax = fig.add_axes([0.0,0.4,0.1,0.25])
         plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
 
-    fig.savefig(argv.output, bbox_inches='tight')
+    fig.savefig(argv.output, bbox_inches='tight', dpi=300)
 
 
 def main():

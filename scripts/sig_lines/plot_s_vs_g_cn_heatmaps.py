@@ -139,7 +139,7 @@ def main():
 
     fig = plot_cn_heatmap(cn_g, cn_s, dataset=argv.dataset, value_col=argv.value_col)
 
-    fig.savefig(argv.output_pdf, bbox_inches='tight')
+    fig.savefig(argv.output_pdf, bbox_inches='tight', dpi=300)
 
 
 if __name__ == '__main__':

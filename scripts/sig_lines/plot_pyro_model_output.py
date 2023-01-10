@@ -72,7 +72,7 @@ def plot_hmmcopy(cn_s, cn_g1, argv):
 
     ax[0].set_title('{}\nG1-phase HMMCopy states'.format(argv.dataset))
     ax[1].set_title('{}\nS-phase HMMCopy states'.format(argv.dataset))
-    fig.savefig(argv.plot2, bbox_inches='tight')
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
 
 def plot_rpm(cn_s, cn_g1, argv):
@@ -84,7 +84,7 @@ def plot_rpm(cn_s, cn_g1, argv):
 
     ax[0].set_title('{}\nG1-phase reads per million'.format(argv.dataset))
     ax[1].set_title('{}\nS-phase reads per million'.format(argv.dataset))
-    fig.savefig(argv.plot3, bbox_inches='tight')
+    fig.savefig(argv.plot3, bbox_inches='tight', dpi=300)
 
 
 def main():

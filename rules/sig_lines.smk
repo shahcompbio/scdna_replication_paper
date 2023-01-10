@@ -360,6 +360,29 @@ rule plot_inferred_cn_vs_scRT_filtered_sl:
         'deactivate'
 
 
+rule cohort_frac_rep_distribution_sl:
+    input: 
+        scRT = expand(
+            'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        )
+    output:
+        output_table = 'analysis/sig_lines/frac_rep_distribution.tsv',
+        output_plot = 'plots/sig_lines/frac_rep_distribution.svg'
+    log: 'logs/sig_lines/cohort_frac_rep_distribution.log'
+    shell:
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/sig_lines/cohort_frac_rep_distribution.py '
+        '-i {input.scRT} '
+        '--table {output.output_table} '
+        '--plot {output.output_plot} '
+        '&> {log} ; '
+        'deactivate'
+
+
 rule plot_rpm_embedding_sl:
     input:
         s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
@@ -480,6 +503,7 @@ rule subclonal_rt_diffs_summary_sl:
         'deactivate'
 
 
+# TODO: finish this script according to the notebook
 rule sample_rt_diffs_sl:
     input:
         rt = expand(

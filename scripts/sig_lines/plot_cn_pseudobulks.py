@@ -32,7 +32,7 @@ def plot_sorted(bulk_df, argv):
     ax.set_yticklabels(labels)
     ax.set_title('{}: Pseudobulk CN Profiles'.format(argv.dataset))
 
-    fig.savefig(argv.plot1, bbox_inches='tight')
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
 def plot_clustered(bulk_df, argv):
@@ -53,7 +53,7 @@ def plot_clustered(bulk_df, argv):
     ax.set_yticklabels(labels)
     ax.set_title('{}: Pseudobulk CN Profiles'.format(argv.dataset))
 
-    fig.savefig(argv.plot2, bbox_inches='tight')
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
 
 def main():

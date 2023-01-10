@@ -195,7 +195,7 @@ def plot_clone_rt_profiles(rt, argv):
         else:
             ax[i].set_ylabel('Relative RT to clone {}\n<--clone later | clone earlier-->'.format(ref_clone))
 
-    fig.savefig(argv.plot1, bbox_inches='tight')
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
 def compute_fracs_and_pvals(df):
@@ -361,7 +361,7 @@ def clone_spf_analysis(cn_s, cn_g, argv):
     ax[1].set_title('{}\nRelative proliferation rate of clones'.format(argv.dataset))
 
     # save spf figure
-    fig.savefig(argv.plot2, bbox_inches='tight')
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
     # save table used to generate spf figure
     df2.to_csv(argv.out_tsv, sep='\t', index=False)

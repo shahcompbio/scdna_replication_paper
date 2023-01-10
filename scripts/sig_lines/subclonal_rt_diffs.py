@@ -199,7 +199,7 @@ def main():
     ax.set_title('RT shifts at subclonal CNAs - {}'.format(argv.dataset))
     ax.set_xlabel('CNA type')
     ax.set_ylabel('Clone RT relative to reference\n<--later | earlier-->')
-    fig.savefig(argv.out_png, bbox_inches='tight')
+    fig.savefig(argv.out_png, bbox_inches='tight', dpi=300)
 
     # add dataset name to table before saving
     cna_rt_diffs['dataset'] = argv.dataset
