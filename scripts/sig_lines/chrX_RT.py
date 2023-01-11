@@ -208,22 +208,26 @@ def load_clone_counts(argv):
     return counts
 
 
-def plot_sample_rt_profiles(rt, rt_coi, argv):
+def plot_sample_rt_profiles(rt, rt_coi, counts, argv):
     fig, ax = plt.subplots(2, 1, figsize=(16,8), tight_layout=True)
     ax = ax.flatten()
 
     for i, col in enumerate(rt_coi):
         dataset_id = col.split('_')[0]
+
+        # find the number of S-phase cells in this dataset according to counts
+        n = int(np.sum(counts.query('dataset=="{}"'.format(dataset_id))['num_cells_s'].values))
+        label = '{} (n={})'.format(dataset_id, n)
         
-        # plot pseudobulk rt values for this dataset
+        # plot pseudobulk rt profile for this dataset
         plot_cell_cn_profile2(
             ax[0], rt, col, color='C{}'.format(i), 
-            max_cn=None, scale_data=False, lines=True, label=dataset_id
+            max_cn=None, scale_data=False, lines=True, label=label
         )
-        # plot pseudobulk cn values for this dataset
+        # zoom in on chrX
         plot_cell_cn_profile2(
             ax[1], rt, col, color='C{}'.format(i), chromosome='X',
-            max_cn=None, scale_data=False, lines=True, label=dataset_id
+            max_cn=None, scale_data=False, lines=True, label=label
         )
 
     ax[0].set_title('Sample Pseudobulk RT')
@@ -251,7 +255,7 @@ def plot_sample_rt_diffs(rt_diff, rt_diff_coi, argv):
 
 
 
-def plot_clone_rt_profiles(rt, ax, dataset_id):
+def plot_clone_rt_profiles(rt, ax, dataset_id, counts):
     # get the clone RT columns for this dataset
     clone_rt_cols = [c for c in rt.columns if c.startswith(dataset_id) and 'clone' in c]
 
@@ -259,18 +263,20 @@ def plot_clone_rt_profiles(rt, ax, dataset_id):
     # only plot the X chromosome for now
     for i, col in enumerate(clone_rt_cols):
         clone_id = col.split('_')[2].split('clone')[1]
+        # find the number of S-phase cells in this clone according to dataset_counts
+        n = int(counts.query("dataset=='{}'".format(dataset_id)).query("clone_id=='{}'".format(clone_id))['num_cells_s'].values[0])
         plot_cell_cn_profile2(
             ax, rt, col, color='C{}'.format(i), chromosome='X',
-            max_cn=None, scale_data=False, lines=True, label=clone_id
+            max_cn=None, scale_data=False, lines=True, label='{} (n={})'.format(clone_id, n)
         )
     
     # format the plot
     ax.set_title('{} clone RT profiles'.format(dataset_id))
     ax.set_ylabel('RT profile\n<--late | early-->')
-    ax.legend(title='Clone ID')
+    ax.legend(title='Clone ID', loc='upper left')
 
 
-def plot_clone_rt_profiles_wrapper(rt, argv):
+def plot_clone_rt_profiles_wrapper(rt, counts, argv):
     # plot clone RT profiles for each dataset
     # find the number of datasets
     datasets = set([c.split('_')[0] for c in rt.columns if c.startswith('SA') and 'clone' not in c])
@@ -282,7 +288,7 @@ def plot_clone_rt_profiles_wrapper(rt, argv):
 
     # loop through each dataset and plot the clone RT profiles
     for i, dataset_id in enumerate(datasets):
-        plot_clone_rt_profiles(rt, ax[i], dataset_id)
+        plot_clone_rt_profiles(rt, ax[i], dataset_id, counts)
     
     # save the figure
     fig.savefig(argv.clone_rt_profiles, dpi=300, bbox_inches='tight')
@@ -464,7 +470,7 @@ def main():
     rt_coi = [c for c in rt.columns if (c.endswith('_pseudobulk_model_rep_state'))]
 
     # plot the sample RT pseudobulk profiles
-    plot_sample_rt_profiles(rt, rt_coi, argv)
+    plot_sample_rt_profiles(rt, rt_coi, counts, argv)
 
     # samples with no CNAs on chrX should be used as a reference
     ref_rt_samples = [
@@ -516,7 +522,7 @@ def main():
     plot_sample_rt_diffs(rt_diff, rt_diff_coi, argv)
 
     # plot the clone RT profiles for chrX
-    plot_clone_rt_profiles_wrapper(rt, argv)
+    plot_clone_rt_profiles_wrapper(rt, counts, argv)
 
     # plot clone-specific RT differences on chrX for SA1054 and SA1055
     plot_clone_rt_diffs_SA1054(rt, counts, argv)
