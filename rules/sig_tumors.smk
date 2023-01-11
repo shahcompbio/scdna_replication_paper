@@ -85,7 +85,7 @@ rule clone_assignments_st:
         assign_col = 'copy'
     log: 'logs/sig_tumors/{dataset}/clone_assignments.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/clone_assignments.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -96,7 +96,7 @@ rule compute_ccc_features_st:
     output: 'analysis/sig_tumors/{dataset}/cn_data_features.tsv'
     log: 'logs/sig_tumors/{dataset}/compute_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -109,7 +109,7 @@ rule plot_ccc_features_st:
         plot2 = 'plots/sig_tumors/{dataset}/ccc_features_scatter.png'
     log: 'logs/sig_tumors/{dataset}/plot_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_tumors/plot_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -122,7 +122,7 @@ rule split_cell_cycle_st:
         cn_g1 = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
     log: 'logs/sig_tumors/{dataset}/split_cell_cycle.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_tumors/split_cell_cycle.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -146,7 +146,7 @@ rule infer_scRT_pyro_st:
         infer_mode = 'pyro'
     log: 'logs/sig_tumors/{dataset}/infer_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -195,7 +195,7 @@ rule plot_pyro_model_output_st:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -211,7 +211,7 @@ rule remove_nonreplicating_cells_st:
         rep_col = 'model_rep_state',
     log: 'logs/sig_tumors/{dataset}/remove_nonreplicating_cells.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/remove_nonreplicating_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -229,7 +229,7 @@ rule plot_filtered_pyro_model_output_st:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -247,7 +247,7 @@ rule plot_nonrep_pyro_model_output_st:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_nonrep_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -260,7 +260,7 @@ rule compute_rt_pseudobulks_st:
         rep_col = 'model_rep_state',
     log: 'logs/sig_tumors/{dataset}/compute_rt_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -280,7 +280,7 @@ rule twidth_analysis_st:
         rep_col = 'model_rep_state',
     log: 'logs/sig_tumors/{dataset}/twidth_analysis.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'

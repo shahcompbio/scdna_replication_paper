@@ -88,7 +88,7 @@ rule plot_filtered_pyro_model_output_fl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness_lines/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/common/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -105,7 +105,7 @@ rule plot_inferred_cn_vs_scRT_filtered_fl:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/fitness_lines/{dataset}/plot_inferred_cn_vs_scRT_filtered.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_lines/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -118,7 +118,7 @@ rule compute_rt_pseudobulks_fl:
         rep_col = 'model_rep_state',
     log: 'logs/fitness_lines/{dataset}/compute_rt_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_lines/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -132,7 +132,7 @@ rule compute_cn_pseudobulks_fl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness_lines/{dataset}/compute_cn_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_lines/compute_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -168,7 +168,7 @@ rule plot_clone_rt_and_spf_fl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness_lines/{dataset}/plot_clone_rt_and_spf.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_lines/plot_clone_rt_and_spf.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -183,7 +183,7 @@ rule plot_clones_vs_time_fl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness_lines/{dataset}/plot_clones_vs_time.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_lines/plot_clones_vs_time.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -198,7 +198,7 @@ rule plot_cn_pseudobulks_fl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness_lines/{dataset}/plot_cn_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_lines/plot_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'

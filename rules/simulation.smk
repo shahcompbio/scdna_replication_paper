@@ -147,7 +147,7 @@ rule simulate_reads_from_cn_pyro_sim:
     log:
         'logs/simulation/{dataset}/simulate_reads_from_cn_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/simulate_reads_from_cn_pyro.py '
         '-si {input.s_phase} '
         '-gi {input.g1_phase} '
@@ -205,7 +205,7 @@ rule compute_ccc_features_sim:
         g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     log: 'logs/simulation/{dataset}/compute_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -229,7 +229,7 @@ rule infer_scRT_bulk_sim:
         max_iter = 2000
     log: 'logs/simulation/{dataset}/infer_scRT_bulk.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -253,7 +253,7 @@ rule infer_scRT_pyro_sim:
         max_iter = 2000
     log: 'logs/simulation/{dataset}/infer_scRT_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -277,7 +277,7 @@ rule infer_scRT_pyro_composite_sim:
         max_iter = 2000
     log: 'logs/simulation/{dataset}/infer_scRT_pyro_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -296,7 +296,7 @@ rule remove_nonreplicating_cells_sim:
         bulk_rep_col = 'rt_state'
     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/remove_nonreplicating_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -315,7 +315,7 @@ rule remove_nonreplicating_cells_composite_sim:
         bulk_rep_col = 'rt_state'
     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/remove_nonreplicating_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -335,7 +335,7 @@ rule plot_ccc_features_sim:
         bulk_rep_col = 'rt_state'
     log: 'logs/simulation/{dataset}/plot_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -404,7 +404,7 @@ rule plot_pyro_inferred_cn_vs_scRT_sim:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/simulation/{dataset}/plot_pyro_inferred_cn_vs_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_pyro_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -419,7 +419,7 @@ rule plot_pyro_composite_inferred_cn_vs_scRT_sim:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/simulation/{dataset}/plot_pyro_composite_inferred_cn_vs_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_pyro_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -435,7 +435,7 @@ rule true_vs_inferred_heatmaps_sim:
         true_rep_state = 'true_rep'
     log: 'logs/simulation/{dataset}/true_vs_inferred_heatmaps.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/true_vs_inferred_heatmaps.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -449,7 +449,7 @@ rule compute_rt_pseudobulks_pyro_sim:
         true_rep_col = 'true_rep'
     log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -463,7 +463,7 @@ rule compute_rt_pseudobulks_bulk_sim:
         true_rep_col = 'true_rep'
     log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_bulk.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -477,7 +477,7 @@ rule compute_rt_pseudobulks_pyro_composite_sim:
         true_rep_col = 'true_rep'
     log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_pyro_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -501,7 +501,7 @@ rule twidth_analysis_pyro_sim:
         infer_mode = 'pyro'
     log: 'logs/simulation/{dataset}/twidth_analysis_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -525,7 +525,7 @@ rule twidth_analysis_bulk_sim:
         infer_mode = 'bulk'
     log: 'logs/simulation/{dataset}/twidth_analysis_bulk.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -549,7 +549,7 @@ rule twidth_analysis_pyro_composite_sim:
         infer_mode = 'pyro_composite'
     log: 'logs/simulation/{dataset}/twidth_analysis_pyro_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -677,7 +677,7 @@ rule clone_specific_rt_sim:
     output: 'plots/simulation/all/clone_specific_rt.png'
     log: 'logs/simulation/all/clone_specific_rt.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/clone_specific_rt.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'

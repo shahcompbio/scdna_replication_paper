@@ -126,7 +126,7 @@ rule compute_ccc_features_lf:
     output: 'analysis/laks_flow/all/cn_data_features.tsv'
     log: 'logs/laks_flow/all/compute_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -213,7 +213,7 @@ rule cluster_into_clones_lf:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/laks_flow/{dataset}/cluster_into_clones.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python scripts/laks_flow/cluster_into_clones.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
@@ -253,7 +253,7 @@ rule infer_scRT_pyro_lf:
         cn_prior_method = 'g1_clones',
     log: 'logs/laks_flow/{dataset}/infer_scRT_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -276,7 +276,7 @@ rule infer_scRT_pyro_composite_lf:
         cn_prior_method = 'g1_composite',
     log: 'logs/laks_flow/{dataset}/infer_scRT_pyro_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/infer_scRT_composite.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -293,7 +293,7 @@ rule plot_inferred_cn_vs_scRT_lf:
         frac_rt_col = 'model_tau'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_vs_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -310,7 +310,7 @@ rule plot_inferred_cn_g_vs_scRT_lf:
         frac_rt_col = 'model_tau'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_g_vs_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -327,7 +327,7 @@ rule plot_inferred_cn_vs_scRT_composite_lf:
         frac_rt_col = 'model_tau'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_vs_scRT_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -344,7 +344,7 @@ rule plot_inferred_cn_g_vs_scRT_composite_lf:
         frac_rt_col = 'model_tau'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_g_vs_scRT_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -365,7 +365,7 @@ rule revise_cell_cycle_labels_lf:
         rpm_col = 'rpm'
     log: 'logs/laks_flow/{dataset}/revise_cell_cycle_labels.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -386,7 +386,7 @@ rule revise_cell_cycle_labels_composite_lf:
         rpm_col = 'rpm'
     log: 'logs/laks_flow/{dataset}/revise_cell_cycle_labels_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -401,7 +401,7 @@ rule rpm_umap_lf:
         rpm_col = 'rpm'
     log: 'logs/laks_flow/all/rpm_umap.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/rpm_umap.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -418,7 +418,7 @@ rule plot_inferred_cn_vs_scRT_filtered_lf:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_vs_scRT_filtered.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -435,7 +435,7 @@ rule plot_inferred_cn_vs_scRT_composite_filtered_lf:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_vs_scRT_composite_filtered.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -449,7 +449,7 @@ rule compute_cn_pseudobulks_lf:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/laks_flow/{dataset}/compute_cn_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/compute_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -463,7 +463,7 @@ rule compute_rt_pseudobulks_lf:
     output: 'analysis/laks_flow/all/rt_pseudobulks.tsv'
     log: 'logs/laks_flow/all/compute_rt_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -477,7 +477,7 @@ rule compute_rt_pseudobulks_composite_lf:
     output: 'analysis/laks_flow/all/rt_pseudobulks_composite.tsv'
     log: 'logs/laks_flow/all/compute_rt_pseudobulks_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -490,7 +490,7 @@ rule compute_rt_pseudobulks_permuted_composite_lf:
         rep_col = 'model_rep_state'
     log: 'logs/laks_flow/{dataset}/compute_rt_pseudobulks_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/compute_rt_pseudobulks_simple.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -506,7 +506,7 @@ rule plot_rt_profiles_lf:
         plot5 = 'plots/laks_flow/all/rt_joint_chr1.png',
     log: 'logs/laks_flow/all/plot_rt_profiles.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_rt_profiles.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -522,7 +522,7 @@ rule plot_rt_profiles_composite_lf:
         plot5 = 'plots/laks_flow/all/rt_joint_chr1_composite.png',
     log: 'logs/laks_flow/all/plot_rt_profiles_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_rt_profiles.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -562,7 +562,7 @@ rule analyze_permuted_datasets_lf:
         rates = expand([str(config['permuted_datasets'][d]['rate']) for d in config['permuted_datasets']])
     log: 'logs/laks_flow/permuted/analyze_permuted_datasets.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/analyze_permuted_datasets.py '
         '--cn_good {input.cn_s} '
         '--cn_bad {input.cn_g} '
@@ -591,7 +591,7 @@ rule permuted_dataset_rt_profiles_lf:
 
     log: 'logs/laks_flow/permuted/permuted_dataset_rt_profiles.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/permuted_dataset_rt_profiles.py '
         '--rt_ref {input.rt_ref} '
         '--rt_perm {input.rt_perm} '
@@ -616,7 +616,7 @@ rule twidth_analysis_pyro_lf:
         rep_state = 'model_rep_state'
     log: 'logs/laks_flow/all/twidth_analysis_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -636,7 +636,7 @@ rule twidth_analysis_pyro_composite_lf:
         rep_state = 'model_rep_state'
     log: 'logs/laks_flow/all/twidth_analysis_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'

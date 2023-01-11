@@ -202,7 +202,7 @@ rule clone_assignments_f:
         assign_col = 'copy'
     log: 'logs/fitness/{dataset}/clone_assignments.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/clone_assignments.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -213,7 +213,7 @@ rule compute_ccc_features_f:
     output: 'analysis/fitness/{dataset}/cn_data_features.tsv'
     log: 'logs/fitness/{dataset}/compute_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -226,7 +226,7 @@ rule plot_ccc_features_f:
         plot2 = 'plots/fitness/{dataset}/ccc_features_scatter.png'
     log: 'logs/fitness/{dataset}/plot_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -241,7 +241,7 @@ rule split_cell_cycle_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/split_cell_cycle.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/split_cell_cycle.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -258,7 +258,7 @@ rule recluster_cells_SA1035_f:
         num_clusters = 6
     log: 'logs/fitness/SA1035/recluster_cells.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/recluster_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -275,7 +275,7 @@ rule recluster_cells_SA535_f:
         num_clusters = 5
     log: 'logs/fitness/SA535/recluster_cells.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/recluster_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -292,7 +292,7 @@ rule recluster_cells_SA609_f:
         num_clusters = 6
     log: 'logs/fitness/SA609/recluster_cells.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/recluster_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -315,7 +315,7 @@ rule infer_scRT_pyro_f:
         infer_mode = 'pyro'
     log: 'logs/fitness/{dataset}/infer_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -350,7 +350,7 @@ rule plot_cn_heatmaps_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/plot_cn_heatmaps.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/common/plot_s_vs_g_cn_heatmaps.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
@@ -365,7 +365,7 @@ rule plot_rt_heatmap_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/plot_rt_heatmap.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/common/plot_rt_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
@@ -383,7 +383,7 @@ rule plot_pyro_model_output_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/plot_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/common/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -404,7 +404,7 @@ rule revise_cell_cycle_labels_f:
         rpm_col = 'rpm'
     log: 'logs/fitness/{dataset}/revise_cell_cycle_labels.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -438,7 +438,7 @@ rule split_by_rx_f:
         cn_g_SA609T2 = 'analysis/fitness/SA609T2/g1_phase_cells_with_scRT_filtered.tsv',
     log: 'logs/fitness/split_by_rx.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/split_by_rx.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -456,7 +456,7 @@ rule plot_filtered_pyro_model_output_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/common/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -473,7 +473,7 @@ rule plot_rpm_embedding_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/plot_rpm_embedding.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_rpm_embedding.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -486,7 +486,7 @@ rule compute_rt_pseudobulks_f:
         rep_col = 'model_rep_state',
     log: 'logs/fitness/{dataset}/compute_rt_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -500,7 +500,7 @@ rule compute_cn_pseudobulks_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/compute_cn_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/compute_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -515,7 +515,7 @@ rule plot_cn_pseudobulks_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/plot_cn_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -535,7 +535,7 @@ rule plot_clone_rt_and_spf_f:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/fitness/{dataset}/plot_clone_rt_and_spf.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_clone_rt_and_spf.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -552,7 +552,7 @@ rule plot_clones_vs_time_SA535_f:
         dataset = 'SA535'
     log: 'logs/fitness/SA535/plot_clones_vs_time.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_clones_vs_time.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -569,7 +569,7 @@ rule plot_clones_vs_time_SA1035_f:
         dataset = 'SA1035'
     log: 'logs/fitness/SA1035/plot_clones_vs_time.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_clones_vs_time.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -589,7 +589,7 @@ rule plot_clones_vs_time_SA609_f:
         dataset = 'SA609'
     log: 'logs/fitness/SA609/plot_clones_vs_time.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_clones_vs_time_SA609.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -605,7 +605,7 @@ rule plot_fitness_proxy_s_coefficients_f:
     output: 'plots/fitness/fitness_proxy_s_coefficients.png'
     log: 'logs/fitness/fitness_proxy_s_coefficients.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/plot_fitness_proxy_s_coefficients.py '
         '{input} {output} &> {log} ; '
         'deactivate'
@@ -623,7 +623,7 @@ rule plot_fitness_proxy_s_coefficients_f:
 #         input_col = 'copy'
 #     log: 'logs/fitness/{dataset}/infer_SPF.log'
 #     shell:
-#         'source ../scdna_replication_tools/venv/bin/activate ; '
+#         'source ../scdna_replication_tools/venv3/bin/activate ; '
 #         'python3 scripts/fitness/infer_SPF.py '
 #         '{input} {params} {output} &> {log} ; '
 #         'deactivate'
@@ -637,7 +637,7 @@ rule plot_fitness_proxy_s_coefficients_f:
 #         clone_col = 'clone_id'
 #     log: 'logs/fitness/{dataset}/compute_consensus_clone_states.log'
 #     shell:
-#         'source ../scdna_replication_tools/venv/bin/activate ; '
+#         'source ../scdna_replication_tools/venv3/bin/activate ; '
 #         'python3 scripts/common/compute_consensus_clone_profiles.py '
 #         '{input} {params} {output} &> {log} ; '
 #         'deactivate'
