@@ -12,6 +12,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('-i', '--input', type=str, nargs='+', help='list of pseudobulk RT profiles for each sample')
+    p.add_argument('-c', '--counts', type=str, nargs='+', help='cell cycle clone counts for each sample')
     p.add_argument('-srp', '--sample_rt_profiles', type=str, help='plot of the RT profiles for each sample')
     p.add_argument('-srd', '--sample_rt_diffs', type=str, help='violin plots of difference in RT between autosomes and chrX for samples with and without chrX CNAs')
     p.add_argument('-crp', '--clone_rt_profiles', type=str, help='plot of the RT profiles for each clone, one subpanel per sample')
@@ -164,6 +165,7 @@ def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_in
                         box_pairs=box_pairs, test=test, order=order,
                         text_format=text_format, loc=loc, verbose=verbose)
 
+
 def plot_rt_diff_vs_chrX(df, ax, x='chrX', y='RT_diff', test='t-test_ind', text_format='star', loc='inside', verbose=0):
     ''' 
     Plot the difference in pseudobulk RT values between SA039 and OV2295
@@ -179,6 +181,31 @@ def plot_rt_diff_vs_chrX(df, ax, x='chrX', y='RT_diff', test='t-test_ind', text_
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
                        text_format=text_format, loc=loc, verbose=verbose)
     return ax
+
+
+def load_clone_counts(argv):
+    """ Use the  cell cycle clone counts input to create a table of the number of cells in each clone for each cell cycle phase and dataset. """
+    counts = []
+    for path in argv.counts:
+        # load the counts
+        temp_counts = pd.read_csv(path, sep='\t')
+        # subset to just the columns with clone-id and cell counts
+        temp_counts = temp_counts[['clone_id', 'num_cells_s', 'num_cells_g']]
+        # sum num_cells_s column across all rows with the same clone_id
+        # this is important as there are multiple rows (libraries) for each clone_id
+        temp_counts = temp_counts.groupby('clone_id').sum().reset_index()
+        # add dataset name as column
+        d = path.split('/')[2]
+        temp_counts['dataset'] = d
+        # compute the fraction of cells in each clone for each cell cycle phase
+        temp_counts['frac_cells_s'] = temp_counts['num_cells_s'] / temp_counts['num_cells_s'].sum()
+        temp_counts['frac_cells_g'] = temp_counts['num_cells_g'] / temp_counts['num_cells_g'].sum()
+        # add to list of counts
+        counts.append(temp_counts)
+    # concatenate all counts
+    counts = pd.concat(counts, ignore_index=True)
+
+    return counts
 
 
 def plot_sample_rt_profiles(rt, rt_coi, argv):
@@ -223,6 +250,7 @@ def plot_sample_rt_diffs(rt_diff, rt_diff_coi, argv):
     fig.savefig(argv.sample_rt_diffs, dpi=300, bbox_inches='tight')
 
 
+
 def plot_clone_rt_profiles(rt, ax, dataset_id):
     # get the clone RT columns for this dataset
     clone_rt_cols = [c for c in rt.columns if c.startswith(dataset_id) and 'clone' in c]
@@ -260,7 +288,7 @@ def plot_clone_rt_profiles_wrapper(rt, argv):
     fig.savefig(argv.clone_rt_profiles, dpi=300, bbox_inches='tight')
 
 
-def plot_clone_rt_diffs_SA1054(rt, argv):
+def plot_clone_rt_diffs_SA1054(rt, counts, argv):
     ''' compute RT difference between the SA1054 clones based on allelic state '''
     # list of clones that are allelically balanced
     ref_rt_clones_SA1054 = [
@@ -268,14 +296,31 @@ def plot_clone_rt_diffs_SA1054(rt, argv):
         'SA1054_pseudobulk_cloneC_model_rep_state',
     ]
 
-    # list of clones that are allelically imbalanced
-    rt_coi_clones_SA1054 = [
-        'SA1054_pseudobulk_cloneA_model_rep_state',
+    # use the number of cells in each clone to compute a corresponding weight vector for the reference
+    ref_rt_weights_SA1054 = [
+        counts.query("dataset=='SA1054'").query("clone_id=='B'")['num_cells_s'].values[0],
+        counts.query("dataset=='SA1054'").query("clone_id=='C'")['num_cells_s'].values[0],
+    ]
+
+    # combine clones D & E into one pseudobulk RT profile since they have the same allelic state
+    # find the number of cells in clones D & E
+    SA1054_clones_DE = [
         'SA1054_pseudobulk_cloneD_model_rep_state',
         'SA1054_pseudobulk_cloneE_model_rep_state',
     ]
+    weights_SA1054_clones_DE = [
+        counts.query("dataset=='SA1054'").query("clone_id=='D'")['num_cells_s'].values[0],
+        counts.query("dataset=='SA1054'").query("clone_id=='E'")['num_cells_s'].values[0],
+    ]
 
-    # TODO: use number of S-phase cells in each SA1054 clone to take a weighted average of clones D & E
+    # take a weighted mean of the clone D & E pseudobulk RT profiles
+    rt['SA1054_pseudobulk_cloneDE_model_rep_state'] = np.average(rt[SA1054_clones_DE], weights=weights_SA1054_clones_DE, axis=1)
+
+    # list of clones that are allelically imbalanced
+    rt_coi_clones_SA1054 = [
+        'SA1054_pseudobulk_cloneA_model_rep_state',
+        'SA1054_pseudobulk_cloneDE_model_rep_state',
+    ]
 
     # subset the RT dataframe to only include the clones of interest or the ref clones
     rt_coi_SA1054 = ref_rt_clones_SA1054 + rt_coi_clones_SA1054 + ['chr', 'start', 'end']
@@ -285,8 +330,7 @@ def plot_clone_rt_diffs_SA1054(rt, argv):
     rt_diff_SA1054['chrX'] = rt_diff_SA1054['chr'].apply(lambda x: 'chrX' if x=='X' else 'autosomes')
 
     # use the ref clones to compute the reference RT
-    # TODO: use the number of S-phase cells in each clone to take the weighted average of the ref clones
-    rt_diff_SA1054['ref_rt'] = rt_diff_SA1054[ref_rt_clones_SA1054].mean(axis=1)
+    rt_diff_SA1054['ref_rt'] = np.average(rt_diff_SA1054[ref_rt_clones_SA1054], weights=ref_rt_weights_SA1054, axis=1)
 
     # for all the clones in rt_coi_clones_SA1054, compute the RT difference between the clone and the ref_rt column
     rt_diff_columns_SA1054 = []
@@ -297,7 +341,7 @@ def plot_clone_rt_diffs_SA1054(rt, argv):
         rt_diff_columns_SA1054.append(temp_diff_col)
 
     # for every rt_diff_column, plot the RT difference vs chrX
-    fig, ax = plt.subplots(1, 3, figsize=(9,4), tight_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(6,4), tight_layout=True)
     ax = ax.flatten()
 
     for i, col in enumerate(rt_diff_columns_SA1054):
@@ -310,7 +354,7 @@ def plot_clone_rt_diffs_SA1054(rt, argv):
     fig.savefig(argv.clone_rt_diffs_SA1054, dpi=300, bbox_inches='tight')
 
 
-def plot_clone_rt_diffs_SA1055(rt, argv):
+def plot_clone_rt_diffs_SA1055(rt, counts, argv):
     ''' compute RT difference between the SA1055 clones based on allelic state '''
     # list of clones that are allelically balanced
     ref_rt_clones_SA1055 = [
@@ -321,10 +365,32 @@ def plot_clone_rt_diffs_SA1055(rt, argv):
         'SA1055_pseudobulk_cloneI_model_rep_state',
     ]
 
-    # list of clones that are allelically imbalanced
-    rt_coi_clones_SA1055 = [
+    # use the number of cells in each clone to compute a corresponding weight vector for the reference
+    ref_rt_weights_SA1055 = [
+        counts.query("dataset=='SA1055'").query("clone_id=='E'")['num_cells_s'].values[0],
+        counts.query("dataset=='SA1055'").query("clone_id=='F'")['num_cells_s'].values[0],
+        counts.query("dataset=='SA1055'").query("clone_id=='G'")['num_cells_s'].values[0],
+        counts.query("dataset=='SA1055'").query("clone_id=='H'")['num_cells_s'].values[0],
+        counts.query("dataset=='SA1055'").query("clone_id=='I'")['num_cells_s'].values[0],
+    ]
+
+    # combine clones A & B into one pseudobulk RT profile since they have the same allelic state
+    # find the number of cells in clones D & E
+    SA1055_clones_AB = [
         'SA1055_pseudobulk_cloneA_model_rep_state',
         'SA1055_pseudobulk_cloneB_model_rep_state',
+    ]
+    weights_SA1055_clones_AB = [
+        counts.query("dataset=='SA1055'").query("clone_id=='A'")['num_cells_s'].values[0],
+        counts.query("dataset=='SA1055'").query("clone_id=='B'")['num_cells_s'].values[0],
+    ]
+
+    # take a weighted mean of the clone A & B pseudobulk RT profiles
+    rt['SA1055_pseudobulk_cloneAB_model_rep_state'] = np.average(rt[SA1055_clones_AB], weights=weights_SA1055_clones_AB, axis=1)
+
+    # list of clones that are allelically imbalanced
+    rt_coi_clones_SA1055 = [
+        'SA1055_pseudobulk_cloneAB_model_rep_state',
         'SA1055_pseudobulk_cloneC_model_rep_state',
         'SA1055_pseudobulk_cloneD_model_rep_state',
     ]
@@ -337,7 +403,7 @@ def plot_clone_rt_diffs_SA1055(rt, argv):
     rt_diff_SA1055['chrX'] = rt_diff_SA1055['chr'].apply(lambda x: 'chrX' if x=='X' else 'autosomes')
 
     # use the ref clones to compute the reference RT
-    rt_diff_SA1055['ref_rt'] = rt_diff_SA1055[ref_rt_clones_SA1055].mean(axis=1)
+    rt_diff_SA1055['ref_rt'] = np.average(rt_diff_SA1055[ref_rt_clones_SA1055], weights=ref_rt_weights_SA1055, axis=1)
 
     # for all the clones in rt_coi_clones_SA1055, compute the RT difference between the clone and the ref_rt column
     rt_diff_columns_SA1055 = []
@@ -348,7 +414,7 @@ def plot_clone_rt_diffs_SA1055(rt, argv):
         rt_diff_columns_SA1055.append(temp_diff_col)
 
     # for every rt_diff_column, plot the RT difference vs chrX
-    fig, ax = plt.subplots(1, 4, figsize=(12,4), tight_layout=True)
+    fig, ax = plt.subplots(1, 3, figsize=(9,4), tight_layout=True)
     ax = ax.flatten()
 
     for i, col in enumerate(rt_diff_columns_SA1055):
@@ -360,8 +426,12 @@ def plot_clone_rt_diffs_SA1055(rt, argv):
 
     fig.savefig(argv.clone_rt_diffs_SA1055, dpi=300, bbox_inches='tight')
 
+
 def main():
     argv = get_args()
+
+    # load the cell counts in each clone
+    counts = load_clone_counts(argv)
 
     # read in the pseudobulk RT profiles for each sample
     rt = pd.DataFrame()
@@ -404,6 +474,13 @@ def main():
         'SA1292_pseudobulk_model_rep_state',
         'SA1188_pseudobulk_model_rep_state',
     ]
+    ref_rt_weights = [
+        np.sum(counts.query('dataset=="SA039"')['num_cells_s'].values),
+        np.sum(counts.query('dataset=="SA906a"')['num_cells_s'].values),
+        np.sum(counts.query('dataset=="SA906b"')['num_cells_s'].values),
+        np.sum(counts.query('dataset=="SA1292"')['num_cells_s'].values),
+        np.sum(counts.query('dataset=="SA1188"')['num_cells_s'].values),
+    ]
 
     # samples with CNAs on chrX should be used as a test
     test_rt_samples = [
@@ -417,7 +494,7 @@ def main():
     rt_diff = rt[[c for c in rt.columns if (c in rt_coi or c in ['chr', 'start', 'end'])]]
 
     # use the average of all the reference samples as the reference RT profile
-    rt_diff['ref_rt'] = rt[ref_rt_samples].mean(axis=1)
+    rt_diff['ref_rt'] = np.average(rt[ref_rt_samples], weights=ref_rt_weights, axis=1)
 
     # denote which loci are on chrX
     rt_diff['chrX'] = rt_diff['chr'].apply(lambda x: 'chrX' if x=='X' else 'autosomes')
@@ -442,8 +519,8 @@ def main():
     plot_clone_rt_profiles_wrapper(rt, argv)
 
     # plot clone-specific RT differences on chrX for SA1054 and SA1055
-    plot_clone_rt_diffs_SA1054(rt, argv)
-    plot_clone_rt_diffs_SA1055(rt, argv)
+    plot_clone_rt_diffs_SA1054(rt, counts, argv)
+    plot_clone_rt_diffs_SA1055(rt, counts, argv)
 
 
 if __name__ == '__main__':

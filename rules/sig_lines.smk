@@ -189,7 +189,7 @@ rule clone_assignments_sl:
         assign_col = 'copy'
     log: 'logs/sig_lines/{dataset}/clone_assignments.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/clone_assignments.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -200,7 +200,7 @@ rule compute_ccc_features_sl:
     output: 'analysis/sig_lines/{dataset}/cn_data_features.tsv'
     log: 'logs/sig_lines/{dataset}/compute_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -213,7 +213,7 @@ rule plot_ccc_features_sl:
         plot2 = 'plots/sig_lines/{dataset}/ccc_features_scatter.png'
     log: 'logs/sig_lines/{dataset}/plot_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -226,7 +226,7 @@ rule split_cell_cycle_sl:
         cn_g1 = 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
     log: 'logs/sig_lines/{dataset}/split_cell_cycle.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/split_cell_cycle.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -250,7 +250,7 @@ rule infer_scRT_pyro_sl:
         infer_mode = 'pyro'
     log: 'logs/sig_lines/{dataset}/infer_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -299,7 +299,7 @@ rule plot_pyro_model_output_sl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_lines/{dataset}/plot_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -320,7 +320,7 @@ rule revise_cell_cycle_labels_sl:
         rpm_col = 'rpm'
     log: 'logs/sig_lines/{dataset}/revise_cell_cycle_labels.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/revise_cell_cycle_labels.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -338,7 +338,7 @@ rule plot_filtered_pyro_model_output_sl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_lines/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -355,7 +355,7 @@ rule plot_inferred_cn_vs_scRT_filtered_sl:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/sig_lines/{dataset}/plot_inferred_cn_vs_scRT_filtered.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -373,7 +373,7 @@ rule cohort_frac_rep_distribution_sl:
     output: 'plots/sig_lines/frac_rep_distribution.png'
     log: 'logs/sig_lines/cohort_frac_rep_distribution.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/cohort_frac_rep_distribution.py '
         '-i {input} '
         '--plot {output} '
@@ -392,7 +392,7 @@ rule plot_rpm_embedding_sl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_lines/{dataset}/plot_rpm_embedding.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_rpm_embedding.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -405,7 +405,7 @@ rule compute_rt_pseudobulks_sl:
         rep_col = 'model_rep_state',
     log: 'logs/sig_lines/{dataset}/compute_rt_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -419,7 +419,7 @@ rule compute_cn_pseudobulks_sl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_lines/{dataset}/compute_cn_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/compute_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -434,7 +434,7 @@ rule plot_cn_pseudobulks_sl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_lines/{dataset}/plot_cn_pseudobulks.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -454,7 +454,7 @@ rule plot_clone_rt_and_spf_sl:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_lines/{dataset}/plot_clone_rt_and_spf.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/plot_clone_rt_and_spf.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -550,7 +550,7 @@ rule twidth_analysis_sl:
         rep_col = 'model_rep_state',
     log: 'logs/sig_lines/{dataset}/twidth_analysis.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -572,7 +572,7 @@ rule twidth_summary_sl:
         datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055']),
     log: 'logs/sig_lines/twidth_summary.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/twidth_summary.py '
         '-i {input.tw} '
         '-d {params.datasets} '
@@ -602,7 +602,7 @@ rule twidth_downsampling_sl:
         rep_col = 'model_rep_state'
     log: 'logs/sig_lines/twidth_downsampling.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/twidth_downsampling.py '
         '--cn_s {input.cn_s} '
         '-d {params.datasets} '
@@ -650,7 +650,7 @@ rule phase_changes_sl:
         dataset = lambda wildcards: wildcards.dataset,
         frac_rt_col = 'cell_frac_rep',
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/phase_changes.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -670,7 +670,7 @@ rule phase_changes_cohort_sl:
         plot2 = 'plots/sig_lines/phase_changes_cohort_features.png'
     log: 'logs/sig_lines/phase_changes_cohort.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/phase_changes_cohort.py '
         '--input {input} '
         '--plot1 {output.plot1} '
@@ -682,13 +682,20 @@ rule phase_changes_cohort_sl:
 # when combining multiple pseudobulk RT profiles
 rule chrX_RT_sl:
     input:
-        expand(
+        RT = expand(
             'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
-        )
+        ),
+        counts = expand(
+            'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
     output:
         sample_rt_profiles = 'plots/sig_lines/sample_RT_X_profiles.png',
         sample_rt_diffs = 'plots/sig_lines/sample_RT_X_diffs.png',
@@ -699,7 +706,8 @@ rule chrX_RT_sl:
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_lines/chrX_RT.py '
-        '--input {input} '
+        '--input {input.RT} '
+        '--counts {input.counts} '
         '--sample_rt_profiles {output.sample_rt_profiles} '
         '--sample_rt_diffs {output.sample_rt_diffs} '
         '--clone_rt_profiles {output.clone_rt_profiles} '
