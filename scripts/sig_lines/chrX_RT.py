@@ -230,7 +230,7 @@ def plot_sample_rt_diffs(rt_diff, rt_diff_coi, argv):
 
 
 
-def plot_clone_rt_profiles(rt, ax, dataset_id, counts):
+def plot_clone_rt_profiles(rt, ax0, ax1, dataset_id, counts):
     # get the clone RT columns for this dataset
     clone_rt_cols = [c for c in rt.columns if c.startswith(dataset_id) and 'clone' in c]
 
@@ -240,30 +240,36 @@ def plot_clone_rt_profiles(rt, ax, dataset_id, counts):
         clone_id = col.split('_')[2].split('clone')[1]
         # find the number of S-phase cells in this clone according to dataset_counts
         n = int(counts.query("dataset=='{}'".format(dataset_id)).query("clone_id=='{}'".format(clone_id))['num_cells_s'].values[0])
+        # plot the X chromosome
         plot_cell_cn_profile2(
-            ax, rt, col, color='C{}'.format(i), chromosome='X',
+            ax1, rt, col, color='C{}'.format(i), chromosome='X',
+            max_cn=None, scale_data=False, lines=True, label='{} (n={})'.format(clone_id, n)
+        )
+        # plot the whole genome
+        plot_cell_cn_profile2(
+            ax0, rt, col, color='C{}'.format(i),
             max_cn=None, scale_data=False, lines=True, label='{} (n={})'.format(clone_id, n)
         )
     
     # format the plot
-    ax.set_title('{} clone RT profiles'.format(dataset_id))
-    ax.set_ylabel('RT profile\n<--late | early-->')
-    ax.legend(title='Clone ID', loc='upper left')
+    for ax in [ax0, ax1]:
+        ax.set_title('{} clone RT profiles'.format(dataset_id))
+        ax.set_ylabel('RT profile\n<--late | early-->')
+        ax.legend(title='Clone ID', loc='upper left')
 
 
 def plot_clone_rt_profiles_wrapper(rt, counts, argv):
     # plot clone RT profiles for each dataset
     # find the number of datasets
-    datasets = set([c.split('_')[0] for c in rt.columns if c.startswith('SA') and 'clone' not in c])
+    datasets = set([c.split('_')[0] for c in rt.columns if (c.startswith('SA') or c.startswith('OV')) and 'clone' not in c])
     n_datasets = len(datasets)
 
     # create a grid of subplots where each row is a dataset and the height is propotional to the number of datasets
-    fig, ax = plt.subplots(n_datasets, 1, figsize=(16, 4*n_datasets), tight_layout=True)
-    ax = ax.flatten()
+    fig, ax = plt.subplots(n_datasets, 2, figsize=(32, 4*n_datasets), tight_layout=True)
 
     # loop through each dataset and plot the clone RT profiles
     for i, dataset_id in enumerate(datasets):
-        plot_clone_rt_profiles(rt, ax[i], dataset_id, counts)
+        plot_clone_rt_profiles(rt, ax[i, 0], ax[i, 1], dataset_id, counts)
     
     # save the figure
     fig.savefig(argv.clone_rt_profiles, dpi=300, bbox_inches='tight')

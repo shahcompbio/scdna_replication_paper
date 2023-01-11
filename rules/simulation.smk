@@ -90,7 +90,7 @@ rule all_simulation:
         ),
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/model_accuracies1.png',
-        'plots/simulation/all/clone_specific_rt.png',
+        'plots/simulation/all/clone_specific_rt_corr.png',
         # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
 
@@ -674,7 +674,9 @@ rule clone_specific_rt_sim:
     input:
         P10 = 'analysis/simulation/P10/scRT_pseudobulks_pyro_composite.tsv',
         P11 = 'analysis/simulation/P11/scRT_pseudobulks_pyro_composite.tsv'
-    output: 'plots/simulation/all/clone_specific_rt.png'
+    output: 
+        corr = 'plots/simulation/all/clone_specific_rt_corr.png',
+        profiles = 'plots/simulation/all/clone_specific_rt_profiles.png'
     log: 'logs/simulation/all/clone_specific_rt.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
