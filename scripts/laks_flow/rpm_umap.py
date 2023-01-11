@@ -58,11 +58,12 @@ def main():
     umap_df = umap_df.merge(metrics_df, on='cell_id')
 
     # plot the UMAP embedding colored by various features
-    fig, axes = plt.subplots(1, 3, figsize=(18, 4), tight_layout=True)
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
     for ax, col in zip(axes.ravel(), ['flow phase', 'cell line', 'PERT phase']):
         sns.scatterplot(
             data=umap_df, x='embedding_0', y='embedding_1', hue=col, ax=ax, alpha=0.5
         )
+        ax.set_title('Reads per million UMAP')
     
     # save the figure
     fig.savefig(argv.output, bbox_inches='tight', dpi=300)
