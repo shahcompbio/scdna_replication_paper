@@ -89,7 +89,7 @@ rule all_sig_lines:
             'plots/sig_lines/{dataset}/subclonal_rt_diffs.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets)
+                if ((d not in bad_datasets) or (d not in ['OV2295']))
             ]
         ),
         expand(
@@ -112,7 +112,7 @@ rule all_sig_lines:
         'plots/sig_lines/twidth_summary.png',
         'plots/sig_lines/clone_RT_X_profiles.png',
         'plots/sig_lines/clone_corrs.png',
-        'plots/sig_lines/frac_rep_distribution.svg'
+        'plots/sig_lines/frac_rep_distribution.png'
         
         
 
@@ -370,7 +370,7 @@ rule cohort_frac_rep_distribution_sl:
                 if (d not in bad_datasets)
             ]
         )
-    output: 'plots/sig_lines/frac_rep_distribution.svg'
+    output: 'plots/sig_lines/frac_rep_distribution.png'
     log: 'logs/sig_lines/cohort_frac_rep_distribution.log'
     shell:
         'source ../scdna_replication_tools/venv/bin/activate ; '
@@ -678,7 +678,8 @@ rule phase_changes_cohort_sl:
         '&> {log} ; '
         'deactivate'
 
-
+# TODO: pass in a tsv of the number of S-phase cells per clone so I can take weighted averages
+# when combining multiple pseudobulk RT profiles
 rule chrX_RT_sl:
     input:
         expand(

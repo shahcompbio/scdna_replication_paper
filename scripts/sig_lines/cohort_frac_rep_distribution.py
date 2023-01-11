@@ -47,12 +47,12 @@ def main():
     ax = ax.flatten()
 
     # plot both a histogram and kdeplot
-    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', ax=ax[0])
+    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', multiple='stack', ax=ax[0])
     sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', ax=ax[1])
-    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, ax=ax[2])
+    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, multiple='stack', ax=ax[2])
     sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, ax=ax[3])
 
-    for i in range(2):
+    for i in range(4):
         ax[i].set_xlabel('Inferred fraction of replicated bins')
         ax[i].set_title('Distribution of cells\nwithin S-phase')
     

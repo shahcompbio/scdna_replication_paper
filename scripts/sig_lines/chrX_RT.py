@@ -275,6 +275,8 @@ def plot_clone_rt_diffs_SA1054(rt, argv):
         'SA1054_pseudobulk_cloneE_model_rep_state',
     ]
 
+    # TODO: use number of S-phase cells in each SA1054 clone to take a weighted average of clones D & E
+
     # subset the RT dataframe to only include the clones of interest or the ref clones
     rt_coi_SA1054 = ref_rt_clones_SA1054 + rt_coi_clones_SA1054 + ['chr', 'start', 'end']
     rt_diff_SA1054 = rt[rt_coi_SA1054]
@@ -283,6 +285,7 @@ def plot_clone_rt_diffs_SA1054(rt, argv):
     rt_diff_SA1054['chrX'] = rt_diff_SA1054['chr'].apply(lambda x: 'chrX' if x=='X' else 'autosomes')
 
     # use the ref clones to compute the reference RT
+    # TODO: use the number of S-phase cells in each clone to take the weighted average of the ref clones
     rt_diff_SA1054['ref_rt'] = rt_diff_SA1054[ref_rt_clones_SA1054].mean(axis=1)
 
     # for all the clones in rt_coi_clones_SA1054, compute the RT difference between the clone and the ref_rt column
