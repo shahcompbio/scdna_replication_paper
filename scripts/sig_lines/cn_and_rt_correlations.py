@@ -11,10 +11,12 @@ def get_args():
 
     p.add_argument('-ic', '--input_cn', type=str, nargs='+', help='list of pseudobulk CN profiles for each sample')
     p.add_argument('-ir', '--input_rt', type=str, nargs='+', help='list of pseudobulk RT profiles for each sample')
+    p.add_argument('-c', '--counts', type=str, help='cell cycle clone counts across all samples')
     p.add_argument('-sc', '--sample_corrs', type=str, help='plot of CN and RT correlations between samples')
     p.add_argument('-cc', '--clone_corrs', type=str, help='plot of CN and RT correlations between clones')
 
     return p.parse_args()
+
 
 def read_rt_data(argv):
     # read in the pseudobulk RT profiles for each sample
@@ -166,14 +168,43 @@ def main():
     # read in the pseudobulk CN profiles for all samples
     cn = read_cn_data(argv)
 
+    # load the number of cells belonging to each sample & clone
+    counts = pd.read_csv(argv.counts, sep='\t')
+
     # create a list of the sample cn profiles
     sample_cn_cols = [c for c in cn.columns if c.endswith('sample_cn')]
     # create a list of the sample rt profiles
     sample_rt_cols = [c for c in rt.columns if c.endswith('model_rep_state') and 'clone' not in c]
     # create a list of the clone cn profiles
-    clone_cn_cols = [c for c in cn.columns if c.endswith('cn') and 'sample' not in c]
+    temp_clone_cn_cols = [c for c in cn.columns if c.endswith('cn') and 'sample' not in c]
     # create a list of the clone rt profiles
-    clone_rt_cols = [c for c in rt.columns if c.endswith('model_rep_state') and 'clone' in c]
+    temp_clone_rt_cols = [c for c in rt.columns if c.endswith('model_rep_state') and 'clone' in c]
+
+    clone_cn_cols = []
+    clone_rt_cols = []
+
+    # loop through all clones and add to the column list if the number of cells is greater than 10
+    for col in temp_clone_cn_cols:
+        # extract the dataset and clone_id from the column name
+        c = col.split('_')[2]
+        d = col.split('_')[0]
+        # find the number of cells corresponding to this dataset and clone
+        print('col', col, 'clone', c, 'dataset', d)
+        n = int(counts.query("dataset=='{}'".format(d)).query("clone_id=='{}'".format(c))['num_cells_s'].values[0])
+        if n > 10:
+            clone_cn_cols.append(col)
+    
+    # repeat this for clone rt columns
+    for col in temp_clone_rt_cols:
+        c = col.split('_')[2].replace('clone', '')
+        d = col.split('_')[0]
+        print('col', col, 'clone', c, 'dataset', d)
+        n = int(counts.query("dataset=='{}'".format(d)).query("clone_id=='{}'".format(c))['num_cells_s'].values[0])
+        if n > 10:
+            clone_rt_cols.append(col)
+
+    # make sure the same number of clones are being plotted for CN and RT
+    assert(len(clone_cn_cols) == len(clone_rt_cols))
 
     # plot the correlation between the sample CN and RT profiles
     plot_sample_corrs(cn, rt, sample_cn_cols, sample_rt_cols, argv)

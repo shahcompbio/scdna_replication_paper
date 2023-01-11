@@ -460,6 +460,26 @@ rule plot_clone_rt_and_spf_sl:
         'deactivate'
 
 
+rule cohort_clone_counts_sl:
+    input:
+        expand(
+            'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+    output: 'analysis/sig_lines/cohort_clone_counts.tsv'
+    log: 'logs/sig_lines/cohort_clone_counts.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/cohort_clone_counts.py '
+        '--input {input} '
+        '--output {output} '
+        '&> {log} ; '
+        'deactivate'
+
+
 rule subclonal_rt_diffs_sl:
     input:
         rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
@@ -678,8 +698,7 @@ rule phase_changes_cohort_sl:
         '&> {log} ; '
         'deactivate'
 
-# TODO: pass in a tsv of the number of S-phase cells per clone so I can take weighted averages
-# when combining multiple pseudobulk RT profiles
+
 rule chrX_RT_sl:
     input:
         RT = expand(
@@ -689,13 +708,7 @@ rule chrX_RT_sl:
                 if (d not in bad_datasets)
             ]
         ),
-        counts = expand(
-            'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv',
-            dataset=[
-                d for d in config['signatures_cell_lines']
-                if (d not in bad_datasets)
-            ]
-        ),
+        counts = 'analysis/sig_lines/cohort_clone_counts.tsv'
     output:
         sample_rt_profiles = 'plots/sig_lines/sample_RT_X_profiles.png',
         sample_rt_diffs = 'plots/sig_lines/sample_RT_X_diffs.png',
@@ -717,7 +730,7 @@ rule chrX_RT_sl:
         'deactivate'
 
 
-rule cn_and_rt_correlations:
+rule cn_and_rt_correlations_sl:
     input:
         rt = expand(
             'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
@@ -732,7 +745,8 @@ rule cn_and_rt_correlations:
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
-        )
+        ),
+        counts = 'analysis/sig_lines/cohort_clone_counts.tsv'
     output:
         sample_corrs = 'plots/sig_lines/sample_corrs.png',
         clone_corrs = 'plots/sig_lines/clone_corrs.png',
@@ -742,6 +756,7 @@ rule cn_and_rt_correlations:
         'python3 scripts/sig_lines/cn_and_rt_correlations.py '
         '--input_cn {input.cn} '
         '--input_rt {input.rt} '
+        '--counts {input.counts} '
         '--sample_corrs {output.sample_corrs} '
         '--clone_corrs {output.clone_corrs} '
         '&> {log} ; '

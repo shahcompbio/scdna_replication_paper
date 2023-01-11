@@ -12,7 +12,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('-i', '--input', type=str, nargs='+', help='list of pseudobulk RT profiles for each sample')
-    p.add_argument('-c', '--counts', type=str, nargs='+', help='cell cycle clone counts for each sample')
+    p.add_argument('-c', '--counts', type=str, help='cell cycle clone counts for across all samples')
     p.add_argument('-srp', '--sample_rt_profiles', type=str, help='plot of the RT profiles for each sample')
     p.add_argument('-srd', '--sample_rt_diffs', type=str, help='violin plots of difference in RT between autosomes and chrX for samples with and without chrX CNAs')
     p.add_argument('-crp', '--clone_rt_profiles', type=str, help='plot of the RT profiles for each clone, one subpanel per sample')
@@ -181,31 +181,6 @@ def plot_rt_diff_vs_chrX(df, ax, x='chrX', y='RT_diff', test='t-test_ind', text_
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
                        text_format=text_format, loc=loc, verbose=verbose)
     return ax
-
-
-def load_clone_counts(argv):
-    """ Use the  cell cycle clone counts input to create a table of the number of cells in each clone for each cell cycle phase and dataset. """
-    counts = []
-    for path in argv.counts:
-        # load the counts
-        temp_counts = pd.read_csv(path, sep='\t')
-        # subset to just the columns with clone-id and cell counts
-        temp_counts = temp_counts[['clone_id', 'num_cells_s', 'num_cells_g']]
-        # sum num_cells_s column across all rows with the same clone_id
-        # this is important as there are multiple rows (libraries) for each clone_id
-        temp_counts = temp_counts.groupby('clone_id').sum().reset_index()
-        # add dataset name as column
-        d = path.split('/')[2]
-        temp_counts['dataset'] = d
-        # compute the fraction of cells in each clone for each cell cycle phase
-        temp_counts['frac_cells_s'] = temp_counts['num_cells_s'] / temp_counts['num_cells_s'].sum()
-        temp_counts['frac_cells_g'] = temp_counts['num_cells_g'] / temp_counts['num_cells_g'].sum()
-        # add to list of counts
-        counts.append(temp_counts)
-    # concatenate all counts
-    counts = pd.concat(counts, ignore_index=True)
-
-    return counts
 
 
 def plot_sample_rt_profiles(rt, rt_coi, counts, argv):
@@ -437,7 +412,7 @@ def main():
     argv = get_args()
 
     # load the cell counts in each clone
-    counts = load_clone_counts(argv)
+    counts = pd.read_csv(argv.counts, sep='\t')
 
     # read in the pseudobulk RT profiles for each sample
     rt = pd.DataFrame()
