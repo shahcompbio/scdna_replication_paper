@@ -28,9 +28,9 @@ def main():
     cn_lowqual = pd.read_csv(argv.lowqual, sep='\t')
 
     # create column to denote cell cycle state or quality
-    cn_s['phase'] = 'S'
-    cn_g['phase'] = 'G1/2'
-    cn_lowqual['phase'] = 'low quality'
+    cn_s['PERT_phase'] = 'S'
+    cn_g['PERT_phase'] = 'G1/2'
+    cn_lowqual['PERT_phase'] = 'low quality'
 
     # concat into one dataframe
     cn_all = pd.concat([cn_s, cn_g, cn_lowqual], ignore_index=True)
@@ -41,7 +41,7 @@ def main():
 
     # merege metric columns with embedding
     metric_cols = [
-        'cell_id', 'cell_frac_rep', 'phase', 'clone_id', 'library_id',
+        'cell_id', 'cell_frac_rep', 'PERT_phase', 'clone_id', 'library_id',
         'total_mapped_reads_hmmcopy', 'breakpoints', 'is_s_phase_prob',
         'madn', 'lrs', 'corrected_madn', 'corrected_breakpoints', 'quality',
     ]
@@ -56,10 +56,10 @@ def main():
     ax = ax.flatten()
 
     sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='clone_id', alpha=0.5, ax=ax[0])
-    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='phase', alpha=0.5, ax=ax[1])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='PERT_phase', alpha=0.5, ax=ax[1])
 
     for i in range(2):
-        ax[i].set_title('{} PCA of read depth'.format(argv.dataset))
+        ax[i].set_title('{} reads per million PCA'.format(argv.dataset))
     
     fig.savefig(argv.output_png, bbox_inches='tight', dpi=300)
 
