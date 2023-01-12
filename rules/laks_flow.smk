@@ -637,7 +637,7 @@ rule twidth_analysis_pyro_composite_lf:
         rep_state = 'model_rep_state'
     log: 'logs/laks_flow/all/twidth_analysis_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
