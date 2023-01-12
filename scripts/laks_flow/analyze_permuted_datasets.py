@@ -39,33 +39,40 @@ def make_plots(legend_df, metrics_df, argv):
     ax = ax.flatten()
 
     # barplot of the fraction of G1/2-cells accurately removed out of all those with swapped flow labels
-    sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[1])
+    sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[1], color='C0')
     ax[1].set_ylabel('Fraction of mislabeled\ncells detected by model')
     ax[1].set_xlabel('Fraction of G1/2-phase cells mislabeled')
-    ax[1].set_title('Model accuracy')
+    ax[1].set_title('PERT phase accuracy')
 
     # distribution of cell_frac_rep values based on the true flow sorting states
-    sns.histplot(data=metrics_df.query("permuted==True"), x='cell_frac_rep', hue='true_cell_cycle_state', bins=20, multiple='stack', ax=ax[0])
+    # copy true_cell_cycle_state to a new column named 'Flow phase'
+    metrics_df['Flow phase'] = metrics_df['true_cell_cycle_state']
+    sns.histplot(data=metrics_df.query("permuted==True"), x='cell_frac_rep', hue='Flow phase', bins=20, multiple='stack', ax=ax[0])
     ax[0].set_title('Cells mislabeled as S-phase')
     ax[0].set_xlabel('Inferred fraction of replicated bins')
+    ax[0].set_ylabel('# mislabeled cells')
 
-    fig.savefig(argv.summary_plots, bbox_inches='tight')
+    fig.savefig(argv.summary_plots, bbox_inches='tight', dpi=300)
+
+    # create a new column entitled 'PERT_phase' that is 'G' when extreme_cell_frac is True and 'S' when extreme_cell_frac is False
+    metrics_df['PERT_phase'] = metrics_df['extreme_cell_frac'].apply(lambda x: 'G' if x else 'S')
 
     # scatterplots of ccc features for the the mislabled cells, colored by whether the model thinks the cell is replicating (extreme_cell_frac)
     fig, ax = plt.subplots(2, 3, figsize=(12, 8), tight_layout=True)
     ax = ax.flatten()
 
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='quality', hue='extreme_cell_frac', alpha=0.5, ax=ax[0])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='corrected_madn', hue='extreme_cell_frac', alpha=0.5, ax=ax[1])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='corrected_breakpoints', hue='extreme_cell_frac', alpha=0.5, ax=ax[2])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_madn', y='quality', hue='extreme_cell_frac', alpha=0.5, ax=ax[3])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_breakpoints', y='quality', hue='extreme_cell_frac', alpha=0.5, ax=ax[4])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_madn', y='corrected_breakpoints', hue='extreme_cell_frac', alpha=0.5, ax=ax[5])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='quality', hue='PERT_phase', alpha=0.5, ax=ax[0])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='corrected_madn', hue='PERT_phase', alpha=0.5, ax=ax[1])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='corrected_breakpoints', hue='PERT_phase', alpha=0.5, ax=ax[2])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_madn', y='quality', hue='PERT_phase', alpha=0.5, ax=ax[3])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_breakpoints', y='quality', hue='PERT_phase', alpha=0.5, ax=ax[4])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_madn', y='corrected_breakpoints', hue='PERT_phase', alpha=0.5, ax=ax[5])
 
     for i in range(6):
-        ax[i].set_title('Cells mislabeled as S-phase')
+        ax[i].set_title('Flow G1/2 cells mislabeled as S-phase')
+        ax[i].legend(title='PERT phase')
 
-    fig.savefig(argv.ccc_plots, bbox_inches='tight')
+    fig.savefig(argv.ccc_plots, bbox_inches='tight', dpi=300)
 
 
 def main():

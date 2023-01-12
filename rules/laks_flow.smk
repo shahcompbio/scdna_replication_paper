@@ -83,6 +83,7 @@ rule all_laks_flow:
         'plots/laks_flow/all/rt_corr_composite.png',
         'plots/laks_flow/all/twidth_curves.png',
         'plots/laks_flow/all/twidth_curves_composite.png',
+        'plots/laks_flow/permuted/ccc_features.png',
         'plots/laks_flow/permuted/summary.png',
         'plots/laks_flow/permuted/rt_corr_composite.png'
 

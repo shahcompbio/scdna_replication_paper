@@ -175,7 +175,7 @@ def plot_frac_rt_distributions(df, argv):
     sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2])
 
     for i in range(3):
-        ax[i].set_xlabel('Time in S-phase')
+        ax[i].set_xlabel('Inferred fraction of replicated bins')
         ax[i].set_title('Distribution of cells\nwithin S-phase')
 
     fig.savefig(argv.output_frac_rt, bbox_inches='tight', dpi=300)
