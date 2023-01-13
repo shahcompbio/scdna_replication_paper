@@ -99,7 +99,8 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/fitness/fitness_proxy_s_coefficients.png'
+        'plots/fitness/fitness_proxy_s_coefficients.png',
+        'plots/fitness/s_predictiveness.png',
         
 
 def dataset_cn_files(wildcards):
@@ -611,6 +612,31 @@ rule plot_fitness_proxy_s_coefficients_f:
         'deactivate'
 
 
+rule plot_s_predictiveness:
+    input:
+        expand(
+            'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
+            dataset=[
+                d for d in config['fitness_rx_datasets']
+                if (d not in bad_datasets)
+            ]
+        )
+    output:
+        plot1 = 'plots/fitness/s_predictiveness.png',
+        plot2 = 'plots/fitness/s_predictiveness_vs_rx.png',
+        tsv = 'analysis/fitness/s_predictiveness.tsv'
+    log: 'logs/fitness/plot_s_predictiveness.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/plot_s_predictiveness.py '
+        '-i {input} '
+        '-p1 {output.plot1} '
+        '-p2 {output.plot2} '
+        '-ot {output.tsv} '
+        '&> {log} ; '
+        'deactivate'
+
+
 # rule infer_SPF:
 #     input:
 #         cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
@@ -683,21 +709,6 @@ rule plot_fitness_proxy_s_coefficients_f:
 #     log: 'logs/fitness/{dataset}/plot_clonal_evolution.log'
 #     shell:
 #         'python3 scripts/fitness/plot_clonal_evolution.py '
-#         '{input} {params} {output} &> {log}'
-
-
-# rule plot_s_predictiveness:
-#     input:
-#         s_phase = 'analysis/fitness/{dataset}/s_phase_clone_time_counts.tsv',
-#         non_s_phase = 'analysis/fitness/{dataset}/non_s_phase_clone_time_counts.tsv',
-#     output:
-#         tsv = 'analysis/fitness/{dataset}/s_predictiveness.tsv',
-#         plot = 'plots/fitness/{dataset}/s_predictiveness.pdf'
-#     params:
-#         dataset = lambda wildcards: wildcards.dataset
-#     log: 'logs/fitness/{dataset}/plot_s_predictiveness.log'
-#     shell:
-#         'python3 scripts/fitness/plot_s_predictiveness.py '
 #         '{input} {params} {output} &> {log}'
 
 

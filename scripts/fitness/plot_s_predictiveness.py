@@ -9,119 +9,158 @@ from argparse import ArgumentParser
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('s_phase', help='input S phase cell counts for each time & clone')
-    p.add_argument('non_s_phase', help='input non-S phase cell counts for each time & clone')
-    p.add_argument('dataset')
-    p.add_argument('output_tsv', help='output tsv file used to make the plot')
-    p.add_argument('output_pdf', help='output pdf file fraction of each clone for S and non-S cells')
+    p.add_argument('-i', '--input', nargs='+', help='list of cell cycle clone counts for each sample')
+    p.add_argument('-p1', '--plot1', help='S-predictiveness plot for each sample')
+    p.add_argument('-p2', '--plot2', help='S-predictiveness plot for all samples, split by Rx status')
+    p.add_argument('-ot', '--output_tsv', help='table of all the data used to make the plots')
 
     return p.parse_args()
 
 
-def plot_figure(df, ax, title, linreg=True):
-    sns.scatterplot(data=df, x='phase_frac_diff', y='time_frac_diff', hue='clone_id', ax=ax)
-    ax.set(title=title, xlabel='S minus G1 cell fraction of clone\nat time t0',
-            ylabel='G1 cell fraction of clone\nat t1 minus t0')
-
-    if linreg:
-        X = df['phase_frac_diff'].values.reshape(-1, 1)
-        y = df['time_frac_diff'].values.reshape(-1, 1)
-        reg = LinearRegression().fit(X, y)
-        r2 = reg.score(X, y)
-
-        X_new = np.linspace(min(X), max(X))
-        y_new = reg.predict(X_new)
-
-        ax.plot(X_new, y_new, color='red', linestyle='--', label='R^2={}'.format(round(r2, 3)))
-
-    ax.legend(title='Clone ID')
-    
-    return ax
+def timepoint_to_int(df):
+    """Converts the timepoint column to an integer"""
+    # get the timepoint column
+    timepoints = df['timepoint'].values
+    # convert the timepoints to integers
+    timepoints = [int(x[1:]) for x in timepoints]
+    # add the timepoints to the dataframe
+    df['timepoint_int'] = timepoints
+    # return the dataframe
+    return df
 
 
-def main():
-    argv = get_args()
+def sort_timepoints(df):
+    """Sort the dataframe according to clone_id and timepoint_int"""
+    # if timepoint_int is not in the dataframe, create such a column
+    df = timepoint_to_int(df)
+    # sort the dataframe
+    df = df.sort_values(by=['clone_id', 'timepoint_int'])
+    # return the dataframe
+    return df
 
-    s_df = pd.read_csv(argv.s_phase, sep='\t')
-    non_s_df = pd.read_csv(argv.non_s_phase, sep='\t')
 
-    s_df['s_phase'] = True
-    non_s_df['s_phase'] = False
+def filter_rows(df, num_cells=10):
+    """Filters out rows that do not have a value for instantaneous_s or have few cells"""
+    df = df.loc[df['instantaneous_s'].notna()]
+    df = df.loc[df['num_cells_g'] > num_cells]
+    return df
 
-    df = pd.concat([s_df, non_s_df]).reset_index().drop(columns=['index'])
-    times = df.timepoint.unique()
-    clones = df.clone_id.unique()
-    df.set_index(['clone_id', 'timepoint', 's_phase'], inplace=True)
 
-    time_diff_df = []
-    phase_diff_df = []
+def add_instantaneous_s_and_enrichment(df):
+    """Adds a column to the dataframe that contains the instantaneous selection coefficient for each clone at each timepoint"""
+    # compute the enrichment or depletion for S-phase cells at a given timepoint
+    df['clone_frac_diff'] = df['clone_frac_s'] - df['clone_frac_g']
+
+    times = sorted(df.timepoint_int.unique())
+    clones = sorted(df.clone_id.unique())
+
+    # this column is a proxy for that clone's instatneous selection coefficient
+    df['instantaneous_s'] = np.nan
 
     # find difference in a clone's number/fraction of cells between two adjacent timepoints
     for t in range(len(times)-1):
         for c in clones:
             t0 = times[t]
             t1 = times[t+1]
-            for phase in [True, False]:
-                count_diff = df.loc[c, t1, phase]['num_cells'] - df.loc[c, t0, phase]['num_cells']
-                frac_diff = df.loc[c, t1, phase]['fraction'] - df.loc[c, t0, phase]['fraction']
-                temp_time_df = pd.DataFrame({'clone_id': [c], 's_phase': [phase], 't0': [t0], 't1': [t1],
-                                             'time_frac_diff': [frac_diff], 'time_count_diff': [count_diff]})
-                time_diff_df.append(temp_time_df)
+            # find the row that corresponds to this clone & time
+            row_t0 = df.loc[(df['clone_id']==c) & (df['timepoint_int']==t0)]
+            row_t1 = df.loc[(df['clone_id']==c) & (df['timepoint_int']==t1)]
+            # find the difference in G1/2-phase fractions between t0 and t1
+            frac_diff = row_t1['clone_frac_g'].values[0] - row_t0['clone_frac_g'].values[0]
 
-    time_diff_df = pd.concat(time_diff_df)
+            # add frac_diff to the dataframe at the appropriate row
+            df.loc[(df['clone_id']==c) & (df['timepoint_int']==t0), 'instantaneous_s'] = frac_diff
+    return df
 
-    # find difference between S-phase and G1-phase fractions for a given timepoint
-    # large frac_diff values are situations with more S-phase cells than we'd expect
-    for t in times:
-        for c in clones:
-            # how many cells are in S-phase for this time & clone compared to what we'd expect (non-S fraction)
-            frac = df.loc[c, t, True]['fraction'] - df.loc[c, t, False]['fraction']
-            temp_phase_df = pd.DataFrame({'clone_id': [c], 'timepoint': [t], 'phase_frac_diff': [frac]})
-            phase_diff_df.append(temp_phase_df)
 
-    phase_diff_df = pd.concat(phase_diff_df)
-    
-    phase_diff_df.set_index(['clone_id', 'timepoint'], inplace=True)
-    out_df = time_diff_df.query('s_phase == False')
-    out_df.drop(columns=['s_phase'], inplace=True)
-    out_df['phase_frac_diff'] = None
-    out_df.reset_index(inplace=True, drop=True)
+def plot_s_predictiveness(df, ax=None, title=None):
+    """Plots the instantaneous selection coefficient vs. the clone's S-phase enrichment/depletion"""
+    # if ax is None, create a new figure
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(6, 6))
 
-    # for each time (t0) & clone, treat the phase_diff_df value as the "predicted" proliferation rate
-    # and the time_diff_df value as the "observed" proliferation rate
-    for i, row in out_df.iterrows():
-        c = row.clone_id
-        t = row.t0
-        val = phase_diff_df.loc[c, t]['phase_frac_diff']
-        out_df.loc[i, 'phase_frac_diff'] = val
+    # fit a regression line to the data
+    sns.regplot(x='instantaneous_s', y='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
-    # remove rows from out_df where the G0G1 clone fraction at both time points is less than 0.05
-    # this should get rid of "noise" near the x=0,y=0 center of the figure
-    filtered_df = []
-    for i, row in out_df.iterrows():
-        c = row.clone_id
-        t0 = row.t0
-        t1 = row.t1
-        # find the fraction of G1 cells belonging to this clone at t0
-        frac_g_t0 = non_s_df.query("clone_id=='{}' & timepoint=={}".format(c, t0))['fraction'].values
-        # find the fraction of G1 cells belonging to this clone at t1
-        frac_g_t1 = non_s_df.query("clone_id=='{}' & timepoint=={}".format(c, t1))['fraction'].values
+    # create a seaborn scatterplot comparing the instantaneous selection coefficient to the clone's S-phase enrichment/depletion
+    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='clone_id', style='timepoint', ax=ax)
+    # set the x-axis label
+    ax.set_xlabel('Instantaneous selection coefficient\n<-contraction | expansion->')
+    # set the y-axis label
+    ax.set_ylabel('S-phase\n<-depletion | enrichment->')
+    # set the title
+    if title is not None:
+        ax.set_title(title)
+
+    # expand the x axis limits to be slightly larger than the data
+    ax.set_xlim(left=ax.get_xlim()[0] - 0.05, right=ax.get_xlim()[1] + 0.05)
+
+
+
+# create a new plotting function that colors the data points by sample_id and uses different markers for the treatment status
+def plot_s_predictiveness_cisplatin_combined(df, argv, title=None):
+    """Plots the instantaneous selection coefficient vs. the clone's S-phase enrichment/depletion"""
+    # fit a regression line to the data
+    sns.lmplot(x='instantaneous_s', y='clone_frac_diff', data=df, scatter=True, hue='cisplatin')
+
+    # set the x-axis label
+    plt.xlabel('Instantaneous selection coefficient\n<-contraction | expansion->')
+    # set the y-axis label
+    plt.ylabel('S-phase\n<-depletion | enrichment->')
+    # set the title
+    if title is not None:
+        plt.title(title)
+
+    plt.savefig(argv.plot2, dpi=300, bbox_inches='tight')
+
+
+def main():
+    argv = get_args()
+
+    # create a list to store the dataframes for each sample
+    df_pdx_combined = []
+
+    # create a panel of figures to plot the S-predictiveness for each sample
+    fig, ax = plt.subplots(2, 4, figsize=(16, 8), tight_layout=True)
+    ax = ax.flatten()
+
+    # loop through the samples and plot their S-predictiveness in separate subpanels
+    for i, path in enumerate(argv.input):
+        # read in the data
+        temp_df = pd.read_csv(path, sep='\t')
+        # get the sample name
+        sample = path.split('/')[2]
+
+        # process the data and plot the s-predictiveness for this sample
+        temp_df = sort_timepoints(temp_df)
+        temp_df = add_instantaneous_s_and_enrichment(temp_df)
+        temp_df = filter_rows(temp_df)
+        plot_s_predictiveness(temp_df, ax=ax[i], title=sample)
+
+        # save the sample_id in a new column
+        temp_df['sample_id'] = sample
+
+        # if 'U' is in the sample name, add a column that indicates that the sample is 'Rx-', otherwise it is 'Rx+'
+        if 'U' in sample:
+            temp_df['cisplatin'] = 'Rx-'
+        else:
+            temp_df['cisplatin'] = 'Rx+'
         
-        # one of the fractions must be abov 0.05 to keep this row
-        if frac_g_t0 > 0.05 or frac_g_t1 > 0.05:
-            filtered_df.append(pd.DataFrame({'clone_id': [c], 't0': [t0], 't1': [t1],
-                                             'time_frac_diff': [row.time_frac_diff],
-                                             'time_count_diff': [row.time_count_diff],
-                                             'phase_frac_diff': [row.phase_frac_diff]}))
+        # add the dataframe to the list
+        df_pdx_combined.append(temp_df)
+    
+    # save the first figure
+    fig.savefig(argv.plot1, dpi=300, bbox_inches='tight')
 
+    # concatenate the dataframes into a single dataframe
+    df_pdx_combined = pd.concat(df_pdx_combined, ignore_index=True)
 
-    filtered_df = pd.concat(filtered_df).reset_index(drop=True)
+    # plot the combined data and save the figure
+    plot_s_predictiveness_cisplatin_combined(df_pdx_combined, argv, title='TNBC PDXs')
 
-    fig, ax = plt.subplots(1, 1, figsize=(6,6))
-    ax = plot_figure(filtered_df, ax, argv.dataset, linreg=True)
+    # save the dataframe for posterity
+    df_pdx_combined.to_csv(argv.output_tsv, sep='\t', index=False)
 
-    fig.savefig(argv.output_pdf, bbox_inches='tight')
-    filtered_df.to_csv(argv.output_tsv, sep='\t', index=False)
 
 
 if __name__ == '__main__':
