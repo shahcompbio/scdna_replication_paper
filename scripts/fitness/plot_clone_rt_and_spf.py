@@ -28,6 +28,14 @@ def get_args():
     return p.parse_args()
 
 
+def get_clone_color_dict():
+    clone_color_dict = {
+        'A': 'C0', 'B': 'C1', 'C': 'C2', 'D': 'C3', 'E': 'C4', 'F': 'C5', 'G': 'C6', 'H': 'C7', 'I': 'C8', 'J': 'C9',
+        'K': 'C0', 'L': 'C1', 'M': 'C2'
+    }
+    return clone_color_dict
+
+
 def plot_cell_cn_profile2(ax, cn_data, value_field_name, cn_field_name=None, max_cn=13,
                           chromosome=None, s=5, squashy=False, color=None, alpha=1,
                           lines=False, label=None, scale_data=False):
@@ -188,14 +196,16 @@ def plot_clone_rt_profiles(rt, argv):
         i += 1
 
     for i in range(4):
-        ax[i].set_title(argv.dataset)
+        dataset = argv.dataset.replace('_CISPLATIN_Combined', '')
+        ax[i].set_title(dataset)
         ax[i].legend(title='Clone ID')
         if i < 2:
             ax[i].set_ylabel('RT profile\n<--late | early-->')
         else:
             ax[i].set_ylabel('Relative RT to clone {}\n<--clone later | clone earlier-->'.format(ref_clone))
 
-    fig.savefig(argv.plot1, bbox_inches='tight')
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
+
 
 
 def compute_fracs_and_pvals(df):
@@ -310,12 +320,12 @@ def clone_spf_analysis(cn_s, cn_g, argv):
     df2['positive_p_adj'] = df2['positive_p'] * 2 * df2.shape[0]
     df2['negative_p_adj'] = df2['negative_p'] * 2 * df2.shape[0]
 
-    fig, ax = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
 
     pthresh = 1e-2
 
     # create custom legend for clones & timepoints
-    clone_cmap = {}
+    clone_cmap = get_clone_color_dict()
     timepoint_cmap = {}
     clone_legend_elements = [
         Line2D([0], [0], marker='^', color='w', label='enriched', markerfacecolor='k', markersize=10),
@@ -323,8 +333,7 @@ def clone_spf_analysis(cn_s, cn_g, argv):
     ]
     timepoint_legend_elements = clone_legend_elements.copy()
     for i, c in enumerate(sorted(df2.clone_id.unique())):
-        color = 'C{}'.format(i)
-        clone_cmap[c] = color
+        color = clone_cmap[c]
         clone_legend_elements.append(Patch(facecolor=color, label=c))
 
     for i, l in enumerate(df2.timepoint.unique()):
@@ -354,18 +363,20 @@ def clone_spf_analysis(cn_s, cn_g, argv):
     ax[0].plot(lims, lims, 'k--', alpha=0.25, zorder=0)
     ax[1].plot(lims, lims, 'k--', alpha=0.25, zorder=0)
 
+    dataset = argv.dataset.replace('_CISPLATIN_Combined', '')
+
     ax[0].legend(handles=clone_legend_elements, title='Clone ID')
     ax[0].set_xlabel('Fraction of G1/2 cells in timepoint assigned to clone')
     ax[0].set_ylabel('Fraction of S cells in timepoint assigned to clone')
-    ax[0].set_title('{}\nRelative proliferation rate of clones'.format(argv.dataset))
+    ax[0].set_title('Phase enrichment of {} clones'.format(dataset))
     
     ax[1].legend(handles=timepoint_legend_elements, title='timepoint')
     ax[1].set_xlabel('Fraction of G1/2 cells in timepoint assigned to clone')
     ax[1].set_ylabel('Fraction of S cells in timepoint assigned to clone')
-    ax[1].set_title('{}\nRelative proliferation rate of clones'.format(argv.dataset))
+    ax[1].set_title('Phase enrichment of {} clones'.format(dataset))
 
     # save spf figure
-    fig.savefig(argv.plot2, bbox_inches='tight')
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
     # save table used to generate spf figure
     df2.to_csv(argv.out_tsv, sep='\t', index=False)

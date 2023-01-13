@@ -40,7 +40,7 @@ def plot_clone_stackplots(df_U, df_T, argv):
     Plots the evolution of clones over time for each cell cycle phase. 
     The top row shows the untreated sample, the bottom row shows the treated sample.
     """
-    fig, ax = plt.subplots(2, 2, figsize=(10, 10), tight_layout=True, sharey=True)
+    fig, ax = plt.subplots(2, 2, figsize=(8, 8), tight_layout=True, sharey=True)
     ax = ax.flatten()
 
     # untreated sample
@@ -50,8 +50,8 @@ def plot_clone_stackplots(df_U, df_T, argv):
     ax[0].set_ylabel('Clone fraction')
     ax[0].set_xlabel('Timepoint')
     ax[1].set_xlabel('Timepoint')
-    ax[0].set_title('{} Rx-: G1/2-phase'.format(argv.dataset))
-    ax[1].set_title('{} Rx-: S-phase'.format(argv.dataset))
+    ax[0].set_title('{}U: G1/2-phase'.format(argv.dataset))
+    ax[1].set_title('{}U: S-phase'.format(argv.dataset))
     ax[1].legend(title='Clone ID')
 
     # treated sample
@@ -61,11 +61,11 @@ def plot_clone_stackplots(df_U, df_T, argv):
     ax[2].set_ylabel('Clone fraction')
     ax[2].set_xlabel('Timepoint')
     ax[3].set_xlabel('Timepoint')
-    ax[2].set_title('{} Rx+: G1/2-phase'.format(argv.dataset))
-    ax[3].set_title('{} Rx+: S-phase'.format(argv.dataset))
+    ax[2].set_title('{}T: G1/2-phase'.format(argv.dataset))
+    ax[3].set_title('{}T: S-phase'.format(argv.dataset))
     ax[3].legend(title='Clone ID')
 
-    fig.savefig(argv.output_clones, bbox_inches='tight')
+    fig.savefig(argv.output_clones, bbox_inches='tight', dpi=300)
 
 
 def compute_total_cell_count_vs_time(df):
@@ -88,7 +88,7 @@ def plot_total_cell_count_stackplot(df_U, df_T, argv):
     Plots the total number of cells in each cell cycle phase at each timepoint.
     The top row shows the untreated sample, the bottom row shows the treated sample.
     """
-    fig, ax = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
     ax = ax.flatten()
 
     # untreated sample
@@ -96,7 +96,7 @@ def plot_total_cell_count_stackplot(df_U, df_T, argv):
     ax[0].stackplot(timepoints, total_counts, labels=phase_legend)
     ax[0].set_ylabel('# cells')
     ax[0].set_xlabel('Timepoint')
-    ax[0].set_title('{} Rx-: total cell count'.format(argv.dataset))
+    ax[0].set_title('{}U: total cell count'.format(argv.dataset))
     ax[0].legend(title='Phase')
 
     # treated sample
@@ -104,10 +104,10 @@ def plot_total_cell_count_stackplot(df_U, df_T, argv):
     ax[1].stackplot(timepoints, total_counts, labels=phase_legend)
     ax[1].set_ylabel('# cells')
     ax[1].set_xlabel('Timepoint')
-    ax[1].set_title('{} Rx+: total cell count'.format(argv.dataset))
+    ax[1].set_title('{}T: total cell count'.format(argv.dataset))
     ax[1].legend(title='Phase')
 
-    fig.savefig(argv.output_total, bbox_inches='tight')
+    fig.savefig(argv.output_total, bbox_inches='tight', dpi=300)
 
 
 def timepoint_to_int(df):

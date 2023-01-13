@@ -17,6 +17,14 @@ def get_args():
     return p.parse_args()
 
 
+def get_clone_color_dict():
+    clone_color_dict = {
+        'A': 'C0', 'B': 'C1', 'C': 'C2', 'D': 'C3', 'E': 'C4', 'F': 'C5', 'G': 'C6', 'H': 'C7', 'I': 'C8', 'J': 'C9',
+        'K': 'C0', 'L': 'C1', 'M': 'C2'
+    }
+    return clone_color_dict
+
+
 def timepoint_to_int(df):
     """Converts the timepoint column to an integer"""
     # get the timepoint column
@@ -82,8 +90,10 @@ def plot_s_predictiveness(df, ax=None, title=None):
     # fit a regression line to the data
     sns.regplot(x='instantaneous_s', y='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
+    clone_color_dict = get_clone_color_dict()
+
     # create a seaborn scatterplot comparing the instantaneous selection coefficient to the clone's S-phase enrichment/depletion
-    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='clone_id', style='timepoint', ax=ax)
+    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='clone_id', style='timepoint', palette=clone_color_dict, ax=ax)
     # set the x-axis label
     ax.set_xlabel('Instantaneous selection coefficient\n<-contraction | expansion->')
     # set the y-axis label
@@ -128,8 +138,8 @@ def main():
     for i, path in enumerate(argv.input):
         # read in the data
         temp_df = pd.read_csv(path, sep='\t')
-        # get the sample name
-        sample = path.split('/')[2]
+        # get the sample name, strip cisplatin suffix from SA535 samples
+        sample = path.split('/')[2].replace('_CISPLATIN_Combined', '')
 
         # process the data and plot the s-predictiveness for this sample
         temp_df = sort_timepoints(temp_df)
