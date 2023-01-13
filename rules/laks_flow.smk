@@ -79,6 +79,7 @@ rule all_laks_flow:
             ]
         ),
         'plots/laks_flow/GM18507/cn_s_example.png',
+        'plots/laks_flow/all/flow_error_cells.png',
         'plots/laks_flow/all/rpm_umap.png',
         'plots/laks_flow/all/rt_corr.png',
         'plots/laks_flow/all/rt_corr_composite.png',
@@ -666,3 +667,15 @@ rule plot_example_cells_lf:
         'python3 scripts/laks_flow/plot_example_cells.py '
         '{input} {output} &> {log} ; '
         'deactivate'
+
+
+rule plot_flow_error_cells_lf:
+    input: 'analysis/laks_flow/all/cn_g_pyro_inferred_composite_filtered.tsv'
+    output: 'plots/laks_flow/all/flow_error_cells.png'
+    log: 'logs/laks_flow/plot_flow_error_cells.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/laks_flow/plot_flow_error_cells.py '
+        '{input} {output} &> {log} ; '
+        'deactivate'
+    
