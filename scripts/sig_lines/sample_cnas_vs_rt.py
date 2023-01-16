@@ -1,0 +1,410 @@
+import matplotlib
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from statannot import add_stat_annotation
+from scgenome import refgenome
+from sklearn import preprocessing
+from argparse import ArgumentParser
+
+
+def get_args():
+    p = ArgumentParser()
+
+    p.add_argument('-ir', '--input_rt', type=str, nargs='+', help='pseduobulk rt profiles for each dataset')
+    p.add_argument('-ic', '--input_cn', type=str, nargs='+', help='pseduobulk cn profiles for each dataset')
+    p.add_argument('-d', '--datasets', type=str, nargs='+', help='list of dataset names')
+    p.add_argument('--plot1', help='plots showing the RT distribution against CNA types and breakpoints')
+    p.add_argument('--plot2', help='plots reference RT and pseudobulk CN profiles')
+
+    return p.parse_args()
+
+
+def plot_cell_cn_profile2(ax, cn_data, value_field_name, cn_field_name=None, max_cn=13,
+                          chromosome=None, s=5, squashy=False, color=None, alpha=1,
+                          lines=False, label=None, scale_data=False):
+    """ Plot copy number profile on a genome axis
+
+    Args:
+        ax: matplotlib axis
+        cn_data: copy number table
+        value_field_name: column in cn_data to use for the y axis value
+    
+    Kwargs:
+        cn_field_name: state column to color scatter points
+        max_cn: max copy number for y axis
+        chromosome: single chromosome plot
+        s: size of scatter points
+
+    The cn_data table should have the following columns (in addition to value_field_name and
+    optionally cn_field_name):
+        - chr
+        - start
+        - end
+    """
+    chromosome_info = refgenome.info.chromosome_info[['chr', 'chromosome_start', 'chromosome_end']].copy()
+    chromosome_info['chr'] = pd.Categorical(chromosome_info['chr'], categories=cn_data['chr'].cat.categories)
+    plot_data = cn_data.merge(chromosome_info)
+    plot_data = plot_data[plot_data['chr'].isin(refgenome.info.chromosomes)]
+    plot_data['start'] = plot_data['start'] + plot_data['chromosome_start']
+    plot_data['end'] = plot_data['end'] + plot_data['chromosome_start']
+
+    squash_coeff = 0.15
+    squash_f = lambda a: np.tanh(squash_coeff * a)
+    if squashy:
+        plot_data[value_field_name] = squash_f(plot_data[value_field_name])
+    
+    if scale_data:
+        plot_data[value_field_name] = preprocessing.scale(plot_data[value_field_name].values)
+
+    if lines:
+        chr_order = [str(i+1) for i in range(22)]
+        chr_order.append('X')
+        chr_order.append('Y')
+        plot_data.chr.cat.set_categories(chr_order, inplace=True)
+        plot_data = plot_data.sort_values(by=['chr', 'start'])
+        if cn_field_name is not None:
+            ax.plot(
+                plot_data['start'], plot_data[value_field_name], alpha=0.3, c='k', label=''
+            )
+        elif color is not None:
+            ax.plot(
+                plot_data['start'], plot_data[value_field_name], alpha=0.3, c=color, label=''
+            )
+        else:
+            ax.plot(
+                plot_data['start'], plot_data[value_field_name], alpha=0.3, label=''
+            )
+    
+    if label is None:
+        label = value_field_name
+    
+    if cn_field_name is not None:
+        ax.scatter(
+            plot_data['start'], plot_data[value_field_name],
+            c=plot_data[cn_field_name], s=s, alpha=alpha, label=label,
+            cmap=get_cn_cmap(plot_data[cn_field_name].astype(int).values),
+        )
+    elif color is not None:
+         ax.scatter(
+            plot_data['start'], plot_data[value_field_name],
+            c=color, s=s, alpha=alpha, label=label
+        )
+    else:
+        ax.scatter(
+            plot_data['start'], plot_data[value_field_name], s=s, alpha=alpha, label=label
+        )
+
+    if chromosome is not None:
+        chromosome_length = refgenome.info.chromosome_info.set_index('chr').loc[chromosome, 'chromosome_length']
+        chromosome_start = refgenome.info.chromosome_info.set_index('chr').loc[chromosome, 'chromosome_start']
+        chromosome_end = refgenome.info.chromosome_info.set_index('chr').loc[chromosome, 'chromosome_end']
+        xticks = np.arange(0, chromosome_length, 2e7)
+        xticklabels = ['{0:d}M'.format(int(x / 1e6)) for x in xticks]
+        xminorticks = np.arange(0, chromosome_length, 1e6)
+        ax.set_xlabel(f'chromosome {chromosome}')
+        ax.set_xticks(xticks + chromosome_start)
+        ax.set_xticklabels(xticklabels)
+        ax.xaxis.set_minor_locator(matplotlib.ticker.FixedLocator(xminorticks + chromosome_start))
+        ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        ax.set_xlim((chromosome_start, chromosome_end))
+
+    else:
+        ax.set_xlim((-0.5, refgenome.info.chromosome_end.max()))
+        ax.set_xlabel('chromosome')
+        ax.set_xticks([0] + list(refgenome.info.chromosome_end.values))
+        ax.set_xticklabels([])
+        ax.xaxis.tick_bottom()
+        ax.yaxis.tick_left()
+        ax.xaxis.set_minor_locator(matplotlib.ticker.FixedLocator(refgenome.info.chromosome_mid))
+        ax.xaxis.set_minor_formatter(matplotlib.ticker.FixedFormatter(refgenome.info.chromosomes))
+
+    if squashy:
+        yticks = np.array([0, 2, 4, 7, 20])
+        yticks_squashed = squash_f(yticks)
+        ytick_labels = [str(a) for a in yticks]
+        ax.set_yticks(yticks_squashed)
+        ax.set_yticklabels(ytick_labels)
+        ax.set_ylim((-0.01, 1.01))
+        ax.spines['left'].set_bounds(0, 1)
+    elif max_cn is not None:
+        ax.set_ylim((-0.05*max_cn, max_cn))
+        ax.set_yticks(range(0, int(max_cn) + 1))
+        ax.spines['left'].set_bounds(0, max_cn)
+    
+
+    if chromosome is not None:
+        sns.despine(ax=ax, offset=10, trim=False)
+    else:
+        sns.despine(ax=ax, offset=10, trim=True)
+
+    return chromosome_info
+
+
+def load_rt_data(argv):
+    # load dataset pseudobulk rt profiles
+    rt = pd.DataFrame()
+    for rt_path, d in zip(argv.input_rt, argv.datasets):
+        temp_rt = pd.read_csv(rt_path, sep='\t')
+        temp_rt = temp_rt[[
+            'chr', 'start', 'pseudobulk_model_rep_state', 'pseudobulk_hours',
+        ]]
+        temp_rt.rename(columns={
+            'pseudobulk_model_rep_state': '{}_pseudobulk_rt'.format(d),
+            'pseudobulk_hours': '{}_pseudobulk_rt_hours'.format(d)
+        }, inplace=True)
+        
+        if rt.empty:
+            rt = temp_rt
+        else:
+            rt = pd.merge(rt, temp_rt)
+
+    # set chr column to category
+    rt.chr = rt.chr.astype('str')
+    rt.chr = rt.chr.astype('category')
+
+    rt['end'] = rt['start'] + 500000 - 1
+            
+    return rt
+
+
+def load_cn_data(argv):
+    # load dataset pseudobulk cn profiles
+    cn = pd.DataFrame()
+
+    col_name_change = {}
+    for cn_path, d in zip(argv.input_cn, argv.datasets):
+        temp_cn = pd.read_csv(cn_path, sep='\t')
+        temp_cn = temp_cn.set_index(['chr', 'start'])
+        
+        # find the sample level pseudobulk cn column
+        # note that it can start with dataset or sample prefix
+        col_of_interest = [c for c in temp_cn.columns if c.startswith('dataset')]
+        if len(col_of_interest)==0:
+            col_of_interest = [c for c in temp_cn.columns if c.startswith('sample')]
+        temp_cn = temp_cn[col_of_interest].reset_index()
+        
+        col_name_change[col_of_interest[0]] = '{}_pseudobulk_cn'.format(d)
+        
+        if cn.empty:
+            cn = temp_cn
+        else:
+            cn = pd.merge(cn, temp_cn)
+
+
+    # set chr column to category
+    cn.chr = cn.chr.astype('str')
+    cn.chr = cn.chr.astype('category')
+
+    cn['end'] = cn['start'] + 500000 - 1
+
+    cn = cn.rename(columns=col_name_change)
+
+    return cn
+
+
+def make_bk(cn, argv):
+    # create a table of copy number breakpoints for sample pseudobulk data
+    # copy over the chromosome, start, and end columns
+    cn_breakpoints = cn[['chr', 'start', 'end']].copy()
+    for d in argv.datasets:
+        # create a column for the copy number breakpoints
+        cn_breakpoints['{}_pseudobulk_cn_breakpoints'.format(d)] = cn['{}_pseudobulk_cn'.format(d)].diff().fillna(0).astype('int')
+        # convert all nonzero values to 1
+        cn_breakpoints['{}_pseudobulk_cn_breakpoints'.format(d)] = cn_breakpoints['{}_pseudobulk_cn_breakpoints'.format(d)].apply(lambda x: 1 if x!=0 else 0)
+
+    return cn_breakpoints
+
+
+def compute_relative_rt_and_cn(cn, rt, argv):
+    for d in argv.datasets:
+        ref_rt_col = 'SA039_pseudobulk_rt'
+        ref_cn_col = 'SA039_pseudobulk_cn'
+        
+        temp_rt_col = '{}_pseudobulk_rt'.format(d)
+        temp_cn_col = '{}_pseudobulk_cn'.format(d)
+        
+        relative_rt_col = '{}_pseudobulk_relative_rt'.format(d)
+        relative_cn_col = '{}_pseudobulk_relative_cn'.format(d)
+        
+        rt[relative_rt_col] = rt[temp_rt_col] - rt[ref_rt_col]
+        cn[relative_cn_col] = (cn[temp_cn_col] / cn[temp_cn_col].mode().values[0]) - (cn[ref_cn_col] / cn[ref_cn_col].mode().values[0])
+    
+    return cn, rt
+
+
+def merge_cn_and_rt_info(cn, rt, bk, argv):
+    # merge the cn and rt tables into one long-form dataframe
+    df = []
+
+    for i, d in enumerate(argv.datasets):
+        ref_rt_col = 'SA039_pseudobulk_rt'
+        ref_cn_col = 'SA039_pseudobulk_cn'
+        
+        temp_rt_col = '{}_pseudobulk_rt'.format(d)
+        temp_cn_col = '{}_pseudobulk_cn'.format(d)
+        temp_bk_col = '{}_pseudobulk_cn_breakpoints'.format(d)
+        
+        relative_rt_col = '{}_pseudobulk_relative_rt'.format(d)
+        relative_cn_col = '{}_pseudobulk_relative_cn'.format(d)
+        
+        temp_df = pd.DataFrame({
+            'chr': cn['chr'], 'start': cn['start'], 'end': cn['end'], 'dataset': [d]*cn.shape[0],
+            'WT_pseudobulk_rt': rt[ref_rt_col], 'WT_pseudobulk_cn': cn[ref_cn_col],
+            'pseudobulk_rt': rt[temp_rt_col], 'pseudobulk_cn': cn[temp_cn_col], 'pseudobulk_bk': bk[temp_bk_col],
+            'relative_rt': rt[relative_rt_col], 'relative_cn': cn[relative_cn_col]
+        })
+        
+        df.append(temp_df)
+
+    df = pd.concat(df, ignore_index=True)
+
+    return df
+
+
+def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order)
+    add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
+                        box_pairs=box_pairs, test=test, order=order,
+                        text_format=text_format, loc=loc, verbose=verbose)
+
+
+def plot_WT_rt_vs_cna_type(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' 
+    Plot the distribution of SA039 (WT) RT values against the ensuing CNAs that emerge
+    in the other hTERT cell lines. This data will show whether gains and losses preferentially
+    emerge in early or late replicating regions.
+    '''
+    x = "cna_type"
+    y = "WT_pseudobulk_rt"
+    hue = None
+    box_pairs = [
+        ('loss', 'gain'),
+        ('loss', 'neutral'),
+        ('neutral', 'gain'),
+    ]
+    order = ['loss', 'neutral', 'gain']
+    violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    return ax
+
+
+def plot_WT_rt_vs_bk(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' 
+    Plot the distribution of SA039 (WT) RT values against the ensuing breakpoints that emerge
+    in the other hTERT cell lines. This data will show whether CN breakpoints preferentially
+    emerge in early or late replicating regions.
+    '''
+    x = "breakpoint"
+    y = "WT_pseudobulk_rt"
+    hue = None
+    box_pairs = [
+        ('No', 'Yes'),
+    ]
+    order = ['No', 'Yes']
+    violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    return ax
+
+
+
+def plot_rt_distributions(df, argv):
+    fig, ax = plt.subplots(2, 2, figsize=(8,8), tight_layout=True)
+    ax = ax.flatten()
+
+    # violin plots of RT distributions split by CNA type
+    plot_WT_rt_vs_cna_type(df.query('dataset!="SA039"'), ax[0])
+    ax[0].set_xlabel('Relative CN in hTERT non-WT cell line')
+    ax[0].set_ylabel('RT in hTERT WT')
+    ax[0].set_title('CNA type vs RT')
+
+    # histogram of RT values split by CNA type
+    sns.histplot(data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='cna_type', common_norm=False, stat='density', ax=ax[1])
+
+    # violin plots of RT distributions split by breakpoint presence
+    plot_WT_rt_vs_bk(df.query('dataset!="SA039"'), ax[2])
+    ax[2].set_xlabel('CN breakpoint in hTERT non-WT cell line')
+    ax[2].set_ylabel('RT in hTERT WT')
+    ax[2].set_title('CN breakpoints vs RT')
+
+    # histogram of RT values split by breakpoint presence
+    sns.histplot(data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='breakpoint', common_norm=False, stat='density', ax=ax[3])
+
+    # save the figure
+    fig.savefig(argv.plot1, dpi=300, bbox_inches='tight')
+
+
+def plot_profiles(cn, rt, argv):
+    # plot the reference RT profile and the relative CN profiles for each dataset
+    # get the reference pseudobulk rt column
+    ref_rt_col = 'SA039_pseudobulk_rt'
+
+    fig, ax = plt.subplots(2, 1, figsize=(16,8), tight_layout=True)
+    ax = ax.flatten()
+
+    # plot pseudobulk rt values of the reference WT dataset
+    plot_cell_cn_profile2(
+        ax[0], rt, ref_rt_col,
+        max_cn=None, scale_data=False, lines=True, label='SA039'
+    )
+
+    for i, d in enumerate(argv.datasets):
+        relative_cn_col = '{}_pseudobulk_relative_cn'.format(d)
+            
+        # plot pseudobulk cn values for this dataset
+        plot_cell_cn_profile2(
+            ax[1], cn, relative_cn_col, color='C{}'.format(i),
+            max_cn=None, scale_data=False, lines=True, label=d
+        )
+
+    ax[0].set_title('Sample Pseudobulk RT')
+    ax[1].set_title('Sample Pseudobulk CN')
+    ax[0].set_ylabel('RT of SA039 WT\n<--late | early-->')
+    ax[1].set_ylabel('CN relative to SA039 WT and ploidy\n<--loss | gain-->')
+    ax[0].legend(title='Sample ID')
+    ax[1].legend(title='Sample ID')
+
+    # manually set the y-ticks for ax[1] to range from -1 to 1, spaced by 0.2
+    ax[1].set_yticks(np.arange(-1, 1.2, 0.2))
+    ax[1].spines['left'].set_bounds(-1, 1)
+
+    fig.savefig(argv.plot2, dpi=300, bbox_inches='tight')
+
+
+def main():
+    argv = get_args()
+
+    # load the rt and cn data
+    rt = load_rt_data(argv)
+    cn = load_cn_data(argv)
+
+    # make a table of copy number breakpoints
+    bk = make_bk(cn, argv)
+
+    # compute the relative RT and CN values for each dataset
+    cn, rt = compute_relative_rt_and_cn(cn, rt, argv)
+
+    # merge the cn and rt tables into one long-form dataframe
+    df = merge_cn_and_rt_info(cn, rt, bk, argv)
+
+    # create column to denote whether a particular bin has a gain, loss, or no cna
+    df['cna_type'] = 'neutral'
+    for i, row in df.iterrows():
+        if row['relative_cn'] > 0:
+            df.loc[i, 'cna_type'] = 'gain'
+        elif row['relative_cn'] < 0:
+            df.loc[i, 'cna_type'] = 'loss'
+
+    # rename bk column
+    df['breakpoint'] = df['pseudobulk_bk'].replace({0: 'No', 1: 'Yes'})
+
+    # plot the RT distributions
+    plot_rt_distributions(df, argv)
+
+    # plot the CN and RT profiles
+    plot_profiles(cn, rt, argv)
+
+
+if __name__ == '__main__':
+    main()

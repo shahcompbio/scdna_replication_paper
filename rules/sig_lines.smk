@@ -108,6 +108,7 @@ rule all_sig_lines:
         ),
         'plots/sig_lines/phase_changes_cohort_confusion.png',
         'plots/sig_lines/subclonal_rt_diffs_summary.png',
+        'plots/sig_lines/sample_cnas_vs_rt_dists.png',
         'plots/sig_lines/downsampled_twidth_scatter.png',
         'plots/sig_lines/twidth_summary.png',
         'plots/sig_lines/clone_RT_X_profiles.png',
@@ -522,7 +523,7 @@ rule subclonal_rt_diffs_summary_sl:
 
 
 # TODO: finish this script according to the notebook
-rule sample_rt_diffs_sl:
+rule sample_cnas_vs_rt:
     input:
         rt = expand(
             'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
@@ -537,21 +538,19 @@ rule sample_rt_diffs_sl:
             ]
         )
     output:
-        tsv = 'analysis/sig_lines/sample_rt_diffs_summary.tsv',
-        png = 'plots/sig_lines/sample_rt_diffs_summary.png'
+        plot1 = 'plots/sig_lines/sample_cnas_vs_rt_dists.png',
+        plot2 = 'plots/sig_lines/sample_cnas_vs_rt_profiles.png'
     params:
-        rep_col = 'model_rep_state',
         datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055']),
-    log: 'logs/sig_lines/sample_rt_diffs.log'
+    log: 'logs/sig_lines/sample_cnas_vs_rt.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/sample_rt_diffs.py '
+        'python3 scripts/sig_lines/sample_cnas_vs_rt.py '
         '-ir {input.rt} '
         '-ic {input.cn} '
         '-d {params.datasets} '
-        '-r {params.rep_col} '
-        '--table {output.tsv} '
-        '--plot {output.png} '
+        '--plot1 {output.plot1} '
+        '--plot2 {output.plot2} '
         '&> {log} ; '
         'deactivate'
 
