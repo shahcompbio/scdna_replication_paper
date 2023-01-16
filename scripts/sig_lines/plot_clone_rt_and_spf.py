@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scgenome.cnplot import plot_cell_cn_profile
 from matplotlib.colors import ListedColormap
+from matplotlib.patches import Patch
+from matplotlib.lines import Line2D
 from scgenome import refgenome
 from sklearn import preprocessing
 from scipy.stats import hypergeom
@@ -16,7 +18,6 @@ def get_args():
 
     p.add_argument('cn_s', type=str, help='full df for S-phase cells')
     p.add_argument('cn_g', type=str, help='full df for G1/2-phase cells')
-    p.add_argument('cn_gr', type=str, help='full df for G1/2-phase cells that were passed to PERT as S-phase and subsequently recovered')
     p.add_argument('rt', type=str, help='table of RT pseudobulk profiles')
     p.add_argument('rep_col', type=str, help='column for replication state (relevant for RT pseudobulk profile column names)')
     p.add_argument('dataset', type=str, help='name of this dataset')
@@ -149,8 +150,9 @@ def plot_cell_cn_profile2(ax, cn_data, value_field_name, cn_field_name=None, max
 
 
 def plot_clone_rt_profiles(rt, argv):
-    cols = [x for x in rt.columns if x.startswith('pseduobulk_clone') and x.endswith(argv.rep_col)]
+    cols = [x for x in rt.columns if x.startswith('pseudobulk_clone') and x.endswith(argv.rep_col)]
     clones = [x.split('_')[1].replace('clone', '') for x in cols]
+    ref_clone = clones[0]
 
     fig, ax = plt.subplots(4, 1, figsize=(16,16), tight_layout=True)
     ax = ax.flatten()
@@ -168,8 +170,8 @@ def plot_clone_rt_profiles(rt, argv):
         )
         
         # compute distance between this clone's RT and the reference clone (A)
-        if clone_id != 'A':
-            rt['temp_diff_rt'] = rt[col] - rt['pseduobulk_cloneA_{}'.format(argv.rep_col)]
+        if clone_id != ref_clone:
+            rt['temp_diff_rt'] = rt[col] - rt['pseudobulk_clone{}_{}'.format(ref_clone, argv.rep_col)]
 
             # plot the whole genome
             plot_cell_cn_profile2(
@@ -191,63 +193,28 @@ def plot_clone_rt_profiles(rt, argv):
         if i < 2:
             ax[i].set_ylabel('RT profile\n<--late | early-->')
         else:
-            ax[i].set_ylabel('Relative RT to clone A\n<--clone later | clone earlier-->')
+            ax[i].set_ylabel('Relative RT to clone {}\n<--clone later | clone earlier-->'.format(ref_clone))
 
-    fig.savefig(argv.plot1, bbox_inches='tight')
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
-def clone_spf_analysis(cn_s, cn_g, cn_gr, argv):
-    # add column to denote phase of each df
-    cn_s['cell_cycle'] = 'S'
-    cn_gr['cell_cycle'] = 'G1/2 recovered'
-    cn_g['cell_cycle'] = 'G1/2 tree'
-
-    # rename the clone_id column to match the cells in the tree
-    cn_s['clone_id'] = cn_s['assigned_clone_id']
-    cn_gr['clone_id'] = cn_gr['assigned_clone_id']
-
-    # concatenate all cells into one df but only store relevant columns
-    coi = ['cell_id', 'cell_cycle', 'clone_id']
-    df = pd.concat([cn_s[coi], cn_gr[coi], cn_g[coi]], ignore_index=True)
-    df = df.sort_values(['clone_id', 'cell_cycle']).drop_duplicates(ignore_index=True)
-
+def compute_fracs_and_pvals(df):
+    """
+    For a given dataset, compute the S-phase fraction of each cell cycle phase and test
+    each clone for enrichment or depletion of S-phase cells
+    """
     clones = df['clone_id'].unique()
-
-    # count the number of cells belonging to each clone and cell cycle phase
-    df2 = df[['cell_cycle', 'clone_id']].value_counts().to_frame(name='num_cells').reset_index().sort_values(['clone_id', 'cell_cycle']).reset_index(drop=True)
     
-    # add all the counts for clones+phase combos with no cells
-    absent_df = []
-    for clone_id in clones:
-        if clone_id not in df2.query("cell_cycle=='S'")['clone_id'].values:
-            absent_df.append(pd.DataFrame({
-                'cell_cycle': ['S'], 'clone_id': [clone_id], 'num_cells': [0]
-            }))
-        if clone_id not in df2.query("cell_cycle=='G1/2 recovered'")['clone_id'].values:
-            absent_df.append(pd.DataFrame({
-                'cell_cycle': ['G1/2 recovered'], 'clone_id': [clone_id], 'num_cells': [0]
-            }))
-        if clone_id not in df2.query("cell_cycle=='G1/2 tree'")['clone_id'].values:
-            absent_df.append(pd.DataFrame({
-                'cell_cycle': ['G1/2 tree'], 'clone_id': [clone_id], 'num_cells': [0]
-            }))
-    
-    # concatenate into one dataframe
-    if len(absent_df) > 0:
-        absent_df = pd.concat(absent_df, ignore_index=True)
-        df2 = pd.concat([df2, absent_df], ignore_index=True)
-
-    # create arrays of clone counts within each cell cycle phase
-    num_cells_s = df2.query("cell_cycle=='S'")['num_cells'].values
-    num_cells_g_tree = df2.query("cell_cycle=='G1/2 tree'")['num_cells'].values
-    num_cells_g_rec = df2.query("cell_cycle=='G1/2 recovered'")['num_cells'].values
-    # treat both the tree and recovered G1/2-phase cells as being nonreplicating here
-    num_cells_g = num_cells_g_tree + num_cells_g_rec
-
+    num_cells_s = np.zeros(len(clones))
+    num_cells_g = np.zeros(len(clones))
+    for i, clone_id in enumerate(clones):
+        num_cells_s[i] = df.query('cell_cycle=="S"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
+        num_cells_g[i] = df.query('cell_cycle=="G1/2"').query('clone_id=="{}"'.format(clone_id))['num_cells'].values[0]
+        
     # convert clone counts to clone frequencies within each cell cycle phase
     clone_frac_s = num_cells_s / sum(num_cells_s)
     clone_frac_g = num_cells_g / sum(num_cells_g)
-
+    
     # statistical test to see which clones are enriched/depleted for S-phase cells
     positive_pvals = np.zeros(len(clones))
     for i, clone_id in enumerate(clones):
@@ -264,44 +231,137 @@ def clone_spf_analysis(cn_s, cn_g, cn_gr, argv):
     # subtract positive pval from 1 to see if clone has 
     # significantly fewer S-phase cells than expected
     negative_pvals = 1 - positive_pvals
+    
+    # create a dataframe with one entry per clone with all relevant stats
+    df_out = pd.DataFrame({
+        'clone_id': clones,
+        'num_cells_s': num_cells_s,
+        'num_cells_g': num_cells_g,
+        'clone_frac_s': clone_frac_s,
+        'clone_frac_g': clone_frac_g,
+        'positive_p': positive_pvals,
+        'negative_p': negative_pvals
+    })
+    
+    return df_out
+    
 
-    # divide by total number of hypotheses tested (Bonferroni correction)
-    positive_pvals *= 2 * len(clones)
-    negative_pvals *= 2 * len(clones)
+def library_wrapper_fracs_and_pvals(df):
+    ''' Compute clone cell cycle fractions within each library '''
+    df_out = []
+    for library_id, chunk in df.groupby('library_id'):
+        temp_out = compute_fracs_and_pvals(chunk)
+        temp_out['library_id'] = library_id
+        df_out.append(temp_out)
+    df_out = pd.concat(df_out, ignore_index=True)
+    return df_out
 
-    fig, ax = plt.subplots(1, 2, figsize=(10, 4), tight_layout=True)
+
+def clone_spf_analysis(cn_s, cn_g, argv):
+    # add column to denote phase of each df
+    cn_s['cell_cycle'] = 'S'
+    cn_g['cell_cycle'] = 'G1/2'
+
+    # rename the clone_id column to match the cells in the tree
+    cn_s['clone_id'] = cn_s['assigned_clone_id']
+    cn_g['clone_id'] = cn_g['assigned_clone_id']
+
+    # concatenate all cells into one df but only store relevant columns
+    coi = ['cell_id', 'cell_cycle', 'clone_id', 'library_id']
+    df = pd.concat([cn_s[coi], cn_g[coi]], ignore_index=True)
+    df = df.sort_values(['clone_id', 'cell_cycle', 'library_id']).drop_duplicates(ignore_index=True)
+
+    # count the number of cells belonging to each clone and cell cycle phase
+    df2 = df[['cell_cycle', 'clone_id', 'library_id']].value_counts().to_frame(name='num_cells').reset_index().sort_values(['clone_id', 'cell_cycle']).reset_index(drop=True)
+    
+    # remove clones with "None" ID
+    df2 = df2.loc[df2['clone_id']!='None']
+
+    clones = df2['clone_id'].unique()
+    libraries = df2['library_id'].unique()
+
+    # add all the counts for clones+phase combos with no cells
+    absent_df = []
+    for library_id in libraries:
+        for clone_id in clones:
+            if clone_id not in df2.query("cell_cycle=='S'").query("library_id=='{}'".format(library_id))['clone_id'].values:
+                absent_df.append(pd.DataFrame({
+                    'cell_cycle': ['S'], 'clone_id': [clone_id], 'library_id': [library_id], 'num_cells': [0]
+                }))
+            if clone_id not in df2.query("cell_cycle=='G1/2'").query("library_id=='{}'".format(library_id))['clone_id'].values:
+                absent_df.append(pd.DataFrame({
+                    'cell_cycle': ['G1/2'], 'clone_id': [clone_id], 'library_id': [library_id], 'num_cells': [0]
+                }))
+    
+    # concatenate into one dataframe
+    if len(absent_df) > 0:
+        absent_df = pd.concat(absent_df, ignore_index=True)
+        df2 = pd.concat([df2, absent_df], ignore_index=True)
+
+    # compute cell cycle fractions per clone & library along with p-values
+    df2 = library_wrapper_fracs_and_pvals(df2)
+
+    # Bonferroni correction of p-values by the total number of hypotheses tested
+    # x2 because we're doing a two-sided t-test
+    df2['positive_p_adj'] = df2['positive_p'] * 2 * df2.shape[0]
+    df2['negative_p_adj'] = df2['negative_p'] * 2 * df2.shape[0]
+
+    fig, ax = plt.subplots(1, 2, figsize=(10, 5), tight_layout=True)
+
+    pthresh = 1e-2
+
+    # create custom legend for clones & libraries
+    clone_cmap = {}
+    library_cmap = {}
+    clone_legend_elements = [
+        Line2D([0], [0], marker='^', color='w', label='enriched', markerfacecolor='k', markersize=10),
+        Line2D([0], [0], marker='v', color='w', label='depleted', markerfacecolor='k', markersize=10)
+    ]
+    library_legend_elements = clone_legend_elements.copy()
+    for i, c in enumerate(df2.clone_id.unique()):
+        color = 'C{}'.format(i)
+        clone_cmap[c] = color
+        clone_legend_elements.append(Patch(facecolor=color, label=c))
+
+    for i, l in enumerate(df2.library_id.unique()):
+        color = 'C{}'.format(i)
+        library_cmap[l] = color
+        library_legend_elements.append(Patch(facecolor=color, label=l))
 
     # draw scatterplot comparing the relative fraction of each clone in S vs G1/2 phases
-    pthresh = 1e-2
-    for i, clone_id in enumerate(clones):
-        if positive_pvals[i] < pthresh:
-            ax[0].scatter(x=clone_frac_g[i], y=clone_frac_s[i], c='C{}'.format(i), label=clone_id, marker='^')
-        elif negative_pvals[i] < pthresh:
-            ax[0].scatter(x=clone_frac_g[i], y=clone_frac_s[i], c='C{}'.format(i), label=clone_id, marker='v')
+    for i, row in df2.iterrows():
+        clone_id = row['clone_id']
+        library_id = row['library_id']
+        if row['positive_p_adj'] < pthresh:
+            ax[0].scatter(x=row['clone_frac_g'], y=row['clone_frac_s'], c=clone_cmap[clone_id], marker='^')
+            ax[1].scatter(x=row['clone_frac_g'], y=row['clone_frac_s'], c=library_cmap[library_id], marker='^')
+        elif row['negative_p_adj'] < pthresh:
+            ax[0].scatter(x=row['clone_frac_g'], y=row['clone_frac_s'], c=clone_cmap[clone_id], marker='v')
+            ax[1].scatter(x=row['clone_frac_g'], y=row['clone_frac_s'], c=library_cmap[library_id], marker='v')
         else:
-            ax[0].scatter(x=clone_frac_g[i], y=clone_frac_s[i], c='C{}'.format(i), label=clone_id)
+            ax[0].scatter(x=row['clone_frac_g'], y=row['clone_frac_s'], c=clone_cmap[clone_id])
+            ax[1].scatter(x=row['clone_frac_g'], y=row['clone_frac_s'], c=library_cmap[library_id])
 
     # draw y=x line where we expect "neutral" clones to lie
     lims = [
         np.min([ax[0].get_xlim(), ax[0].get_ylim()]),  # min of both axes
         np.max([ax[0].get_xlim(), ax[0].get_ylim()]),  # max of both axes
     ]
-    ax[0].plot(lims, lims, 'k--', alpha=0.25, zorder=0, label='neutral')
+    ax[0].plot(lims, lims, 'k--', alpha=0.25, zorder=0)
+    ax[1].plot(lims, lims, 'k--', alpha=0.25, zorder=0)
 
-    ax[0].legend(title='Clone ID')
-    ax[0].set_xlabel('Fraction of G1/2 cells assigned to clone')
-    ax[0].set_ylabel('Fraction of S cells assigned to clone')
+    ax[0].legend(handles=clone_legend_elements, title='Clone ID')
+    ax[0].set_xlabel('Fraction of G1/2 cells in library assigned to clone')
+    ax[0].set_ylabel('Fraction of S cells in library assigned to clone')
     ax[0].set_title('{}\nRelative proliferation rate of clones'.format(argv.dataset))
-
-    # pie chart to represent the total fraction of cell cycle phases across all clones
-    n_cells_per_phase = [sum(num_cells_g_tree), sum(num_cells_g_rec), sum(num_cells_s)]
-    phases = ['G1/2 tree', 'G1/2 recovered', 'S']
-    colors = matplotlib.cm.get_cmap('Pastel2', len(phases)).colors
-    ax[1].pie(n_cells_per_phase, labels=phases, autopct='%1.1f%%', shadow=True, colors=colors)
-    ax[1].set_title('Sample proliferation rate - {}'.format(argv.dataset))
+    
+    ax[1].legend(handles=library_legend_elements, title='Library ID')
+    ax[1].set_xlabel('Fraction of G1/2 cells in library assigned to clone')
+    ax[1].set_ylabel('Fraction of S cells in library assigned to clone')
+    ax[1].set_title('{}\nRelative proliferation rate of clones'.format(argv.dataset))
 
     # save spf figure
-    fig.savefig(argv.plot2, bbox_inches='tight')
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
     # save table used to generate spf figure
     df2.to_csv(argv.out_tsv, sep='\t', index=False)
@@ -312,7 +372,6 @@ def main():
     # load long-form dataframes from different cell cycle phases
     cn_s = pd.read_csv(argv.cn_s, sep='\t')
     cn_g = pd.read_csv(argv.cn_g, sep='\t')
-    cn_gr = pd.read_csv(argv.cn_gr, sep='\t')
 
     # load pseudobulk RT profiles
     rt = pd.read_csv(argv.rt, sep='\t')
@@ -321,8 +380,6 @@ def main():
     cn_s.chr = cn_s.chr.astype('category')
     cn_g.chr = cn_g.chr.astype('str')
     cn_g.chr = cn_g.chr.astype('category')
-    cn_gr.chr = cn_gr.chr.astype('str')
-    cn_gr.chr = cn_gr.chr.astype('category')
     rt.chr = rt.chr.astype('str')
     rt.chr = rt.chr.astype('category')
 
@@ -334,7 +391,7 @@ def main():
 
     # plot S-phase fractions at the clone and sample levels
     # save both the plot and table used to make the plot
-    clone_spf_analysis(cn_s, cn_g, cn_gr, argv)
+    clone_spf_analysis(cn_s, cn_g, argv)
 
 
 if __name__ == '__main__':

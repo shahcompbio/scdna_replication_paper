@@ -88,7 +88,9 @@ rule all_simulation:
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/simulation/all/model_accuracies.png'
+        'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
+        'plots/simulation/all/model_accuracies1.png',
+        'plots/simulation/all/clone_specific_rt_corr.png',
         # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
 
@@ -145,7 +147,7 @@ rule simulate_reads_from_cn_pyro_sim:
     log:
         'logs/simulation/{dataset}/simulate_reads_from_cn_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/simulate_reads_from_cn_pyro.py '
         '-si {input.s_phase} '
         '-gi {input.g1_phase} '
@@ -203,7 +205,7 @@ rule compute_ccc_features_sim:
         g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     log: 'logs/simulation/{dataset}/compute_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -214,8 +216,10 @@ rule infer_scRT_bulk_sim:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output: 
-        main_out = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv',
-        supp_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_output.tsv'  # should be an empty dataframe for bulk method
+        main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
+        supp_s_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_s_output.tsv',
+        main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_bulk_inferred.tsv',
+        supp_g_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -225,7 +229,7 @@ rule infer_scRT_bulk_sim:
         max_iter = 2000
     log: 'logs/simulation/{dataset}/infer_scRT_bulk.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -235,9 +239,11 @@ rule infer_scRT_pyro_sim:
     input:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
-    output: 
-        main_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_infered.tsv',
-        supp_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_output.tsv'  # should contain sample- and library-level params
+    output:
+        main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
+        supp_s_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_inferred.tsv',
+        supp_g_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -247,7 +253,7 @@ rule infer_scRT_pyro_sim:
         max_iter = 2000
     log: 'logs/simulation/{dataset}/infer_scRT_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -257,9 +263,11 @@ rule infer_scRT_pyro_composite_sim:
     input:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
-    output: 
-        main_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
-        supp_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_output.tsv'  # should contain sample- and library-level params
+    output:
+        main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
+        supp_s_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_s_output.tsv',
+        main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_composite_inferred.tsv',
+        supp_g_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_g_output.tsv',
     params:
         input_col = 'true_reads_norm',
         cn_col = 'observed_cn_state',
@@ -269,7 +277,7 @@ rule infer_scRT_pyro_composite_sim:
         max_iter = 2000
     log: 'logs/simulation/{dataset}/infer_scRT_pyro_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -277,8 +285,8 @@ rule infer_scRT_pyro_composite_sim:
 
 rule remove_nonreplicating_cells_sim:
     input: 
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_infered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv'
+        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv'
     output:
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
         cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv'
@@ -288,7 +296,7 @@ rule remove_nonreplicating_cells_sim:
         bulk_rep_col = 'rt_state'
     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/remove_nonreplicating_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -296,8 +304,8 @@ rule remove_nonreplicating_cells_sim:
 
 rule remove_nonreplicating_cells_composite_sim:
     input: 
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_infered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv'
+        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv'
     output:
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
         cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_composite_filtered.tsv'
@@ -307,7 +315,7 @@ rule remove_nonreplicating_cells_composite_sim:
         bulk_rep_col = 'rt_state'
     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/remove_nonreplicating_cells.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -315,8 +323,8 @@ rule remove_nonreplicating_cells_composite_sim:
 
 rule plot_ccc_features_sim:
     input:
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_infered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_infered.tsv',
+        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/ccc_features_hist.png',
@@ -327,7 +335,7 @@ rule plot_ccc_features_sim:
         bulk_rep_col = 'rt_state'
     log: 'logs/simulation/{dataset}/plot_ccc_features.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -396,7 +404,7 @@ rule plot_pyro_inferred_cn_vs_scRT_sim:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/simulation/{dataset}/plot_pyro_inferred_cn_vs_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_pyro_inferred_cn_vs_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -411,8 +419,24 @@ rule plot_pyro_composite_inferred_cn_vs_scRT_sim:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/simulation/{dataset}/plot_pyro_composite_inferred_cn_vs_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_pyro_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule true_vs_inferred_heatmaps_sim:
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+    output: 'plots/simulation/{dataset}/true_vs_inferred_heatmaps.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        true_frac_col = 'true_t',
+        rep_state = 'model_rep_state',
+        true_rep_state = 'true_rep'
+    log: 'logs/simulation/{dataset}/true_vs_inferred_heatmaps.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/true_vs_inferred_heatmaps.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -425,7 +449,7 @@ rule compute_rt_pseudobulks_pyro_sim:
         true_rep_col = 'true_rep'
     log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -439,7 +463,7 @@ rule compute_rt_pseudobulks_bulk_sim:
         true_rep_col = 'true_rep'
     log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_bulk.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -453,7 +477,7 @@ rule compute_rt_pseudobulks_pyro_composite_sim:
         true_rep_col = 'true_rep'
     log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_pyro_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -477,7 +501,7 @@ rule twidth_analysis_pyro_sim:
         infer_mode = 'pyro'
     log: 'logs/simulation/{dataset}/twidth_analysis_pyro.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -501,7 +525,7 @@ rule twidth_analysis_bulk_sim:
         infer_mode = 'bulk'
     log: 'logs/simulation/{dataset}/twidth_analysis_bulk.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -525,7 +549,7 @@ rule twidth_analysis_pyro_composite_sim:
         infer_mode = 'pyro_composite'
     log: 'logs/simulation/{dataset}/twidth_analysis_pyro_composite.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -611,11 +635,12 @@ rule model_accuracies_sim:
     input: 'analysis/simulation/all/s_phase_model_results_paths.tsv'
     output:
         accuracy_table = 'analysis/simulation/all/model_accuracies.tsv',
-        accuracy_plot = 'plots/simulation/all/model_accuracies.png'
+        accuracy_plot1 = 'plots/simulation/all/model_accuracies1.png',
+        accuracy_plot2 = 'plots/simulation/all/model_accuracies2.png',
     params:
         datasets = expand(config['simulated_datasets']),
         A = expand([str(config['simulated_datasets'][d]['A']) for d in config['simulated_datasets']]),
-        cell_cna_prob = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
+        cell_cna_rate = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
         num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
         bulk_rep_col = 'rt_state',
@@ -625,12 +650,12 @@ rule model_accuracies_sim:
         true_cn_col = 'true_G1_state'
     log: 'logs/simulation/all/model_accuracies.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/model_accuracies.py '
         '--input {input} '
         '--datasets {params.datasets} '
         '--A {params.A} '
-        '--cell_cna_prob {params.cell_cna_prob} '
+        '--cell_cna_rate {params.cell_cna_rate} '
         '--num_clones {params.num_clones} '
         '--lamb {params.lamb} '
         '--bulk_rep_col {params.bulk_rep_col} '
@@ -639,7 +664,22 @@ rule model_accuracies_sim:
         '--true_rep_col {params.true_rep_col} '
         '--true_cn_col {params.true_cn_col} '
         '--table {output.accuracy_table} '
-        '--plot {output.accuracy_plot} '
+        '--plot1 {output.accuracy_plot1} '
+        '--plot2 {output.accuracy_plot2} '
         '&> {log} ; '
         'deactivate'
 
+
+rule clone_specific_rt_sim:
+    input:
+        P10 = 'analysis/simulation/P10/scRT_pseudobulks_pyro_composite.tsv',
+        P11 = 'analysis/simulation/P11/scRT_pseudobulks_pyro_composite.tsv'
+    output: 
+        corr = 'plots/simulation/all/clone_specific_rt_corr.png',
+        profiles = 'plots/simulation/all/clone_specific_rt_profiles.png'
+    log: 'logs/simulation/all/clone_specific_rt.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/clone_specific_rt.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'

@@ -4,7 +4,7 @@
         "queue" : "general",
         "mem" : 64,
         "threads" : 1,
-        "time" : "2:00",
+        "time" : "6:00",
         "extra" : "",
         "latency" : "10",
         "logdir" : "logs/cluster"
@@ -14,6 +14,16 @@
         "mem" : 96
     },
     "collect_cn_data_st" :
+    {
+        "time" : "6:00",
+        "mem" : 200
+    },
+    "collect_cn_data_f" :
+    {
+        "time" : "6:00",
+        "mem" : 200
+    },
+    "filter_data_f":
     {
         "time" : "6:00",
         "mem" : 200
@@ -39,6 +49,10 @@
     {
         "time" : "6:00"
     },
+    "plot_ccc_features_f" :
+    {
+        "time" : "6:00"
+    },
     "split_cell_cycle_st" :
     {
         "time" : "6:00"
@@ -47,6 +61,10 @@
     {
         "time" : "6:00"
     },
+    "plot_cn_heatmaps_f" :
+    {
+        "mem" : 128
+    },
     "infer_scRT_bulk_sim" :
     {
         "time" : "48:00",
@@ -54,12 +72,12 @@
     },
     "infer_scRT_pyro_composite_sim" :
     {
-        "time" : "48:00",
+        "time" : "72:00",
         "mem" : 128
     },
     "infer_scRT_pyro_sim" :
     {
-        "time" : "48:00",
+        "time" : "72:00",
         "mem" : 128
     },
     "infer_scRT_pyro_sl" :
@@ -69,18 +87,23 @@
     },
     "infer_scRT_pyro_composite_lf" :
     {
-        "time" : "48:00",
+        "time" : "72:00",
         "mem" : 128
     },
     "infer_scRT_pyro_lf" :
     {
-        "time" : "48:00",
+        "time" : "72:00",
         "mem" : 128
     },
     "infer_scRT_pyro_st" :
     {
         "time" : "72:00",
         "mem" : 128
+    },
+    "infer_scRT_pyro_f" :
+    {
+        "time" : "120:00",
+        "mem" : 256
     },
     "model_accuracies_sim" :
     {
@@ -93,6 +116,15 @@
     "compute_cn_pseudobulks_sl" :
     {
         "time" : "6:00"
+    },
+    "compute_cn_pseudobulks_fl" :
+    {
+        "time" : "6:00"
+    },
+    "compute_cn_pseudobulks_f" :
+    {
+        "mem" : 128,
+        "time" : "12:00"
     },
     "compute_rt_pseudobulks_composite_lf" :
     {
@@ -113,6 +145,10 @@
         "time" : "6:00",
         "mem" : 256
     },
+    "revise_cell_cycle_labels_f" :
+    {
+        "mem": 128
+    },
     "plot_filtered_pyro_model_output_st" :
     {
         "time" : "6:00",
@@ -132,5 +168,25 @@
     {
         "time" : "6:00",
         "mem" : 256
+    },
+    "phase_changes_sl" :
+    {
+        "time" : "12:00"
+    },
+    "plot_rpm_embedding_f" :
+    {
+        "mem": 128
+    },
+    "split_by_rx_f" :
+    {
+        "mem": 256
+    },
+    "plot_filtered_pyro_model_output_f" :
+    {
+        "mem": 256
+    },
+    "compute_rt_pseudobulks_f" :
+    {
+        "mem": 256
     }
 }

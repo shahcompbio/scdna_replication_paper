@@ -17,6 +17,33 @@ def get_args():
     return p.parse_args()
 
 
+def rename_none_clone(cn):
+    """ 
+    Rename clone with 'None' to the next available clone id. 
+    For instance, if the clones are A, B, None, then rename None to C. 
+    """
+    # get all clone ids
+    clones = cn['clone_id'].unique()
+    # get the next available clone id not counting 'None'
+    highest_clone = max([c for c in clones if c != 'None'])
+    # next clone id is the ascii character following the highest clone id
+    next_clone = chr(ord(highest_clone) + 1)
+    # rename 'None' clone to the next available clone id
+    cn.loc[cn['clone_id'] == 'None', 'clone_id'] = next_clone
+    return cn
+
+
+def remove_small_clones(cn, min_cells=10):
+    """ Remove clones with fewer than min_cells cells. """
+    # get the number of unique cells belonging to each clone
+    clone_sizes = cn[['cell_id', 'clone_id']].drop_duplicates()['clone_id'].value_counts()
+    # get clones with fewer than min_cells cells
+    small_clones = clone_sizes[clone_sizes < min_cells].index
+    # remove small clones
+    cn = cn.loc[~cn['clone_id'].isin(small_clones)]
+    return cn
+
+
 def main():
     argv = get_args()
 
@@ -28,6 +55,12 @@ def main():
 
     # merge clone_id for the g1-phase cells (those with clone labels already)
     cn_g1 = pd.merge(cn, clones, on='cell_id')
+
+    # remove small clones
+    cn_g1 = remove_small_clones(cn_g1)
+
+    # rename 'None' clone to the next available clone id
+    cn_g1 = rename_none_clone(cn_g1)
     
     # need to assign clone_ids for the S-phase cells who do not appear in cn_g1
     cn_s = cn.loc[~cn['cell_id'].isin(cn_g1['cell_id'].unique())]

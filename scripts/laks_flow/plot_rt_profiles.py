@@ -152,7 +152,7 @@ def plot_chr1_by_cell_line(df, argv):
     ax.set_ylabel('Pseudobulk RT')
     ax.set_title('Joint Model')
     ax.legend()
-    fig.savefig(argv.rt_joint_chr1, bbox_inches='tight')
+    fig.savefig(argv.rt_joint_chr1, bbox_inches='tight', dpi=300)
 
     # plot chr1 bulk RT for each cell line inferred with the split model
     fig, ax = plt.subplots(1, 1, figsize=(16,4))
@@ -161,16 +161,32 @@ def plot_chr1_by_cell_line(df, argv):
     ax.set_ylabel('Pseudobulk RT')
     ax.set_title('Split Model')
     ax.legend()
-    fig.savefig(argv.rt_split_chr1, bbox_inches='tight')
+    fig.savefig(argv.rt_split_chr1, bbox_inches='tight', dpi=300)
 
 
 def plot_rt_corr(df, argv):
-    # plot a heatmap of all the pairwise correlations in RT
-    fig, ax = plt.subplots(1, 1, figsize=(6,6))
-    rt_corrs = df[['gc', 'rt_joint_T47D', 'rt_split_T47D', 'rt_joint_GM18507', 'rt_split_GM18507']].corr()
-    sns.heatmap(rt_corrs, annot=True, ax=ax)
-    ax.set_title('Correlation in RT')
-    fig.savefig(argv.rt_corr, bbox_inches='tight')
+    """ plot a heatmap of all the pairwise RT correlations for each cell line when the joint and split methods are used """
+    # subset the dataframe to only the columns that should be plotted
+    df = df[['gc', 'rt_joint_T47D', 'rt_split_T47D', 'rt_joint_GM18507', 'rt_split_GM18507']]
+    # rename the columns to be more readable
+    df.columns = ['gc', 'T47D joint', 'T47D split', 'GM18507 joint', 'GM18507 split']
+    # calculate the Pearson correlation matrix
+    corr = df.corr()
+
+    # mask the upper triangle of the heatmap
+    mask = np.zeros_like(corr, dtype=bool)
+    mask[np.triu_indices_from(mask)] = True
+
+    fig = plt.figure(figsize=(6, 6))
+
+    # plot the heatmap, including the first 2 digits of the correlation values, the mask, and whitespace between the cells
+    sns.heatmap(corr, square=True, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='.2f')
+    plt.title('Pseudobulk RT correlations\nFlow sorted data passed into PERT joint vs split by cell line')
+
+    # rotate the y-tick labels to read from left to right
+    plt.yticks(rotation=0)
+
+    fig.savefig(argv.rt_corr, bbox_inches='tight', dpi=300)
 
 
 def plot_rt_diff(df, argv):
@@ -180,14 +196,14 @@ def plot_rt_diff(df, argv):
     plot_cell_cn_profile2(ax, df, 'rt_diff_joint', color='C3', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('RT Diff\n<--GM18507 earlier | T47D earlier -->')
     ax.set_title('Joint Model')
-    fig.savefig(argv.rt_diff_joint, bbox_inches='tight')
+    fig.savefig(argv.rt_diff_joint, bbox_inches='tight', dpi=300)
 
     # for the split model
     fig, ax = plt.subplots(1, 1, figsize=(16,4))
     plot_cell_cn_profile2(ax, df, 'rt_diff_split', color='C3', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('RT Diff\n<--GM18507 earlier | T47D earlier -->')
     ax.set_title('Split Model')
-    fig.savefig(argv.rt_diff_split, bbox_inches='tight')
+    fig.savefig(argv.rt_diff_split, bbox_inches='tight', dpi=300)
 
 
 def main():

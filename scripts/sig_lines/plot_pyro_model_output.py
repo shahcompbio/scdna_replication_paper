@@ -27,22 +27,40 @@ def get_rt_cmap():
     return ListedColormap(color_list)
 
 
-def plot_model_results(cn_s, argv):
+def plot_model_results(cn_s, cn_g, argv):
     rt_cmap = get_rt_cmap()
 
-    fig, ax = plt.subplots(1, 4, figsize=(28, 7), tight_layout=True)
+    # create 2 x 4 grid of plots
+    fig, ax = plt.subplots(2, 4, figsize=(28, 14), tight_layout=True)
     ax = ax.flatten()
 
+    # top row is the S-phase cells
+    # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
     plot_clustered_cell_cn_matrix(ax[0], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
     plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
     plot_clustered_cell_cn_matrix(ax[2], cn_s, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
     plot_clustered_cell_cn_matrix(ax[3], cn_s, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
 
-    ax[0].set_title('{}\nReads per million'.format(argv.dataset))
-    ax[1].set_title('{}\nHMMCopy states'.format(argv.dataset))
-    ax[2].set_title('{}\nInferred CN states'.format(argv.dataset))
-    ax[3].set_title('{}\nInferred replication states'.format(argv.dataset))
-    fig.savefig(argv.plot1, bbox_inches='tight')
+    # add titles for each subplot
+    ax[0].set_title('{} S-phase cells\nReads per million'.format(argv.dataset))
+    ax[1].set_title('{} S-phase cells\nHMMCopy states'.format(argv.dataset))
+    ax[2].set_title('{} S-phase cells\nInferred CN states'.format(argv.dataset))
+    ax[3].set_title('{} S-phase cells\nInferred replication states'.format(argv.dataset))
+
+    # bottom row is the G1/2-phase cells
+    # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
+    plot_clustered_cell_cn_matrix(ax[4], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[5], cn_g, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[6], cn_g, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[7], cn_g, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
+
+    # add titles for each subplot
+    ax[4].set_title('{} G1/2-phase cells\nReads per million'.format(argv.dataset))
+    ax[5].set_title('{} G1/2-phase cells\nHMMCopy states'.format(argv.dataset))
+    ax[6].set_title('{} G1/2-phase cells\nInferred CN states'.format(argv.dataset))
+    ax[7].set_title('{} G1/2-phase cells\nInferred replication states'.format(argv.dataset))
+
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
 def plot_hmmcopy(cn_s, cn_g1, argv):
@@ -54,7 +72,7 @@ def plot_hmmcopy(cn_s, cn_g1, argv):
 
     ax[0].set_title('{}\nG1-phase HMMCopy states'.format(argv.dataset))
     ax[1].set_title('{}\nS-phase HMMCopy states'.format(argv.dataset))
-    fig.savefig(argv.plot2, bbox_inches='tight')
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
 
 def plot_rpm(cn_s, cn_g1, argv):
@@ -66,7 +84,7 @@ def plot_rpm(cn_s, cn_g1, argv):
 
     ax[0].set_title('{}\nG1-phase reads per million'.format(argv.dataset))
     ax[1].set_title('{}\nS-phase reads per million'.format(argv.dataset))
-    fig.savefig(argv.plot3, bbox_inches='tight')
+    fig.savefig(argv.plot3, bbox_inches='tight', dpi=300)
 
 
 def main():
@@ -75,9 +93,9 @@ def main():
     cn_s = pd.read_csv(argv.cn_s, sep='\t')
     cn_g = pd.read_csv(argv.cn_g, sep='\t')
 
-    # show rpm, hmmcopy, inferred cn, inferred rep heatmaps for S-phase cells
+    # show rpm, hmmcopy, inferred cn, inferred rep heatmaps for S-phase cells and G1/2-phase cells
     # where all the rows are sorted the same in all four heatmaps
-    plot_model_results(cn_s, argv)
+    plot_model_results(cn_s, cn_g, argv)
 
     # show hmmcopy state heatmaps for both S-phase and G1-phase cells
     plot_hmmcopy(cn_s, cn_g, argv)

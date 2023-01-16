@@ -191,7 +191,7 @@ rule infer_SPF:
         input_col = 'copy'
     log: 'logs/fitness_rx/{dataset}/infer_SPF.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_rx/infer_SPF.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -205,7 +205,7 @@ rule compute_consensus_clone_states:
         clone_col = 'clone_id'
     log: 'logs/fitness_rx/{dataset}/compute_consensus_clone_states.log'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/common/compute_consensus_clone_profiles.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'

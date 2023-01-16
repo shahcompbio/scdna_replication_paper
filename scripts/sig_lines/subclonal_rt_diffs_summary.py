@@ -64,7 +64,7 @@ def main():
     ax.set_title('RT shifts at subclonal CNAs - all hTERTs')
     ax.set_xlabel('CNA type')
     ax.set_ylabel('Clone RT relative to reference\n<--later | earlier-->')
-    fig.savefig(argv.plot, bbox_inches='tight')
+    fig.savefig(argv.plot, bbox_inches='tight', dpi=300)
 
     # save the merged table
     df.to_csv(argv.table, sep='\t', index=False)

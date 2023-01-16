@@ -76,7 +76,7 @@ def subclonal_rt_diffs(df3, cols, clones, ploidies, argv):
             avg_neutral_rt = np.mean(row[neutral_cols])
         else:
             # use the sample pseudbulk when there are subclonal CNAs in all clones
-            avg_neutral_rt = row['pseduobulk_{}'.format(argv.rep_col)]
+            avg_neutral_rt = row['pseudobulk_{}'.format(argv.rep_col)]
         
         if len(gain_cols) > 0:
             avg_gain_rt = np.mean(row[gain_cols])
@@ -174,7 +174,7 @@ def main():
     df['end'] = df['start'] + 500000 - 1
 
     # find all the columns containing clone RT profiles
-    cols = [x for x in df.columns if x.startswith('pseduobulk_clone') and x.endswith(argv.rep_col)]
+    cols = [x for x in df.columns if x.startswith('pseudobulk_clone') and x.endswith(argv.rep_col)]
     # find all the columns containing clone CN profiles
     clones = [x.split('_')[1].replace('clone', 'clone_') for x in cols]
 
@@ -199,7 +199,7 @@ def main():
     ax.set_title('RT shifts at subclonal CNAs - {}'.format(argv.dataset))
     ax.set_xlabel('CNA type')
     ax.set_ylabel('Clone RT relative to reference\n<--later | earlier-->')
-    fig.savefig(argv.out_png, bbox_inches='tight')
+    fig.savefig(argv.out_png, bbox_inches='tight', dpi=300)
 
     # add dataset name to table before saving
     cna_rt_diffs['dataset'] = argv.dataset

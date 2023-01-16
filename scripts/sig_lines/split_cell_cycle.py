@@ -26,7 +26,6 @@ def split_cell_cycle(cn):
     return df_s, df_g
 
 
-
 if __name__ == '__main__':
     argv = get_args()
 

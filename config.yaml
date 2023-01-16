@@ -1,15 +1,14 @@
 ticket_dir_50kb: /juno/work/shah/users/weinera2/projects/hmmcopy/output
 ticket_dir_500kb: /work/shah/tantalus
-fitness_datasets: ['SA000', 'SA001', 'SA039U', 'SA532', 'SA609',
-                   'SA609X3X8a', 'SA906a', 'SA906b', 'SA1035U',
-                   'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT']
-fitness_rx_pairs:
-  SA1035:
-    Rx: 'SA1035T'
-    UnRx: 'SA1035U'
-  SA535:
-    Rx: 'SA535_CISPLATIN_CombinedT'
-    UnRx: 'SA535_CISPLATIN_CombinedU'
+# fitness_datasets: ['SA000', 'SA001', 'SA039U', 'SA532', 'SA609',
+#                    'SA609X3X8a', 'SA906a', 'SA906b', 'SA1035U',
+#                    'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT']
+fitness_rx_datasets: [
+  'SA1035U', 'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT', 
+  'SA609U', 'SA609U2', 'SA609T', 'SA609T2'
+]
+fitness_datasets: ['SA1035', 'SA535', 'SA609']
+fitness_lines: ['SA039', 'SA906a', 'SA906b']
 permuted_datasets:
   A:
     rate: 0.01
@@ -67,15 +66,15 @@ signatures_cell_lines:
   SA906b:
     type: 'hTERT,TP53-/-'
   SA1188:
-    type: 'hTERT,BRCA2+/−,TP53−/−'
-  SA1056:
-    type: 'hTERT,BRCA2−/−,TP53−/−'
-  SA1055:
-    type: 'hTERT,BRCA2−/−,TP53−/−'
-  SA1054:
-    type: 'hTERT,BRCA1−/−,TP53−/−'
+    type: 'hTERT,BRCA2+/-,TP53-/-'
   SA1292:
-    type: 'hTERT,BRCA1+/−,TP53−/−'
+    type: 'hTERT,BRCA1+/-,TP53-/-'
+  SA1056:
+    type: 'hTERT,BRCA2-/-,TP53-/-'
+  SA1055:
+    type: 'hTERT,BRCA2-/-,TP53-/-'
+  SA1054:
+    type: 'hTERT,BRCA1-/-,TP53-/-'
   OV2295:
     type: 'HGSOC-line'
 signatures_patient_tumors:

@@ -1,7 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
 import sys
-sys.setrecursionlimit(10000)
 import scgenome.cnplot
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -57,11 +56,11 @@ def make_color_mat_float(values, palette_color):
     return color_mat, color_dict
 
 
-def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, value_col='state', clone_col='clone_id'):
+def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_id', value_col='state'):
     cn_g = cn_g.copy()
     cn_s = cn_s.copy()
 
-   # create mapping of clones
+    # create mapping of clones
     cluster_col = 'cluster_id'
     clone_dict = dict([(y,x+1) for x,y in enumerate(sorted(cn_g[clone_col].unique()))])
     cn_g[cluster_col] = cn_g[clone_col]
@@ -128,16 +127,20 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, value_col='state',
     return fig
 
 
+
 def main():
     argv = get_args()
 
     cn_s = pd.read_csv(argv.s_phase, sep='\t')
     cn_g = pd.read_csv(argv.non_s_phase, sep='\t')
 
-    cn_s.chr = cn_s.chr.astype(str)
-    cn_g.chr = cn_g.chr.astype(str)
+    # make sure chromosome column is set to the appropriate dtype
+    cn_s['chr'] = cn_s['chr'].astype(str)
+    cn_s['chr'] = cn_s['chr'].astype('category')
+    cn_g['chr'] = cn_g['chr'].astype(str)
+    cn_g['chr'] = cn_g['chr'].astype('category')
 
-    fig = plot_cn_heatmap(cn_g, cn_s, dataset=argv.dataset, value_col=argv.value_col, clone_col='clone_id')
+    fig = plot_cn_heatmap(cn_g, cn_s, dataset=argv.dataset, value_col=argv.value_col)
 
     fig.savefig(argv.output_pdf, bbox_inches='tight')
 
