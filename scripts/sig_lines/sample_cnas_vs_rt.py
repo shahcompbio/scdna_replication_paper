@@ -316,20 +316,31 @@ def plot_rt_distributions(df, argv):
     # violin plots of RT distributions split by CNA type
     plot_WT_rt_vs_cna_type(df.query('dataset!="SA039"'), ax[0])
     ax[0].set_xlabel('Relative CN in hTERT non-WT cell line')
-    ax[0].set_ylabel('RT in hTERT WT')
+    ax[0].set_ylabel('RT in hTERT WT\n<--late | early-->')
     ax[0].set_title('CNA type vs RT')
 
     # histogram of RT values split by CNA type
-    sns.histplot(data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='cna_type', common_norm=False, stat='density', ax=ax[1])
+    df['CNA type'] = df['cna_type']
+    sns.histplot(
+        data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='CNA type', 
+        common_norm=False, stat='density', ax=ax[1],
+        palette={'loss': 'C0', 'neutral': 'C1', 'gain': 'C2'}
+    )
+    ax[1].set_xlabel('RT in hTERT WT\n<--late | early-->')
 
     # violin plots of RT distributions split by breakpoint presence
     plot_WT_rt_vs_bk(df.query('dataset!="SA039"'), ax[2])
     ax[2].set_xlabel('CN breakpoint in hTERT non-WT cell line')
-    ax[2].set_ylabel('RT in hTERT WT')
+    ax[2].set_ylabel('RT in hTERT WT\n<--late | early-->')
     ax[2].set_title('CN breakpoints vs RT')
 
     # histogram of RT values split by breakpoint presence
-    sns.histplot(data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='breakpoint', common_norm=False, stat='density', ax=ax[3])
+    sns.histplot(
+        data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='breakpoint', 
+        common_norm=False, stat='density', ax=ax[3],
+        palette={'No': 'C0', 'Yes': 'C1'}
+    )
+    ax[3].set_xlabel('RT in hTERT WT\n<--late | early-->')
 
     # save the figure
     fig.savefig(argv.plot1, dpi=300, bbox_inches='tight')
@@ -360,8 +371,8 @@ def plot_profiles(cn, rt, argv):
 
     ax[0].set_title('Sample Pseudobulk RT')
     ax[1].set_title('Sample Pseudobulk CN')
-    ax[0].set_ylabel('RT of SA039 WT\n<--late | early-->')
-    ax[1].set_ylabel('CN relative to SA039 WT and ploidy\n<--loss | gain-->')
+    ax[0].set_ylabel('RT of hTERT WT\n<--late | early-->')
+    ax[1].set_ylabel('CN relative to hTERT WT and ploidy\n<--loss | gain-->')
     ax[0].legend(title='Sample ID')
     ax[1].legend(title='Sample ID')
 
