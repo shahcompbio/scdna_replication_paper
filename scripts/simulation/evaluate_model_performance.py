@@ -70,19 +70,18 @@ def plot_rt_accuracy(df, argv):
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
     ax = ax.flatten()
 
-    acc_cmap = get_acc_cmap()
-    plot_clustered_cell_cn_matrix(ax[0], df, 'rt_state_diff', cluster_field_name='clone_id', secondary_field_name='true_t', cmap=acc_cmap)
-
     if argv.cn_col=='observed_cn_state':
-        plot_clustered_cell_cn_matrix(ax[1], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
-        ax[1].set_title('True CN state')
+        plot_clustered_cell_cn_matrix(ax[0], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
+        ax[0].set_title('True CN state')
     elif 'cn' in argv.cn_col:
-        plot_clustered_cell_cn_matrix(ax[1], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
-        ax[1].set_title('Inferred CN state')
+        plot_clustered_cell_cn_matrix(ax[0], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
+        ax[0].set_title('Inferred CN state')
     else:
         print('specify whether to plot inferred CN or changepoint heatmap')
 
-    ax[0].set_title('False positives (green) and negatives (purple)\nAccuracy: {}'.format(round(accuracy, 3)))
+    acc_cmap = get_acc_cmap()
+    plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state_diff', cluster_field_name='clone_id', secondary_field_name='true_t', cmap=acc_cmap)
+    ax[1].set_title('Replication accuracy: {}'.format(round(accuracy, 3)))
     
 
     fig.savefig(argv.output_rt_accuracy, bbox_inches='tight')

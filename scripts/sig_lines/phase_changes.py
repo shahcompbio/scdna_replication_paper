@@ -23,7 +23,7 @@ def get_args():
 def plot_confusion_matrix(cn, argv):
     """ Plot a confusion matrix comparing laks_phase to pert_phase for each cell. """
     # create a figure
-    fig, ax = plt.subplots(figsize=(6, 6))
+    fig, ax = plt.subplots(figsize=(4, 4))
 
     # plot a confusion matrix of cn where the rows are laks phase and the columns are pert phase
     sns.heatmap(pd.crosstab(cn['laks_phase'], cn['pert_phase']), annot=True, fmt='d', cmap='Blues', ax=ax)
@@ -46,14 +46,28 @@ def plot_violin_plots(cn, argv):
         'gc_intercept', 'gc_slope', 'ploidy'
     ]
 
+    # create a dictionary that maps each y-column name to a y-axis label
+    y_label_dict = {
+        'corrected_breakpoints': 'CN breakpoints',
+        'corrected_madn': 'RPM median absolute deviation\nbetween neighboring bins',
+        'rpm_auto_norm': 'RPM autocorrelation',
+        'rep_auto_norm': 'PERT rep state autocorrelation',
+        'cell_frac_rep': 'PERT fraction of replicated bins',
+        'quality': 'Laks et al quality score',
+        'gc_intercept': 'GC bias intercept',
+        'gc_slope': 'GC bias slope',
+        'ploidy': 'HMMcopy ploidy'
+    }
+
     # create a matplotlib figure with 3 rows and 3 columns
-    fig, axes = plt.subplots(3, 3, figsize=(15, 15), tight_layout=True)
+    fig, axes = plt.subplots(3, 3, figsize=(12, 12), tight_layout=True)
     ax = axes.flatten()
 
     # loop through each column in y_cols, plotting the violin plot on the corresponding axis
     for y_col in y_cols:
         sns.violinplot(data=cn, x='laks_phase', hue='pert_phase', y=y_col, ax=ax[y_cols.index(y_col)])
         ax[y_cols.index(y_col)].set_xlabel('Laks et al phase')
+        ax[y_cols.index(y_col)].set_ylabel(y_label_dict[y_col])
         ax[y_cols.index(y_col)].legend(loc='upper right', title='PERT phase')
         ax[y_cols.index(y_col)].set_title(argv.dataset)
 

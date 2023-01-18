@@ -345,7 +345,7 @@ rule evaluate_model_performance_bulk_sim:
     input: 'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/scRT_heatmaps_bulk.png',
-        plot2 = 'plots/simulation/{dataset}/scRT_accuracy_heatamps_bulk.png',
+        plot2 = 'plots/simulation/{dataset}/scrt_accuracy_heatmaps_bulk.png',
         plot3 = 'plots/simulation/{dataset}/frac_rt_distributions_bulk.png'
     params:
         rep_col = 'rt_state',
@@ -363,7 +363,7 @@ rule evaluate_model_performance_pyro_sim:
     input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/scRT_heatmaps_pyro.png',
-        plot2 = 'plots/simulation/{dataset}/scRT_accuracy_heatamps_pyro.png',
+        plot2 = 'plots/simulation/{dataset}/scrt_accuracy_heatmaps_pyro.png',
         plot3 = 'plots/simulation/{dataset}/frac_rt_distributions_pyro.png'
     params:
         rep_col = 'model_rep_state',
@@ -381,7 +381,7 @@ rule evaluate_model_performance_pyro_composite_sim:
     input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/scRT_heatmaps_pyro_composite.png',
-        plot2 = 'plots/simulation/{dataset}/scRT_accuracy_heatamps_pyro_composite.png',
+        plot2 = 'plots/simulation/{dataset}/scrt_accuracy_heatmaps_pyro_composite.png',
         plot3 = 'plots/simulation/{dataset}/frac_rt_distributions_pyro_composite.png'
     params:
         rep_col = 'model_rep_state',
