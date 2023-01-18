@@ -54,19 +54,27 @@ def make_plots(legend_df, metrics_df, argv):
 
     fig.savefig(argv.summary_plots, bbox_inches='tight', dpi=300)
 
-    # create a new column entitled 'PERT_phase' that is 'G' when extreme_cell_frac is True and 'S' when extreme_cell_frac is False
-    metrics_df['PERT_phase'] = metrics_df['extreme_cell_frac'].apply(lambda x: 'G' if x else 'S')
+    # create a new column entitled 'PERT phase' that is 'G' when extreme_cell_frac is True and 'S' when extreme_cell_frac is False
+    metrics_df['PERT phase'] = metrics_df['extreme_cell_frac'].apply(lambda x: 'G' if x else 'S')
+
+    # rename the columns in metrics df to make the plots more readable
+    metrics_df.rename(columns={
+        'is_s_phase_prob': 'Laks S-phase probability',
+        'corrected_breakpoints': 'CN breakpoints',
+        'corrected_madn': 'RPM median absolute deviation',
+        'quality': 'Laks quality score',
+        }, inplace=True)
 
     # scatterplots of ccc features for the the mislabled cells, colored by whether the model thinks the cell is replicating (extreme_cell_frac)
     fig, ax = plt.subplots(2, 3, figsize=(12, 8), tight_layout=True)
     ax = ax.flatten()
 
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='quality', hue='PERT_phase', alpha=0.5, ax=ax[0])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='corrected_madn', hue='PERT_phase', alpha=0.5, ax=ax[1])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='is_s_phase_prob', y='corrected_breakpoints', hue='PERT_phase', alpha=0.5, ax=ax[2])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_madn', y='quality', hue='PERT_phase', alpha=0.5, ax=ax[3])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_breakpoints', y='quality', hue='PERT_phase', alpha=0.5, ax=ax[4])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='corrected_madn', y='corrected_breakpoints', hue='PERT_phase', alpha=0.5, ax=ax[5])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[0])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='RPM median absolute deviation', hue='PERT phase', alpha=0.5, ax=ax[1])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[2])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[3])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='CN breakpoints', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[4])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[5])
 
     for i in range(6):
         ax[i].set_title('Flow G1/2 cells mislabeled as S-phase')

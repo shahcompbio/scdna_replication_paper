@@ -93,7 +93,7 @@ rule all_sig_lines:
             ]
         ),
         expand(
-            'plots/sig_lines/{dataset}/phase_changes_confusion.svg',
+            'plots/sig_lines/{dataset}/phase_changes_confusion.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
@@ -662,7 +662,7 @@ rule phase_changes_sl:
         cn_s_init = 'analysis/sig_lines/{dataset}/s_phase_cells.tsv',
     output:
         output_tsv = 'analysis/sig_lines/{dataset}/phase_changes.tsv',
-        plot1 = 'plots/sig_lines/{dataset}/phase_changes_confusion.svg',
+        plot1 = 'plots/sig_lines/{dataset}/phase_changes_confusion.png',
         plot2 = 'plots/sig_lines/{dataset}/phase_changes_features.png'
     log: 'logs/sig_lines/{dataset}/phase_changes.log'
     params:
