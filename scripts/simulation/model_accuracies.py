@@ -29,34 +29,33 @@ def get_args():
 
 def make_figure1(df, argv):
     """ First figure is a mixture of barplots, scatterplots, and violinplots showing the accuracies of the different methods. """
-    fig, ax = plt.subplots(2, 5, figsize=(25, 8), tight_layout=True)
-    ax = ax.flatten()
+    fig, ax = plt.subplots(2, 4, figsize=(16, 8), tight_layout=True)
 
-    # barplots and scatterplots of cn and rep accuracies for each method, across different simulation params
+    # merge together the two supblots in the top left corner
+    gs = ax[0, 0].get_gridspec()
+    for a in ax[0, :2]:
+        a.remove()
+    axbig_top_row = fig.add_subplot(gs[0, 0:2])
+
+    # merge together the two supblots in the bottom left corner
+    gs = ax[1, 0].get_gridspec()
+    for a in ax[1, :2]:
+        a.remove()
+    axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
+
     # showing rep accuracies on the top row
-    sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='method', ax=ax[0])
-
-    sns.violinplot(data=df.query("num_clones==1"), x='cell_cna_rate', y='rep_accuracy', hue='method', ax=ax[1])
-    ax[1].set_title('1 diploid clone')
-    
-    sns.violinplot(data=df.query("cell_cna_rate==0.02"), x='num_clones', y='rep_accuracy', hue='method', ax=ax[2])
-    ax[2].set_title('Cell CNA rate 2%')
+    # barplots and scatterplots of cn and rep accuracies for each method, across different simulation params
+    sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='method', ax=axbig_top_row)
 
     # scatterplots which use A and lambda as the size params
-    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='A', style='num_clones', ax=ax[3])
-    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='lambda', style='num_clones', ax=ax[4])
+    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='alpha', style='num_clones', ax=ax[0, 2])
+    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='lambda', style='num_clones', ax=ax[0, 3])
 
     # showing cn accuracies on the bottom row
-    sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='method', ax=ax[5])
-
-    sns.violinplot(data=df.query("num_clones==1"), x='cell_cna_rate', y='cn_accuracy', hue='method', ax=ax[6])
-    ax[6].set_title('1 diploid clone')
-
-    sns.violinplot(data=df.query("cell_cna_rate==0.02"), x='num_clones', y='cn_accuracy', hue='method', ax=ax[7])
-    ax[7].set_title('Cell CNA rate 2%')
+    sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='method', ax=axbig_bottom_row)
     
-    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='A', style='num_clones', ax=ax[8])
-    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='lambda', style='num_clones', ax=ax[9])
+    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='alpha', style='num_clones', ax=ax[1, 2])
+    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='lambda', style='num_clones', ax=ax[1, 3])
 
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
@@ -204,7 +203,7 @@ def main():
     # build table that matches config file for each permuted dataset
     legend_df = pd.DataFrame({
         'dataset': argv.datasets,
-        'A': argv.A,
+        'alpha': argv.A,
         'cell_cna_rate': argv.cell_cna_rate,
         'num_clones': argv.num_clones,
         'lambda': argv.lamb
@@ -234,7 +233,7 @@ def main():
         cn_accs = [bulk_cn_acc, pyro_clone_cn_acc, pyro_comp_cn_acc]
         temp_df = pd.DataFrame({
             'dataset': [dataset]*3, 'datatag': [datatag]*3,
-            'A': [chunk.A.values[0]]*3, 'lambda': [chunk['lambda'].values[0]]*3,
+            'alpha': [chunk['alpha'].values[0]]*3, 'lambda': [chunk['lambda'].values[0]]*3,
             'cell_cna_rate': [chunk.cell_cna_rate.values[0]]*3, 'num_clones': [chunk.num_clones.values[0]]*3,
             'method': methods, 'rep_accuracy': rep_accs, 'cn_accuracy': cn_accs
         })
