@@ -108,35 +108,34 @@ def plot_true_vs_inferred_heatmaps(df, argv):
     ax4 = fig.add_axes([0.4, 0.0, 0.29, 0.45]) # bottom middle
     ax5 = fig.add_axes([0.7, 0.0, 0.29, 0.45]) # bottom right
 
-    # top left: true CN state
-    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'true_G1_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
-    ax0.set_title('{}: True CN state'.format(argv.dataset))
+    # top left: true read depth
+    plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'true_reads_norm', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis', max_cn=None)
+    ax0.set_title('{}: Reads per million'.format(argv.dataset))
 
-    # top middle: inferred CN state
-    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'model_cn_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
-    ax1.set_title('{}: Inferred CN state'.format(argv.dataset))
+    # top middle: true CN state
+    plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, 'true_G1_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
+    ax1.set_title('{}: True CN state'.format(argv.dataset))
 
-    # top right: true read depth
-    plot_data2 = plot_clustered_cell_cn_matrix(ax2, df, 'true_reads_norm', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis', max_cn=None)
-    ax2.set_title('{}: Reads per million'.format(argv.dataset))
+    # top right: inferred CN state
+    plot_data2 = plot_clustered_cell_cn_matrix(ax2, df, 'model_cn_state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
+    ax2.set_title('{}: Inferred CN state'.format(argv.dataset))
 
-    # bottom left: true replication state
-    plot_data3 = plot_clustered_cell_cn_matrix(ax3, df, argv.true_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
-    ax3.set_title('{}: True replication state'.format(argv.dataset))
+    # bottom left: comparison of true and inferred replication states
+    plot_data3 = plot_clustered_cell_cn_matrix(ax3, df, 'rt_state_diff', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=acc_cmap)
+    ax3.set_title('Replication accuracy: {}'.format(round(accuracy, 3)))
 
-    # bottom middle: inferred replication state
-    plot_data4 = plot_clustered_cell_cn_matrix(ax4, df, argv.model_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
-    ax4.set_title('{}: Inferred replication state'.format(argv.dataset))
+    # bottom middle: true replication state
+    plot_data4 = plot_clustered_cell_cn_matrix(ax4, df, argv.true_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
+    ax4.set_title('{}: True replication state'.format(argv.dataset))
 
-    # bottom right: comparison of true and inferred replication states
-    plot_data5 = plot_clustered_cell_cn_matrix(ax5, df, 'rt_state_diff', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=acc_cmap)
-    ax5.set_title('Replication accuracy: {}'.format(round(accuracy, 3)))
+    # bottom right: inferred replication state
+    plot_data5 = plot_clustered_cell_cn_matrix(ax5, df, argv.model_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
+    ax5.set_title('{}: Inferred replication state'.format(argv.dataset))
 
     # hide the y-ticks and labels for all heatmaps
     for ax in [ax0, ax1, ax2, ax3, ax4, ax5]:
         ax.set_yticks([])
         ax.set_yticklabels([])
-    
     
     if len(clone_dict) > 1:
         # annotate the clones for G1-phase cells
