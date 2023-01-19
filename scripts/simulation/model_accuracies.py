@@ -73,7 +73,7 @@ def plot_cna_rate_rep_acc(df, ax, n=1, test='t-test_ind', text_format='star', lo
     x = "cell_cna_rate"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('A==10.0').query('lamb==0.7').query('num_clones=={}'.format(n))
+    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('num_clones=={}'.format(n))
     box_pairs = [
         ((0.05, "PERT clone"), (0.05, "PERT comp.")),
         ((0.02, "PERT clone"), (0.02, "PERT comp.")),
@@ -95,7 +95,7 @@ def plot_cna_rate_cn_acc(df, ax, n=1, test='t-test_ind', text_format='star', loc
     x = "cell_cna_rate"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('A==10.0').query('lamb==0.7').query('num_clones=={}'.format(n))
+    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('num_clones=={}'.format(n))
     box_pairs = [
         ((0.05, "PERT clone"), (0.05, "PERT comp.")),
         ((0.02, "PERT clone"), (0.02, "PERT comp.")),
@@ -114,7 +114,7 @@ def plot_clone_effect_rep_acc(df, ax, rate=0.02, test='t-test_ind', text_format=
     x = "num_clones"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('A==10.0').query('lamb==0.7').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4')
+    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4')
     box_pairs = [
         ((1, "Dileep"), (3, "Dileep")),
         ((1, "PERT comp."), (3, "PERT comp.")),
@@ -136,7 +136,7 @@ def plot_clone_effect_cn_acc(df, ax, rate=0.02, test='t-test_ind', text_format='
     x = "num_clones"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('A==10.0').query('lamb==0.7').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4')
+    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4')
     box_pairs = [
         ((1, "PERT comp."), (3, "PERT comp.")),
         ((3, "PERT clone"), (3, "PERT comp.")),
