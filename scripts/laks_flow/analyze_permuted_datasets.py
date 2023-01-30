@@ -47,8 +47,8 @@ def make_plots(legend_df, metrics_df, argv):
     # distribution of cell_frac_rep values based on the true flow sorting states
     # copy true_cell_cycle_state to a new column named 'Flow phase'
     metrics_df['Flow phase'] = metrics_df['true_cell_cycle_state']
-    sns.histplot(data=metrics_df.query("permuted==True"), x='cell_frac_rep', hue='Flow phase', bins=20, multiple='stack', ax=ax[0])
-    ax[0].set_title('Cells mislabeled as S-phase')
+    sns.histplot(data=metrics_df.query("cell_cycle_state=='S'"), x='cell_frac_rep', hue='Flow phase', bins=20, multiple='stack', ax=ax[0])
+    ax[0].set_title('Cells labeled as S-phase in PERT input')
     ax[0].set_xlabel('Inferred fraction of replicated bins')
     ax[0].set_ylabel('# mislabeled cells')
 
