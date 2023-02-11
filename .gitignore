@@ -146,4 +146,6 @@ data/gc_rt_bins.csv
 data/replication_timing/
 data/fitness/
 data/signatures/clone_trees/
+data/HiC/
+data/gastric_10x/
 manuscript/._*.pdf

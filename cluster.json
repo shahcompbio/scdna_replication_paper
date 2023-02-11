@@ -188,5 +188,18 @@
     "compute_rt_pseudobulks_f" :
     {
         "mem": 256
+    },
+    "collect_cn_data_g10x" :
+    {
+        "mem" : 256
+    },
+    "plot_cn_heatmaps_input_g10x" :
+    {
+        "mem" : 256
+    },
+    "infer_scRT_pyro_g10x" :
+    {
+        "mem" : 600,
+        "time" : "120:00"
     }
 }

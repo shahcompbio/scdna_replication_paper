@@ -9,6 +9,7 @@ fitness_rx_datasets: [
 ]
 fitness_datasets: ['SA1035', 'SA535', 'SA609']
 fitness_lines: ['SA039', 'SA906a', 'SA906b']
+10x_gastric_cell_lines: ['HGC-27', 'KATOIII', 'NCI-N87', 'SNU-668']
 permuted_datasets:
   A:
     rate: 0.01
