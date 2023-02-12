@@ -76,27 +76,36 @@ def add_genome_tracks(f):
 def parse_h5_input(f):
     '''
     This function takes in the h5 file from cellrangercnv and returns a long-form dataframe with the following columns:
-    cell_id, bin_id, chr, start, end, gc, n_fraction, is_mappable, state, reads, reads_norm
+    cell_id, bin_id, chr, start, end, gc, state, reads, reads_norm
     '''
+    print('Parsing h5 file')
     # load the cnvs
     cnvs = counts_to_df(f, data_type='cnvs', col_name='state')
+    print('Loaded cnvs')
     # load gc, start, end, is_mappable, n_fraction for each locus
     genome_tracks = add_genome_tracks(f)
+    print('Loaded genome tracks')
     # merge the cnvs and genome_tracks dataframes
     cnvs = cnvs.merge(genome_tracks)
+    print('Merged cnvs and genome tracks')
     # load raw_counts
     raw_counts = counts_to_df(f, data_type='raw_counts', col_name='reads')
+    print('Loaded raw counts')
     # load normalized counts
     norm_counts = counts_to_df(f, data_type='normalized_counts', col_name='reads_norm')
+    print('Loaded normalized counts')
     # merge the raw counts, normalized counts and cnvs dataframes
     df = pd.merge(raw_counts, norm_counts)
     df = pd.merge(df, cnvs)
+    print('Merged raw counts, normalized counts and cnvs')
     # filter out the unmappable regions
     df = df[(df['is_mappable'] == 1)]
+    print('Filtered out unmappable regions')
     # convert df['cell_id'] to int64
     df['cell_id'] = df['cell_id'].astype(int)
     # drop n_fraction and is_mappable columns as we've already filtered out the unmappable bins
     df.drop(columns=['n_fraction', 'is_mappable'], inplace=True)
+    print('Dropped n_fraction and is_mappable columns')
 
     return df
 
@@ -157,19 +166,19 @@ def remove_state0_cells(df):
     return df_out
 
 
-def filter_high_cn_loci(df):
+def filter_high_cn_loci(df, thresh=12):
     '''
     This function takes in the long-form dataframe and filters out the loci that have state>12 bins in the population of high quality G1/2-phase cells
     '''
-    # get all the bins with state>12 and the cell is in the tree
-    high_cn_loci = df[(df['state']>12) & (df['clone_id']!='not_in_tree')]
-    # optional step: remove bins if the cell_id is not present in more than 10 cells
-    # high_cn_loci = high_cn_loci[high_cn_loci.groupby(['chr', 'start'])['cell_id'].transform('nunique') > 5]
-    # drop duplicate loci
-    high_cn_loci = high_cn_loci[['chr', 'start']].drop_duplicates()
+    # pivot to a wide-form dataframe of cells x bins
+    mat = df.pivot_table(index='cell_id', columns=['chr', 'start'], values='state')
 
-    # subset df to only include rows that are in the main dataframe but not in the high_cn_loci dataframe
-    df_out = df[~df.apply(lambda x: high_cn_loci.apply(lambda y: (x['chr']==y['chr']) & (x['start']==y['start']), axis=1).any(), axis=1)]
+    # remove any columns from the matrix that have values >thresh
+    mat2 = mat.loc[:, mat.max() <= thresh]
+
+    # melt back to long form and merge with the original dataframe to recover the other columns
+    df2 = mat2.reset_index().melt(id_vars='cell_id', var_name=['chr', 'start'], value_name='state')
+    df_out = df2.merge(df, how='left')
 
     return df_out
 
@@ -177,33 +186,38 @@ def filter_high_cn_loci(df):
 
 def main():
     argv = get_args()
+    print('Parsed the arguments')
 
     # read in the cnv data from the h5 file
     f = h5py.File(argv.cn_data, 'r')
+    print('loaded the h5 file')
 
     # parse the h5 file into a long-form cn dataframe
     df = parse_h5_input(f)
-    logging.info('Parsed the h5 file into a long-form dataframe')
+    print('Parsed the h5 file into a long-form dataframe')
 
     # parse the h5 file into a dataframe with per-cell metrics
     metrics_df = parse_cell_metrics(f)
-    logging.info('Parsed the h5 file into a dataframe with per-cell metrics')
+    print('Parsed the h5 file into a dataframe with per-cell metrics')
+
+    # close the h5 file
+    f.close()
 
     # add the clone information to the metrics dataframe
     metrics_df = add_clones_to_metrics(argv, metrics_df)
-    logging.info('Added the clone information to the metrics dataframe')
+    print('Added the clone information to the metrics dataframe')
 
     # merge metrics_df with df
     df2 = pd.merge(df, metrics_df)
-    logging.info('Merged the metrics dataframe with the long-form dataframe')
+    print('Merged the metrics dataframe with the long-form dataframe')
 
     # remove cells with more than 7500 state==0 bins
     df3 = remove_state0_cells(df2)
-    logging.info('Removed cells with more than 7500 state==0 bins')
+    print('Removed cells with more than 7500 state==0 bins')
 
     # TODO: filter out the loci that have state>12 bins in the population of G1/2-phase cells
     df4 = filter_high_cn_loci(df3)
-    logging.info('Filtered out the loci that have state>12 bins in the population of G1/2-phase cells')
+    print('Filtered out the loci that have state>12 bins in the population of G1/2-phase cells')
 
     # save the dataframe to a csv file
     df4.to_csv(argv.output, index=False, sep='\t')
