@@ -133,7 +133,7 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(14,7), dataset=None, clone_col='library
 def main():
     argv = get_args()
 
-    cn = pd.read_csv(argv.cn, sep='\t')
+    cn = pd.read_csv(argv.cn)
 
     # convert the 'chr' column to a string and then categorical
     cn.chr = cn.chr.astype(str)

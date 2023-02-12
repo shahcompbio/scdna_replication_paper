@@ -17,7 +17,7 @@ rule all_gastric_10x:
             ]
         ),
         expand(
-            'analysis/gastric_10x/{dataset}/s_phase_cells_with_scRT.tsv',
+            'analysis/gastric_10x/{dataset}/s_phase_cells_with_scRT.csv.gz',
             dataset=[
                 d for d in config['10x_gastric_cell_lines']
                 if (d not in bad_datasets)
@@ -29,7 +29,7 @@ rule collect_cn_data_g10x:
     input:
         cn_data = 'data/gastric_10x/{dataset}/cnv_data.h5',
         clones = 'data/gastric_10x/{dataset}/{dataset}_cnv_meta.csv',
-    output: 'analysis/gastric_10x/{dataset}/cn_data.tsv'
+    output: 'analysis/gastric_10x/{dataset}/cn_data.csv.gz'
     log: 'logs/gastric_10x/{dataset}/collect_cn_data.log'
     shell: 
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -39,7 +39,7 @@ rule collect_cn_data_g10x:
 
 
 rule plot_cn_heatmaps_input_g10x:
-    input: 'analysis/gastric_10x/{dataset}/cn_data.tsv'
+    input: 'analysis/gastric_10x/{dataset}/cn_data.csv.gz'
     output: 'plots/gastric_10x/{dataset}/cn_heatmaps_input.png'
     params:
         value_col = 'state',
@@ -53,12 +53,12 @@ rule plot_cn_heatmaps_input_g10x:
 
 
 rule infer_scRT_pyro_g10x:
-    input: 'analysis/gastric_10x/{dataset}/cn_data.tsv'
+    input: 'analysis/gastric_10x/{dataset}/cn_data.csv.gz'
     output:
-        main_s_out = 'analysis/gastric_10x/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_s_out = 'analysis/gastric_10x/{dataset}/scRT_pyro_supp_s_output.tsv',
-        main_g_out = 'analysis/gastric_10x/{dataset}/g1_phase_cells_with_scRT.tsv',
-        supp_g_out = 'analysis/gastric_10x/{dataset}/scRT_pyro_supp_g_output.tsv',
+        main_s_out = 'analysis/gastric_10x/{dataset}/s_phase_cells_with_scRT.csv.gz',
+        supp_s_out = 'analysis/gastric_10x/{dataset}/scRT_pyro_supp_s_output.csv.gz',
+        main_g_out = 'analysis/gastric_10x/{dataset}/g1_phase_cells_with_scRT.csv.gz',
+        supp_g_out = 'analysis/gastric_10x/{dataset}/scRT_pyro_supp_g_output.csv.gz',
     params:
         input_col = 'reads',
         clone_col = 'clone_id',

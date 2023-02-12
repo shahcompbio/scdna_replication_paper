@@ -26,7 +26,7 @@ def main():
     argv = get_args()
 
     # load data
-    cn = pd.read_csv(argv.cn_input, sep='\t')
+    cn = pd.read_csv(argv.cn_input)
 
     # add a dummy column for library_id if it is not provided (i.e. dataset is one library)
     if 'library_id' not in cn.columns:
@@ -76,12 +76,12 @@ def main():
     print('cn_g_out.shape', cn_g_out.shape)
 
     # save output files
-    cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
-    cn_g_out.to_csv(argv.cn_g_out, sep='\t', index=False)
+    cn_s_out.to_csv(argv.cn_s_out, index=False)
+    cn_g_out.to_csv(argv.cn_g_out, index=False)
 
     # this will be an empty df when argv.infer_mode!='pyro'
-    supp_s_output.to_csv(argv.supp_s_output, sep='\t', index=False)
-    supp_g_output.to_csv(argv.supp_g_output, sep='\t', index=False)
+    supp_s_output.to_csv(argv.supp_s_output, index=False)
+    supp_g_output.to_csv(argv.supp_g_output, index=False)
 
 
 if __name__ == '__main__':

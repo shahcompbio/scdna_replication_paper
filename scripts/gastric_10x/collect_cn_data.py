@@ -183,6 +183,59 @@ def filter_high_cn_loci(df, thresh=12):
     return df_out
 
 
+def filter_other_bad_cells_and_loci(df):
+    print("filtering based on gc, chrY")
+    df2 = df.query('chr!="Y"')
+    df2 = df2.query('gc > 0')
+
+    mat2 = df2.pivot_table(index='cell_id', columns=['chr', 'start'], values='reads')
+
+    # drop cells that have >5% NaNs and then any remaining loci with >5% NaNs
+    # NaNs in this matrix are caused by loci being present in some cells but not others
+    print("filtering bad cells")
+    perc = 5.
+    min_count = int(((100-perc)/100)*mat2.shape[1] + 1)
+    mat3 = mat2.dropna(axis=0, thresh=min_count)
+
+    print('filtering bad loci')
+    perc = 5.
+    min_count = int(((100-perc)/100)*mat3.shape[0] + 1)
+    mat3 = mat3.dropna(axis=1, thresh=min_count)
+
+    # fill the remaining NaNs with the neighboring loci for that same cell
+    print('filling remaining NaNs')
+    mat3 = mat3.fillna(axis=1, method='bfill').fillna(axis=1, method='ffill')
+    # compute reads per million for each cell
+    print('computing rpm')
+    mat_rpm = mat3.div(mat3.sum(axis=1), axis=0) * 1e6
+
+    # limit original df to just include melted loci
+    print('melting and merging reads and rpm')
+    df3 = mat3.reset_index().melt(id_vars='cell_id', value_name='reads')
+    df_rpm = mat_rpm.reset_index().melt(id_vars='cell_id', value_name='rpm')
+
+    # combine filtered reads and rpm into one df
+    df3 = pd.merge(df3, df_rpm)
+
+    # merge using the interpolated read counts from df3
+    print('merging reads and rpm back into main df')
+    df2.drop(columns=['reads'], inplace=True)
+    df4 = pd.merge(df2, df3, how='right')
+
+    # convert to matrix and interpolate states
+    print('repeating process for state')
+    mat4 = df4.pivot_table(index='cell_id', columns=['chr', 'start'], values='state')
+    mat4 = mat4.fillna(axis=1, method='bfill').fillna(axis=1, method='ffill')
+    df5 = mat4.reset_index().melt(id_vars='cell_id', value_name='state')
+    print('merging state back into main df')
+    df4.drop(columns=['state'], inplace=True)
+    df6 = pd.merge(df4, df5, how='right')
+
+    # merge with the original dataframe to recover the cell metric columns
+    df_out = df6.merge(df, how='left')
+
+    return df_out
+
 
 def main():
     argv = get_args()
@@ -215,12 +268,15 @@ def main():
     df3 = remove_state0_cells(df2)
     print('Removed cells with more than 7500 state==0 bins')
 
-    # TODO: filter out the loci that have state>12 bins in the population of G1/2-phase cells
+    # filter out the loci that have state>12 bins in the population of G1/2-phase cells
     df4 = filter_high_cn_loci(df3)
     print('Filtered out the loci that have state>12 bins in the population of G1/2-phase cells')
 
+    # filter other bad cells and loci
+    df5 = filter_other_bad_cells_and_loci(df4)
+
     # save the dataframe to a csv file
-    df4.to_csv(argv.output, index=False, sep='\t')
+    df5.to_csv(argv.output, index=False)
 
 
 if __name__ == '__main__':
