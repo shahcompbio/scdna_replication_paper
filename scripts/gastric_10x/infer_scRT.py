@@ -28,6 +28,10 @@ def main():
     # load data
     cn = pd.read_csv(argv.cn_input)
 
+    # convert clone_id and chr columns to string dtype
+    cn['chr'] = cn['chr'].astype(str)
+    cn[argv.clone_col] = cn[argv.clone_col].astype(str)
+
     # add a dummy column for library_id if it is not provided (i.e. dataset is one library)
     if 'library_id' not in cn.columns:
         cn['library_id'] = 1
@@ -35,7 +39,6 @@ def main():
     # split into initial G1/2 and S phase assignments based on the 'clonealign_clone_id' column
     cn_g = cn[cn[argv.clone_col]!='not_in_tree']
     cn_s = cn[cn[argv.clone_col]=='not_in_tree']
-
 
     # use library_id as the clone_id when it is not provided
     if argv.clone_col not in cn_g.columns:

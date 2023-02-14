@@ -191,7 +191,7 @@
     },
     "collect_cn_data_g10x" :
     {
-        "mem" : 256
+        "mem" : 350
     },
     "plot_cn_heatmaps_input_g10x" :
     {
