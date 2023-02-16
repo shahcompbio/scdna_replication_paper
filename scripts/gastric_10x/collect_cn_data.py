@@ -141,6 +141,15 @@ def add_clones_to_metrics(argv, metrics_df):
     # if clone_id column is of dtype int, add a 'clone_id' column that converts 1->A, 2->B, 3->C, etc.
     if clones['clone_id'].dtype == 'int64':
         clones['clone_id'] = clones['clone_id'].apply(lambda x: chr(x + 64))
+    
+    # if one of the clone_id names is None, change it to the next available letter
+    # find the highest clone_id letter not including 'None' values
+    if 'None' in clones['clone_id'].values:
+        max_clone_id = clones.loc[clones['clone_id']!='None']['clone_id'].max()
+        # find the next letter in the alphabet
+        next_letter = chr(ord(max_clone_id) + 1)
+        # replace the None clone_id with the next available letter
+        clones.loc[clones['clone_id']=='None', 'clone_id'] = next_letter
 
     # merge the clones dataframe with the metrics dataframe
     # keep rows with no clone assignment (NaN)

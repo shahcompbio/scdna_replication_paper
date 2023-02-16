@@ -201,5 +201,17 @@
     {
         "mem" : 600,
         "time" : "120:00"
+    },
+    "revise_cell_cycle_labels_g10x" :
+    {
+        "mem": 256
+    },
+    "plot_pyro_model_output_g10x" :
+    {
+        "mem" : 256
+    },
+    "plot_filtered_pyro_model_output_g10x" :
+    {
+        "mem" : 256
     }
 }
