@@ -14,14 +14,14 @@ def get_args():
 def main():
     argv = get_args()
 
-    bulk_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_bulk_filtered.tsv'
-    pyro_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_pyro_filtered.tsv'
-    comp_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_pyro_composite_filtered.tsv'
+    bulk_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_kronos_inferred.tsv'
+    pyro_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_pyro_inferred.tsv'
+    comp_path = '/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/simulation/{}/s_phase_cells_pyro_composite_inferred.tsv'
     
     df = []
     for d in argv.datasets:
         temp_df = pd.DataFrame({
-            'dataset': [d], 'bulk_path': [bulk_path.format(d)],
+            'dataset': [d], 'kronos_path': [bulk_path.format(d)],
             'clone_path': [pyro_path.format(d)], 'comp_path': [comp_path.format(d)]
         })
         df.append(temp_df)

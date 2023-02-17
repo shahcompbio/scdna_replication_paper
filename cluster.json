@@ -105,7 +105,11 @@
         "time" : "120:00",
         "mem" : 256
     },
-    "model_accuracies_sim" :
+    "scRT_accuracies_sim" :
+    {
+        "time" : "12:00"
+    },
+    "phase_accuracies_sim" :
     {
         "time" : "12:00"
     },

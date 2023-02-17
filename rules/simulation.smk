@@ -89,8 +89,9 @@ rule all_simulation:
             ]
         ),
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
-        'plots/simulation/all/model_accuracies1.png',
+        'plots/simulation/all/scRT_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
+        'analysis/simulation/all/phase_accuracies.tsv'
         
 
 rule simulate_cell_cn_states_sim:
@@ -308,44 +309,6 @@ rule infer_scRT_pyro_composite_sim:
         'python3 scripts/simulation/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
-
-
-# rule remove_nonreplicating_cells_sim:
-#     input: 
-#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
-#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
-#     output:
-#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
-#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_filtered.tsv'
-#     params:
-#         frac_rt_col = 'cell_frac_rep',
-#         pyro_rep_col = 'model_rep_state',
-#         kronos_rep_col = 'rt_state'
-#     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv3/bin/activate ; '
-#         'python3 scripts/simulation/remove_nonreplicating_cells.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
-
-
-# rule remove_nonreplicating_cells_composite_sim:
-#     input: 
-#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
-#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
-#     output:
-#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
-#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_composite_filtered.tsv'
-#     params:
-#         frac_rt_col = 'cell_frac_rep',
-#         pyro_rep_col = 'model_rep_state',
-#         kronos_rep_col = 'rt_state'
-#     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells_composite.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv3/bin/activate ; '
-#         'python3 scripts/simulation/remove_nonreplicating_cells.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
 
 
 rule revise_cell_cycle_labels_composite_sim:
@@ -604,69 +567,6 @@ rule twidth_analysis_pyro_composite_sim:
         'deactivate'
 
 
-# takeaway is that rule_aggregate_model_results succeeds when =<20 files are provided 
-# but fails when >20 files are provided
-# dataset_list = [d for d in config['simulated_datasets'] if d.startswith('D1.0')]
-# dataset_list = ['D1.0', 'D1.1', 'D1.2', 'D1.3', 'D1.4', 'D1.5', 'D1.6', 'D1.7', 'D1.8']
-# dataset_list = ['D2.0', 'D2.1', 'D2.2', 'D2.3', 'D2.4', 'D2.5']
-
-# def get_cn_bulk_paths():
-#     files = expand(
-#         'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv',
-#         dataset=dataset_list
-#     )
-#     return files
-
-
-# def get_cn_pyro_clone_paths():
-#     files = expand(
-#         'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
-#         dataset=dataset_list
-#     )
-#     return files
-
-
-# def get_cn_pyro_comp_paths():
-#     files = expand(
-#         'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
-#         dataset=dataset_list
-#     )
-#     return files
-
-
-# dataset_list = ['D1.6', 'D1.7', 'D1.8']
-# print(dataset_list)
-# rule aggregate_model_results:
-#     input: 
-#         cn_bulk = expand(
-#             'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv',
-#             dataset=dataset_list
-#         ),
-#         cn_pyro_clone = expand(
-#             'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
-#             dataset=dataset_list
-#         ),
-#         cn_pyro_comp = expand(
-#             'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
-#             dataset=dataset_list
-#         )
-#     output: 'analysis/simulation/all/s_phase_model_results_paths.tsv'
-#     params:
-#         datasets = expand(dataset_list)
-#     run:
-#         df = []
-#         for dataset, bulk_path, clone_path, comp_path in zip(
-#                 params.datasets, input.cn_bulk, input.cn_pyro_clone, input.cn_pyro_comp
-#             ):
-#             temp_df = pd.DataFrame({
-#                 'dataset': [str(dataset)], 'bulk_path': [str(bulk_path)],
-#                 'clone_path': [str(clone_path)], 'comp_path': [str(comp_path)]
-#             })
-#             df.append(temp_df)
-#         df = pd.concat(df, ignore_index=True)
-#         df.to_csv(str(output), sep='\t', index=False)
-
-
 rule aggregate_model_results_sim:
     input: 'analysis/simulation/D1.0/s_phase_cells_pyro_composite_inferred.tsv'
     output: 'analysis/simulation/all/s_phase_model_results_paths.tsv'
@@ -680,12 +580,9 @@ rule aggregate_model_results_sim:
          '&> {log}'
 
 
-rule model_accuracies_sim:
+rule scRT_accuracies_sim:
     input: 'analysis/simulation/all/s_phase_model_results_paths.tsv'
-    output:
-        accuracy_table = 'analysis/simulation/all/model_accuracies.tsv',
-        accuracy_plot1 = 'plots/simulation/all/model_accuracies1.png',
-        accuracy_plot2 = 'plots/simulation/all/model_accuracies2.png',
+    output: 'analysis/simulation/all/scRT_accuracies.tsv'
     params:
         datasets = expand(config['simulated_datasets']),
         A = expand([str(config['simulated_datasets'][d]['A']) for d in config['simulated_datasets']]),
@@ -697,10 +594,10 @@ rule model_accuracies_sim:
         pyro_cn_col = 'model_cn_state',
         true_rep_col = 'true_rep',
         true_cn_col = 'true_G1_state'
-    log: 'logs/simulation/all/model_accuracies.log'
+    log: 'logs/simulation/all/scRT_accuracies.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/simulation/model_accuracies.py '
+        'python3 scripts/simulation/scRT_accuracies.py '
         '--input {input} '
         '--datasets {params.datasets} '
         '--A {params.A} '
@@ -712,10 +609,78 @@ rule model_accuracies_sim:
         '--pyro_cn_col {params.pyro_cn_col} '
         '--true_rep_col {params.true_rep_col} '
         '--true_cn_col {params.true_cn_col} '
-        '--table {output.accuracy_table} '
-        '--plot1 {output.accuracy_plot1} '
-        '--plot2 {output.accuracy_plot2} '
+        '--table {output} '
         '&> {log} ; '
+        'deactivate'
+
+
+rule plot_scRT_accuracies_sim:
+    input: 'analysis/simulation/all/scRT_accuracies.tsv'
+    output:
+        plot1 = 'plots/simulation/all/scRT_accuracies1.png',
+        plot2 = 'plots/simulation/all/scRT_accuracies2.png'
+    log: 'logs/simulation/all/plot_scRT_accuracies.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/plot_scRT_accuracies.py '
+        '{input} {output} &> {log} ; '
+        'deactivate'
+
+
+rule aggregate_model_phases_sim:
+    input: 'analysis/simulation/D1.0/s_phase_cells_pyro_composite_filtered.tsv'
+    output: 'analysis/simulation/all/predicted_phase_paths.tsv'
+    params:
+        datasets = expand(config['simulated_datasets'])
+    log: 'logs/simulation/all/aggregate_model_phases.log'
+    shell:
+        'python3 scripts/simulation/aggregate_model_phases.py '
+        '-d {params.datasets} '
+        '-o {output} '
+         '&> {log}'
+    
+
+rule phase_accuracies_sim:
+    input: 'analysis/simulation/all/predicted_phase_paths.tsv'
+    output: 'analysis/simulation/all/phase_accuracies.tsv'
+    params:
+        datasets = expand(config['simulated_datasets']),
+        A = expand([str(config['simulated_datasets'][d]['A']) for d in config['simulated_datasets']]),
+        cell_cna_rate = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
+        num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
+        lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
+        true_phase_col = 'true_phase',
+        pert_phase_col = 'PERT_phase'
+    log: 'logs/simulation/all/phase_accuracies.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/phase_accuracies.py '
+        '--input {input} '
+        '--datasets {params.datasets} '
+        '--A {params.A} '
+        '--cell_cna_rate {params.cell_cna_rate} '
+        '--num_clones {params.num_clones} '
+        '--lamb {params.lamb} '
+        '--true_phase_col {params.true_phase_col} '
+        '--pert_phase_col {params.pert_phase_col} '
+        '--table {output} '
+        '&> {log} ; '
+        'deactivate'
+
+
+# TODO: add rules for computing the true vs PERT predicted cell cycle phases
+# one plot should be a confusion matrix
+# the other should be a violin plot of the phase accuracies across each dataset, grouped by cell cna rate and num_clones
+rule plot_phase_accuracies_sim:
+    input: 'analysis/simulation/all/phase_accuracies.tsv'
+    output: 
+        plot1 = 'plots/simulation/all/predicted_phase_confusion_map.png',
+        plot2 = 'plots/simulation/all/phase_accuracies2.png'
+    log: 'logs/simulation/all/plot_phase_accuracies.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/plot_phase_accuracies.py '
+        '{input} {output} &> {log} ; '
         'deactivate'
 
 
