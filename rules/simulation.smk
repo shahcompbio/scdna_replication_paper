@@ -91,8 +91,6 @@ rule all_simulation:
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/model_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
-        # 'analysis/simulation/D1.0/s_phase_cells_kronos_filtered.tsv'
-        # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
 
 rule simulate_cell_cn_states_sim:
@@ -350,18 +348,40 @@ rule infer_scRT_pyro_composite_sim:
 #         'deactivate'
 
 
+rule revise_cell_cycle_labels_composite_sim:
+    input: 
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
+        cn_g = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_composite_inferred.tsv',
+    output:
+        out_s = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+        out_g = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_composite_filtered.tsv',
+        out_lowqual = 'analysis/simulation/{dataset}/model_lowqual_composite_cells.tsv',
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        rpm_col = 'true_reads_norm'
+    log: 'logs/simulation/{dataset}/revise_cell_cycle_labels.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/revise_cell_cycle_labels.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule plot_ccc_features_sim:
     input:
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
-        cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv',
-        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_composite_filtered.tsv',
+        cn_lowqual = 'analysis/simulation/{dataset}/model_lowqual_composite_cells.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/ccc_features_hist.png',
-        plot2 = 'plots/simulation/{dataset}/ccc_features_scatter.png'
+        plot2 = 'plots/simulation/{dataset}/ccc_features_scatter.png',
+        plot3 = 'plots/simulation/{dataset}/predicted_phase_confusion_mat.png'
     params:
         frac_rt_col = 'cell_frac_rep',
         pyro_rep_col = 'model_rep_state',
-        kronos_rep_col = 'rt_state'
+        dataset = lambda wildcards: wildcards.dataset
     log: 'logs/simulation/{dataset}/plot_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '

@@ -47,6 +47,16 @@ def get_acc_cmap():
     return ListedColormap(color_list)
 
 
+def compute_cell_frac(cn, frac_rt_col='cell_frac_rep', rep_state_col='model_rep_state'):
+    ''' Compute the fraction of replicated bins for all cells in `cn` '''
+    cn['extreme_cell_frac'] = False
+    for cell_id, cell_cn in cn.groupby('cell_id'):
+        temp_rep = cell_cn[rep_state_col].values
+        temp_frac = sum(temp_rep) / len(temp_rep)
+        cn.loc[cell_cn.index, frac_rt_col] = temp_frac
+    return cn
+
+
 def plot_true_vs_inferred_rt_state(df, argv):
     # compute accuracy of inferred rt_state values
     accuracy = 1.0 - (sum(abs(df['true_rep'] - df[argv.rep_col])) / df.shape[0])
@@ -141,6 +151,10 @@ def main():
 
     # 1 is false positive, 0 is accurate, -1 is false negative
     df['rt_state_diff'] = df[argv.rep_col] - df['true_rep']
+
+    # compute fraction of replicated bins per cells 
+    if argv.frac_rt_col not in df.columns:
+        df = compute_cell_frac(df, frac_rt_col=argv.frac_rt_col, rep_state_col=argv.rep_col)
 
     # create separate plots
     plot_true_vs_inferred_rt_state(df, argv)

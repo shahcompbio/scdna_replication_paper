@@ -27,6 +27,16 @@ def get_rt_cmap():
     return ListedColormap(color_list)
 
 
+def compute_cell_frac(cn, frac_rt_col='cell_frac_rep', rep_state_col='model_rep_state'):
+    ''' Compute the fraction of replicated bins for all cells in `cn` '''
+    cn['extreme_cell_frac'] = False
+    for cell_id, cell_cn in cn.groupby('cell_id'):
+        temp_rep = cell_cn[rep_state_col].values
+        temp_frac = sum(temp_rep) / len(temp_rep)
+        cn.loc[cell_cn.index, frac_rt_col] = temp_frac
+    return cn
+
+
 def plot_cn_and_rep_states(df, argv):
 
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
@@ -49,6 +59,10 @@ def main():
     # set chr column to category
     df.chr = df.chr.astype('str')
     df.chr = df.chr.astype('category')
+
+    # compute fraction of replicated bins per cells 
+    if argv.frac_rt_col not in df.columns:
+        df = compute_cell_frac(df, frac_rt_col=argv.frac_rt_col, rep_state_col=argv.rep_col)
 
     # create separate plots
     plot_cn_and_rep_states(df, argv)
