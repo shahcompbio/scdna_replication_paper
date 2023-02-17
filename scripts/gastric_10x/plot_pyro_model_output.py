@@ -93,6 +93,10 @@ def main():
     cn_s = pd.read_csv(argv.cn_s)
     cn_g = pd.read_csv(argv.cn_g)
 
+    # convert the 'chr' column to a string and then categorical
+    cn_s.chr = cn_s.chr.astype(str).astype('category')
+    cn_g.chr = cn_s.chr.astype(str).astype('category')
+
     # show rpm, hmmcopy, inferred cn, inferred rep heatmaps for S-phase cells and G1/2-phase cells
     # where all the rows are sorted the same in all four heatmaps
     plot_model_results(cn_s, cn_g, argv)

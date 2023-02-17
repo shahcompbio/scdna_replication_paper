@@ -15,7 +15,7 @@ def get_args():
     p.add_argument('-cna', '--cell_cna_rate', type=float, nargs='+', help='cell cna prob for each dataset')
     p.add_argument('-nc', '--num_clones', type=int, nargs='+', help='number of clones for each dataset')
     p.add_argument('-l', '--lamb', type=float, nargs='+', help='negative binomial event probs lambda for each dataset')
-    p.add_argument('-brc', '--bulk_rep_col', type=str, help='column containing the bulk model replication states')
+    p.add_argument('-brc', '--kronos_rep_col', type=str, help='column containing the kronos model replication states')
     p.add_argument('-prc', '--pyro_rep_col', type=str, help='column containing the pyro model replication states')
     p.add_argument('-pcn', '--pyro_cn_col', type=str, help='column containing the pyro model copy number states')
     p.add_argument('-trc', '--true_rep_col', type=str, help='column containing the true replication states')
@@ -80,10 +80,10 @@ def plot_cna_rate_rep_acc(df, ax, n=1, test='t-test_ind', text_format='star', lo
         ((0.02, "PERT comp."), (0.00, "PERT comp.")),
         ((0.02, "PERT comp."), (0.05, "PERT comp.")),
         ((0.00, "PERT comp."), (0.05, "PERT comp.")),
-        ((0.05, "Dileep"), (0.05, "PERT comp.")),
-        ((0.05, "PERT clone"), (0.05, "Dileep")),
-        ((0.02, "Dileep"), (0.02, "PERT comp.")),
-        ((0.02, "PERT clone"), (0.02, "Dileep")),
+        ((0.05, "Kronos"), (0.05, "PERT comp.")),
+        ((0.05, "PERT clone"), (0.05, "Kronos")),
+        ((0.02, "Kronos"), (0.02, "PERT comp.")),
+        ((0.02, "PERT clone"), (0.02, "Kronos")),
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test, text_format=text_format, loc=loc, verbose=verbose)
     ax.set_title('{} clone(s)'.format(n))
@@ -116,13 +116,13 @@ def plot_clone_effect_rep_acc(df, ax, rate=0.02, test='t-test_ind', text_format=
     hue = "method"
     temp_df = df.query('alpha==10.0').query('lamb==0.7').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4')
     box_pairs = [
-        ((1, "Dileep"), (3, "Dileep")),
+        ((1, "Kronos"), (3, "Kronos")),
         ((1, "PERT comp."), (3, "PERT comp.")),
-        ((3, "Dileep"), (3, "PERT comp.")),
-        ((3, "PERT clone"), (3, "Dileep")),
+        ((3, "Kronos"), (3, "PERT comp.")),
+        ((3, "PERT clone"), (3, "Kronos")),
         ((3, "PERT clone"), (3, "PERT comp.")),
-        ((1, "Dileep"), (1, "PERT comp.")),
-        ((1, "PERT clone"), (1, "Dileep")),
+        ((1, "Kronos"), (1, "PERT comp.")),
+        ((1, "PERT clone"), (1, "Kronos")),
         ((1, "PERT clone"), (1, "PERT comp.")),
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
@@ -191,7 +191,7 @@ def compute_accuracies(df,
 
 def load_data(chunk):
     # load the S-phase cells from each model version for a given dataset chunk
-    df1 = pd.read_csv(chunk['bulk_path'].values[0], sep='\t')
+    df1 = pd.read_csv(chunk['kronos_path'].values[0], sep='\t')
     df2 = pd.read_csv(chunk['clone_path'].values[0], sep='\t')
     df3 = pd.read_csv(chunk['comp_path'].values[0], sep='\t')
     return df1, df2, df3
@@ -221,16 +221,16 @@ def main():
         df1, df2, df3 = load_data(chunk)
 
         # compute cn and rep accuracy for each method
-        bulk_rep_acc, bulk_cn_acc = compute_accuracies(df1, model_rep_col=argv.bulk_rep_col, model_cn_col=None, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
+        kronos_rep_acc, kronos_cn_acc = compute_accuracies(df1, model_rep_col=argv.kronos_rep_col, model_cn_col=None, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
         pyro_clone_rep_acc, pyro_clone_cn_acc = compute_accuracies(df2, model_rep_col=argv.pyro_rep_col, model_cn_col=argv.pyro_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
         pyro_comp_rep_acc, pyro_comp_cn_acc = compute_accuracies(df3, model_rep_col=argv.pyro_rep_col, model_cn_col=argv.pyro_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
 
         datatag = dataset.split('.')[0]
 
         # create a dataframe with the accuracies for this simulated dataset
-        methods = ['Dileep', 'PERT clone', 'PERT comp.']
-        rep_accs = [bulk_rep_acc, pyro_clone_rep_acc, pyro_comp_rep_acc]
-        cn_accs = [bulk_cn_acc, pyro_clone_cn_acc, pyro_comp_cn_acc]
+        methods = ['Kronos', 'PERT clone', 'PERT comp.']
+        rep_accs = [kronos_rep_acc, pyro_clone_rep_acc, pyro_comp_rep_acc]
+        cn_accs = [kronos_cn_acc, pyro_clone_cn_acc, pyro_comp_cn_acc]
         temp_df = pd.DataFrame({
             'dataset': [dataset]*3, 'datatag': [datatag]*3,
             'alpha': [chunk['alpha'].values[0]]*3, 'lambda': [chunk['lambda'].values[0]]*3,

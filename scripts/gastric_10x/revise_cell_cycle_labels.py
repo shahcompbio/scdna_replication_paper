@@ -109,6 +109,9 @@ if __name__ == '__main__':
     cn_g = pd.read_csv(argv.input_g)
     cn = pd.concat([cn_s, cn_g], ignore_index=True)
 
+    # convert the 'chr' column to a string and then categorical
+    cn.chr = cn.chr.astype(str).astype('category')
+
     # compute the fraction of replicated bins within each cell
     cn = compute_cell_frac(cn, frac_rt_col=argv.frac_rt_col, rep_state_col=argv.rep_col)
 

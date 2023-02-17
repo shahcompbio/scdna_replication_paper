@@ -19,7 +19,7 @@ rule all_simulation:
             ]
         ),
         expand(
-            'plots/simulation/{dataset}/scRT_heatmaps_bulk.png',
+            'plots/simulation/{dataset}/scRT_heatmaps_kronos.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
@@ -40,7 +40,7 @@ rule all_simulation:
             ]
         ),
         expand(
-            'plots/simulation/{dataset}/twidth_curves_bulk.png',
+            'plots/simulation/{dataset}/twidth_curves_kronos.png',
             dataset=[
                 d for d in config['simulated_datasets']
                 if (d not in bad_datasets)
@@ -91,7 +91,7 @@ rule all_simulation:
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/model_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
-        'analysis/simulation/D1.0/s_phase_cells_kronos_filtered.tsv'
+        # 'analysis/simulation/D1.0/s_phase_cells_kronos_filtered.tsv'
         # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
 
@@ -212,28 +212,28 @@ rule compute_ccc_features_sim:
         'deactivate'
 
 
-rule infer_scRT_bulk_sim:
-    input:
-        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
-        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
-    output: 
-        main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
-        supp_s_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_s_output.tsv',
-        main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_bulk_inferred.tsv',
-        supp_g_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_g_output.tsv',
-    params:
-        input_col = 'true_reads_norm',
-        cn_col = 'observed_cn_state',
-        gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
-        cn_prior_method = 'diploid',  # irrelevant bc pyro model not invoked here
-        infer_mode = 'bulk',
-        max_iter = 2000
-    log: 'logs/simulation/{dataset}/infer_scRT_bulk.log'
-    shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/simulation/infer_scRT.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
+# rule infer_scRT_bulk_sim:
+#     input:
+#         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
+#         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+#     output: 
+#         main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
+#         supp_s_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_s_output.tsv',
+#         main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_bulk_inferred.tsv',
+#         supp_g_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_g_output.tsv',
+#     params:
+#         input_col = 'true_reads_norm',
+#         cn_col = 'observed_cn_state',
+#         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
+#         cn_prior_method = 'diploid',  # irrelevant bc pyro model not invoked here
+#         infer_mode = 'bulk',
+#         max_iter = 2000
+#     log: 'logs/simulation/{dataset}/infer_scRT_bulk.log'
+#     shell:
+#         'source ../scdna_replication_tools/venv3/bin/activate ; '
+#         'python3 scripts/simulation/infer_scRT.py '
+#         '{input} {params} {output} &> {log} ; '
+#         'deactivate'
 
 
 rule infer_kronos_scRT_sim:
@@ -312,48 +312,48 @@ rule infer_scRT_pyro_composite_sim:
         'deactivate'
 
 
-rule remove_nonreplicating_cells_sim:
-    input: 
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
-    output:
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_filtered.tsv'
-    params:
-        frac_rt_col = 'cell_frac_rep',
-        pyro_rep_col = 'model_rep_state',
-        bulk_rep_col = 'rt_state'
-    log: 'logs/simulation/{dataset}/remove_nonreplicating_cells.log'
-    shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/simulation/remove_nonreplicating_cells.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
+# rule remove_nonreplicating_cells_sim:
+#     input: 
+#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
+#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
+#     output:
+#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
+#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_filtered.tsv'
+#     params:
+#         frac_rt_col = 'cell_frac_rep',
+#         pyro_rep_col = 'model_rep_state',
+#         kronos_rep_col = 'rt_state'
+#     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells.log'
+#     shell:
+#         'source ../scdna_replication_tools/venv3/bin/activate ; '
+#         'python3 scripts/simulation/remove_nonreplicating_cells.py '
+#         '{input} {params} {output} &> {log} ; '
+#         'deactivate'
 
 
-rule remove_nonreplicating_cells_composite_sim:
-    input: 
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
-    output:
-        cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_composite_filtered.tsv'
-    params:
-        frac_rt_col = 'cell_frac_rep',
-        pyro_rep_col = 'model_rep_state',
-        bulk_rep_col = 'rt_state'
-    log: 'logs/simulation/{dataset}/remove_nonreplicating_cells_composite.log'
-    shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/simulation/remove_nonreplicating_cells.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
+# rule remove_nonreplicating_cells_composite_sim:
+#     input: 
+#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
+#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
+#     output:
+#         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+#         cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_composite_filtered.tsv'
+#     params:
+#         frac_rt_col = 'cell_frac_rep',
+#         pyro_rep_col = 'model_rep_state',
+#         kronos_rep_col = 'rt_state'
+#     log: 'logs/simulation/{dataset}/remove_nonreplicating_cells_composite.log'
+#     shell:
+#         'source ../scdna_replication_tools/venv3/bin/activate ; '
+#         'python3 scripts/simulation/remove_nonreplicating_cells.py '
+#         '{input} {params} {output} &> {log} ; '
+#         'deactivate'
 
 
 rule plot_ccc_features_sim:
     input:
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
+        cn_kronos = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/ccc_features_hist.png',
@@ -361,7 +361,7 @@ rule plot_ccc_features_sim:
     params:
         frac_rt_col = 'cell_frac_rep',
         pyro_rep_col = 'model_rep_state',
-        bulk_rep_col = 'rt_state'
+        kronos_rep_col = 'rt_state'
     log: 'logs/simulation/{dataset}/plot_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -370,17 +370,17 @@ rule plot_ccc_features_sim:
         'deactivate'
 
 
-rule evaluate_model_performance_bulk_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv'
+rule evaluate_model_performance_kronos_sim:
+    input: 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
     output: 
-        plot1 = 'plots/simulation/{dataset}/scRT_heatmaps_bulk.png',
-        plot2 = 'plots/simulation/{dataset}/scrt_accuracy_heatmaps_bulk.png',
-        plot3 = 'plots/simulation/{dataset}/frac_rt_distributions_bulk.png'
+        plot1 = 'plots/simulation/{dataset}/scRT_heatmaps_kronos.png',
+        plot2 = 'plots/simulation/{dataset}/scrt_accuracy_heatmaps_kronos.png',
+        plot3 = 'plots/simulation/{dataset}/frac_rt_distributions_kronos.png'
     params:
         rep_col = 'rt_state',
         cn_col = 'observed_cn_state',
         frac_rt_col = 'frac_rt'
-    log: 'logs/simulation/{dataset}/evaluate_model_performance_bulk.log'
+    log: 'logs/simulation/{dataset}/evaluate_model_performance_kronos.log'
     shell:
         'source ../scgenome/venv/bin/activate ; '
         'python3 scripts/simulation/evaluate_model_performance.py '
@@ -389,7 +389,7 @@ rule evaluate_model_performance_bulk_sim:
 
 
 rule evaluate_model_performance_pyro_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv'
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/scRT_heatmaps_pyro.png',
         plot2 = 'plots/simulation/{dataset}/scrt_accuracy_heatmaps_pyro.png',
@@ -407,7 +407,7 @@ rule evaluate_model_performance_pyro_sim:
 
 
 rule evaluate_model_performance_pyro_composite_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv'
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv'
     output: 
         plot1 = 'plots/simulation/{dataset}/scRT_heatmaps_pyro_composite.png',
         plot2 = 'plots/simulation/{dataset}/scrt_accuracy_heatmaps_pyro_composite.png',
@@ -425,7 +425,7 @@ rule evaluate_model_performance_pyro_composite_sim:
 
 
 rule plot_pyro_inferred_cn_vs_scRT_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv'
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv'
     output: 'plots/simulation/{dataset}/cn_vs_scRT_heatmaps_pyro.png'
     params:
         rep_col = 'model_rep_state',
@@ -440,7 +440,7 @@ rule plot_pyro_inferred_cn_vs_scRT_sim:
 
 
 rule plot_pyro_composite_inferred_cn_vs_scRT_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv'
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv'
     output: 'plots/simulation/{dataset}/cn_vs_scRT_composite_heatmaps_pyro.png'
     params:
         rep_col = 'model_rep_state',
@@ -455,7 +455,7 @@ rule plot_pyro_composite_inferred_cn_vs_scRT_sim:
 
 
 rule true_vs_inferred_heatmaps_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
     output: 'plots/simulation/{dataset}/true_vs_inferred_heatmaps.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
@@ -471,7 +471,7 @@ rule true_vs_inferred_heatmaps_sim:
 
 
 rule compute_rt_pseudobulks_pyro_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv'
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv'
     output: 'analysis/simulation/{dataset}/scRT_pseudobulks_pyro.tsv'
     params:
         rep_col = 'model_rep_state',
@@ -484,13 +484,13 @@ rule compute_rt_pseudobulks_pyro_sim:
         'deactivate'
 
 
-rule compute_rt_pseudobulks_bulk_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv'
-    output: 'analysis/simulation/{dataset}/scRT_pseudobulks_bulk.tsv'
+rule compute_rt_pseudobulks_kronos_sim:
+    input: 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
+    output: 'analysis/simulation/{dataset}/scRT_pseudobulks_kronos.tsv'
     params:
         rep_col = 'rt_state',
         true_rep_col = 'true_rep'
-    log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_bulk.log'
+    log: 'logs/simulation/{dataset}/compute_rt_pseudobulks_kronos.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/compute_rt_pseudobulks.py '
@@ -499,7 +499,7 @@ rule compute_rt_pseudobulks_bulk_sim:
 
 
 rule compute_rt_pseudobulks_pyro_composite_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv'
+    input: 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv'
     output: 'analysis/simulation/{dataset}/scRT_pseudobulks_pyro_composite.tsv'
     params:
         rep_col = 'model_rep_state',
@@ -514,7 +514,7 @@ rule compute_rt_pseudobulks_pyro_composite_sim:
 
 rule twidth_analysis_pyro_sim:
     input: 
-        cn = 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
+        cn = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
         pseudobulk = 'analysis/simulation/{dataset}/scRT_pseudobulks_pyro.tsv'
     output: 
         tsv = 'analysis/simulation/{dataset}/twidth_values_pyro.tsv',
@@ -536,13 +536,13 @@ rule twidth_analysis_pyro_sim:
         'deactivate'
 
 
-rule twidth_analysis_bulk_sim:
+rule twidth_analysis_kronos_sim:
     input:
-        cn = 'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv',
-        pseudobulk = 'analysis/simulation/{dataset}/scRT_pseudobulks_bulk.tsv'
+        cn = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv',
+        pseudobulk = 'analysis/simulation/{dataset}/scRT_pseudobulks_kronos.tsv'
     output: 
-        tsv = 'analysis/simulation/{dataset}/twidth_values_bulk.tsv',
-        plot = 'plots/simulation/{dataset}/twidth_curves_bulk.png',
+        tsv = 'analysis/simulation/{dataset}/twidth_values_kronos.tsv',
+        plot = 'plots/simulation/{dataset}/twidth_curves_kronos.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
         lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
@@ -551,8 +551,8 @@ rule twidth_analysis_bulk_sim:
         true_frac_col = 'true_t',
         rep_state = 'rt_state',
         true_rep_state = 'true_rep',
-        infer_mode = 'bulk'
-    log: 'logs/simulation/{dataset}/twidth_analysis_bulk.log'
+        infer_mode = 'kronos'
+    log: 'logs/simulation/{dataset}/twidth_analysis_kronos.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/twidth_analysis.py '
@@ -562,7 +562,7 @@ rule twidth_analysis_bulk_sim:
 
 rule twidth_analysis_pyro_composite_sim:
     input: 
-        cn = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
+        cn = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
         pseudobulk = 'analysis/simulation/{dataset}/scRT_pseudobulks_pyro_composite.tsv'
     output: 
         tsv = 'analysis/simulation/{dataset}/twidth_values_pyro_composite.tsv',
@@ -648,7 +648,7 @@ rule twidth_analysis_pyro_composite_sim:
 
 
 rule aggregate_model_results_sim:
-    input: 'analysis/simulation/D1.0/s_phase_cells_pyro_composite_filtered.tsv'
+    input: 'analysis/simulation/D1.0/s_phase_cells_pyro_composite_inferred.tsv'
     output: 'analysis/simulation/all/s_phase_model_results_paths.tsv'
     params:
         datasets = expand(config['simulated_datasets'])
@@ -672,7 +672,7 @@ rule model_accuracies_sim:
         cell_cna_rate = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
         num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
-        bulk_rep_col = 'rt_state',
+        kronos_rep_col = 'rt_state',
         pyro_rep_col = 'model_rep_state',
         pyro_cn_col = 'model_cn_state',
         true_rep_col = 'true_rep',
@@ -687,7 +687,7 @@ rule model_accuracies_sim:
         '--cell_cna_rate {params.cell_cna_rate} '
         '--num_clones {params.num_clones} '
         '--lamb {params.lamb} '
-        '--bulk_rep_col {params.bulk_rep_col} '
+        '--kronos_rep_col {params.kronos_rep_col} '
         '--pyro_rep_col {params.pyro_rep_col} '
         '--pyro_cn_col {params.pyro_cn_col} '
         '--true_rep_col {params.true_rep_col} '
