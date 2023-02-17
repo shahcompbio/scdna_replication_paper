@@ -105,8 +105,8 @@ if __name__ == '__main__':
     argv = get_args()
 
     # load in unfiltered S-phase cells
-    cn_s = pd.read_csv(argv.input_s, sep='\t')
-    cn_g = pd.read_csv(argv.input_g, sep='\t')
+    cn_s = pd.read_csv(argv.input_s)
+    cn_g = pd.read_csv(argv.input_g)
     cn = pd.concat([cn_s, cn_g], ignore_index=True)
 
     # compute the fraction of replicated bins within each cell
@@ -122,11 +122,11 @@ if __name__ == '__main__':
     cn_filtered, cn_lowqual = remove_low_quality_cells(cn_filtered)
 
     # return the filtered set of S-phase cells
-    cn_filtered.to_csv(argv.output_s, sep='\t', index=False)
+    cn_filtered.to_csv(argv.output_s, index=False)
 
     # return the set of cells that don't appear to be replicating
-    cn_nonrep.to_csv(argv.output_g, sep='\t', index=False)
+    cn_nonrep.to_csv(argv.output_g, index=False)
 
     # return the cells that look to be low quality
-    cn_lowqual.to_csv(argv.output_lowqual, sep='\t', index=False)
+    cn_lowqual.to_csv(argv.output_lowqual, index=False)
 
