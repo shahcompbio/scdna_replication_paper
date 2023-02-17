@@ -91,6 +91,7 @@ rule all_simulation:
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/model_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
+        'analysis/simulation/D1.0/s_phase_cells_kronos_filtered.tsv'
         # 'analysis/simulation/all/s_phase_model_results_paths.tsv'
         
 
@@ -235,6 +236,34 @@ rule infer_scRT_bulk_sim:
         'deactivate'
 
 
+rule infer_kronos_scRT_sim:
+    input:
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
+        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+    output: 'analysis/simulation/{dataset}/s_phase_cells_kronos_output.tsv'
+    conda: '../envs/Kronos_scRT.yaml'
+    log: 'logs/simulation/{dataset}/infer_kronos_scRT.log'
+    shell:
+        'Kronos RT '
+        '-s {input.cn_s} '
+        '-g {input.cn_g1} '
+        '-o {output} '
+        '&> {log}'
+
+
+rule process_kronos_output_sim:
+    input: 
+        kronos_input = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
+        kronos_output = 'analysis/simulation/{dataset}/s_phase_cells_kronos_output.tsv'
+    output: 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
+    log: 'logs/simulation/{dataset}/process_kronos_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/process_kronos_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule infer_scRT_pyro_sim:
     input:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
@@ -286,10 +315,10 @@ rule infer_scRT_pyro_composite_sim:
 rule remove_nonreplicating_cells_sim:
     input: 
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv'
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
     output:
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_filtered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_filtered.tsv'
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_filtered.tsv'
     params:
         frac_rt_col = 'cell_frac_rep',
         pyro_rep_col = 'model_rep_state',
@@ -305,10 +334,10 @@ rule remove_nonreplicating_cells_sim:
 rule remove_nonreplicating_cells_composite_sim:
     input: 
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv'
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
     output:
         cn_pyro = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_filtered.tsv',
-        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_bulk_composite_filtered.tsv'
+        cn_bulk = 'analysis/simulation/{dataset}/s_phase_cells_kronos_composite_filtered.tsv'
     params:
         frac_rt_col = 'cell_frac_rep',
         pyro_rep_col = 'model_rep_state',
