@@ -11,6 +11,7 @@ def get_args():
     parser.add_argument('plot1', type=str, help='Confusion matrix plot for all cells')
     parser.add_argument('plot2', type=str, help='Plot of phase accuracies in parameter sweep')
     parser.add_argument('plot3', type=str, help='Plot of phase accuracies for all datasets')
+    parser.add_argument('plot4', type=str, help='Jointplot of true vs inferred fraction of replicated bins')
     return parser.parse_args()
 
 
@@ -106,6 +107,13 @@ def plot_all_datatags(df, argv):
     fig.savefig(argv.plot3, bbox_inches='tight', dpi=300)
 
 
+def plot_jointplot(df, argv):
+    ''' Plot a jointplot of the PERT and true fraction of replicated bins per cell. Use the true phase as the hue. '''
+    fig, ax = plt.subplots(1, 1, figsize=(8, 8), tight_layout=True)
+    sns.jointplot(data=df, x='cell_frac_rep', y='true_t', hue='true_phase', ax=ax)
+    fig.savefig(argv.plot4, bbox_inches='tight', dpi=300)
+
+
 def main():
     argv = get_args()
 
@@ -126,6 +134,9 @@ def main():
 
     # Plot all datatags
     plot_all_datatags(df, argv)
+
+    # plot a jointplot of the PERT and true fraction of replicated bins per cell
+    plot_jointplot(df, argv)
 
 
 if __name__ == '__main__':

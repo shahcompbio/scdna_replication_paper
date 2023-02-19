@@ -650,7 +650,9 @@ rule phase_accuracies_sim:
         num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
         true_phase_col = 'true_phase',
-        pert_phase_col = 'PERT_phase'
+        pert_phase_col = 'PERT_phase',
+        true_frac_rep = 'true_t',
+        pert_frac_rep = 'cell_frac_rep'
     log: 'logs/simulation/all/phase_accuracies.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -663,6 +665,8 @@ rule phase_accuracies_sim:
         '--lamb {params.lamb} '
         '--true_phase_col {params.true_phase_col} '
         '--pert_phase_col {params.pert_phase_col} '
+        '--true_frac_rep {params.true_frac_rep} '
+        '--pert_frac_rep {params.pert_frac_rep} '
         '--table {output} '
         '&> {log} ; '
         'deactivate'
@@ -676,7 +680,8 @@ rule plot_phase_accuracies_sim:
     output: 
         plot1 = 'plots/simulation/all/predicted_phase_confusion_map.png',
         plot2 = 'plots/simulation/all/phase_accuracies_param_sweep.png',
-        plot3 = 'plots/simulation/all/phase_accuracies_all_datasets.png'
+        plot3 = 'plots/simulation/all/phase_accuracies_all_datasets.png',
+        plot4 = 'plots/simulation/all/s_time_jointplot.png'
     log: 'logs/simulation/all/plot_phase_accuracies.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '

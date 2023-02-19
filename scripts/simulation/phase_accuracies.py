@@ -14,7 +14,7 @@ def get_args():
     p.add_argument('-tp', '--true_phase_col', type=str, help='column containing the true cell cycle phase')
     p.add_argument('-pp', '--pert_phase_col', type=str, help='column containing the pert predicted cell cycle phase')
     p.add_argument('-tf', '--true_frac_rep', help='true fraction of replicated bins per cell')
-    p.add_argument('-pf', '-pert_frac_rep', help='PERT inferred fraction of replicated bins per cell')
+    p.add_argument('-pf', '--pert_frac_rep', help='PERT inferred fraction of replicated bins per cell')
     p.add_argument('-t', '--table', help='table containing all the cn and rep accuracies for each simulated dataset and model')
 
     return p.parse_args()
