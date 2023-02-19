@@ -13,6 +13,8 @@ def get_args():
     p.add_argument('-l', '--lamb', type=float, nargs='+', help='negative binomial event probs lambda for each dataset')
     p.add_argument('-tp', '--true_phase_col', type=str, help='column containing the true cell cycle phase')
     p.add_argument('-pp', '--pert_phase_col', type=str, help='column containing the pert predicted cell cycle phase')
+    p.add_argument('-tf', '--true_frac_rep', help='true fraction of replicated bins per cell')
+    p.add_argument('-pf', '-pert_frac_rep', help='PERT inferred fraction of replicated bins per cell')
     p.add_argument('-t', '--table', help='table containing all the cn and rep accuracies for each simulated dataset and model')
 
     return p.parse_args()
@@ -61,9 +63,9 @@ def main():
         cn_s, cn_g, cn_lq = load_data(chunk)
 
         # subset all three dataframes to just 'cell_id', 'true_phase', and 'PERT_phase
-        cn_s = cn_s[['cell_id', argv.true_phase_col, argv.pert_phase_col]].drop_duplicates()
-        cn_g = cn_g[['cell_id', argv.true_phase_col, argv.pert_phase_col]].drop_duplicates()
-        cn_lq = cn_lq[['cell_id', argv.true_phase_col, argv.pert_phase_col]].drop_duplicates()
+        cn_s = cn_s[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep]].drop_duplicates()
+        cn_g = cn_g[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep]].drop_duplicates()
+        cn_lq = cn_lq[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep]].drop_duplicates()
 
         # merge the three dataframes into one
         temp_df = pd.concat([cn_s, cn_g, cn_lq])

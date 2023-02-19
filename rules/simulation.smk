@@ -91,7 +91,7 @@ rule all_simulation:
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/scRT_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
-        'analysis/simulation/all/phase_accuracies.tsv'
+        'plots/simulation/all/predicted_phase_confusion_map.png',
         
 
 rule simulate_cell_cn_states_sim:
@@ -675,7 +675,8 @@ rule plot_phase_accuracies_sim:
     input: 'analysis/simulation/all/phase_accuracies.tsv'
     output: 
         plot1 = 'plots/simulation/all/predicted_phase_confusion_map.png',
-        plot2 = 'plots/simulation/all/phase_accuracies2.png'
+        plot2 = 'plots/simulation/all/phase_accuracies_param_sweep.png',
+        plot3 = 'plots/simulation/all/phase_accuracies_all_datasets.png'
     log: 'logs/simulation/all/plot_phase_accuracies.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
