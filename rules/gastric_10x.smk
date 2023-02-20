@@ -30,13 +30,13 @@ rule all_gastric_10x:
                 if (d not in bad_datasets)
             ]
         ),
-        expand(
-            'plots/gastric_10x/{dataset}/inferred_cn_rep_results_filtered.png',
-            dataset=[
-                d for d in config['10x_gastric_cell_lines']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # expand(
+        #     'plots/gastric_10x/{dataset}/inferred_cn_rep_results_filtered.png',
+        #     dataset=[
+        #         d for d in config['10x_gastric_cell_lines']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
 
 
 rule collect_cn_data_g10x:
@@ -143,3 +143,4 @@ rule plot_filtered_pyro_model_output_g10x:
         'python3 scripts/gastric_10x/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+        

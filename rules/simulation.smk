@@ -91,7 +91,7 @@ rule all_simulation:
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/scRT_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
-        'plots/simulation/all/predicted_phase_confusion_map.png',
+        'plots/simulation/all/predicted_phase_confusion_mat.png',
         
 
 rule simulate_cell_cn_states_sim:
@@ -637,7 +637,7 @@ rule aggregate_model_phases_sim:
         'python3 scripts/simulation/aggregate_model_phases.py '
         '-d {params.datasets} '
         '-o {output} '
-         '&> {log}'
+        '&> {log}'
     
 
 rule phase_accuracies_sim:
@@ -678,10 +678,9 @@ rule phase_accuracies_sim:
 rule plot_phase_accuracies_sim:
     input: 'analysis/simulation/all/phase_accuracies.tsv'
     output: 
-        plot1 = 'plots/simulation/all/predicted_phase_confusion_map.png',
+        plot1 = 'plots/simulation/all/predicted_phase_confusion_mat.png',
         plot2 = 'plots/simulation/all/phase_accuracies_param_sweep.png',
-        plot3 = 'plots/simulation/all/phase_accuracies_all_datasets.png',
-        plot4 = 'plots/simulation/all/s_time_jointplot.png'
+        plot3 = 'plots/simulation/all/s_time_jointplot.png'
     log: 'logs/simulation/all/plot_phase_accuracies.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '

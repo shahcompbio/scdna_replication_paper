@@ -63,23 +63,23 @@ def plot_model_results(cn_s, cn_g, argv):
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
-def plot_hmmcopy(cn_s, cn_g1, argv):
+def plot_hmmcopy(cn_s, cn_g, argv):
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
     ax = ax.flatten()
 
-    plot_clustered_cell_cn_matrix(ax[0], cn_g1, 'state', cluster_field_name='clone_id')
+    plot_clustered_cell_cn_matrix(ax[0], cn_g, 'state', cluster_field_name='clone_id')
     plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='clone_id')
 
-    ax[0].set_title('{}\nG1-phase 10x CN states'.format(argv.dataset))
+    ax[0].set_title('{}\nG1/2-phase 10x CN states'.format(argv.dataset))
     ax[1].set_title('{}\nS-phase 10x CN states'.format(argv.dataset))
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
 
-def plot_rpm(cn_s, cn_g1, argv):
+def plot_rpm(cn_s, cn_g, argv):
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
     ax = ax.flatten()
 
-    plot_clustered_cell_cn_matrix(ax[0], cn_g1, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id')
+    plot_clustered_cell_cn_matrix(ax[0], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id')
     plot_clustered_cell_cn_matrix(ax[1], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id')
 
     ax[0].set_title('{}\nG1-phase reads per million'.format(argv.dataset))
@@ -90,12 +90,25 @@ def plot_rpm(cn_s, cn_g1, argv):
 def main():
     argv = get_args()
 
-    cn_s = pd.read_csv(argv.cn_s)
-    cn_g = pd.read_csv(argv.cn_g)
+    cn_s = pd.read_csv(argv.cn_s, dtype={'chr': str, 'cell_id': int, 'barcode': str, 'assigned_clone_id': str})
+    cn_g = pd.read_csv(argv.cn_g, dtype={'chr': str, 'cell_id': int, 'barcode': str, 'clone_id': str})
 
     # convert the 'chr' column to a string and then categorical
-    cn_s.chr = cn_s.chr.astype(str).astype('category')
-    cn_g.chr = cn_s.chr.astype(str).astype('category')
+    cn_s.chr = cn_s.chr.astype('category')
+    cn_g.chr = cn_s.chr.astype('category')
+
+    print('S-phase cells')
+    print(cn_s.head())
+    print(cn_s.dtypes)
+    print('G1/2-phase cells')
+    print(cn_g.head())
+    print(cn_g.dtypes)
+
+    # use the barcode column as the cell_id
+    # this is necessary for scgenome plotting functions to work
+    # as the cell_id needs to be a string, not an integer
+    cn_s['cell_id'] = cn_s['barcode'].astype(str)
+    cn_g['cell_id'] = cn_g['barcode'].astype(str)
 
     # show rpm, hmmcopy, inferred cn, inferred rep heatmaps for S-phase cells and G1/2-phase cells
     # where all the rows are sorted the same in all four heatmaps
