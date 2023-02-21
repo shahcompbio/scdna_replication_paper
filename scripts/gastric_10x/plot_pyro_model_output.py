@@ -13,8 +13,8 @@ def get_args():
     p.add_argument('cn_g', help='long-form dataframe of G1/2-phase cells')
     p.add_argument('dataset')
     p.add_argument('plot1', help='heatmaps of all S-phase cells sorted the same')
-    p.add_argument('plot2', help='heatmaps of G1- vs S-phase hmmcopy states')
-    p.add_argument('plot3', help='heatmaps of G1- vs S-phase reads per million')
+    # p.add_argument('plot2', help='heatmaps of G1- vs S-phase hmmcopy states')
+    # p.add_argument('plot3', help='heatmaps of G1- vs S-phase reads per million')
 
     return p.parse_args()
 
@@ -49,10 +49,10 @@ def plot_model_results(cn_s, cn_g, argv):
 
     # bottom row is the G1/2-phase cells
     # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
-    plot_clustered_cell_cn_matrix(ax[4], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
-    plot_clustered_cell_cn_matrix(ax[5], cn_g, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
-    plot_clustered_cell_cn_matrix(ax[6], cn_g, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
-    plot_clustered_cell_cn_matrix(ax[7], cn_g, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
+    # plot_clustered_cell_cn_matrix(ax[4], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    # plot_clustered_cell_cn_matrix(ax[5], cn_g, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    # plot_clustered_cell_cn_matrix(ax[6], cn_g, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    # plot_clustered_cell_cn_matrix(ax[7], cn_g, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
 
     # add titles for each subplot
     ax[4].set_title('{} G1/2-phase cells\nReads per million'.format(argv.dataset))
@@ -114,11 +114,11 @@ def main():
     # where all the rows are sorted the same in all four heatmaps
     plot_model_results(cn_s, cn_g, argv)
 
-    # show hmmcopy state heatmaps for both S-phase and G1-phase cells
-    plot_hmmcopy(cn_s, cn_g, argv)
+    # # show hmmcopy state heatmaps for both S-phase and G1-phase cells
+    # plot_hmmcopy(cn_s, cn_g, argv)
 
-    # show reads per million heatmaps for both S-phase and G1-phase cells
-    plot_rpm(cn_s, cn_g, argv)
+    # # show reads per million heatmaps for both S-phase and G1-phase cells
+    # plot_rpm(cn_s, cn_g, argv)
 
 
 

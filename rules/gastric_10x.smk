@@ -94,8 +94,8 @@ rule plot_pyro_model_output_g10x:
         g1_phase = 'analysis/gastric_10x/{dataset}/g1_phase_cells_with_scRT.csv.gz'
     output:
         plot1 = 'plots/gastric_10x/{dataset}/inferred_cn_rep_results.png',
-        plot2 = 'plots/gastric_10x/{dataset}/s_vs_g_hmmcopy_states.png',
-        plot3 = 'plots/gastric_10x/{dataset}/s_vs_g_rpm.png',
+        # plot2 = 'plots/gastric_10x/{dataset}/s_vs_g_hmmcopy_states.png',
+        # plot3 = 'plots/gastric_10x/{dataset}/s_vs_g_rpm.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/gastric_10x/{dataset}/plot_pyro_model_output.log'
@@ -133,8 +133,8 @@ rule plot_filtered_pyro_model_output_g10x:
         g1_phase = 'analysis/gastric_10x/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
     output:
         plot1 = 'plots/gastric_10x/{dataset}/inferred_cn_rep_results_filtered.png',
-        plot2 = 'plots/gastric_10x/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
-        plot3 = 'plots/gastric_10x/{dataset}/s_vs_g_rpm_filtered.png',
+        # plot2 = 'plots/gastric_10x/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
+        # plot3 = 'plots/gastric_10x/{dataset}/s_vs_g_rpm_filtered.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/gastric_10x/{dataset}/plot_filtered_pyro_model_output.log'
@@ -143,4 +143,3 @@ rule plot_filtered_pyro_model_output_g10x:
         'python3 scripts/gastric_10x/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
-        
