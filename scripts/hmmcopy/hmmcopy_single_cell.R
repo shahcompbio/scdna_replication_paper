@@ -92,7 +92,7 @@ error_exit_clean <- function(samp.uncorrected, chromosomes, sample_id, out_reads
 
 
 
-run_hmmcopy <- function(cell, corrected_reads_data, param, outdir, multipliers, verbose=FALSE) {
+run_hmmcopy <- function(cell, corrected_reads_data, param, multipliers, verbose=FALSE) {
 
     samp.corrected <- fread(corrected_reads_data)
     samp.corrected <- data.table(start=samp.corrected$start, end=samp.corrected$end, chr=samp.corrected$chr,
@@ -111,31 +111,32 @@ run_hmmcopy <- function(cell, corrected_reads_data, param, outdir, multipliers, 
     #Catch and quit if no data to fit.
     if (all(is.na(check.samp.corrected$cor_gc)) | all(is.na(check.samp.corrected$copy))){
 
-        for (VAL in VALS) {
+        # for (VAL in VALS) {
 
-            modal_output = file.path(outdir, VAL, sep='/')
-            dir.create(modal_output, recursive=TRUE)
+        #     # modal_output = file.path(outdir, VAL, sep='/')
+        #     # dir.create(modal_output, recursive=TRUE)
 
-            out_reads <- file.path(modal_output, "reads.csv")
-            out_segs <- file.path(modal_output, "segs.csv")
-            out_params <- file.path(modal_output, "params.csv")
-            out_metrics <- file.path(modal_output, "metrics.csv")
+        #     # out_reads <- file.path(modal_output, "reads.csv")
+        #     # out_segs <- file.path(modal_output, "segs.csv")
+        #     # out_params <- file.path(modal_output, "params.csv")
+        #     # out_metrics <- file.path(modal_output, "metrics.csv")
 
-            err <- "Low coverage sample results in loess regression failure, unable to correct and segment"
-            error_exit_clean(check.samp.corrected, chromosomes, opt$sample_id, out_reads, out_segs, out_params, out_metrics, VAL, err)
-        }
+        #     err <- "Low coverage sample results in loess regression failure, unable to correct and segment"
+        #     error_exit_clean(check.samp.corrected, chromosomes, opt$sample_id, out_reads, out_segs, out_params, out_metrics, VAL, err)
+        # }
 
-        #create auto ploidy dummy output
-        modal_output = file.path(outdir, '0', sep='/')
-        dir.create(modal_output, recursive=TRUE)
+        # #create auto ploidy dummy output
+        # modal_output = file.path(outdir, '0', sep='/')
+        # dir.create(modal_output, recursive=TRUE)
 
-        out_reads <- file.path(modal_output, "reads.csv")
-        out_segs <- file.path(modal_output, "segs.csv")
-        out_params <- file.path(modal_output, "params.csv")
-        out_metrics <- file.path(modal_output, "metrics.csv")
+        # out_reads <- file.path(modal_output, "reads.csv")
+        # out_segs <- file.path(modal_output, "segs.csv")
+        # out_params <- file.path(modal_output, "params.csv")
+        # out_metrics <- file.path(modal_output, "metrics.csv")
 
         err <- "Low coverage sample results in loess regression failure, unable to correct and segment"
-        error_exit_clean(check.samp.corrected, chromosomes, opt$sample_id, out_reads, out_segs, out_params, out_metrics, VAL, err)
+        warning(paste(error, sep=""))
+        # error_exit_clean(check.samp.corrected, chromosomes, opt$sample_id, out_reads, out_segs, out_params, out_metrics, VAL, err)
 
         quit()
 
@@ -248,13 +249,13 @@ run_hmmcopy <- function(cell, corrected_reads_data, param, outdir, multipliers, 
         test.corrected <- as.data.frame(test.corrected)
         colnames(test.corrected)[colnames(test.corrected)=="space"] <- "chr"
 
-        #write
-        modal_output = file.path(outdir, VAL, sep='/')
-        dir.create(modal_output, recursive=TRUE)
-        write.table(test.corrected, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "reads.csv"))
-        write.table(modal_seg, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "segs.csv"))
-        write.table(mstats, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "metrics.csv"))
-        write.table(df.params, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "params.csv"))
+        # #write
+        # modal_output = file.path(outdir, VAL, sep='/')
+        # dir.create(modal_output, recursive=TRUE)
+        # write.table(test.corrected, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "reads.csv"))
+        # write.table(modal_seg, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "segs.csv"))
+        # write.table(mstats, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "metrics.csv"))
+        # write.table(df.params, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(modal_output, "params.csv"))
 
         # SAVE
         best.segmented[[VAL]] <- test.corrected
@@ -265,8 +266,8 @@ run_hmmcopy <- function(cell, corrected_reads_data, param, outdir, multipliers, 
         seg.best <- rbind.fill(seg.best, data.frame(VAL, VAL, scaledpenalty = mstats$scaled_halfiness, MSRSI_non_integerness = mstats$MSRSI_non_integerness, mean_copy = mstats$mean_copy))
     }
 
-    auto_output = file.path(outdir, "0", sep='/')
-    dir.create(auto_output, recursive=TRUE)
+    # auto_output = file.path(outdir, "0", sep='/')
+    # dir.create(auto_output, recursive=TRUE)
 
     seg.best$red <- FALSE
     seg.best$red[which(seg.best$scaledpenalty == min(seg.best$scaledpenalty))] <- TRUE
@@ -277,19 +278,22 @@ run_hmmcopy <- function(cell, corrected_reads_data, param, outdir, multipliers, 
     }
 
     auto_ploidy.reads <- best.segmented[[pick]]
-    write.table(auto_ploidy.reads, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "reads.csv"))
+    # write.table(auto_ploidy.reads, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "reads.csv"))
 
     auto_ploidy.segs <- best.segs[[pick]]
-    write.table(auto_ploidy.segs, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "segs.csv"))
+    # write.table(auto_ploidy.segs, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "segs.csv"))
 
     auto_ploidy.metrics <- best.metrics[[pick]]
-    write.table(auto_ploidy.metrics, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "metrics.csv"))
+    # write.table(auto_ploidy.metrics, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "metrics.csv"))
 
     auto_ploidy.params <- best.params[[pick]]
-    write.table(auto_ploidy.params, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "params.csv"))
+    # write.table(auto_ploidy.params, sep = ",", quote = FALSE, row.names = FALSE, file = file.path(auto_output, "params.csv"))
+
+    # return both the best (auto_ploidy) reads and metrics files
+    return(list(auto_ploidy.reads, auto_ploidy.metrics))
 }
 
-get_parameters <- function(str, e, mu, lambda, nu, kappa, m,eta, gamma, S) {
+get_parameters <- function(str, e, mu, lambda, nu, kappa, m, eta, gamma, S) {
 
     str <- as.numeric(str)
     e <- as.numeric(e)
@@ -313,6 +317,28 @@ get_parameters <- function(str, e, mu, lambda, nu, kappa, m,eta, gamma, S) {
 }
 
 
+run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_path, multipliers) {
+    # get list of unique cell_id values in corrected_reads_data
+    cell_ids <- unique(corrected_reads_data$cell_id)
+
+    # create an empty data frame to store the results
+    all_cell_reads <- data.frame()
+
+    # loop through each cell_id
+    for (cell_id in cell_ids) {
+        # subset corrected_reads_data to only include rows for this cell_id
+        cell_data <- subset(corrected_reads_data, cell_id == cell_id)
+        # run hmmcopy on this cell to get cell_reads and cell_metrics
+        list(cell_reads, cell_metrics) <- run_hmmcopy(cell_id, cell_data, param, multipliers)
+        # append the results to all_cell_reads
+        all_cell_reads <- rbind(all_cell_reads, cell_reads)
+    }
+
+    # write.table all_cell_reads to a file
+    write.table(all_cell_reads, sep = ",", quote = FALSE, row.names = FALSE, file = output_path)
+
+}
+
 #=======================================================================================================================
 # Command Line Options
 #=======================================================================================================================
@@ -320,7 +346,7 @@ get_parameters <- function(str, e, mu, lambda, nu, kappa, m,eta, gamma, S) {
 spec = matrix(c(
                 "corrected_data",  "t",    1, "character", "csv file with the corrected_data",
                 "sample_id",    "sample_id",    1, "character",    "specify sample or cell id",
-                "outdir",      "param",    1, "character", "path to output directory",
+                "output",      "o",    1, "character", "path to output directory",
                 "param_str",      "st",    2, "double",    "optional strength parameter",
                 "param_e",      "e",    2, "double",    "optional e parameter, suggested probablity of extending a segment",
                 "param_mu",     "mu",    2, "character", "optional mu median parameter, comma-separated list of length num_states",
@@ -348,6 +374,6 @@ param <- get_parameters(opt$param_str, opt$param_e, opt$param_mu, opt$param_l, o
 
 ## TODO: create loop that runs hmmcopy for each cell within corrected_data, concatenating the results
 ## TODO: only one reads.csv file which includes hmmcopy results for all cells (no more outdir with multiple files)
-run_hmmcopy(opt$sample_id, opt$corrected_data, param, opt$outdir, opt$param_multiplier)
+run_hmmcopy_all_cells(opt$corrected_data, param, opt$output, opt$param_multiplier)
 
 
