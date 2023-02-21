@@ -164,6 +164,101 @@ rule simulate_reads_from_cn_pyro_sim:
         'deactivate'
 
 
+rule run_hmmcopy_step1_s_sim:
+    input: 'analysis/simulation/{dataset}/s_phase_cells.tsv',
+    output: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv',
+    log: 'logs/simulation/{dataset}/run_hmmcopy_step1_s.log',
+    conda: '../envs/hmmcopy.yaml'
+    shell:
+        'python3 scripts/hmmcopy/correct_read_count.py '
+        '{input} {output} &> {log}'
+
+
+rule run_hmmcopy_step1_g1_sim:
+    input: 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
+    output: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv',
+    log: 'logs/simulation/{dataset}/run_hmmcopy_step1_g1.log',
+    conda: '../envs/hmmcopy.yaml'
+    shell:
+        'python3 scripts/hmmcopy/correct_read_count.py '
+        '{input} {output} &> {log}'
+
+
+rule run_hmmcopy_step2_s_sim:
+    input: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv'
+    output: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv'
+    params:
+        # default params found here 
+        # https://github.com/shahcompbio/single_cell_pipeline/blob/2af7287a9a7f98b54cb8ebcd3580dda85274bb6d/single_cell/config/pipeline_config.py#L48
+        mult = '1,2,3,4,5,6',
+        e = 0.999999,
+        eta = 50000,
+        g = 3,
+        l = 20,
+        nu = 2.1,
+        s = 1,
+        st = 1000,
+        k = '100,100,700,100,25,25,25,25,25,25,25,25',
+        m = '0,1,2,3,4,5,6,7,8,9,10,11',
+        mu = '0,1,2,3,4,5,6,7,8,9,10,11',
+    log: 'logs/simulation/{dataset}/run_hmmcopy_step2_s.log',
+    conda: '../envs/hmmcopy.yaml'
+    shell:
+        'Rscript scripts/hmmcopy/hmmcopy_single_cell.py '
+        '-t {input} '
+        '-mult {params.mult} '
+        '-e {params.e} '
+        '-eta {params.eta} '
+        '-g {params.g} '
+        '-l {params.l} '
+        '-nu {params.nu} '
+        '-s {params.s} '
+        '-st {params.st} '
+        '-k {params.k} '
+        '-m {params.m} '
+        '-mu {params.mu} '
+        '-o {output} '
+        '&> {log}'
+
+
+rule run_hmmcopy_step2_g1_sim:
+    input: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv'
+    output: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_reads.csv'
+    params:
+        # default params found here 
+        # https://github.com/shahcompbio/single_cell_pipeline/blob/2af7287a9a7f98b54cb8ebcd3580dda85274bb6d/single_cell/config/pipeline_config.py#L48
+        mult = '1,2,3,4,5,6',
+        e = 0.999999,
+        eta = 50000,
+        g = 3,
+        l = 20,
+        nu = 2.1,
+        s = 1,
+        st = 1000,
+        k = '100,100,700,100,25,25,25,25,25,25,25,25',
+        m = '0,1,2,3,4,5,6,7,8,9,10,11',
+        mu = '0,1,2,3,4,5,6,7,8,9,10,11',
+    log: 'logs/simulation/{dataset}/run_hmmcopy_step2_g1.log',
+    conda: '../envs/hmmcopy.yaml'
+    shell:
+        'Rscript scripts/hmmcopy/hmmcopy_single_cell.py '
+        '-t {input} '
+        '-mult {params.mult} '
+        '-e {params.e} '
+        '-eta {params.eta} '
+        '-g {params.g} '
+        '-l {params.l} '
+        '-nu {params.nu} '
+        '-s {params.s} '
+        '-st {params.st} '
+        '-k {params.k} '
+        '-m {params.m} '
+        '-mu {params.mu} '
+        '-o {output} '
+        '&> {log}'
+
+
+
 rule plot_cn_heatmaps_sim:
     input:
         s_phase = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
