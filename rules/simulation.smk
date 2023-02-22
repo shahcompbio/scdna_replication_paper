@@ -92,6 +92,8 @@ rule all_simulation:
         'plots/simulation/all/scRT_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
         'plots/simulation/all/predicted_phase_confusion_mat.png',
+        'analysis/simulation/D1.0/s_phase_cells_hmmcopy_reads.csv',
+        # 'analysis/simulation/D1.0/g1_phase_cells_hmmcopy_reads.csv',
         
 
 rule simulate_cell_cn_states_sim:
@@ -165,7 +167,9 @@ rule simulate_reads_from_cn_pyro_sim:
 
 
 rule run_hmmcopy_step1_s_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells.tsv',
+    input: 
+        cn = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
+        gc_map = 'data/gc_map_500kb.csv'
     output: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv',
     log: 'logs/simulation/{dataset}/run_hmmcopy_step1_s.log',
     conda: '../envs/hmmcopy.yaml'
@@ -175,7 +179,9 @@ rule run_hmmcopy_step1_s_sim:
 
 
 rule run_hmmcopy_step1_g1_sim:
-    input: 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
+    input: 
+        cn = 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
+        gc_map = 'data/gc_map_500kb.csv'
     output: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv',
     log: 'logs/simulation/{dataset}/run_hmmcopy_step1_g1.log',
     conda: '../envs/hmmcopy.yaml'
@@ -186,7 +192,9 @@ rule run_hmmcopy_step1_g1_sim:
 
 rule run_hmmcopy_step2_s_sim:
     input: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv'
-    output: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv'
+    output: 
+        reads = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv',
+        metrics = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_metrics.csv',
     params:
         # default params found here 
         # https://github.com/shahcompbio/single_cell_pipeline/blob/2af7287a9a7f98b54cb8ebcd3580dda85274bb6d/single_cell/config/pipeline_config.py#L48
@@ -204,26 +212,29 @@ rule run_hmmcopy_step2_s_sim:
     log: 'logs/simulation/{dataset}/run_hmmcopy_step2_s.log',
     conda: '../envs/hmmcopy.yaml'
     shell:
-        'Rscript scripts/hmmcopy/hmmcopy_single_cell.py '
-        '-t {input} '
-        '-mult {params.mult} '
-        '-e {params.e} '
-        '-eta {params.eta} '
-        '-g {params.g} '
-        '-l {params.l} '
-        '-nu {params.nu} '
-        '-s {params.s} '
-        '-st {params.st} '
-        '-k {params.k} '
-        '-m {params.m} '
-        '-mu {params.mu} '
-        '-o {output} '
+        'Rscript scripts/hmmcopy/hmmcopy_single_cell.R '
+        '--corrected_data {input} '
+        '--param_multiplier {params.mult} '
+        '--param_e {params.e} '
+        '--param_eta {params.eta} '
+        '--param_g {params.g} '
+        '--param_l {params.l} '
+        '--param_nu {params.nu} '
+        '--param_s {params.s} '
+        '--param_str {params.st} '
+        '--param_k {params.k} '
+        '--param_m {params.m} '
+        '--param_mu {params.mu} '
+        '--output_reads {output.reads} '
+        '--output_metrics {output.metrics} '
         '&> {log}'
 
 
 rule run_hmmcopy_step2_g1_sim:
     input: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv'
-    output: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_reads.csv'
+    output: 
+        reads = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_reads.csv',
+        metrics = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_metrics.csv',
     params:
         # default params found here 
         # https://github.com/shahcompbio/single_cell_pipeline/blob/2af7287a9a7f98b54cb8ebcd3580dda85274bb6d/single_cell/config/pipeline_config.py#L48
@@ -241,7 +252,7 @@ rule run_hmmcopy_step2_g1_sim:
     log: 'logs/simulation/{dataset}/run_hmmcopy_step2_g1.log',
     conda: '../envs/hmmcopy.yaml'
     shell:
-        'Rscript scripts/hmmcopy/hmmcopy_single_cell.py '
+        'Rscript scripts/hmmcopy/hmmcopy_single_cell.R '
         '-t {input} '
         '-mult {params.mult} '
         '-e {params.e} '
@@ -254,7 +265,8 @@ rule run_hmmcopy_step2_g1_sim:
         '-k {params.k} '
         '-m {params.m} '
         '-mu {params.mu} '
-        '-o {output} '
+        '-or {output.reads} '
+        '-om {output.metrics} '
         '&> {log}'
 
 
@@ -767,9 +779,6 @@ rule phase_accuracies_sim:
         'deactivate'
 
 
-# TODO: add rules for computing the true vs PERT predicted cell cycle phases
-# one plot should be a confusion matrix
-# the other should be a violin plot of the phase accuracies across each dataset, grouped by cell cna rate and num_clones
 rule plot_phase_accuracies_sim:
     input: 'analysis/simulation/all/phase_accuracies.tsv'
     output: 

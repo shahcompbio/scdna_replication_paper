@@ -92,14 +92,7 @@ error_exit_clean <- function(samp.uncorrected, chromosomes, sample_id, out_reads
 
 
 
-run_hmmcopy <- function(cell, corrected_reads_data, param, multipliers, verbose=FALSE) {
-
-    samp.corrected <- fread(corrected_reads_data)
-    samp.corrected <- data.table(start=samp.corrected$start, end=samp.corrected$end, chr=samp.corrected$chr,
-                                 reads=samp.corrected$reads, gc=samp.corrected$gc, map=samp.corrected$map,
-                                 cor_gc=samp.corrected$cor_gc, copy=samp.corrected$copy, valid=samp.corrected$valid, ideal=samp.corrected$ideal,
-                                 modal_curve=samp.corrected$modal_curve,modal_quantile=samp.corrected$modal_quantile, cor_map=samp.corrected$cor_map)
-
+run_hmmcopy <- function(cell, samp.corrected, param, multipliers, verbose=FALSE) {
 
     VALS = as.numeric(strsplit(multipliers, ",")[[1]])
 
@@ -317,25 +310,40 @@ get_parameters <- function(str, e, mu, lambda, nu, kappa, m, eta, gamma, S) {
 }
 
 
-run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_path, multipliers) {
+run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_reads, output_metrics, multipliers) {
+    # read in the corrected reads data
+    samp.corrected <- fread(corrected_reads_data)
+    samp.corrected <- data.table(start=samp.corrected$start, end=samp.corrected$end, chr=samp.corrected$chr, cell_id=samp.corrected$cell_id,
+                                 reads=samp.corrected$reads, gc=samp.corrected$gc, map=samp.corrected$map,
+                                 cor_gc=samp.corrected$cor_gc, copy=samp.corrected$copy, valid=samp.corrected$valid, ideal=samp.corrected$ideal,
+                                 modal_curve=samp.corrected$modal_curve,modal_quantile=samp.corrected$modal_quantile, cor_map=samp.corrected$cor_map)
+    print('corrected reads data read in')
+    
     # get list of unique cell_id values in corrected_reads_data
-    cell_ids <- unique(corrected_reads_data$cell_id)
+    cell_ids <- unique(samp.corrected$cell_id)
+    # print the number of cell IDs
+    print(paste0('number of cell ids', length(cell_ids)))
 
     # create an empty data frame to store the results
     all_cell_reads <- data.frame()
+    all_cell_metrics <- data.frame()
 
     # loop through each cell_id
     for (cell_id in cell_ids) {
-        # subset corrected_reads_data to only include rows for this cell_id
-        cell_data <- subset(corrected_reads_data, cell_id == cell_id)
+        # subset samp.corrected to only include rows for this cell_id
+        cell_data <- subset(samp.corrected, cell_id == cell_id)
         # run hmmcopy on this cell to get cell_reads and cell_metrics
         list(cell_reads, cell_metrics) <- run_hmmcopy(cell_id, cell_data, param, multipliers)
         # append the results to all_cell_reads
         all_cell_reads <- rbind(all_cell_reads, cell_reads)
+        # append the results to all_cell_metrics
+        all_cell_metrics <- rbind(all_cell_metrics, cell_metrics)
     }
 
     # write.table all_cell_reads to a file
     write.table(all_cell_reads, sep = ",", quote = FALSE, row.names = FALSE, file = output_path)
+    # write.table all_cell_metrics to a file
+    write.table(all_cell_metrics, sep = ",", quote = FALSE, row.names = FALSE, file = output_path)
 
 }
 
@@ -345,8 +353,8 @@ run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_path, mult
 
 spec = matrix(c(
                 "corrected_data",  "t",    1, "character", "csv file with the corrected_data",
-                "sample_id",    "sample_id",    1, "character",    "specify sample or cell id",
-                "output",      "o",    1, "character", "path to output directory",
+                "output_reads",    "or",    1, "character",    "path to output reads file",
+                "output_metrics",      "om",    1, "character", "path to output metrics file",
                 "param_str",      "st",    2, "double",    "optional strength parameter",
                 "param_e",      "e",    2, "double",    "optional e parameter, suggested probablity of extending a segment",
                 "param_mu",     "mu",    2, "character", "optional mu median parameter, comma-separated list of length num_states",
@@ -369,11 +377,12 @@ if (!is.null(opt$help)) {
 
 chromosomes <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y")
 
+print('getting parameters')
 param <- get_parameters(opt$param_str, opt$param_e, opt$param_mu, opt$param_l, opt$param_nu, opt$param_k, opt$param_m, opt$param_eta, opt$param_g, opt$param_s)
-
+print('running hmmcopy across all cells')
 
 ## TODO: create loop that runs hmmcopy for each cell within corrected_data, concatenating the results
 ## TODO: only one reads.csv file which includes hmmcopy results for all cells (no more outdir with multiple files)
-run_hmmcopy_all_cells(opt$corrected_data, param, opt$output, opt$param_multiplier)
+run_hmmcopy_all_cells(opt$corrected_data, param, opt$output_reads, opt$output_metrics, opt$param_multiplier)
 
 

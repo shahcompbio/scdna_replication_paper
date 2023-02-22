@@ -19,12 +19,13 @@ class CorrectReadCount(object):
     values
     """
 
-    def __init__(self, input, output, mappability=0.9,
+    def __init__(self, input_cn, input_gc_map, output, mappability=0.9,
                  smoothing_function='lowess',
                  polynomial_degree=2):
         self.mappability = mappability
 
-        self.input = input
+        self.input_cn = input_cn
+        self.input_gc_map = input_gc_map
         self.output = output
 
     def valid(self, df):
@@ -132,14 +133,35 @@ class CorrectReadCount(object):
         df.to_csv(self.output, index=False, sep=',', na_rep="NA")
 
     def main(self):
-        # read input dataframe containing columns 
-        # 'chr', 'start', 'end', 'width', 'gc', 'map', 'reads', 'cell_id'
-        input_df = pd.read_csv(self.input)
+        # read input dataframe containing simulated read counts and copy number for each bin
+        input_cn = pd.read_csv(self.input_cn, sep='\t')
+
+        # rename true_reads_raw to reads and subset to the input columns for hmmcopy
+        input_cn.rename(columns={'true_reads_raw': 'reads'}, inplace=True)
+        input_cn = input_cn[['chr', 'start', 'end', 'reads', 'cell_id']]
+        print('input_cn', input_cn.head(), input_cn.dtypes, sep='\n')
+
+        # read input for gc and mappability of each bin
+        input_gc_map = pd.read_csv(self.input_gc_map)
+        # subtract 1 from the start position so the bins match input_cn
+        input_gc_map['start'] = input_gc_map['start'] - 1
+        print('input_gc_map', input_gc_map.head(), input_gc_map.dtypes, sep='\n')
+
+        # merge input_cn and input_gc_map to create input_df
+        # this dataframe has columns 'chr', 'start', 'end', 'gc', 'map', 'reads', 'cell_id'
+        input_df = pd.merge(input_cn, input_gc_map)
+        print(input_df.head())
 
         # store each cell's dataframe in a list of dataframes
         output_df = []
 
-        for cell_id, df in input_df.groupby('cell_id'):
+        # iterate over each cell
+        for cell_id, cell_df in input_df.groupby('cell_id'):
+            print("Processing cell: {}".format(cell_id))
+            print(cell_df.head())
+
+            # create a copy of the cell dataframe with reset index
+            df = cell_df.copy().reset_index(drop=True)
 
             # annotate valid and ideal bins
             df = self.valid(df)
@@ -174,9 +196,13 @@ class CorrectReadCount(object):
 
             df["cor_map"] = float("NaN")
 
+            print('done with cell: {}'.format(cell_id))
+            print(df.head())
+
             output_df.append(df)
     
         # concatenate the per-cell dataframes into one output dataframe
+        print('number of cells processed: {}'.format(len(output_df)))
         output_df = pd.concat(output_df, ignore_index=True)
 
         # save
@@ -190,8 +216,12 @@ def parse_args():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('input',
+    parser.add_argument('input_cn',
                         help='path to the input read count csv'
+                        )
+
+    parser.add_argument('input_gc_map',
+                        help='path to the input gc and mappability csv'
                         )
 
     parser.add_argument('output',
@@ -211,7 +241,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    corr = CorrectReadCount(args.input, args.output,
+    corr = CorrectReadCount(args.input_cn, args.input_gc_map, args.output,
                             mappability=args.mappability,
                             )
 
