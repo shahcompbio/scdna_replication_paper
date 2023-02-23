@@ -61,7 +61,7 @@ def main():
     print('creating scrt object')
     # create SPF object with input
     scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.cn_col,
-                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=1500)
+                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, min_iter=1000, max_iter=2000)
 
     # run inference
     print('running inference')
@@ -75,6 +75,8 @@ def main():
         cn_s_with_scrt.rename(columns={argv.clone_col: 'assigned_{}'.format(argv.clone_col)}, inplace=True)
     cn_s_out = pd.merge(cn_s, cn_s_with_scrt)
     print('cn_s_out.shape', cn_s_out.shape)
+    if argv.clone_col in cn_g_with_scrt.columns and argv.clone_col in cn_g.columns:
+        cn_g_with_scrt.rename(columns={argv.clone_col: 'assigned_{}'.format(argv.clone_col)}, inplace=True)
     cn_g_out = pd.merge(cn_g, cn_g_with_scrt)
     print('cn_g_out.shape', cn_g_out.shape)
 

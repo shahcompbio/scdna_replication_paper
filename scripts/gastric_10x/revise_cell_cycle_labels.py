@@ -60,9 +60,9 @@ def compute_quality_features(cn, rep_state_col='model_rep_state', cn_state_col='
     cell_metrics = []
     for cell_id, cell_cn in cn.groupby('cell_id'):
         # compute read depth autocorrelation
-        rpm_auto = autocorr(cell_cn[rpm_col].values)
+        rpm_auto = autocorr(cell_cn[rpm_col].values, min_lag=250, max_lag=1250)
         # compute replication state autocorrelation
-        rep_auto = autocorr(cell_cn[rep_state_col].values)
+        rep_auto = autocorr(cell_cn[rep_state_col].values, min_lag=250, max_lag=1250)
         # compute number of breakpoints for inferred CN
         cn_bk = breakpoints(cell_cn[cn_state_col].values)
         # compute number of breakpoints for inferred rep states
