@@ -322,22 +322,42 @@ run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_reads, out
     # get list of unique cell_id values in corrected_reads_data
     cell_ids <- unique(samp.corrected$cell_id)
     # print the number of cell IDs
-    print(paste0('number of cell ids', length(cell_ids)))
+    print(paste0('number of cell ids ', length(cell_ids)))
 
     # create an empty data frame to store the results
     all_cell_reads <- data.frame()
     all_cell_metrics <- data.frame()
 
     # loop through each cell_id
-    for (cell_id in cell_ids) {
+    for (curr_cell_id in cell_ids) {
+        print(paste0('processing cell id ', curr_cell_id))
         # subset samp.corrected to only include rows for this cell_id
-        cell_data <- subset(samp.corrected, cell_id == cell_id)
+        cell_data <- subset(samp.corrected, cell_id == curr_cell_id)
+        print(head(cell_data))
         # run hmmcopy on this cell to get cell_reads and cell_metrics
-        list(cell_reads, cell_metrics) <- run_hmmcopy(cell_id, cell_data, param, multipliers)
-        # append the results to all_cell_reads
-        all_cell_reads <- rbind(all_cell_reads, cell_reads)
-        # append the results to all_cell_metrics
-        all_cell_metrics <- rbind(all_cell_metrics, cell_metrics)
+        cell_outputs <- run_hmmcopy(curr_cell_id, cell_data, param, multipliers)
+        cell_reads < cell_outputs[[1]]
+        cell_metrics <- cell_outputs[[2]]
+        print('cell reads and metrics calculated')
+        print(head(cell_reads))
+        print(head(cell_metrics))
+        # if all_cell_reads is empty, then set it to cell_reads
+        if (nrow(all_cell_reads) == 0) {
+            all_cell_reads <- cell_reads
+        } else {
+            # otherwise append the results to all_cell_reads
+            all_cell_reads <- rbind(all_cell_reads, cell_reads)
+        }
+        # if all_cell_metrics is empty, then set it to cell_metrics
+        if (nrow(all_cell_metrics) == 0) {
+            all_cell_metrics <- cell_metrics
+        } else {
+            # otherwise append the results to all_cell_metrics
+            all_cell_metrics <- rbind(all_cell_metrics, cell_metrics)
+        }
+        # print the number of rows in all_cell_reads and all_cell_metrics
+        print(paste0('number of rows in all_cell_reads ', nrow(all_cell_reads)))
+        print(paste0('number of rows in all_cell_metrics ', nrow(all_cell_metrics)))
     }
 
     # write.table all_cell_reads to a file
