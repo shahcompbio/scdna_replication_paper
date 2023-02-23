@@ -92,8 +92,8 @@ rule all_simulation:
         'plots/simulation/all/scRT_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
         'plots/simulation/all/predicted_phase_confusion_mat.png',
-        'analysis/simulation/D1.0/s_phase_cells_hmmcopy_reads.csv',
-        # 'analysis/simulation/D1.0/g1_phase_cells_hmmcopy_reads.csv',
+        'analysis/simulation/D1.0/s_phase_cells_hmmcopy.csv.gz',
+        'analysis/simulation/D1.0/g1_phase_cells_hmmcopy.csv.gz',
         
 
 rule simulate_cell_cn_states_sim:
@@ -170,7 +170,7 @@ rule run_hmmcopy_step1_s_sim:
     input: 
         cn = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
         gc_map = 'data/gc_map_500kb.csv'
-    output: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv',
+    output: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv'
     log: 'logs/simulation/{dataset}/run_hmmcopy_step1_s.log',
     conda: '../envs/hmmcopy.yaml'
     shell:
@@ -182,7 +182,7 @@ rule run_hmmcopy_step1_g1_sim:
     input: 
         cn = 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
         gc_map = 'data/gc_map_500kb.csv'
-    output: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv',
+    output: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv'
     log: 'logs/simulation/{dataset}/run_hmmcopy_step1_g1.log',
     conda: '../envs/hmmcopy.yaml'
     shell:
@@ -269,6 +269,24 @@ rule run_hmmcopy_step2_g1_sim:
         '-om {output.metrics} '
         '&> {log}'
 
+
+rule merge_hmmcopy_output_sim:
+    input:
+        s_input = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
+        g1_input = 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
+        s_reads = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv',
+        g1_reads = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_reads.csv',
+        s_metrics = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_metrics.csv',
+        g1_metrics = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_metrics.csv'
+    output: 
+        s_output = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy.csv.gz',
+        g1_output = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy.csv.gz'
+    log: 'logs/simulation/{dataset}/merge_hmmcopy_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/merge_hmmcopy_output.py '
+        '{input} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_cn_heatmaps_sim:

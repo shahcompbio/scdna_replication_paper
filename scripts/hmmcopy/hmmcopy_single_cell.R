@@ -233,10 +233,10 @@ run_hmmcopy <- function(cell, samp.corrected, param, multipliers, verbose=FALSE)
         df.params <- format_parameter_table(samp.segmented, new.params)
 
         # add cellid
-        df.params$cell_id <- opt$sample_id
-        test.corrected$cell_id <- opt$sample_id
-        modal_seg$cell_id <- opt$sample_id
-        mstats$cell_id <- opt$sample_id
+        df.params$cell_id <- cell
+        test.corrected$cell_id <- cell
+        modal_seg$cell_id <- cell
+        mstats$cell_id <- cell
 
         # rename space col in reads
         test.corrected <- as.data.frame(test.corrected)
@@ -317,7 +317,6 @@ run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_reads, out
                                  reads=samp.corrected$reads, gc=samp.corrected$gc, map=samp.corrected$map,
                                  cor_gc=samp.corrected$cor_gc, copy=samp.corrected$copy, valid=samp.corrected$valid, ideal=samp.corrected$ideal,
                                  modal_curve=samp.corrected$modal_curve,modal_quantile=samp.corrected$modal_quantile, cor_map=samp.corrected$cor_map)
-    print('corrected reads data read in')
     
     # get list of unique cell_id values in corrected_reads_data
     cell_ids <- unique(samp.corrected$cell_id)
@@ -330,17 +329,12 @@ run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_reads, out
 
     # loop through each cell_id
     for (curr_cell_id in cell_ids) {
-        print(paste0('processing cell id ', curr_cell_id))
         # subset samp.corrected to only include rows for this cell_id
         cell_data <- subset(samp.corrected, cell_id == curr_cell_id)
-        print(head(cell_data))
         # run hmmcopy on this cell to get cell_reads and cell_metrics
         cell_outputs <- run_hmmcopy(curr_cell_id, cell_data, param, multipliers)
-        cell_reads < cell_outputs[[1]]
+        cell_reads <- cell_outputs[[1]]
         cell_metrics <- cell_outputs[[2]]
-        print('cell reads and metrics calculated')
-        print(head(cell_reads))
-        print(head(cell_metrics))
         # if all_cell_reads is empty, then set it to cell_reads
         if (nrow(all_cell_reads) == 0) {
             all_cell_reads <- cell_reads
@@ -361,9 +355,9 @@ run_hmmcopy_all_cells <- function(corrected_reads_data, param, output_reads, out
     }
 
     # write.table all_cell_reads to a file
-    write.table(all_cell_reads, sep = ",", quote = FALSE, row.names = FALSE, file = output_path)
+    write.table(all_cell_reads, sep = ",", quote = FALSE, row.names = FALSE, file = output_reads)
     # write.table all_cell_metrics to a file
-    write.table(all_cell_metrics, sep = ",", quote = FALSE, row.names = FALSE, file = output_path)
+    write.table(all_cell_metrics, sep = ",", quote = FALSE, row.names = FALSE, file = output_metrics)
 
 }
 
