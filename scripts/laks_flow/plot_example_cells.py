@@ -26,7 +26,7 @@ def get_args():
 
 def plot_cell_cn_profile_with_density(cell_cn, title=None):
     # create figure of shape 15 x 3
-    fig = plt.figure(figsize=(15, 3))
+    fig = plt.figure(figsize=(8, 2))
 
     # add subplot for cell cn profile
     # this plot should have a height of 1, width of 0.9, and be placed at (0.0, 0.0)
@@ -73,37 +73,37 @@ def main():
 
     # plot a T47D cell in G1 phase
     for cell_id, cell_cn in cn_t_g1.groupby('cell_id'):
-        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nT47D, G1-phase'.format(cell_id))
+        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nT47D, FACS G1-phase'.format(cell_id))
         fig.savefig(argv.cn_t_g1_out, dpi=300, bbox_inches='tight')
         break
 
     # plot a T47D cell in G2 phase
     for cell_id, cell_cn in cn_t_g2.groupby('cell_id'):
-        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nT47D, G2-phase'.format(cell_id))
+        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nT47D, FACS G2-phase'.format(cell_id))
         fig.savefig(argv.cn_t_g2_out, dpi=300, bbox_inches='tight')
         break
 
     # plot a T47D cell in S phase
     for cell_id, cell_cn in cn_t_s.groupby('cell_id'):
-        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nT47D, S-phase'.format(cell_id))
+        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nT47D, FACS S-phase'.format(cell_id))
         fig.savefig(argv.cn_t_s_out, dpi=300, bbox_inches='tight')
         break
 
     # plot a GM18507 cell in G1 phase
     for cell_id, cell_cn in cn_gm_g1.groupby('cell_id'):
-        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nGM18507, G1-phase'.format(cell_id))
+        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nGM18507, FACS G1-phase'.format(cell_id))
         fig.savefig(argv.cn_gm_g1_out, dpi=300, bbox_inches='tight')
         break
 
     # plot a GM18507 cell in G2 phase
     for cell_id, cell_cn in cn_gm_g2.groupby('cell_id'):
-        fig =  plot_cell_cn_profile_with_density(cell_cn, title='{}\nGM18507, G2-phase'.format(cell_id))
+        fig =  plot_cell_cn_profile_with_density(cell_cn, title='{}\nGM18507, FACS G2-phase'.format(cell_id))
         fig.savefig(argv.cn_gm_g2_out, dpi=300, bbox_inches='tight')
         break
 
     # plot a GM18507 cell in S phase
     for cell_id, cell_cn in cn_gm_s.groupby('cell_id'):
-        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nGM18507, S-phase'.format(cell_id))
+        fig = plot_cell_cn_profile_with_density(cell_cn, title='{}\nGM18507, FACS S-phase'.format(cell_id))
         fig.savefig(argv.cn_gm_s_out, dpi=300, bbox_inches='tight')
         break
 
