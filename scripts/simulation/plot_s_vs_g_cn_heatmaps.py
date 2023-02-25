@@ -131,8 +131,8 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
 def main():
     argv = get_args()
 
-    cn_s = pd.read_csv(argv.s_phase, sep='\t')
-    cn_g = pd.read_csv(argv.non_s_phase, sep='\t')
+    cn_s = pd.read_csv(argv.s_phase)
+    cn_g = pd.read_csv(argv.non_s_phase)
 
     cn_s.chr = cn_s.chr.astype(str)
     cn_g.chr = cn_g.chr.astype(str)

@@ -53,13 +53,21 @@ rule all_simulation:
                 if (d not in bad_datasets)
             ]
         ),
-        expand(
-            'plots/simulation/{dataset}/cn_heatmaps.png',
-            dataset=[
-                d for d in config['simulated_datasets']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # TODO: uncomment these rules when I want to run hmmcopy for all datasets
+        # expand(
+        #     'plots/simulation/{dataset}/true_cn_heatmaps.png',
+        #     dataset=[
+        #         d for d in config['simulated_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/simulation/{dataset}/hmmcopy_heatmaps.png',
+        #     dataset=[
+        #         d for d in config['simulated_datasets']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
         expand(
             'plots/simulation/{dataset}/true_scRT_heatmap.png',
             dataset=[
@@ -92,8 +100,7 @@ rule all_simulation:
         'plots/simulation/all/scRT_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
         'plots/simulation/all/predicted_phase_confusion_mat.png',
-        'analysis/simulation/D1.0/s_phase_cells_hmmcopy.csv.gz',
-        'analysis/simulation/D1.0/g1_phase_cells_hmmcopy.csv.gz',
+        'plots/simulation/D1.0/hmmcopy_heatmaps.png',
         
 
 rule simulate_cell_cn_states_sim:
@@ -289,19 +296,36 @@ rule merge_hmmcopy_output_sim:
         ' ; deactivate'
 
 
-rule plot_cn_heatmaps_sim:
+rule plot_true_cn_heatmaps_sim:
     input:
-        s_phase = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
-        g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells.tsv'
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy.csv.gz',
+        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy.csv.gz'
     output:
-        s_phase = 'plots/simulation/{dataset}/cn_heatmaps.png',
+        s_phase = 'plots/simulation/{dataset}/true_cn_heatmaps.png',
     params:
         value_col = 'true_G1_state',
         dataset = lambda wildcards: wildcards.dataset
     log:
-        'logs/simulation/{dataset}/plot_cn_heatmaps.log'
+        'logs/simulation/{dataset}/plot_true_cn_heatmaps.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/plot_s_vs_g_cn_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule plot_hmmcopy_heatmaps_sim:
+    input:
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy.csv.gz',
+        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy.csv.gz'
+    output: 'plots/simulation/{dataset}/hmmcopy_heatmaps.png'
+    params:
+        value_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log:
+        'logs/simulation/{dataset}/plot_hmmcopy_heatmaps.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_s_vs_g_cn_heatmaps.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
@@ -315,7 +339,7 @@ rule plot_true_scRT_heatmap_sim:
     log:
         'logs/simulation/{dataset}/plot_true_scRT_heatmap.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/plot_true_scRT_heatmap.py '
         '{input} {params} {output} &> {log}'
         ' ; deactivate'
@@ -490,7 +514,7 @@ rule evaluate_model_performance_kronos_sim:
         frac_rt_col = 'frac_rt'
     log: 'logs/simulation/{dataset}/evaluate_model_performance_kronos.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/evaluate_model_performance.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -508,7 +532,7 @@ rule evaluate_model_performance_pyro_sim:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/simulation/{dataset}/evaluate_model_performance_pyro.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/evaluate_model_performance.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
@@ -526,7 +550,7 @@ rule evaluate_model_performance_pyro_composite_sim:
         frac_rt_col = 'cell_frac_rep'
     log: 'logs/simulation/{dataset}/evaluate_model_performance_pyro_composite.log'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/evaluate_model_performance.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
