@@ -360,6 +360,46 @@ rule compute_ccc_features_sim:
         'deactivate'
 
 
+# TODO: make files that should be used as Laks cell cycle classifier input
+rule make_laks_ccc_input_sim:
+    input:
+        s_reads = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv',
+        g1_reads = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_reads.csv',
+        s_metrics = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_metrics.csv',
+        g1_metrics = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_metrics.csv'
+    output:
+        cn = 'analysis/simulation/{dataset}/ccc_cn.csv.gz',
+        metrics = 'analysis/simulation/{dataset}/ccc_metrics.csv.gz',
+        align_metrics = 'analysis/simulation/{dataset}/ccc_align_metrics.csv.gz'
+    log: 'logs/simulation/{dataset}/make_laks_ccc_input.log'
+    conda: '../envs/hmmcopy.yaml'
+    shell:
+        'python3 scripts/simulation/make_laks_ccc_input.py '
+        '{input} {output} &> {log}'
+
+
+# TODO: run Laks cell cycle classifier
+# might need to edit train-classify to not use any align_metrics features
+rule run_laks_ccc_sim:
+    input: 
+        cn = 'analysis/simulation/{dataset}/ccc_cn.csv.gz',
+        metrics = 'analysis/simulation/{dataset}/ccc_metrics.csv.gz',
+        align_metrics = 'analysis/simulation/{dataset}/ccc_align_metrics.csv.gz'
+    output: 'analysis/simulation/{dataset}/ccc_predictions.csv.gz'
+    log: 'logs/simulation/{dataset}/run_laks_ccc.log'
+    conda: '../envs/hmmcopy.yaml'
+    shell:
+        'cell_cycle_classifier train-classify '
+        '{input.cn} '
+        '{input.metrics} '
+        '{input.align_metrics} '
+        '{output}'
+
+
+# TODO: merge Laks predictions back into data
+# might be able to wait to do this until I'm analyzing phase accuracy (merge with scrt output)
+    
+
 # rule infer_scRT_bulk_sim:
 #     input:
 #         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
