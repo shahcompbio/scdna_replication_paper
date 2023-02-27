@@ -101,7 +101,7 @@ rule all_simulation:
         'plots/simulation/all/clone_specific_rt_corr.png',
         'plots/simulation/all/predicted_phase_confusion_mat.png',
         'plots/simulation/D1.0/hmmcopy_heatmaps.png',
-        'analysis/simulation/D1.0/s_phase_cells_kronos_output.tsv'
+        'analysis/simulation/D1.0/s_phase_cells_kronos_output.tsv',
         
 
 rule simulate_cell_cn_states_sim:
@@ -109,8 +109,8 @@ rule simulate_cell_cn_states_sim:
         gc_rt_data = 'data/gc_rt_bins.csv',
         gc_map_data = 'data/gc_map_500kb.csv'
     output:
-        s_phase = 'analysis/simulation/{dataset}/s_phase_cn_states.tsv',
-        g1_phase = 'analysis/simulation/{dataset}/g1_phase_cn_states.tsv'
+        s_phase = temp('analysis/simulation/{dataset}/s_phase_cn_states.tsv'),
+        g1_phase = temp('analysis/simulation/{dataset}/g1_phase_cn_states.tsv')
     params:
         num_cells_S = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_cells_S'],
         num_cells_G = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['num_cells_G'],
@@ -144,8 +144,8 @@ rule simulate_reads_from_cn_pyro_sim:
         s_phase = 'analysis/simulation/{dataset}/s_phase_cn_states.tsv',
         g1_phase = 'analysis/simulation/{dataset}/g1_phase_cn_states.tsv'
     output:
-        s_phase = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
-        g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells.tsv'
+        s_phase = temp('analysis/simulation/{dataset}/s_phase_cells.tsv'),
+        g1_phase = temp('analysis/simulation/{dataset}/g1_phase_cells.tsv')
     params:
         lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
@@ -178,7 +178,7 @@ rule run_hmmcopy_step1_s_sim:
     input: 
         cn = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
         gc_map = 'data/gc_map_500kb.csv'
-    output: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv'
+    output: temp('analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv')
     log: 'logs/simulation/{dataset}/run_hmmcopy_step1_s.log',
     conda: '../envs/hmmcopy.yaml'
     shell:
@@ -190,7 +190,7 @@ rule run_hmmcopy_step1_g1_sim:
     input: 
         cn = 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
         gc_map = 'data/gc_map_500kb.csv'
-    output: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv'
+    output: temp('analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_step1.csv')
     log: 'logs/simulation/{dataset}/run_hmmcopy_step1_g1.log',
     conda: '../envs/hmmcopy.yaml'
     shell:
@@ -201,8 +201,8 @@ rule run_hmmcopy_step1_g1_sim:
 rule run_hmmcopy_step2_s_sim:
     input: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_step1.csv'
     output: 
-        reads = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv',
-        metrics = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_metrics.csv',
+        reads = temp('analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv'),
+        metrics = temp('analysis/simulation/{dataset}/s_phase_cells_hmmcopy_metrics.csv'),
     params:
         # default params found here 
         # https://github.com/shahcompbio/single_cell_pipeline/blob/2af7287a9a7f98b54cb8ebcd3580dda85274bb6d/single_cell/config/pipeline_config.py#L48
@@ -348,11 +348,11 @@ rule plot_true_scRT_heatmap_sim:
 
 rule compute_ccc_features_sim:
     input: 
-        s_phase = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
-        g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells.tsv'
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy.csv.gz',
+        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy.csv.gz',
     output: 
-        s_phase = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
-        g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+        s_phase = temp('analysis/simulation/{dataset}/s_phase_cells_features.tsv'),
+        g1_phase = temp('analysis/simulation/{dataset}/g1_phase_cells_features.tsv')
     log: 'logs/simulation/{dataset}/compute_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -425,34 +425,6 @@ rule run_laks_ccc_sim:
 #         'deactivate'
 
 
-# rule make_kronos_input_sim:
-#     input: 
-#         s_phase = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
-#         g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
-#         gc_map_data = 'data/gc_map_500kb.csv'
-#     output: 'analysis/simulation/{dataset}/kronos_input.csv'
-#     log: 'logs/simulation/{dataset}/make_kronos_input.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv3/bin/activate ; '
-#         'python3 scripts/simulation/make_kronos_input.py '
-#         '{input} {output} &> {log} ; '
-#         'deactivate'
-
-
-# rule infer_kronos_cnv_sim:
-#     input: 'analysis/simulation/{dataset}/kronos_input.csv'
-#     output:
-#         metrics = 'analysis/simulation/{dataset}/kronos_metrics.csv',
-#         tracks = 'analysis/simulation/{dataset}/kronos_tracks.tsv'
-#     log: 'logs/simulation/{dataset}/infer_kronos_cnv.log'
-#     conda: '../envs/Kronos_scRT.yaml'
-#     shell:
-#         'Kronos CNV '
-#         '-B {input} '
-#         '-o {output.metrics} '
-#         '-O {output.tracks} '
-#         '&> {log}'
-
 
 rule infer_kronos_scRT_sim:
     input:
@@ -496,8 +468,8 @@ rule infer_scRT_pyro_sim:
         main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_inferred.tsv',
         supp_g_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
-        input_col = 'true_reads_norm',
-        cn_col = 'observed_cn_state',
+        input_col = 'reads',
+        cn_col = 'state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         cn_prior_method = 'g1_clones',
         infer_mode = 'pyro',
@@ -520,8 +492,8 @@ rule infer_scRT_pyro_composite_sim:
         main_g_out = 'analysis/simulation/{dataset}/g1_phase_cells_pyro_composite_inferred.tsv',
         supp_g_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_g_output.tsv',
     params:
-        input_col = 'true_reads_norm',
-        cn_col = 'observed_cn_state',
+        input_col = 'reads',
+        cn_col = 'state',
         gc_col = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['gc_col'],
         cn_prior_method = 'g1_composite',
         infer_mode = 'pyro',
