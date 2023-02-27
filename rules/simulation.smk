@@ -101,6 +101,7 @@ rule all_simulation:
         'plots/simulation/all/clone_specific_rt_corr.png',
         'plots/simulation/all/predicted_phase_confusion_mat.png',
         'plots/simulation/D1.0/hmmcopy_heatmaps.png',
+        'analysis/simulation/D1.0/s_phase_cells_kronos_output.tsv'
         
 
 rule simulate_cell_cn_states_sim:
@@ -424,17 +425,50 @@ rule run_laks_ccc_sim:
 #         'deactivate'
 
 
+# rule make_kronos_input_sim:
+#     input: 
+#         s_phase = 'analysis/simulation/{dataset}/s_phase_cells.tsv',
+#         g1_phase = 'analysis/simulation/{dataset}/g1_phase_cells.tsv',
+#         gc_map_data = 'data/gc_map_500kb.csv'
+#     output: 'analysis/simulation/{dataset}/kronos_input.csv'
+#     log: 'logs/simulation/{dataset}/make_kronos_input.log'
+#     shell:
+#         'source ../scdna_replication_tools/venv3/bin/activate ; '
+#         'python3 scripts/simulation/make_kronos_input.py '
+#         '{input} {output} &> {log} ; '
+#         'deactivate'
+
+
+# rule infer_kronos_cnv_sim:
+#     input: 'analysis/simulation/{dataset}/kronos_input.csv'
+#     output:
+#         metrics = 'analysis/simulation/{dataset}/kronos_metrics.csv',
+#         tracks = 'analysis/simulation/{dataset}/kronos_tracks.tsv'
+#     log: 'logs/simulation/{dataset}/infer_kronos_cnv.log'
+#     conda: '../envs/Kronos_scRT.yaml'
+#     shell:
+#         'Kronos CNV '
+#         '-B {input} '
+#         '-o {output.metrics} '
+#         '-O {output.tracks} '
+#         '&> {log}'
+
+
 rule infer_kronos_scRT_sim:
     input:
-        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
-        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+        s_reads = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_reads.csv',
+        g1_reads = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_reads.csv',
+        s_metrics = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy_metrics.csv',
+        g1_metrics = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy_metrics.csv'
     output: 'analysis/simulation/{dataset}/s_phase_cells_kronos_output.tsv'
     conda: '../envs/Kronos_scRT.yaml'
     log: 'logs/simulation/{dataset}/infer_kronos_scRT.log'
     shell:
         'Kronos RT '
-        '-s {input.cn_s} '
-        '-g {input.cn_g1} '
+        '-s {input.s_reads} '
+        '-g {input.g1_reads} '
+        '-m {input.s_metrics} '
+        '-M {input.g1_metrics} '
         '-o {output} '
         '&> {log}'
 
