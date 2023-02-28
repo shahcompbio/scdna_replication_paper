@@ -24,7 +24,7 @@ def get_cell_metrics(cn_pyro_s, cn_pyro_g, cn_pyro_lq, frac_rt_col='cell_frac_re
     # get cell-level metrics with the updated cell cycle labels
     cell_metric_cols = [
         'cell_id', 'true_phase', 'PERT_phase', 'breakpoints', 
-        'num_reads', 'madn', 'lrs', frac_rt_col, 
+        'total_mapped_reads_hmmcopy', 'madn', 'lrs', frac_rt_col, 
         'corrected_madn', 'corrected_breakpoints'
     ]
     cell_metrics_pyro_s = cn_pyro_s[cell_metric_cols].drop_duplicates()
