@@ -61,7 +61,8 @@ def main():
     print('creating scrt object')
     # create SPF object with input
     scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.cn_col,
-                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, min_iter=1000, max_iter=2000)
+                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, min_iter=1000, max_iter=2000,
+                min_iter_step1=100, max_iter_step1=300, min_iter_step3=500, max_iter_step3=1000)
 
     # run inference
     print('running inference')

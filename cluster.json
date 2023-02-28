@@ -204,7 +204,7 @@
     "infer_scRT_pyro_g10x" :
     {
         "mem" : 600,
-        "time" : "120:00"
+        "time" : "160:00"
     },
     "revise_cell_cycle_labels_g10x" :
     {
