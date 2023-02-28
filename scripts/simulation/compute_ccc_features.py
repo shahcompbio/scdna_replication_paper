@@ -20,9 +20,8 @@ def main():
     argv = get_args()
 
     # load in data
-    cn_s = pd.read_csv(argv.cn_s_input, sep='\t')
-    cn_g = pd.read_csv(argv.cn_g_input, sep='\t')
-
+    cn_s = pd.read_csv(argv.cn_s_input)
+    cn_g = pd.read_csv(argv.cn_g_input)
 
     # use common set of columns from cn_s and cn_g so they can be concatenated together
     keep_cols = ['chr', 'start', 'end', 'gc', 'clone_id', 'cell_id', 'reads', 'total_mapped_reads_hmmcopy', 'breakpoints']
@@ -44,8 +43,8 @@ def main():
     cn_g_out = pd.merge(cn_g, cell_features)
 
     # save output files
-    cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
-    cn_g_out.to_csv(argv.cn_g_out, sep='\t', index=False)
+    cn_s_out.to_csv(argv.cn_s_out, index=False)
+    cn_g_out.to_csv(argv.cn_g_out, index=False)
 
 
 if __name__ == '__main__':

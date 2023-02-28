@@ -351,8 +351,8 @@ rule compute_ccc_features_sim:
         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy.csv.gz',
         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy.csv.gz',
     output: 
-        s_phase = temp('analysis/simulation/{dataset}/s_phase_cells_features.tsv'),
-        g1_phase = temp('analysis/simulation/{dataset}/g1_phase_cells_features.tsv')
+        s_phase = temp('analysis/simulation/{dataset}/s_phase_cells_features.csv.gz'),
+        g1_phase = temp('analysis/simulation/{dataset}/g1_phase_cells_features.csv.gz')
     log: 'logs/simulation/{dataset}/compute_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -403,8 +403,8 @@ rule run_laks_ccc_sim:
 
 # rule infer_scRT_bulk_sim:
 #     input:
-#         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
-#         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+#         cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.csv.gz',
+#         cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.csv.gz'
 #     output: 
 #         main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_bulk_inferred.tsv',
 #         supp_s_out = 'analysis/simulation/{dataset}/scRT_bulk_supp_s_output.tsv',
@@ -447,7 +447,7 @@ rule infer_kronos_scRT_sim:
 
 rule process_kronos_output_sim:
     input: 
-        kronos_input = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
+        kronos_input = 'analysis/simulation/{dataset}/s_phase_cells_features.csv.gz',
         kronos_output = 'analysis/simulation/{dataset}/s_phase_cells_kronos_output.tsv'
     output: 'analysis/simulation/{dataset}/s_phase_cells_kronos_inferred.tsv'
     log: 'logs/simulation/{dataset}/process_kronos_output.log'
@@ -460,8 +460,8 @@ rule process_kronos_output_sim:
 
 rule infer_scRT_pyro_sim:
     input:
-        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
-        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.csv.gz',
+        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.csv.gz'
     output:
         main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_inferred.tsv',
         supp_s_out = 'analysis/simulation/{dataset}/scRT_pyro_supp_s_output.tsv',
@@ -484,8 +484,8 @@ rule infer_scRT_pyro_sim:
 
 rule infer_scRT_pyro_composite_sim:
     input:
-        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.tsv',
-        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.tsv'
+        cn_s = 'analysis/simulation/{dataset}/s_phase_cells_features.csv.gz',
+        cn_g1 = 'analysis/simulation/{dataset}/g1_phase_cells_features.csv.gz'
     output:
         main_s_out = 'analysis/simulation/{dataset}/s_phase_cells_pyro_composite_inferred.tsv',
         supp_s_out = 'analysis/simulation/{dataset}/scRT_pyro_composite_supp_s_output.tsv',
@@ -637,7 +637,7 @@ rule true_vs_inferred_heatmaps_sim:
     output: 'plots/simulation/{dataset}/true_vs_inferred_heatmaps.png',
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        true_frac_col = 'true_t',
+        true_frac_col = 'true_cell_frac_rep',
         rep_state = 'model_rep_state',
         true_rep_state = 'true_rep'
     log: 'logs/simulation/{dataset}/true_vs_inferred_heatmaps.log'
@@ -702,7 +702,7 @@ rule twidth_analysis_pyro_sim:
         lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
         frac_rt_col = 'cell_frac_rep',
-        true_frac_col = 'true_t',
+        true_frac_col = 'true_cell_frac_rep',
         rep_state = 'model_rep_state',
         true_rep_state = 'true_rep',
         infer_mode = 'pyro'
@@ -726,7 +726,7 @@ rule twidth_analysis_kronos_sim:
         lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
         frac_rt_col = 'frac_rt',
-        true_frac_col = 'true_t',
+        true_frac_col = 'true_cell_frac_rep',
         rep_state = 'rt_state',
         true_rep_state = 'true_rep',
         infer_mode = 'kronos'
@@ -750,7 +750,7 @@ rule twidth_analysis_pyro_composite_sim:
         lamb = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['lambda'],
         A = lambda wildcards: config['simulated_datasets'][wildcards.dataset]['A'],
         frac_rt_col = 'cell_frac_rep',
-        true_frac_col = 'true_t',
+        true_frac_col = 'true_cell_frac_rep',
         rep_state = 'model_rep_state',
         true_rep_state = 'true_rep',
         infer_mode = 'pyro_composite'
@@ -846,7 +846,7 @@ rule phase_accuracies_sim:
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
         true_phase_col = 'true_phase',
         pert_phase_col = 'PERT_phase',
-        true_frac_rep = 'true_t',
+        true_frac_rep = 'true_cell_frac_rep',
         pert_frac_rep = 'cell_frac_rep'
     log: 'logs/simulation/all/phase_accuracies.log'
     shell:

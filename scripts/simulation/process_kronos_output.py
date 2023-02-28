@@ -16,7 +16,7 @@ def main():
     argv = get_args()
 
     # Read in the Kronos input and output
-    df_in = pd.read_csv(argv.kronos_input, sep='\t')
+    df_in = pd.read_csv(argv.kronos_input)
     df_out = pd.read_csv(argv.kronos_output, sep='\t')
 
     # make sure chr, start, end are of the correct dtypes
