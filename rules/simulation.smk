@@ -53,21 +53,20 @@ rule all_simulation:
                 if (d not in bad_datasets)
             ]
         ),
-        # TODO: uncomment these rules when I want to run hmmcopy for all datasets
-        # expand(
-        #     'plots/simulation/{dataset}/true_cn_heatmaps.png',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/simulation/{dataset}/hmmcopy_heatmaps.png',
-        #     dataset=[
-        #         d for d in config['simulated_datasets']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/simulation/{dataset}/true_cn_heatmaps.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/simulation/{dataset}/hmmcopy_heatmaps.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         expand(
             'plots/simulation/{dataset}/true_scRT_heatmap.png',
             dataset=[
@@ -100,13 +99,13 @@ rule all_simulation:
         'plots/simulation/all/scRT_accuracies1.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
         'plots/simulation/all/predicted_phase_confusion_mat.png',
-        'plots/simulation/D1.0/hmmcopy_heatmaps.png',
-        'plots/simulation/D5.0/hmmcopy_heatmaps.png',
-        'plots/simulation/D6.0/hmmcopy_heatmaps.png',
-        'plots/simulation/D9.0/hmmcopy_heatmaps.png',
-        'plots/simulation/D10.0/hmmcopy_heatmaps.png',
-        'analysis/simulation/D1.0/s_phase_cells_kronos_output.tsv',
-        'analysis/simulation/D1.0/laks_ccc_predictions.csv.gz'
+        # 'plots/simulation/D1.0/hmmcopy_heatmaps.png',
+        # 'plots/simulation/D5.0/hmmcopy_heatmaps.png',
+        # 'plots/simulation/D6.0/hmmcopy_heatmaps.png',
+        # 'plots/simulation/D9.0/hmmcopy_heatmaps.png',
+        # 'plots/simulation/D10.0/hmmcopy_heatmaps.png',
+        # 'analysis/simulation/D1.0/s_phase_cells_kronos_output.tsv',
+        # 'analysis/simulation/D1.0/laks_ccc_predictions.csv.gz'
         
 
 rule simulate_cell_cn_states_sim:
