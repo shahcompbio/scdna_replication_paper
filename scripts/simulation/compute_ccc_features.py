@@ -9,6 +9,7 @@ def get_args():
 
     p.add_argument('cn_s_input', help='input long-form copy number dataframe for s-phase cells')
     p.add_argument('cn_g_input', help='input long-form copy number dataframe for g1-phase cells')
+    p.add_argument('laks_predictions', help='predicted cell cycle phase from Laks et al classifier')
     p.add_argument('cn_s_out', help='same as cn_s_input with classifier features added')
     p.add_argument('cn_g_out', help='same as cn_s_input with classifier features added')
 
@@ -22,6 +23,7 @@ def main():
     # load in data
     cn_s = pd.read_csv(argv.cn_s_input)
     cn_g = pd.read_csv(argv.cn_g_input)
+    laks_phases = pd.read_csv(argv.laks_predictions)
 
     # use common set of columns from cn_s and cn_g so they can be concatenated together
     keep_cols = ['chr', 'start', 'end', 'gc', 'clone_id', 'cell_id', 'reads', 'total_mapped_reads_hmmcopy', 'breakpoints']
@@ -36,6 +38,14 @@ def main():
         lrs_col='lrs', num_reads_col='total_mapped_reads_hmmcopy', bk_col='breakpoints'
     )
 
+    # add column to laks_phases to indicate if the cell is in s-phase
+    # if is_s_phase is True, then the cell is in 'S' phase, otherwise it is in 'G1/2' phase
+    laks_phases['laks_phase'] = laks_phases['is_s_phase'].apply(lambda x: 'S' if x else 'G1/2')
+    # add laks_ prefix to is_s_phase and is_s_phase_prob columns in laks_phases
+    laks_phases = laks_phases.rename(columns={'is_s_phase': 'laks_is_s_phase', 'is_s_phase_prob': 'laks_is_s_phase_prob'})
+    # merge the laks predictions with cell_features
+    cell_features = pd.merge(cell_features, laks_phases)
+    
     # merge the cell level features with the cn input
     # we don't want to use cn_temp as the output since its
     # shape might be different from the cn_input which has already been filtered

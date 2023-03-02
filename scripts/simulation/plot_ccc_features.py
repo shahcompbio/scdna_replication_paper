@@ -23,7 +23,7 @@ def get_args():
 def get_cell_metrics(cn_pyro_s, cn_pyro_g, cn_pyro_lq, frac_rt_col='cell_frac_rep'):
     # get cell-level metrics with the updated cell cycle labels
     cell_metric_cols = [
-        'cell_id', 'true_phase', 'PERT_phase', 'breakpoints', 
+        'cell_id', 'true_phase', 'PERT_phase', 'laks_phase', 'breakpoints', 
         'total_mapped_reads_hmmcopy', 'madn', 'lrs', frac_rt_col, 
         'corrected_madn', 'corrected_breakpoints'
     ]
@@ -69,12 +69,27 @@ def plot_ccc_distributions(cell_metrics, argv):
 
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
-    # plot a confusion matrix comparing true_phase and PERT_phase
-    fig, ax = plt.subplots(1, 1, figsize=(4, 4), tight_layout=True)
-    sns.heatmap(pd.crosstab(cell_metrics.true_phase, cell_metrics.PERT_phase), annot=True, fmt='d', ax=ax)
-    ax.set_xlabel('PERT phase')
-    ax.set_ylabel('True phase')
-    ax.set_title(argv.dataset)
+    # plot a confusion matrix comparing true_phase, PERT_phase, and laks_phase
+    fig, ax = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
+
+    # true (x-axis) vs PERT (y-axis) in ax[0]
+    sns.heatmap(pd.crosstab(cell_metrics.PERT_phase, cell_metrics.true_phase), annot=True, fmt='d', ax=ax[0])
+    ax[0].set_ylabel('PERT phase')
+    ax[0].set_xlabel('True phase')
+    ax[0].set_title(argv.dataset)
+
+    # true (x-axis) vs laks (y-axis) in ax[1]
+    sns.heatmap(pd.crosstab(cell_metrics.laks_phase, cell_metrics.true_phase), annot=True, fmt='d', ax=ax[1])
+    ax[1].set_ylabel('Laks phase')
+    ax[1].set_xlabel('True phase')
+    ax[1].set_title(argv.dataset)
+
+    # laks (x-axis) vs PERT (y-axis) in ax[2]
+    sns.heatmap(pd.crosstab(cell_metrics.PERT_phase, cell_metrics.laks_phase), annot=True, fmt='d', ax=ax[2])
+    ax[2].set_ylabel('PERT phase')
+    ax[2].set_xlabel('Laks phase')
+    ax[2].set_title(argv.dataset)
+
     fig.savefig(argv.plot3, bbox_inches='tight', dpi=300)
 
 

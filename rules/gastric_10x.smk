@@ -78,7 +78,7 @@ rule infer_scRT_pyro_g10x:
         clone_col = 'clone_id',
         cn_col = 'state',
         gc_col = 'gc',
-        cn_prior_method = 'g1_composite',
+        cn_prior_method = 'g1_clone',
         infer_mode = 'pyro'
     log: 'logs/gastric_10x/{dataset}/infer_scRT.log'
     shell:
