@@ -1,10 +1,5 @@
 from argparse import ArgumentParser
-import string
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scdna_replication_tools.compute_pseudobulk_rt_profiles import compute_pseudobulk_rt_profiles
 
 
 def get_args():
@@ -16,8 +11,6 @@ def get_args():
     p.add_argument('-r', '--rates', type=float, nargs='+', help='permutation rate for each dataset')
     p.add_argument('-so', '--summary_output', help='table for the accruacy of each permuted dataset')
     p.add_argument('-mo', '--metrics_output', help='table containing per-cell metrics for cells in all permuted datasets')
-    p.add_argument('-sp', '--summary_plots', help='plot showing the model accuracy for catching mislabeled cells')
-    p.add_argument('-cp', '--ccc_plots', help='plot showing the ccc features for mislabeled cells')
 
     return p.parse_args()
 
@@ -32,55 +25,6 @@ def load_data(argv, i, d):
     cn = pd.concat([cn_good, cn_bad], ignore_index=True)
     cn['dataset'] = d
     return cn
-
-
-def make_plots(legend_df, metrics_df, argv):
-    fig, ax = plt.subplots(1, 2, figsize=(12, 4), tight_layout=True)
-    ax = ax.flatten()
-
-    # barplot of the fraction of G1/2-cells accurately removed out of all those with swapped flow labels
-    sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[1], color='C0')
-    ax[1].set_ylabel('Fraction of mislabeled\ncells detected by model')
-    ax[1].set_xlabel('Fraction of G1/2-phase cells mislabeled')
-    ax[1].set_title('PERT phase accuracy')
-
-    # distribution of cell_frac_rep values based on the true flow sorting states
-    # copy true_cell_cycle_state to a new column named 'Flow phase'
-    metrics_df['Flow phase'] = metrics_df['true_cell_cycle_state']
-    sns.histplot(data=metrics_df.query("cell_cycle_state=='S'"), x='cell_frac_rep', hue='Flow phase', bins=20, multiple='stack', ax=ax[0])
-    ax[0].set_title('Cells labeled as S-phase in PERT input')
-    ax[0].set_xlabel('Inferred fraction of replicated bins')
-    ax[0].set_ylabel('# mislabeled cells')
-
-    fig.savefig(argv.summary_plots, bbox_inches='tight', dpi=300)
-
-    # create a new column entitled 'PERT phase' that is 'G' when extreme_cell_frac is True and 'S' when extreme_cell_frac is False
-    metrics_df['PERT phase'] = metrics_df['extreme_cell_frac'].apply(lambda x: 'G' if x else 'S')
-
-    # rename the columns in metrics df to make the plots more readable
-    metrics_df.rename(columns={
-        'is_s_phase_prob': 'Laks S-phase probability',
-        'corrected_breakpoints': 'CN breakpoints',
-        'corrected_madn': 'RPM median absolute deviation',
-        'quality': 'Laks quality score',
-        }, inplace=True)
-
-    # scatterplots of ccc features for the the mislabled cells, colored by whether the model thinks the cell is replicating (extreme_cell_frac)
-    fig, ax = plt.subplots(2, 3, figsize=(12, 8), tight_layout=True)
-    ax = ax.flatten()
-
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[0])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='RPM median absolute deviation', hue='PERT phase', alpha=0.5, ax=ax[1])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[2])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[3])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='CN breakpoints', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[4])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[5])
-
-    for i in range(6):
-        ax[i].set_title('Flow G1/2 cells mislabeled as S-phase')
-        ax[i].legend(title='PERT phase')
-
-    fig.savefig(argv.ccc_plots, bbox_inches='tight', dpi=300)
 
 
 def main():
@@ -138,11 +82,8 @@ def main():
     metrics_df = pd.concat(metrics_df, ignore_index=True)
     metrics_df.head()
 
-
-    make_plots(legend_df, metrics_df, argv)
-
+    # save the legend_df and metrics_df
     legend_df.to_csv(argv.summary_output, sep='\t', index=False)
-
     metrics_df.to_csv(argv.metrics_output, sep='\t', index=False)
 
 

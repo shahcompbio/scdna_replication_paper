@@ -572,8 +572,6 @@ rule analyze_permuted_datasets_lf:
     output:
         summary = 'analysis/laks_flow/permuted/summary.tsv',
         cell_metrics = 'analysis/laks_flow/permuted/cell_metrics.tsv',
-        summary_plots = 'plots/laks_flow/permuted/summary.png',
-        ccc_plots = 'plots/laks_flow/permuted/ccc_features.png',
     params:
         datasets = expand([d for d in config['permuted_datasets']]),
         rates = expand([str(config['permuted_datasets'][d]['rate']) for d in config['permuted_datasets']])
@@ -587,9 +585,22 @@ rule analyze_permuted_datasets_lf:
         '--rates {params.rates} '
         '--summary_output {output.summary} '
         '--metrics_output {output.cell_metrics} '
-        '--summary_plots {output.summary_plots} '
-        '--ccc_plots {output.ccc_plots} '
         '&> {log} ; '
+        'deactivate'
+
+
+rule plot_permuted_datasets_lf:
+    input:
+        summary = 'analysis/laks_flow/permuted/summary.tsv',
+        cell_metrics = 'analysis/laks_flow/permuted/cell_metrics.tsv'
+    output:
+        summary_plots = 'plots/laks_flow/permuted/summary.png',
+        ccc_plots = 'plots/laks_flow/permuted/ccc_features.png'
+    log: 'logs/laks_flow/permuted/plot_permuted_datasets.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/laks_flow/plot_permuted_datasets.py '
+        '{input} {output} &> {log} ; '
         'deactivate'
 
 
@@ -602,7 +613,6 @@ rule permuted_dataset_rt_profiles_lf:
         )
     output:
         rt_table = 'analysis/laks_flow/permuted/rt_pseudobulks_composite.tsv',
-        cor_plot = 'plots/laks_flow/permuted/rt_corr_composite.png',
     params:
         datasets = expand([d for d in config['permuted_datasets']]),
 
@@ -614,8 +624,18 @@ rule permuted_dataset_rt_profiles_lf:
         '--rt_perm {input.rt_perm} '
         '--datasets {params.datasets} '
         '--rt_table {output.rt_table} '
-        '--cor_plot {output.cor_plot} '
         '&> {log} ; '
+        'deactivate'
+
+
+rule plot_permuted_dataset_rt_profiles_lf:
+    input: 'analysis/laks_flow/permuted/rt_pseudobulks_composite.tsv'
+    output: 'plots/laks_flow/permuted/rt_corr_composite.png'
+    log: 'logs/laks_flow/permuted/plot_permuted_dataset_rt_profiles.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/laks_flow/plot_permuted_dataset_rt_profiles.py '
+        '{input} {output} &> {log} ; '
         'deactivate'
 
 
