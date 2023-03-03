@@ -150,7 +150,7 @@ def plot_chr1_by_cell_line(df, argv):
     plot_cell_cn_profile2(ax, df, 'rt_merged_T47D', color='C0', label='merged T47D', max_cn=None, scale_data=False, lines=True, chromosome='1')
     plot_cell_cn_profile2(ax, df, 'rt_merged_GM18507', color='C1', label='merged GM18507', max_cn=None, scale_data=False, lines=True, chromosome='1')
     ax.set_ylabel('Pseudobulk RT')
-    ax.set_title('merged Model')
+    ax.set_title('Merged PERT input')
     ax.legend()
     fig.savefig(argv.rt_merged_chr1, bbox_inches='tight', dpi=300)
 
@@ -159,7 +159,7 @@ def plot_chr1_by_cell_line(df, argv):
     plot_cell_cn_profile2(ax, df, 'rt_split_T47D', color='C0', label='split T47D', max_cn=None, scale_data=False, lines=True, chromosome='1')
     plot_cell_cn_profile2(ax, df, 'rt_split_GM18507', color='C1', label='split GM18507', max_cn=None, scale_data=False, lines=True, chromosome='1')
     ax.set_ylabel('Pseudobulk RT')
-    ax.set_title('Split Model')
+    ax.set_title('Split PERT input')
     ax.legend()
     fig.savefig(argv.rt_split_chr1, bbox_inches='tight', dpi=300)
 
@@ -181,7 +181,7 @@ def plot_rt_corr(df, argv):
 
     # plot the heatmap, including the first 2 digits of the correlation values, the mask, and whitespace between the cells
     sns.heatmap(corr, square=True, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='.2f')
-    plt.title('Pseudobulk RT correlations\nCell lines merged vs split for PERT')
+    plt.title('Pseudobulk RT correlations\nMerged vs split PERT input')
 
     # rotate the y-tick labels to read from left to right
     plt.yticks(rotation=0)
@@ -195,14 +195,14 @@ def plot_rt_diff(df, argv):
     fig, ax = plt.subplots(1, 1, figsize=(12,4))
     plot_cell_cn_profile2(ax, df, 'rt_diff_merged', color='C3', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
-    ax.set_title('Cell lines merged for PERT')
+    ax.set_title('Merged PERT input')
     fig.savefig(argv.rt_diff_merged, bbox_inches='tight', dpi=300)
 
     # for the split model
     fig, ax = plt.subplots(1, 1, figsize=(12,4))
     plot_cell_cn_profile2(ax, df, 'rt_diff_split', color='C3', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
-    ax.set_title('Cell lines split for PERT')
+    ax.set_title('Split PERT input')
     fig.savefig(argv.rt_diff_split, bbox_inches='tight', dpi=300)
 
 

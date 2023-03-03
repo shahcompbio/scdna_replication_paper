@@ -164,19 +164,24 @@ def plot_cn_and_rep_states(df, argv):
 
 
 def plot_frac_rt_distributions(df, argv):
-    df_frac = df[['cell_id', argv.frac_rt_col, 'library_id', 'clone_id']].drop_duplicates().reset_index(drop=True)
+    df_frac = df[['cell_id', argv.frac_rt_col, 'sample_id', 'clone_id']].drop_duplicates().reset_index(drop=True)
+
+    # map the sample_id to a new column called cell_line
+    # if sample_id is 'SA928' then the cell line is 'GM18507'
+    # if sample_id is 'SA1044' then the cell line is 'T47D'
+    df_frac['cell_line'] = df_frac['sample_id'].apply(lambda x: 'GM18507' if x == 'SA928' else 'T47D')
     
     fig, ax = plt.subplots(1,3, figsize=(12, 4), tight_layout=True)
     ax = ax.flatten()
 
     # violinplot
     sns.histplot(data=df_frac, x=argv.frac_rt_col, ax=ax[0])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='library_id', multiple='stack', ax=ax[1])
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='cell_line', multiple='stack', ax=ax[1])
     sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2])
 
     for i in range(3):
         ax[i].set_xlabel('Inferred fraction of replicated bins')
-        ax[i].set_title('Distribution of cells\nwithin S-phase')
+        ax[i].set_title('Distribution of S-phase times')
 
     fig.savefig(argv.output_frac_rt, bbox_inches='tight', dpi=300)
 
