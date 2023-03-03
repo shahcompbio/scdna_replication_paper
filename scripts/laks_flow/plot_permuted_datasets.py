@@ -58,7 +58,7 @@ def make_plots(legend_df, metrics_df, argv):
     sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[5])
 
     for i in range(6):
-        ax[i].set_title('Flow G1/2 cells labeled as high variance in PERT input')
+        ax[i].set_title('Mislabeled flow G1/2 cells')
         ax[i].legend(title='PERT phase')
 
     fig.savefig(argv.ccc_plots, bbox_inches='tight', dpi=300)
