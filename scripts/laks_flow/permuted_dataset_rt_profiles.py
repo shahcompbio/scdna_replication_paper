@@ -81,7 +81,7 @@ def main():
 
     # merge each permuted dataset's relevant RT columns into rt_wide
     rt_wide = ref_rt.copy()
-    bulk_rt_cols = ['rt_joint_T47D', 'rt_joint_GM18507']
+    bulk_rt_cols = ['rt_merged_T47D', 'rt_merged_GM18507']
 
     for dataset, temp_rt in all_rts.groupby('dataset'):
         # rename columns in temp_rt to reflect the current dataset
@@ -101,13 +101,13 @@ def main():
     rt_wide.to_csv(argv.rt_table, sep='\t', index=False)
 
     # remove columns that should not appear in the correlation matrix
-    bad_columns = ['chr', 'start', 'end', 'gc', 'rt_split_T47D', 'rt_split_GM18507', 'rt_diff_split', 'rt_diff_joint']
+    bad_columns = ['chr', 'start', 'end', 'gc', 'rt_split_T47D', 'rt_split_GM18507', 'rt_diff_split', 'rt_diff_merged']
     rt_wide = rt_wide.drop(columns=bad_columns)
 
     # rename the reference dataset columns with no permuted cells
     rt_wide = rt_wide.rename(columns={
-        'rt_joint_T47D': 'T47D',
-        'rt_joint_GM18507': 'GM18507',
+        'rt_merged_T47D': 'T47D',
+        'rt_merged_GM18507': 'GM18507',
     })
 
     # replace all the underscores with spaces in the column names

@@ -83,6 +83,7 @@ rule all_laks_flow:
         'plots/laks_flow/all/rpm_umap.png',
         'plots/laks_flow/all/rt_corr.png',
         'plots/laks_flow/all/rt_corr_composite.png',
+        'plots/laks_flow/all/hic_vs_rt_corr.png',
         'plots/laks_flow/all/twidth_curves.png',
         'plots/laks_flow/all/twidth_curves_composite.png',
         'plots/laks_flow/permuted/ccc_features.png',
@@ -395,7 +396,6 @@ rule revise_cell_cycle_labels_composite_lf:
         'deactivate'
 
 
-# TODO: figure out why I can't load the data for this rule
 rule rpm_umap_lf:
     input: 
         cn_s = 'analysis/laks_flow/all/cn_s_pyro_inferred_composite_filtered.tsv',
@@ -504,10 +504,10 @@ rule plot_rt_profiles_lf:
     input: 'analysis/laks_flow/all/rt_pseudobulks.tsv'
     output:
         plot1 = 'plots/laks_flow/all/rt_diff_split.png',
-        plot2 = 'plots/laks_flow/all/rt_diff_joint.png',
+        plot2 = 'plots/laks_flow/all/rt_diff_merged.png',
         plot3 = 'plots/laks_flow/all/rt_corr.png',
         plot4 = 'plots/laks_flow/all/rt_split_chr1.png',
-        plot5 = 'plots/laks_flow/all/rt_joint_chr1.png',
+        plot5 = 'plots/laks_flow/all/rt_merged_chr1.png',
     log: 'logs/laks_flow/all/plot_rt_profiles.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -520,15 +520,28 @@ rule plot_rt_profiles_composite_lf:
     input: 'analysis/laks_flow/all/rt_pseudobulks_composite.tsv'
     output:
         plot1 = 'plots/laks_flow/all/rt_diff_split_composite.png',
-        plot2 = 'plots/laks_flow/all/rt_diff_joint_composite.png',
+        plot2 = 'plots/laks_flow/all/rt_diff_merged_composite.png',
         plot3 = 'plots/laks_flow/all/rt_corr_composite.png',
         plot4 = 'plots/laks_flow/all/rt_split_chr1_composite.png',
-        plot5 = 'plots/laks_flow/all/rt_joint_chr1_composite.png',
+        plot5 = 'plots/laks_flow/all/rt_merged_chr1_composite.png',
     log: 'logs/laks_flow/all/plot_rt_profiles_composite.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_rt_profiles.py '
         '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule hic_vs_rt_corr_lf:
+    input: 
+        hic = 'data/HiC/hic_compartments_500kb.csv',
+        rt = 'analysis/laks_flow/all/rt_pseudobulks_composite.tsv'
+    output: 'plots/laks_flow/all/hic_vs_rt_corr.png'
+    log: 'logs/laks_flow/all/hic_vs_rt_corr.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/laks_flow/hic_vs_rt_corr.py '
+        '{input} {output} &> {log} ; '
         'deactivate'
 
 

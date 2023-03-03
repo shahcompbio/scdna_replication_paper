@@ -25,7 +25,7 @@ def main():
 
     # denote the phase of each cell according to PERT
     cn_s['PERT_phase'] = 'S'
-    cn_g['PERT_phase'] = 'G'
+    cn_g['PERT_phase'] = 'G1/2'
 
     # compute the RPM matrix for all cells
     cn_all = pd.concat([cn_s, cn_g], ignore_index=True)
@@ -59,11 +59,13 @@ def main():
 
     # plot the UMAP embedding colored by various features
     fig, axes = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
-    for ax, col in zip(axes.ravel(), ['flow phase', 'cell line', 'PERT phase']):
+    for ax, col in zip(axes.ravel(), ['cell line', 'flow phase', 'PERT phase']):
         sns.scatterplot(
             data=umap_df, x='embedding_0', y='embedding_1', hue=col, ax=ax, alpha=0.5
         )
         ax.set_title('Reads per million UMAP')
+        ax.set_xlabel('UMAP 0')
+        ax.set_ylabel('UMAP 1')
     
     # save the figure
     fig.savefig(argv.output, bbox_inches='tight', dpi=300)

@@ -15,10 +15,10 @@ def get_args():
 
     p.add_argument('rt_bulks', help='input rt pseudobulks from multiple cell lines and model versions')
     p.add_argument('rt_diff_split', help='difference in rt values between the two cell lines for the split pyro model')
-    p.add_argument('rt_diff_joint', help='difference in rt values between the two cell lines for the joint pyro model')
+    p.add_argument('rt_diff_merged', help='difference in rt values between the two cell lines for the merged pyro model')
     p.add_argument('rt_corr', help='pairwise correlation between all rt profiles')
     p.add_argument('rt_split_chr1', help='both cell line chr1 RT profiles for split model')
-    p.add_argument('rt_joint_chr1', help='both cell line chr1 RT profiles for joint model')
+    p.add_argument('rt_merged_chr1', help='both cell line chr1 RT profiles for merged model')
 
 
     return p.parse_args()
@@ -145,14 +145,14 @@ def plot_cell_cn_profile2(ax, cn_data, value_field_name, cn_field_name=None, max
 
 
 def plot_chr1_by_cell_line(df, argv):
-    # plot chr1 bulk RT for each cell line inferred with the joint model
+    # plot chr1 bulk RT for each cell line inferred with the merged model
     fig, ax = plt.subplots(1, 1, figsize=(16,4))
-    plot_cell_cn_profile2(ax, df, 'rt_joint_T47D', color='C0', label='joint T47D', max_cn=None, scale_data=False, lines=True, chromosome='1')
-    plot_cell_cn_profile2(ax, df, 'rt_joint_GM18507', color='C1', label='joint GM18507', max_cn=None, scale_data=False, lines=True, chromosome='1')
+    plot_cell_cn_profile2(ax, df, 'rt_merged_T47D', color='C0', label='merged T47D', max_cn=None, scale_data=False, lines=True, chromosome='1')
+    plot_cell_cn_profile2(ax, df, 'rt_merged_GM18507', color='C1', label='merged GM18507', max_cn=None, scale_data=False, lines=True, chromosome='1')
     ax.set_ylabel('Pseudobulk RT')
-    ax.set_title('Joint Model')
+    ax.set_title('merged Model')
     ax.legend()
-    fig.savefig(argv.rt_joint_chr1, bbox_inches='tight', dpi=300)
+    fig.savefig(argv.rt_merged_chr1, bbox_inches='tight', dpi=300)
 
     # plot chr1 bulk RT for each cell line inferred with the split model
     fig, ax = plt.subplots(1, 1, figsize=(16,4))
@@ -165,11 +165,11 @@ def plot_chr1_by_cell_line(df, argv):
 
 
 def plot_rt_corr(df, argv):
-    """ plot a heatmap of all the pairwise RT correlations for each cell line when the joint and split methods are used """
+    """ plot a heatmap of all the pairwise RT correlations for each cell line when the merged and split methods are used """
     # subset the dataframe to only the columns that should be plotted
-    df = df[['gc', 'rt_joint_T47D', 'rt_split_T47D', 'rt_joint_GM18507', 'rt_split_GM18507']]
+    df = df[['rt_merged_T47D', 'rt_split_T47D', 'rt_merged_GM18507', 'rt_split_GM18507']]
     # rename the columns to be more readable
-    df.columns = ['gc', 'T47D joint', 'T47D split', 'GM18507 joint', 'GM18507 split']
+    df.columns = ['T47D merged', 'T47D split', 'GM18507 merged', 'GM18507 split']
     # calculate the Pearson correlation matrix
     corr = df.corr()
 
@@ -181,7 +181,7 @@ def plot_rt_corr(df, argv):
 
     # plot the heatmap, including the first 2 digits of the correlation values, the mask, and whitespace between the cells
     sns.heatmap(corr, square=True, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, annot=True, fmt='.2f')
-    plt.title('Pseudobulk RT correlations\nFlow sorted data passed into PERT joint vs split by cell line')
+    plt.title('Pseudobulk RT correlations\nCell lines merged vs split for PERT')
 
     # rotate the y-tick labels to read from left to right
     plt.yticks(rotation=0)
@@ -191,18 +191,18 @@ def plot_rt_corr(df, argv):
 
 def plot_rt_diff(df, argv):
     # plot the difference in RT values between the two cell lines
-    # for the joint model
-    fig, ax = plt.subplots(1, 1, figsize=(16,4))
-    plot_cell_cn_profile2(ax, df, 'rt_diff_joint', color='C3', max_cn=None, scale_data=False, lines=True)
-    ax.set_ylabel('RT Diff\n<--GM18507 earlier | T47D earlier -->')
-    ax.set_title('Joint Model')
-    fig.savefig(argv.rt_diff_joint, bbox_inches='tight', dpi=300)
+    # for the merged model
+    fig, ax = plt.subplots(1, 1, figsize=(12,4))
+    plot_cell_cn_profile2(ax, df, 'rt_diff_merged', color='C3', max_cn=None, scale_data=False, lines=True)
+    ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
+    ax.set_title('Cell lines merged for PERT')
+    fig.savefig(argv.rt_diff_merged, bbox_inches='tight', dpi=300)
 
     # for the split model
-    fig, ax = plt.subplots(1, 1, figsize=(16,4))
+    fig, ax = plt.subplots(1, 1, figsize=(12,4))
     plot_cell_cn_profile2(ax, df, 'rt_diff_split', color='C3', max_cn=None, scale_data=False, lines=True)
-    ax.set_ylabel('RT Diff\n<--GM18507 earlier | T47D earlier -->')
-    ax.set_title('Split Model')
+    ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
+    ax.set_title('Cell lines split for PERT')
     fig.savefig(argv.rt_diff_split, bbox_inches='tight', dpi=300)
 
 
