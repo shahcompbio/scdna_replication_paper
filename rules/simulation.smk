@@ -784,9 +784,11 @@ rule scRT_accuracies_sim:
         cell_cna_rate = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
         num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
+        beta0 = expand([str(config['simulated_datasets'][d]['gc_betas'][0]) for d in config['simulated_datasets']]),
+        beta1 = expand([str(config['simulated_datasets'][d]['gc_betas'][1]) for d in config['simulated_datasets']]),
         kronos_rep_col = 'rt_state',
-        pyro_rep_col = 'model_rep_state',
-        pyro_cn_col = 'model_cn_state',
+        pert_rep_col = 'model_rep_state',
+        pert_cn_col = 'model_cn_state',
         true_rep_col = 'true_rep',
         true_cn_col = 'true_G1_state'
     log: 'logs/simulation/all/scRT_accuracies.log'
@@ -799,9 +801,11 @@ rule scRT_accuracies_sim:
         '--cell_cna_rate {params.cell_cna_rate} '
         '--num_clones {params.num_clones} '
         '--lamb {params.lamb} '
+        '--beta0 {params.beta0} '
+        '--beta1 {params.beta1} '
         '--kronos_rep_col {params.kronos_rep_col} '
-        '--pyro_rep_col {params.pyro_rep_col} '
-        '--pyro_cn_col {params.pyro_cn_col} '
+        '--pert_rep_col {params.pert_rep_col} '
+        '--pert_cn_col {params.pert_cn_col} '
         '--true_rep_col {params.true_rep_col} '
         '--true_cn_col {params.true_cn_col} '
         '--table {output} '
@@ -844,8 +848,11 @@ rule phase_accuracies_sim:
         cell_cna_rate = expand([str(config['simulated_datasets'][d]['cell_CNA_prob']) for d in config['simulated_datasets']]),
         num_clones = expand([str(len(config['simulated_datasets'][d]['clones'])) for d in config['simulated_datasets']]),
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
+        beta0 = expand([str(config['simulated_datasets'][d]['gc_betas'][0]) for d in config['simulated_datasets']]),
+        beta1 = expand([str(config['simulated_datasets'][d]['gc_betas'][1]) for d in config['simulated_datasets']]),
         true_phase_col = 'true_phase',
         pert_phase_col = 'PERT_phase',
+        laks_phase_col = 'laks_phase',
         true_frac_rep = 'true_cell_frac_rep',
         pert_frac_rep = 'cell_frac_rep'
     log: 'logs/simulation/all/phase_accuracies.log'
@@ -858,8 +865,11 @@ rule phase_accuracies_sim:
         '--cell_cna_rate {params.cell_cna_rate} '
         '--num_clones {params.num_clones} '
         '--lamb {params.lamb} '
+        '--beta0 {params.beta0} '
+        '--beta1 {params.beta1} '
         '--true_phase_col {params.true_phase_col} '
         '--pert_phase_col {params.pert_phase_col} '
+        '--laks_phase_col {params.laks_phase_col} '
         '--true_frac_rep {params.true_frac_rep} '
         '--pert_frac_rep {params.pert_frac_rep} '
         '--table {output} '

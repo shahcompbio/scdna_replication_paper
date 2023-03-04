@@ -34,16 +34,34 @@ def make_figure1(df, argv):
     # showing rep accuracies on the top row
     # barplots and scatterplots of cn and rep accuracies for each method, across different simulation params
     sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='method', ax=axbig_top_row)
+    axbig_top_row.set_title('All simulated datasets')
+    axbig_top_row.set_xlabel('Datatag')
+    axbig_top_row.set_ylabel('Replication state accuracy')
 
     # scatterplots which use A and lambda as the size params
     sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='alpha', style='num_clones', ax=ax[0, 2])
-    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='lambda', style='num_clones', ax=ax[0, 3])
+    ax[0, 2].set_title('Alpha effect on replication accuracy')
+    ax[0, 2].set_xlabel('Cell CNA rate')
+    ax[0, 2].set_ylabel('Replication state accuracy')
+    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='lamb', style='num_clones', ax=ax[0, 3])
+    ax[0, 3].set_title('Lambda effect on replication accuracy')
+    ax[0, 3].set_xlabel('Cell CNA rate')
+    ax[0, 3].set_ylabel('Replication state accuracy')
 
     # showing cn accuracies on the bottom row
     sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='method', ax=axbig_bottom_row)
+    axbig_bottom_row.set_title('All simulated datasets')
+    axbig_bottom_row.set_xlabel('Datatag')
+    axbig_bottom_row.set_ylabel('CN state accuracy')
     
     sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='alpha', style='num_clones', ax=ax[1, 2])
-    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='lambda', style='num_clones', ax=ax[1, 3])
+    ax[1, 2].set_title('Alpha effect on CN accuracy')
+    ax[1, 2].set_xlabel('Cell CNA rate')
+    ax[1, 2].set_ylabel('CN state accuracy')
+    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='lamb', style='num_clones', ax=ax[1, 3])
+    ax[1, 3].set_title('Lambda effect on CN accuracy')
+    ax[1, 3].set_xlabel('Cell CNA rate')
+    ax[1, 3].set_ylabel('CN state accuracy')
 
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
@@ -61,7 +79,7 @@ def plot_cna_rate_rep_acc(df, ax, n=1, test='t-test_ind', text_format='star', lo
     x = "cell_cna_rate"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('num_clones=={}'.format(n))
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2')
     box_pairs = [
         ((0.05, "PERT clone"), (0.05, "PERT comp.")),
         ((0.02, "PERT clone"), (0.02, "PERT comp.")),
@@ -74,7 +92,9 @@ def plot_cna_rate_rep_acc(df, ax, n=1, test='t-test_ind', text_format='star', lo
         ((0.02, "PERT clone"), (0.02, "Kronos")),
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test, text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('{} clone(s)'.format(n))
+    ax.set_title('Sweep across cell CNA rate')
+    ax.set_xlabel('Cell CNA rate')
+    ax.set_ylabel('Replication state accuracy')
     return ax
 
 
@@ -83,7 +103,7 @@ def plot_cna_rate_cn_acc(df, ax, n=1, test='t-test_ind', text_format='star', loc
     x = "cell_cna_rate"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('num_clones=={}'.format(n))
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2')
     box_pairs = [
         ((0.05, "PERT clone"), (0.05, "PERT comp.")),
         ((0.02, "PERT clone"), (0.02, "PERT comp.")),
@@ -93,7 +113,9 @@ def plot_cna_rate_cn_acc(df, ax, n=1, test='t-test_ind', text_format='star', loc
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('{} clone(s)'.format(n))
+    ax.set_title('Sweep across cell CNA rate')
+    ax.set_xlabel('Cell CNA rate')
+    ax.set_ylabel('CN state accuracy')
     return ax
 
 
@@ -102,7 +124,7 @@ def plot_clone_effect_rep_acc(df, ax, rate=0.02, test='t-test_ind', text_format=
     x = "num_clones"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2')
     box_pairs = [
         ((1, "Kronos"), (3, "Kronos")),
         ((1, "PERT comp."), (3, "PERT comp.")),
@@ -115,7 +137,9 @@ def plot_clone_effect_rep_acc(df, ax, rate=0.02, test='t-test_ind', text_format=
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Cell CNA rate {}'.format(rate))
+    ax.set_title('Sweep across # of clones')
+    ax.set_xlabel('Number of clones')
+    ax.set_ylabel('Replication state accuracy')
     return ax
 
 
@@ -124,7 +148,7 @@ def plot_clone_effect_cn_acc(df, ax, rate=0.02, test='t-test_ind', text_format='
     x = "num_clones"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.7').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2')
     box_pairs = [
         ((1, "PERT comp."), (3, "PERT comp.")),
         ((3, "PERT clone"), (3, "PERT comp.")),
@@ -132,7 +156,9 @@ def plot_clone_effect_cn_acc(df, ax, rate=0.02, test='t-test_ind', text_format='
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Cell CNA rate {}'.format(rate))
+    ax.set_title('Sweep across # of clones')
+    ax.set_xlabel('Number of clones')
+    ax.set_ylabel('CN state accuracy')
     return ax
 
 
@@ -169,11 +195,11 @@ def main():
     # load the data
     df = pd.read_csv(argv.input, sep='\t')
 
-    # make the first figure
-    make_figure1(df, argv)
-
     # rename lambda column to avoid conflict with python keyword
     df.rename(columns={'lambda': 'lamb'}, inplace=True)
+
+    # make the first figure
+    make_figure1(df, argv)
 
     # make the second figure
     make_figure2(df, argv)

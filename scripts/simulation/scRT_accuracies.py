@@ -11,9 +11,11 @@ def get_args():
     p.add_argument('-cna', '--cell_cna_rate', type=float, nargs='+', help='cell cna prob for each dataset')
     p.add_argument('-nc', '--num_clones', type=int, nargs='+', help='number of clones for each dataset')
     p.add_argument('-l', '--lamb', type=float, nargs='+', help='negative binomial event probs lambda for each dataset')
-    p.add_argument('-brc', '--kronos_rep_col', type=str, help='column containing the kronos model replication states')
-    p.add_argument('-prc', '--pyro_rep_col', type=str, help='column containing the pyro model replication states')
-    p.add_argument('-pcn', '--pyro_cn_col', type=str, help='column containing the pyro model copy number states')
+    p.add_argument('-b0', '--beta0', type=float, nargs='+', help='beta0 for each dataset')
+    p.add_argument('-b1', '--beta1', type=float, nargs='+', help='beta1 for each dataset')
+    p.add_argument('-krc', '--kronos_rep_col', type=str, help='column containing the kronos model replication states')
+    p.add_argument('-prc', '--pert_rep_col', type=str, help='column containing the pert model replication states')
+    p.add_argument('-pcn', '--pert_cn_col', type=str, help='column containing the pert model copy number states')
     p.add_argument('-trc', '--true_rep_col', type=str, help='column containing the true replication states')
     p.add_argument('-tcn', '--true_cn_col', type=str, help='column containing the true copy number states')
     p.add_argument('-t', '--table', help='table containing all the cn and rep accuracies for each simulated dataset and model')
@@ -52,7 +54,9 @@ def main():
         'alpha': argv.A,
         'cell_cna_rate': argv.cell_cna_rate,
         'num_clones': argv.num_clones,
-        'lambda': argv.lamb
+        'lambda': argv.lamb,
+        'beta0': argv.beta0,
+        'beta1': argv.beta1
     })
 
     # load table with paths to model results
@@ -68,8 +72,8 @@ def main():
 
         # compute cn and rep accuracy for each method
         kronos_rep_acc, kronos_cn_acc = compute_accuracies(df1, model_rep_col=argv.kronos_rep_col, model_cn_col=None, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
-        pyro_clone_rep_acc, pyro_clone_cn_acc = compute_accuracies(df2, model_rep_col=argv.pyro_rep_col, model_cn_col=argv.pyro_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
-        pyro_comp_rep_acc, pyro_comp_cn_acc = compute_accuracies(df3, model_rep_col=argv.pyro_rep_col, model_cn_col=argv.pyro_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
+        pyro_clone_rep_acc, pyro_clone_cn_acc = compute_accuracies(df2, model_rep_col=argv.pert_rep_col, model_cn_col=argv.pert_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
+        pyro_comp_rep_acc, pyro_comp_cn_acc = compute_accuracies(df3, model_rep_col=argv.pert_rep_col, model_cn_col=argv.pert_cn_col, true_cn_col=argv.true_cn_col, true_rep_col=argv.true_rep_col)
 
         datatag = dataset.split('.')[0]
 
@@ -80,6 +84,7 @@ def main():
         temp_df = pd.DataFrame({
             'dataset': [dataset]*3, 'datatag': [datatag]*3,
             'alpha': [chunk['alpha'].values[0]]*3, 'lambda': [chunk['lambda'].values[0]]*3,
+            'beta0': [chunk['beta0'].values[0]]*3, 'beta1': [chunk['beta1'].values[0]]*3,
             'cell_cna_rate': [chunk.cell_cna_rate.values[0]]*3, 'num_clones': [chunk.num_clones.values[0]]*3,
             'method': methods, 'rep_accuracy': rep_accs, 'cn_accuracy': cn_accs
         })

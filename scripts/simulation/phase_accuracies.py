@@ -11,8 +11,11 @@ def get_args():
     p.add_argument('-cna', '--cell_cna_rate', type=float, nargs='+', help='cell cna prob for each dataset')
     p.add_argument('-nc', '--num_clones', type=int, nargs='+', help='number of clones for each dataset')
     p.add_argument('-l', '--lamb', type=float, nargs='+', help='negative binomial event probs lambda for each dataset')
+    p.add_argument('-b0', '--beta0', type=float, nargs='+', help='0th beta term for GC bias polynomial in each dataset')
+    p.add_argument('-b1', '--beta1', type=float, nargs='+', help='1st beta term for GC bias polynomial in each dataset')
     p.add_argument('-tp', '--true_phase_col', type=str, help='column containing the true cell cycle phase')
     p.add_argument('-pp', '--pert_phase_col', type=str, help='column containing the pert predicted cell cycle phase')
+    p.add_argument('-lp', '--laks_phase_col', type=str, help='column containing the laks predicted cell cycle phase')
     p.add_argument('-tf', '--true_frac_rep', help='true fraction of replicated bins per cell')
     p.add_argument('-pf', '--pert_frac_rep', help='PERT inferred fraction of replicated bins per cell')
     p.add_argument('-t', '--table', help='table containing all the cn and rep accuracies for each simulated dataset and model')
@@ -28,13 +31,21 @@ def load_data(chunk):
     return cn_s, cn_g, cn_lq
 
 
-def compute_phase_accuracy(df, argv):
+def compute_phase_accuracy(df, true_col, pred_col, true_frac_rep=None, pert_frac_rep=None):
     ''' Loop through every row in df, and count the number of times the true and predicted phases match. '''
     phase_acc = 0
     num_cells = df.shape[0]
     for i in range(num_cells):
-        if df.iloc[i][argv.true_phase_col] == df.iloc[i][argv.pert_phase_col]:
+        # count the phase as being correct if the true and predicted phases match
+        if df.iloc[i][true_col] == df.iloc[i][pred_col]:
             phase_acc += 1
+        # also count the phase as being correct if the cell is true S-phase
+        # and both the true and predcted fraction of replicated bins are less than 0.05 or greater than 0.95
+        elif df.iloc[i][true_col] == 'S' and true_frac_rep is not None and pert_frac_rep is not None:
+            if df.iloc[i][true_frac_rep] < 0.05 and df.iloc[i][pert_frac_rep] < 0.05:
+                phase_acc += 1
+            elif df.iloc[i][true_frac_rep] > 0.95 and df.iloc[i][pert_frac_rep] > 0.95:
+                phase_acc += 1
     phase_acc /= num_cells
     return phase_acc
 
@@ -48,7 +59,9 @@ def main():
         'alpha': argv.A,
         'cell_cna_rate': argv.cell_cna_rate,
         'num_clones': argv.num_clones,
-        'lambda': argv.lamb
+        'lambda': argv.lamb,
+        'beta0': argv.beta0,
+        'beta1': argv.beta1
     })
 
     # load table with paths to model results
@@ -63,15 +76,16 @@ def main():
         cn_s, cn_g, cn_lq = load_data(chunk)
 
         # subset all three dataframes to just 'cell_id', 'true_phase', and 'PERT_phase
-        cn_s = cn_s[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep]].drop_duplicates()
-        cn_g = cn_g[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep]].drop_duplicates()
-        cn_lq = cn_lq[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep]].drop_duplicates()
+        cn_s = cn_s[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep, argv.laks_phase_col]].drop_duplicates()
+        cn_g = cn_g[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep, argv.laks_phase_col]].drop_duplicates()
+        cn_lq = cn_lq[['cell_id', argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep, argv.laks_phase_col]].drop_duplicates()
 
         # merge the three dataframes into one
         temp_df = pd.concat([cn_s, cn_g, cn_lq])
 
         # count the fraction of cells in which the true and predicted phases match
-        phase_acc = compute_phase_accuracy(temp_df, argv)
+        pert_phase_acc = compute_phase_accuracy(temp_df, argv.true_phase_col, argv.pert_phase_col, argv.true_frac_rep, argv.pert_frac_rep)
+        laks_phase_acc = compute_phase_accuracy(temp_df, argv.true_phase_col, argv.laks_phase_col)
 
         # add columns denoting dataset simulation parameters
         datatag = dataset.split('.')[0]
@@ -79,9 +93,12 @@ def main():
         temp_df['dataset'] = dataset
         temp_df['alpha'] = chunk['alpha'].values[0]
         temp_df['lambda'] = chunk['lambda'].values[0]
+        temp_df['beta0'] = chunk['beta0'].values[0]
+        temp_df['beta1'] = chunk['beta1'].values[0]
         temp_df['cell_cna_rate'] = chunk.cell_cna_rate.values[0]
         temp_df['num_clones'] = chunk.num_clones.values[0]
-        temp_df['phase_acc'] = phase_acc
+        temp_df['PERT_phase_acc'] = pert_phase_acc
+        temp_df['laks_phase_acc'] = laks_phase_acc
 
         # store this dataframe of results and move onto the next simulated dataset
         df.append(temp_df)
