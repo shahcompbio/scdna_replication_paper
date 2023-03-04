@@ -14,6 +14,17 @@ def get_args():
     return parser.parse_args()
 
 
+def custom_color_palette():
+    pal = {
+        'PERT clone': '#2D68C4',  # POWDERKEG BLUE
+        'PERT comp.': '#7BAFD4',  # LIGHT BLUE
+        'PERT': '#7BAFD4',  # LIGHT BLUE
+        'Kronos': '#F2A900',  # GOLD
+        'laks': '#FFE800',  # YELLOW
+    }
+    return pal
+
+
 def plot_confusion_matrix(df, argv):
     ''' Given a table of true and inferred phases, plot a confusion matrix with counts of each cell in each phase '''
     # subset to rows of df where method=='PERT'
@@ -30,7 +41,8 @@ def plot_confusion_matrix(df, argv):
 def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_format='star', loc='inside', verbose=0, show_hue=True):
     """ Create a violinplot with p-values annotated. """
     if show_hue:
-        sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax)
+        palette = custom_color_palette()
+        sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette)
     else:
         sns.violinplot(data=df, x=x, y=y, ax=ax)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
@@ -189,7 +201,7 @@ def plot_param_sweep(df, argv):
     axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
 
     # barplots of phase accuracies for all simulated datasets
-    sns.barplot(data=df, x='datatag', y='phase_acc', hue='method', ax=axbig_bottom_row)
+    sns.barplot(data=df, x='datatag', y='phase_acc', hue='method', ax=axbig_bottom_row, palette=custom_color_palette())
     axbig_bottom_row.set_ylabel('Phase accuracy')
     axbig_bottom_row.set_title('All simulated datasets')
 
