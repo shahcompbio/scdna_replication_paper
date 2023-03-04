@@ -15,57 +15,6 @@ def get_args():
     return p.parse_args()
 
 
-def make_figure1(df, argv):
-    """ First figure is a mixture of barplots, scatterplots, and violinplots showing the accuracies of the different methods. """
-    fig, ax = plt.subplots(2, 4, figsize=(16, 8), tight_layout=True)
-
-    # merge together the two supblots in the top left corner
-    gs = ax[0, 0].get_gridspec()
-    for a in ax[0, :2]:
-        a.remove()
-    axbig_top_row = fig.add_subplot(gs[0, 0:2])
-
-    # merge together the two supblots in the bottom left corner
-    gs = ax[1, 0].get_gridspec()
-    for a in ax[1, :2]:
-        a.remove()
-    axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
-
-    # showing rep accuracies on the top row
-    # barplots and scatterplots of cn and rep accuracies for each method, across different simulation params
-    sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='method', ax=axbig_top_row)
-    axbig_top_row.set_title('All simulated datasets')
-    axbig_top_row.set_xlabel('Datatag')
-    axbig_top_row.set_ylabel('Replication state accuracy')
-
-    # scatterplots which use A and lambda as the size params
-    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='alpha', style='num_clones', ax=ax[0, 2])
-    ax[0, 2].set_title('Alpha effect on replication accuracy')
-    ax[0, 2].set_xlabel('Cell CNA rate')
-    ax[0, 2].set_ylabel('Replication state accuracy')
-    sns.scatterplot(data=df, x='cell_cna_rate', y='rep_accuracy', hue='method', size='lamb', style='num_clones', ax=ax[0, 3])
-    ax[0, 3].set_title('Lambda effect on replication accuracy')
-    ax[0, 3].set_xlabel('Cell CNA rate')
-    ax[0, 3].set_ylabel('Replication state accuracy')
-
-    # showing cn accuracies on the bottom row
-    sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='method', ax=axbig_bottom_row)
-    axbig_bottom_row.set_title('All simulated datasets')
-    axbig_bottom_row.set_xlabel('Datatag')
-    axbig_bottom_row.set_ylabel('CN state accuracy')
-    
-    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='alpha', style='num_clones', ax=ax[1, 2])
-    ax[1, 2].set_title('Alpha effect on CN accuracy')
-    ax[1, 2].set_xlabel('Cell CNA rate')
-    ax[1, 2].set_ylabel('CN state accuracy')
-    sns.scatterplot(data=df, x='cell_cna_rate', y='cn_accuracy', hue='method', size='lamb', style='num_clones', ax=ax[1, 3])
-    ax[1, 3].set_title('Lambda effect on CN accuracy')
-    ax[1, 3].set_xlabel('Cell CNA rate')
-    ax[1, 3].set_ylabel('CN state accuracy')
-
-    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
-
-
 def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_format='star', loc='inside', verbose=0):
     """ Create a violinplot with p-values annotated. """
     sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax)
@@ -92,7 +41,7 @@ def plot_cna_rate_rep_acc(df, ax, n=1, test='t-test_ind', text_format='star', lo
         ((0.02, "PERT clone"), (0.02, "Kronos")),
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test, text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Sweep across cell CNA rate')
+    ax.set_title('Sweep across cell CNA rate\n# of clones={}'.format(n))
     ax.set_xlabel('Cell CNA rate')
     ax.set_ylabel('Replication state accuracy')
     return ax
@@ -113,7 +62,7 @@ def plot_cna_rate_cn_acc(df, ax, n=1, test='t-test_ind', text_format='star', loc
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Sweep across cell CNA rate')
+    ax.set_title('Sweep across cell CNA rate\n# of clones={}'.format(n))
     ax.set_xlabel('Cell CNA rate')
     ax.set_ylabel('CN state accuracy')
     return ax
@@ -137,7 +86,7 @@ def plot_clone_effect_rep_acc(df, ax, rate=0.02, test='t-test_ind', text_format=
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Sweep across # of clones')
+    ax.set_title('Sweep across # of clones\nCell CNA rate={}'.format(rate))
     ax.set_xlabel('Number of clones')
     ax.set_ylabel('Replication state accuracy')
     return ax
@@ -156,37 +105,248 @@ def plot_clone_effect_cn_acc(df, ax, rate=0.02, test='t-test_ind', text_format='
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Sweep across # of clones')
+    ax.set_title('Sweep across # of clones\nCell CNA rate={}'.format(rate))
     ax.set_xlabel('Number of clones')
     ax.set_ylabel('CN state accuracy')
     return ax
 
 
-def make_figure2(df, argv):
-    """ Figure showing parameter sweep across num_clones and cell_cna_rate """
+def plot_alpha_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' Plot the cn accuracy vs alpha where the hue is cell cna rate. '''
+    x = "alpha"
+    y = "cn_accuracy"
+    hue = "method"
+    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02')
+    box_pairs = [
+        ((10.0, 'PERT comp.'), (5.0, 'PERT comp.')),
+        ((15.0, 'PERT comp.'), (5.0, 'PERT comp.')),
+        ((10.0, 'PERT comp.'), (15.0, 'PERT comp.')),
+        ((10.0, 'PERT clone'), (5.0, 'PERT clone')),
+        ((15.0, 'PERT clone'), (5.0, 'PERT clone')),
+        ((10.0, 'PERT clone'), (15.0, 'PERT clone')),
+        ((10.0, 'PERT comp.'), (10.0, 'PERT clone')),
+        ((5.0, 'PERT comp.'), (5.0, 'PERT clone')),
+        ((15.0, 'PERT comp.'), (15.0, 'PERT clone'))
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    ax.set_title('Sweep across alpha')
+    ax.set_ylabel('CN state accuracy')
+    ax.set_xlabel('alpha')
+
+
+def plot_alpha_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' Plot the rep accuracy vs alpha where the hue is cell cna rate. '''
+    x = "alpha"
+    y = "rep_accuracy"
+    hue = "method"
+    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02')
+    box_pairs = [
+        ((10.0, 'PERT comp.'), (5.0, 'PERT comp.')),
+        ((15.0, 'PERT comp.'), (5.0, 'PERT comp.')),
+        ((10.0, 'PERT comp.'), (15.0, 'PERT comp.')),
+        ((10.0, 'Kronos'), (5.0, 'Kronos')),
+        ((15.0, 'Kronos'), (5.0, 'Kronos')),
+        ((10.0, 'Kronos'), (15.0, 'Kronos')),
+        ((10.0, 'PERT comp.'), (10.0, 'Kronos')),
+        ((5.0, 'PERT comp.'), (5.0, 'Kronos')),
+        ((15.0, 'PERT comp.'), (15.0, 'Kronos'))
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    ax.set_title('Sweep across alpha')
+    ax.set_ylabel('Replication state accuracy')
+    ax.set_xlabel('alpha')
+
+
+def plot_lambda_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' Plot the copy number accuracy vs lambda where the hue is cell cna rate. '''
+    x = "lamb"
+    y = "cn_accuracy"
+    hue = "method"
+    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2')
+    box_pairs = [
+        ((0.5, 'PERT comp.'), (0.6, 'PERT comp.')),
+        ((0.5, 'PERT comp.'), (0.75, 'PERT comp.')),
+        ((0.5, 'PERT comp.'), (0.9, 'PERT comp.')),
+        ((0.5, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.6, 'PERT comp.'), (0.75, 'PERT comp.')),
+        ((0.6, 'PERT comp.'), (0.9, 'PERT comp.')),
+        ((0.6, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.75, 'PERT comp.'), (0.9, 'PERT comp.')),
+        ((0.75, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.9, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.5, 'PERT clone'), (0.6, 'PERT clone')),
+        ((0.5, 'PERT clone'), (0.75, 'PERT clone')),
+        ((0.5, 'PERT clone'), (0.9, 'PERT clone')),
+        ((0.5, 'PERT clone'), (0.99, 'PERT clone')),
+        ((0.6, 'PERT clone'), (0.75, 'PERT clone')),
+        ((0.6, 'PERT clone'), (0.9, 'PERT clone')),
+        ((0.6, 'PERT clone'), (0.99, 'PERT clone')),
+        ((0.75, 'PERT clone'), (0.9, 'PERT clone')),
+        ((0.75, 'PERT clone'), (0.99, 'PERT clone')),
+        ((0.9, 'PERT clone'), (0.99, 'PERT clone')),
+        ((0.5, 'PERT clone'), (0.5, 'PERT comp.')),
+        ((0.6, 'PERT clone'), (0.6, 'PERT comp.')),
+        ((0.75, 'PERT clone'), (0.75, 'PERT comp.')),
+        ((0.9, 'PERT clone'), (0.9, 'PERT comp.')),
+        ((0.99, 'PERT clone'), (0.99, 'PERT comp.'))
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    ax.set_xlabel('lambda')
+    ax.set_title('Sweep across lambda')
+    ax.set_ylabel('CN state accuracy')
+
+
+def plot_lambda_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' Plot the replication accuracy vs lambda where the hue is the method. '''
+    x = "lamb"
+    y = "rep_accuracy"
+    hue = "method"
+    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2')
+    box_pairs = [
+        ((0.5, 'PERT comp.'), (0.6, 'PERT comp.')),
+        ((0.5, 'PERT comp.'), (0.75, 'PERT comp.')),
+        ((0.5, 'PERT comp.'), (0.9, 'PERT comp.')),
+        ((0.5, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.6, 'PERT comp.'), (0.75, 'PERT comp.')),
+        ((0.6, 'PERT comp.'), (0.9, 'PERT comp.')),
+        ((0.6, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.75, 'PERT comp.'), (0.9, 'PERT comp.')),
+        ((0.75, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.9, 'PERT comp.'), (0.99, 'PERT comp.')),
+        ((0.5, 'Kronos'), (0.6, 'Kronos')),
+        ((0.5, 'Kronos'), (0.75, 'Kronos')),
+        ((0.5, 'Kronos'), (0.9, 'Kronos')),
+        ((0.5, 'Kronos'), (0.99, 'Kronos')),
+        ((0.6, 'Kronos'), (0.75, 'Kronos')),
+        ((0.6, 'Kronos'), (0.9, 'Kronos')),
+        ((0.6, 'Kronos'), (0.99, 'Kronos')),
+        ((0.75, 'Kronos'), (0.9, 'Kronos')),
+        ((0.75, 'Kronos'), (0.99, 'Kronos')),
+        ((0.9, 'Kronos'), (0.99, 'Kronos')),
+        ((0.5, 'Kronos'), (0.5, 'PERT comp.')),
+        ((0.6, 'Kronos'), (0.6, 'PERT comp.')),
+        ((0.75, 'Kronos'), (0.75, 'PERT comp.')),
+        ((0.9, 'Kronos'), (0.9, 'PERT comp.')),
+        ((0.99, 'Kronos'), (0.99, 'PERT comp.'))
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    ax.set_xlabel('lambda')
+    ax.set_title('Sweep across lambda')
+    ax.set_ylabel('Replication state accuracy')
+
+
+def plot_gc_bias_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' Plot the phase accuracy vs GC bias coefficients in datasets with all other params fixed. '''
+    x = "beta0"
+    y = "cn_accuracy"
+    hue = "method"
+    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75')
+    box_pairs = [
+        ((1.2, 'PERT comp.'), (-1.2, 'PERT comp.')),
+        ((1.2, 'PERT comp.'), (1.2, 'PERT clone')),
+        ((1.2, 'PERT clone'), (-1.2, 'PERT clone')),
+        ((1.2, 'PERT clone'), (-1.2, 'PERT comp.')),
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    ax.set_title('Sweep across GC bias coefficients')
+    ax.set_ylabel('CN state accuracy')
+    ax.set_xlabel('Beta0 (GC bias slope)')
+
+
+def plot_gc_bias_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    ''' Plot the replication accuracy vs GC bias coefficients in datasets with all other params fixed. '''
+    x = "beta0"
+    y = "rep_accuracy"
+    hue = "method"
+    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75')
+    box_pairs = [
+        ((1.2, 'PERT comp.'), (-1.2, 'PERT comp.')),
+        ((1.2, 'PERT comp.'), (1.2, 'Kronos')),
+        ((1.2, 'Kronos'), (-1.2, 'Kronos')),
+        ((1.2, 'Kronos'), (-1.2, 'PERT comp.')),
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    ax.set_title('Sweep across GC bias coefficients')
+    ax.set_ylabel('Replication state accuracy')
+    ax.set_xlabel('Beta0 (GC bias slope)')
+
+
+def plot_param_sweep_rep_acc(df, argv):
+    """ Figure showing replication accuracy parameter sweep across num_clones and cell_cna_rate """
     fig, ax = plt.subplots(2, 5, figsize=(20, 8), tight_layout=True)
-    ax = ax.flatten()
 
     # top row shows accuracy at predicting replication states
     # show effect of varying cna rate at fixed number of clones
-    plot_cna_rate_rep_acc(df, ax[0], n=1)
-    plot_cna_rate_rep_acc(df, ax[1], n=3)
+    plot_cna_rate_rep_acc(df, ax[0, 0], n=1)
+    plot_cna_rate_rep_acc(df, ax[0, 1], n=3)
     # show effect of varying number of clones at fixed cna rates
-    plot_clone_effect_rep_acc(df, ax[2], rate=0.0)
-    plot_clone_effect_rep_acc(df, ax[3], rate=0.02)
-    plot_clone_effect_rep_acc(df, ax[4], rate=0.05)
+    plot_clone_effect_rep_acc(df, ax[0, 2], rate=0.0)
+    plot_clone_effect_rep_acc(df, ax[0, 3], rate=0.02)
+    plot_clone_effect_rep_acc(df, ax[0, 4], rate=0.05)
 
-    # bottom row shows accuracy at predicting CN states
+    # merge together the two supblots in the bottom left corner
+    gs = ax[1, 0].get_gridspec()
+    for a in ax[1, :2]:
+        a.remove()
+    axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
+
+    # barplots of phase accuracies for all simulated datasets
+    sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='method', ax=axbig_bottom_row)
+    axbig_bottom_row.set_ylabel('Replication state accuracy')
+    axbig_bottom_row.set_title('All simulated datasets')
+
+    # plot the effect of varying alpha
+    plot_alpha_effect_rep_acc(df, ax[1, 2])
+
+    # plot the effect of varying lambda
+    plot_lambda_effect_rep_acc(df, ax[1, 3])
+    
+    # plot the effect of varying GC bias
+    plot_gc_bias_effect_rep_acc(df, ax[1, 4])
+
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
+
+
+def plot_param_sweep_cn_acc(df, argv):
+    """ Figure showing copy number accuracy parameter sweep across num_clones and cell_cna_rate """
+    fig, ax = plt.subplots(2, 5, figsize=(20, 8), tight_layout=True)
+
+    # top row shows accuracy at predicting replication states
     # show effect of varying cna rate at fixed number of clones
-    plot_cna_rate_cn_acc(df, ax[5], n=1)
-    plot_cna_rate_cn_acc(df, ax[6], n=3)
+    plot_cna_rate_cn_acc(df, ax[0, 0], n=1)
+    plot_cna_rate_cn_acc(df, ax[0, 1], n=3)
     # show effect of varying number of clones at fixed cna rates
-    plot_clone_effect_cn_acc(df, ax[7], rate=0.0)
-    plot_clone_effect_cn_acc(df, ax[8], rate=0.02)
-    plot_clone_effect_cn_acc(df, ax[9], rate=0.05)
+    plot_clone_effect_cn_acc(df, ax[0, 2], rate=0.0)
+    plot_clone_effect_cn_acc(df, ax[0, 3], rate=0.02)
+    plot_clone_effect_cn_acc(df, ax[0, 4], rate=0.05)
+
+    # merge together the two supblots in the bottom left corner
+    gs = ax[1, 0].get_gridspec()
+    for a in ax[1, :2]:
+        a.remove()
+    axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
+
+    # barplots of phase accuracies for all simulated datasets
+    sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='method', ax=axbig_bottom_row)
+    axbig_bottom_row.set_ylabel('CN state accuracy')
+    axbig_bottom_row.set_title('All simulated datasets')
+
+    # plot the effect of varying alpha
+    plot_alpha_effect_cn_acc(df, ax[1, 2])
+
+    # plot the effect of varying lambda
+    plot_lambda_effect_cn_acc(df, ax[1, 3])
+    
+    # plot the effect of varying GC bias
+    plot_gc_bias_effect_cn_acc(df, ax[1, 4])
 
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
-
 
 
 def main():
@@ -199,10 +359,10 @@ def main():
     df.rename(columns={'lambda': 'lamb'}, inplace=True)
 
     # make the first figure
-    make_figure1(df, argv)
+    plot_param_sweep_rep_acc(df, argv)
 
     # make the second figure
-    make_figure2(df, argv)
+    plot_param_sweep_cn_acc(df, argv)
 
 
 

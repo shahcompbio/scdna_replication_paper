@@ -260,9 +260,11 @@ def main():
     # compute the pairwise correlation between all of the columns except the chr and start columns
     corr = df.corr()
 
-    # drom the 'start' row and column from the correlation matrix
+    # drop the 'start' and 'end' rows and columns from the correlation matrix
     corr = corr.drop('start', axis=0)
     corr = corr.drop('start', axis=1)
+    corr = corr.drop('end', axis=0)
+    corr = corr.drop('end', axis=1)
 
     # replace the underscores in the column and row names with spaces
     corr.columns = corr.columns.str.replace('_', ' ')

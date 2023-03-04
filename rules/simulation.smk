@@ -96,7 +96,9 @@ rule all_simulation:
             ]
         ),
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
-        'plots/simulation/all/scRT_accuracies1.png',
+        'plots/simulation/all/rep_accuracies_param_sweep.png',
+        'plots/simulation/all/cn_accuracies_param_sweep.png',
+        'plots/simulation/all/phase_accuracies_param_sweep.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
         'plots/simulation/all/predicted_phase_confusion_mat.png',
         # 'plots/simulation/D1.0/hmmcopy_heatmaps.png',
@@ -816,8 +818,8 @@ rule scRT_accuracies_sim:
 rule plot_scRT_accuracies_sim:
     input: 'analysis/simulation/all/scRT_accuracies.tsv'
     output:
-        plot1 = 'plots/simulation/all/scRT_accuracies1.png',
-        plot2 = 'plots/simulation/all/scRT_accuracies2.png'
+        plot1 = 'plots/simulation/all/rep_accuracies_param_sweep.png',
+        plot2 = 'plots/simulation/all/cn_accuracies_param_sweep.png'
     log: 'logs/simulation/all/plot_scRT_accuracies.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '

@@ -58,7 +58,7 @@ def plot_cna_rate_phase_acc(df, ax, n=1, test='t-test_ind', text_format='star', 
         ((0.05, 'PERT'), (0.05, 'laks'))
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test, text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Sweep across cell CNA rate')
+    ax.set_title('Sweep across cell CNA rate\n# of clones={}'.format(n))
     ax.set_ylabel('Phase accuracy')
     ax.set_xlabel('Cell CNA rate')
     return ax
@@ -78,7 +78,7 @@ def plot_clone_effect_phase_acc(df, ax, rate=0.02, test='t-test_ind', text_forma
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
-    ax.set_title('Sweep across # of clones')
+    ax.set_title('Sweep across # of clones\nCell CNA rate={}'.format(rate))
     ax.set_ylabel('Phase accuracy')
     ax.set_xlabel('Number of clones')
     return ax
