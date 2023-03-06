@@ -14,6 +14,7 @@ def get_args():
     p.add_argument('rep_col', help='column name for inferred replication states')
     p.add_argument('cn_col', help='column name containing copy number (pyro model) or changepoint segment (heuristic model)')
     p.add_argument('frac_rt_col', help='column name for time within S-phase (i.e. fraction replicated)')
+    p.add_argument('method', help='name of the method used for inferring scRT states (kronos, PERT)')
     p.add_argument('output_rt_state', help='heatmap comparing true and inferred rt_state values')
     p.add_argument('output_rt_accuracy', help='heatmap of false pos/neg and changepoint segments')
     p.add_argument('output_frac_rt', help='Compare distributions of frac_rt between true and inferred')
@@ -71,7 +72,7 @@ def plot_true_vs_inferred_rt_state(df, argv):
     ax[0].set_title('True scRT')
     ax[1].set_title('Inferred scRT\nAccuracy: {}'.format(round(accuracy, 3)))
 
-    fig.savefig(argv.output_rt_state, bbox_inches='tight')
+    fig.savefig(argv.output_rt_state, bbox_inches='tight', dpi=300)
 
 
 def plot_rt_accuracy(df, argv):
@@ -83,6 +84,9 @@ def plot_rt_accuracy(df, argv):
     if argv.cn_col=='observed_cn_state':
         plot_clustered_cell_cn_matrix(ax[0], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
         ax[0].set_title('True CN state')
+    elif argv.cn_col=='state':
+        plot_clustered_cell_cn_matrix(ax[0], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
+        ax[0].set_title('HMMcopy state')
     elif 'cn' in argv.cn_col:
         plot_clustered_cell_cn_matrix(ax[0], df, argv.cn_col, cluster_field_name='clone_id', secondary_field_name='true_t')
         ax[0].set_title('Inferred CN state')
@@ -91,10 +95,10 @@ def plot_rt_accuracy(df, argv):
 
     acc_cmap = get_acc_cmap()
     plot_clustered_cell_cn_matrix(ax[1], df, 'rt_state_diff', cluster_field_name='clone_id', secondary_field_name='true_t', cmap=acc_cmap)
-    ax[1].set_title('Replication accuracy: {}'.format(round(accuracy, 3)))
+    ax[1].set_title('{} replication accuracy: {}'.format(argv.method.replace('_', ' '), round(accuracy, 3)))
     
 
-    fig.savefig(argv.output_rt_accuracy, bbox_inches='tight')
+    fig.savefig(argv.output_rt_accuracy, bbox_inches='tight', dpi=300)
 
 
 def plot_frac_rt_distributions(df, argv):
@@ -135,10 +139,11 @@ def plot_frac_rt_distributions(df, argv):
         ax[1].plot(x, y, color="black", alpha=0.05)
 
     for i in range(2):
-        ax[i].set_ylabel('Fraction replicated')
-        ax[i].set_title('Distribution of cells\nwithin S-phase')
+        ax[i].set_ylabel('Inferred fraction of replicated bins')
+        ax[i].set_title('Cell S-phase times')
+        ax[i].set_xlabel(argv.method.replace('_', ' '))
 
-    fig.savefig(argv.output_frac_rt, bbox_inches='tight')
+    fig.savefig(argv.output_frac_rt, bbox_inches='tight', dpi=300)
 
 
 def main():

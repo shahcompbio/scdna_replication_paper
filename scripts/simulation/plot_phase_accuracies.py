@@ -27,14 +27,16 @@ def custom_color_palette():
 
 def plot_confusion_matrix(df, argv):
     ''' Given a table of true and inferred phases, plot a confusion matrix with counts of each cell in each phase '''
-    # subset to rows of df where method=='PERT'
-    df = df[df['method'] == 'PERT']
+    # subset to just the rows with method=='PERT'
+    df = df.query('method=="PERT"').query('lamb==0.75')
     # Plot confusion matrix
     fig, ax = plt.subplots(1, 1, figsize=(4, 4), tight_layout=True)
     sns.heatmap(pd.crosstab(df['predicted_phase'], df['true_phase']), annot=True, fmt='d', ax=ax, cmap='Blues')
     ax.set_xlabel('True phase')
     ax.set_ylabel('PERT phase')
-    ax.set_title('All simulated cells')
+    ax.set_title('All simulated cells (lambda=0.75)')
+    # center the y-axis tick labels
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, va='center')
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
@@ -59,12 +61,12 @@ def plot_cna_rate_phase_acc(df, ax, n=1, test='t-test_ind', text_format='star', 
     hue = "method"
     temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2')
     box_pairs = [
-        ((0.02, 'PERT'), (0.00, 'PERT')),
-        ((0.02, 'PERT'), (0.05, 'PERT')),
-        ((0.00, 'PERT'), (0.05, 'PERT')),
-        ((0.02, 'laks'), (0.00, 'laks')),
-        ((0.02, 'laks'), (0.05, 'laks')),
-        ((0.00, 'laks'), (0.05, 'laks')),
+        # ((0.02, 'PERT'), (0.00, 'PERT')),
+        # ((0.02, 'PERT'), (0.05, 'PERT')),
+        # ((0.00, 'PERT'), (0.05, 'PERT')),
+        # ((0.02, 'laks'), (0.00, 'laks')),
+        # ((0.02, 'laks'), (0.05, 'laks')),
+        # ((0.00, 'laks'), (0.05, 'laks')),
         ((0.02, 'PERT'), (0.02, 'laks')),
         ((0.00, 'PERT'), (0.00, 'laks')),
         ((0.05, 'PERT'), (0.05, 'laks'))
@@ -83,8 +85,8 @@ def plot_clone_effect_phase_acc(df, ax, rate=0.02, test='t-test_ind', text_forma
     hue = "method"
     temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2')
     box_pairs = [
-        ((1, 'PERT'), (3, 'PERT')),
-        ((1, 'laks'), (3, 'laks')),
+        # ((1, 'PERT'), (3, 'PERT')),
+        # ((1, 'laks'), (3, 'laks')),
         ((1, 'PERT'), (1, 'laks')),
         ((3, 'PERT'), (3, 'laks'))
     ]
@@ -103,12 +105,12 @@ def plot_alpha_effect(df, ax, test='t-test_ind', text_format='star', loc='inside
     hue = "method"
     temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02')
     box_pairs = [
-        ((10.0, 'PERT'), (5.0, 'PERT')),
-        ((15.0, 'PERT'), (5.0, 'PERT')),
-        ((10.0, 'PERT'), (15.0, 'PERT')),
-        ((10.0, 'laks'), (5.0, 'laks')),
-        ((15.0, 'laks'), (5.0, 'laks')),
-        ((10.0, 'laks'), (15.0, 'laks')),
+        # ((10.0, 'PERT'), (5.0, 'PERT')),
+        # ((15.0, 'PERT'), (5.0, 'PERT')),
+        # ((10.0, 'PERT'), (15.0, 'PERT')),
+        # ((10.0, 'laks'), (5.0, 'laks')),
+        # ((15.0, 'laks'), (5.0, 'laks')),
+        # ((10.0, 'laks'), (15.0, 'laks')),
         ((10.0, 'PERT'), (10.0, 'laks')),
         ((5.0, 'PERT'), (5.0, 'laks')),
         ((15.0, 'PERT'), (15.0, 'laks'))
@@ -127,26 +129,26 @@ def plot_lambda_effect(df, ax, test='t-test_ind', text_format='star', loc='insid
     hue = "method"
     temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2')
     box_pairs = [
-        ((0.5, 'PERT'), (0.6, 'PERT')),
-        ((0.5, 'PERT'), (0.75, 'PERT')),
-        ((0.5, 'PERT'), (0.9, 'PERT')),
-        ((0.5, 'PERT'), (0.99, 'PERT')),
-        ((0.6, 'PERT'), (0.75, 'PERT')),
-        ((0.6, 'PERT'), (0.9, 'PERT')),
-        ((0.6, 'PERT'), (0.99, 'PERT')),
-        ((0.75, 'PERT'), (0.9, 'PERT')),
-        ((0.75, 'PERT'), (0.99, 'PERT')),
-        ((0.9, 'PERT'), (0.99, 'PERT')),
-        ((0.5, 'laks'), (0.6, 'laks')),
-        ((0.5, 'laks'), (0.75, 'laks')),
-        ((0.5, 'laks'), (0.9, 'laks')),
-        ((0.5, 'laks'), (0.99, 'laks')),
-        ((0.6, 'laks'), (0.75, 'laks')),
-        ((0.6, 'laks'), (0.9, 'laks')),
-        ((0.6, 'laks'), (0.99, 'laks')),
-        ((0.75, 'laks'), (0.9, 'laks')),
-        ((0.75, 'laks'), (0.99, 'laks')),
-        ((0.9, 'laks'), (0.99, 'laks')),
+        # ((0.5, 'PERT'), (0.6, 'PERT')),
+        # ((0.5, 'PERT'), (0.75, 'PERT')),
+        # ((0.5, 'PERT'), (0.9, 'PERT')),
+        # ((0.5, 'PERT'), (0.99, 'PERT')),
+        # ((0.6, 'PERT'), (0.75, 'PERT')),
+        # ((0.6, 'PERT'), (0.9, 'PERT')),
+        # ((0.6, 'PERT'), (0.99, 'PERT')),
+        # ((0.75, 'PERT'), (0.9, 'PERT')),
+        # ((0.75, 'PERT'), (0.99, 'PERT')),
+        # ((0.9, 'PERT'), (0.99, 'PERT')),
+        # ((0.5, 'laks'), (0.6, 'laks')),
+        # ((0.5, 'laks'), (0.75, 'laks')),
+        # ((0.5, 'laks'), (0.9, 'laks')),
+        # ((0.5, 'laks'), (0.99, 'laks')),
+        # ((0.6, 'laks'), (0.75, 'laks')),
+        # ((0.6, 'laks'), (0.9, 'laks')),
+        # ((0.6, 'laks'), (0.99, 'laks')),
+        # ((0.75, 'laks'), (0.9, 'laks')),
+        # ((0.75, 'laks'), (0.99, 'laks')),
+        # ((0.9, 'laks'), (0.99, 'laks')),
         ((0.5, 'laks'), (0.5, 'PERT')),
         ((0.6, 'laks'), (0.6, 'PERT')),
         ((0.75, 'laks'), (0.75, 'PERT')),
@@ -167,10 +169,10 @@ def plot_gc_bias_effect(df, ax, test='t-test_ind', text_format='star', loc='insi
     hue = "method"
     temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75')
     box_pairs = [
-        ((1.2, 'PERT'), (-1.2, 'PERT')),
+        # ((1.2, 'PERT'), (-1.2, 'PERT')),
+        # ((1.2, 'laks'), (-1.2, 'laks')),
         ((1.2, 'PERT'), (1.2, 'laks')),
-        ((1.2, 'laks'), (-1.2, 'laks')),
-        ((1.2, 'laks'), (-1.2, 'PERT')),
+        ((-1.2, 'PERT'), (-1.2, 'laks')),
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
@@ -224,7 +226,7 @@ def plot_jointplot(df, argv):
     df = df.query('method=="PERT"').query('lamb==0.75')
     pal = {'TP': 'green', 'TN': 'blue', 'FP': 'red', 'FN': 'orange'}
     # create a JointGrid instance
-    g = sns.JointGrid(data=df, x='true_cell_frac_rep', y='cell_frac_rep', hue='phase_class', hue_order=['TP', 'TN', 'FP', 'FN'], palette=pal)
+    g = sns.JointGrid(data=df, x='true_cell_frac_rep', y='cell_frac_rep', hue='phase_class', hue_order=['TP', 'TN', 'FP', 'FN'], palette=pal, height=4)
     # plot a scatterplot on the joint axes with alpha=0.2   
     # order the hues such that S is first, G1/2 is second
     g.plot_joint(sns.scatterplot, alpha=0.2, s=5)
@@ -232,6 +234,8 @@ def plot_jointplot(df, argv):
     g.plot_marginals(sns.histplot, kde=True, bins=20)
     # rename the axes
     g.set_axis_labels('True fraction of replicated bins', 'PERT inferred fraction of replicated bins')
+    # rename the legend title to 'Phase class'
+    g.ax_joint.legend(title='Phase class')
     g.savefig(argv.plot3, bbox_inches='tight', dpi=300)
 
 

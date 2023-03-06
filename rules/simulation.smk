@@ -558,8 +558,9 @@ rule evaluate_model_performance_kronos_sim:
         plot3 = 'plots/simulation/{dataset}/frac_rt_distributions_kronos.png'
     params:
         rep_col = 'rt_state',
-        cn_col = 'observed_cn_state',
-        frac_rt_col = 'frac_rt'
+        cn_col = 'state',
+        frac_rt_col = 'frac_rt',
+        method = 'Kronos'
     log: 'logs/simulation/{dataset}/evaluate_model_performance_kronos.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -577,7 +578,8 @@ rule evaluate_model_performance_pyro_sim:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'cell_frac_rep'
+        frac_rt_col = 'cell_frac_rep',
+        method = 'PERT_clone'
     log: 'logs/simulation/{dataset}/evaluate_model_performance_pyro.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -595,7 +597,8 @@ rule evaluate_model_performance_pyro_composite_sim:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'cell_frac_rep'
+        frac_rt_col = 'cell_frac_rep',
+        method = 'PERT_comp'
     log: 'logs/simulation/{dataset}/evaluate_model_performance_pyro_composite.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
