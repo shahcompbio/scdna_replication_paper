@@ -17,11 +17,11 @@ def get_args():
 
 def custom_color_palette():
     pal = {
-        'PERT clone': '#2D68C4',  # POWDERKEG BLUE
-        'PERT comp.': '#7BAFD4',  # LIGHT BLUE
-        'PERT': '#7BAFD4',  # LIGHT BLUE
-        'Kronos': '#F2A900',  # GOLD
-        'laks': '#FFE800',  # YELLOW
+        'PERT clone': '#3da2ff',  # POWDERKEG BLUE
+        'PERT comp.': '#0054c0',  # TRUE BLUE
+        'PERT': '#0054c0',  # TRUE BLUE
+        'Kronos': '#c6aa55',  # GOLD
+        'laks': '#ffc000',  # YELLOW
     }
     return pal
 
@@ -29,7 +29,7 @@ def custom_color_palette():
 def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_format='star', loc='inside', verbose=0):
     """ Create a violinplot with p-values annotated. """
     palette = custom_color_palette()
-    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette)
+    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, saturation=1, linewidth=1)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test,
                         text_format=text_format, loc=loc, verbose=verbose)
@@ -309,7 +309,7 @@ def plot_param_sweep_rep_acc(df, argv):
     axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
 
     # barplots of phase accuracies for all simulated datasets
-    sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='method', ax=axbig_bottom_row, palette=custom_color_palette())
+    sns.barplot(data=df, x='datatag', y='rep_accuracy', hue='method', ax=axbig_bottom_row, palette=custom_color_palette(), saturation=1)
     axbig_bottom_row.set_ylabel('Replication state accuracy')
     axbig_bottom_row.set_title('All simulated datasets')
 
@@ -345,7 +345,7 @@ def plot_param_sweep_cn_acc(df, argv):
     axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
 
     # barplots of phase accuracies for all simulated datasets
-    sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='method', ax=axbig_bottom_row, palette=custom_color_palette())
+    sns.barplot(data=df, x='datatag', y='cn_accuracy', hue='method', ax=axbig_bottom_row, palette=custom_color_palette(), saturation=1)
     axbig_bottom_row.set_ylabel('CN state accuracy')
     axbig_bottom_row.set_title('All simulated datasets')
 

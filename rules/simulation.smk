@@ -641,7 +641,9 @@ rule true_vs_inferred_heatmaps_sim:
         dataset = lambda wildcards: wildcards.dataset,
         true_frac_col = 'true_cell_frac_rep',
         rep_state = 'model_rep_state',
-        true_rep_state = 'true_rep'
+        true_rep_state = 'true_rep',
+        cn_state = 'model_cn_state',
+        true_cn_state = 'true_G1_state',
     log: 'logs/simulation/{dataset}/true_vs_inferred_heatmaps.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '

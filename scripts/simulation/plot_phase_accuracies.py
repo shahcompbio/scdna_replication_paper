@@ -16,11 +16,11 @@ def get_args():
 
 def custom_color_palette():
     pal = {
-        'PERT clone': '#2D68C4',  # POWDERKEG BLUE
-        'PERT comp.': '#7BAFD4',  # LIGHT BLUE
-        'PERT': '#7BAFD4',  # LIGHT BLUE
-        'Kronos': '#F2A900',  # GOLD
-        'laks': '#FFE800',  # YELLOW
+        'PERT clone': '#3da2ff',  # POWDERKEG BLUE
+        'PERT comp.': '#0054c0',  # TRUE BLUE
+        'PERT': '#0054c0',  # TRUE BLUE
+        'Kronos': '#c6aa55',  # GOLD
+        'laks': '#ffc000',  # YELLOW
     }
     return pal
 
@@ -42,9 +42,9 @@ def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_for
     """ Create a violinplot with p-values annotated. """
     if show_hue:
         palette = custom_color_palette()
-        sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette)
+        sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, saturation=1, linewidth=1)
     else:
-        sns.violinplot(data=df, x=x, y=y, ax=ax)
+        sns.violinplot(data=df, x=x, y=y, ax=ax, saturation=1, linewidth=1)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test,
                         text_format=text_format, loc=loc, verbose=verbose)
@@ -201,7 +201,7 @@ def plot_param_sweep(df, argv):
     axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
 
     # barplots of phase accuracies for all simulated datasets
-    sns.barplot(data=df, x='datatag', y='phase_acc', hue='method', ax=axbig_bottom_row, palette=custom_color_palette())
+    sns.barplot(data=df, x='datatag', y='phase_acc', hue='method', ax=axbig_bottom_row, palette=custom_color_palette(), saturation=1)
     axbig_bottom_row.set_ylabel('Phase accuracy')
     axbig_bottom_row.set_title('All simulated datasets')
 
@@ -219,11 +219,12 @@ def plot_param_sweep(df, argv):
 
 
 def plot_jointplot(df, argv):
-    ''' Plot a jointplot of the PERT and true fraction of replicated bins per cell. Use the true phase as the hue. '''
+    ''' Plot a jointplot of the PERT and true fraction of replicated bins per cell. Use the phase class (TP, FP, TN, FN) as the hue. '''
     # subset to just the rows with method=='PERT'
-    df = df.query('method=="PERT"')
+    df = df.query('method=="PERT"').query('lamb==0.75')
+    pal = {'TP': 'green', 'TN': 'blue', 'FP': 'red', 'FN': 'orange'}
     # create a JointGrid instance
-    g = sns.JointGrid(data=df, x='true_cell_frac_rep', y='cell_frac_rep', hue='true_phase', hue_order=['S', 'G1/2'])
+    g = sns.JointGrid(data=df, x='true_cell_frac_rep', y='cell_frac_rep', hue='phase_class', hue_order=['TP', 'TN', 'FP', 'FN'], palette=pal)
     # plot a scatterplot on the joint axes with alpha=0.2   
     # order the hues such that S is first, G1/2 is second
     g.plot_joint(sns.scatterplot, alpha=0.2, s=5)
@@ -263,6 +264,24 @@ def main():
 
     # create a new column named 'predicted_phase' that is the same as 'PERT_phase' if 'method' is 'PERT', 'laks_phase' if the method is 'laks'
     df['predicted_phase'] = np.where(df['method'] == 'PERT', df['PERT_phase'], df['laks_phase'])
+
+    print(df[['cell_id', 'method', 'true_phase', 'predicted_phase']].head())
+
+    # create a new column named 'phase_class' which says whether the 
+    # given prediction is a true positive, false positive, true negative, or false negative
+    df['phase_class'] = 'None'
+    for i, row in df.iterrows():
+        if row['predicted_phase'] == row['true_phase'] and row['true_phase'] == 'S':
+            df.at[i, 'phase_class'] = 'TP'
+        elif row['predicted_phase'] == row['true_phase'] and row['true_phase'] == 'G1/2':
+            df.at[i, 'phase_class'] = 'TN'
+        elif row['predicted_phase'] != row['true_phase'] and row['true_phase'] == 'S':
+            df.at[i, 'phase_class'] = 'FN'
+        elif row['predicted_phase'] != row['true_phase'] and row['true_phase'] == 'G1/2':
+            df.at[i, 'phase_class'] = 'FP'
+
+    print(df[['cell_id', 'method', 'true_phase', 'predicted_phase', 'phase_class']])
+    print(df.phase_class.value_counts())
 
     # drop the pert_phase and laks_phase columns
     df.drop(columns=['PERT_phase', 'laks_phase'], inplace=True)
