@@ -196,7 +196,7 @@ rule plot_cn_heatmaps_lf:
     output: 'plots/laks_flow/{dataset}/cn_heatmaps.png'
     params:
         value_col = 'state',
-        dataset = 'flow-sorted'
+        dataset = 'FACS'
     log:
         'logs/laks_flow/{dataset}/plot_cn_heatmaps.log'
     shell:

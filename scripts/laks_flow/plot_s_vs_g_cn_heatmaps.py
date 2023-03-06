@@ -8,6 +8,7 @@ import numpy as np
 from argparse import ArgumentParser
 from scgenome import cncluster
 from matplotlib.patches import Patch
+from matplotlib import colors as mcolors
 
 
 def get_args():
@@ -87,13 +88,19 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(14,7), dataset=None, line_col='library_
         ax.set_ylabel('')
     
     if dataset:
-        ax_g1.set_title('{}: G1/2-phase'.format(dataset))
-        ax_s.set_title('{}: S-phase'.format(dataset))
+        ax_g1.set_title('{} G1/2-phase HMMcopy state'.format(dataset))
+        ax_s.set_title('{} S-phase HMMcopy state'.format(dataset))
     
     if len(line_dict) > 1:
         # annotate the lines for G1-phase cells
         cluster_ids_g1 = plot_data_g1.columns.get_level_values(1).values
-        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, return_map=True)
+        print(cluster_ids_g1)
+        cell_line_cmap = {
+            2: mcolors.to_rgba('C0'),  # blue for T47D
+            1: mcolors.to_rgba('C1')  # orange for GM18507,
+        }
+        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, color_map=cell_line_cmap, return_map=True)
+        print(color_mat_g1)
 
         # get list of color pigments in the same order as line_dict
         colors_used_g1 = []
