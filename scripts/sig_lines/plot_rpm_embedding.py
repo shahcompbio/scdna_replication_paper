@@ -19,6 +19,18 @@ def get_args():
     return p.parse_args()
 
 
+def get_phase_cmap():
+    ''' Global color map for cell cycle phases '''
+    cmap = {
+        'S': '#BA0021',  # red
+        'G1/2': '#003263',  # dark blue
+        'G1': '#003263',  # dark blue
+        'G2': '#6CACE4',  # light blue
+        'LQ': '#C4CED4'  # silver
+    }
+    return cmap
+
+
 def main():
     argv = get_args()
 
@@ -30,7 +42,7 @@ def main():
     # create column to denote cell cycle state or quality
     cn_s['PERT_phase'] = 'S'
     cn_g['PERT_phase'] = 'G1/2'
-    cn_lowqual['PERT_phase'] = 'low quality'
+    cn_lowqual['PERT_phase'] = 'LQ'
 
     # concat into one dataframe
     cn_all = pd.concat([cn_s, cn_g, cn_lowqual], ignore_index=True)
@@ -55,11 +67,17 @@ def main():
     fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
     ax = ax.flatten()
 
+    phase_cmap = get_phase_cmap()
+
     sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='clone_id', alpha=0.5, ax=ax[0])
-    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='PERT_phase', alpha=0.5, ax=ax[1])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='PERT_phase', alpha=0.5, ax=ax[1], palette=phase_cmap)
 
     for i in range(2):
         ax[i].set_title('{} reads per million PCA'.format(argv.dataset))
+        ax[i].set_xlabel('PC1')
+        ax[i].set_ylabel('PC2')
+        # remove underscore from legend title
+        ax[i].get_legend().set_title(ax[i].get_legend().get_title().replace('_', ' '))
     
     fig.savefig(argv.output_png, bbox_inches='tight', dpi=300)
 
