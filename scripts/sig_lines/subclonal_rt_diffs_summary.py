@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statannot import add_stat_annotation
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_cna_cmap
 
 
 def get_args():
@@ -27,8 +30,8 @@ def load_data(argv):
     return df
 
 
-def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0):
-    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order)
+def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0, palette=None):
+    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order, palette=palette)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test, order=order,
                         text_format=text_format, loc=loc, verbose=verbose)
@@ -36,6 +39,7 @@ def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_in
 
 def plot_clone_rt_diff_vs_cna_types(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
     ''' Plot the distribution of clone RT differences against the CNA type of that particular locus. '''
+    cna_cmap = get_cna_cmap()
     x = "clone_cna_type"
     y = "clone_rt_diff"
     hue = None
@@ -46,9 +50,8 @@ def plot_clone_rt_diff_vs_cna_types(df, ax, test='t-test_ind', text_format='star
     ]
     order = ['loss', 'neutral', 'gain']
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
-                       text_format=text_format, loc=loc, verbose=verbose)
+                       text_format=text_format, loc=loc, verbose=verbose, palette=cna_cmap)
     return ax
-
 
 
 def main():

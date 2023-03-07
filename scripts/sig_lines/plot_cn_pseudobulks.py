@@ -22,7 +22,7 @@ def plot_sorted(bulk_df, argv):
     n_cells = len(bulk_df['cell_id'].unique())
 
     # make a figure that has the height corresponding to the number of cells
-    fig, ax = plt.subplots(1, 1, figsize=(10, n_cells*0.5))
+    fig, ax = plt.subplots(1, 1, figsize=(14, n_cells*0.7))
     
     plot_data = plot_clustered_cell_cn_matrix(
         ax, bulk_df, 'state', cluster_field_name='cluster_id', secondary_field_name='clone_id'
@@ -43,7 +43,7 @@ def plot_clustered(bulk_df, argv):
     n_cells = len(bulk_df['cell_id'].unique())
 
     # make a figure that has the height corresponding to the number of cells
-    fig, ax = plt.subplots(1, 1, figsize=(10, n_cells*0.5))
+    fig, ax = plt.subplots(1, 1, figsize=(14, n_cells*0.7))
 
     plot_data = plot_clustered_cell_cn_matrix(
         ax, bulk_df, 'state', cluster_field_name='cluster_id'

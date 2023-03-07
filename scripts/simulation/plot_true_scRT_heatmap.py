@@ -152,7 +152,7 @@ def plot_true_rt_state(df, argv):
 
 def main():
     argv = get_args()
-    df = pd.read_csv(argv.cn_s, sep='\t')
+    df = pd.read_csv(argv.cn_s)
 
     # set chr column to category
     df.chr = df.chr.astype(str)

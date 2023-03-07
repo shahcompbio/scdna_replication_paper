@@ -100,14 +100,7 @@ rule all_simulation:
         'plots/simulation/all/cn_accuracies_param_sweep.png',
         'plots/simulation/all/phase_accuracies_param_sweep.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
-        'plots/simulation/all/predicted_phase_confusion_mat.png',
-        # 'plots/simulation/D1.0/hmmcopy_heatmaps.png',
-        # 'plots/simulation/D5.0/hmmcopy_heatmaps.png',
-        # 'plots/simulation/D6.0/hmmcopy_heatmaps.png',
-        # 'plots/simulation/D9.0/hmmcopy_heatmaps.png',
-        # 'plots/simulation/D10.0/hmmcopy_heatmaps.png',
-        # 'analysis/simulation/D1.0/s_phase_cells_kronos_output.tsv',
-        # 'analysis/simulation/D1.0/laks_ccc_predictions.csv.gz'
+        'plots/simulation/all/predicted_phase_confusion_mat.png'
         
 
 rule simulate_cell_cn_states_sim:
@@ -339,7 +332,7 @@ rule plot_hmmcopy_heatmaps_sim:
 
 
 rule plot_true_scRT_heatmap_sim:
-    input: 'analysis/simulation/{dataset}/s_phase_cells.tsv',
+    input: 'analysis/simulation/{dataset}/s_phase_cells_hmmcopy.csv.gz',
     output: 'plots/simulation/{dataset}/true_scRT_heatmap.png',
     params:
         dataset = lambda wildcards: wildcards.dataset

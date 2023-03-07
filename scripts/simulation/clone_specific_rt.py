@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.plot_utils import plot_cell_cn_profile2
 
 

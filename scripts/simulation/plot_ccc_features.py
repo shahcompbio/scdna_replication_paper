@@ -109,5 +109,8 @@ if __name__ == '__main__':
     # use ecf status to come up with good vs bad S-phase labels in PERT_phase column
     cell_metrics = get_cell_metrics(cn_pyro_s, cn_pyro_g, cn_pyro_lq, frac_rt_col=argv.frac_rt_col)
 
+    # rename the 'LowQual' entries in column 'PERT_phase' to 'LQ'
+    cell_metrics.loc[cell_metrics.PERT_phase == 'LowQual', 'PERT_phase'] = 'LQ'
+
     # generate and save plots
     plot_ccc_distributions(cell_metrics, argv)

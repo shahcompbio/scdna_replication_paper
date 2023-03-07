@@ -1,15 +1,13 @@
-import matplotlib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scgenome import refgenome
-from sklearn import preprocessing
 from statannot import add_stat_annotation
 from argparse import ArgumentParser
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.plot_utils import plot_cell_cn_profile2
+from common.colors import get_chrom_cmap
 
 
 def get_args():
@@ -27,8 +25,8 @@ def get_args():
     return p.parse_args()
 
 
-def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0):
-    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order)
+def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0, palette=None):
+    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order, palette=palette)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test, order=order,
                         text_format=text_format, loc=loc, verbose=verbose)
@@ -39,6 +37,7 @@ def plot_rt_diff_vs_chrX(df, ax, x='chrX', y='RT_diff', test='t-test_ind', text_
     Plot the difference in pseudobulk RT values between SA039 and OV2295
     where the data is split by chrX vs autosomes
     '''
+    chrom_cmap = get_chrom_cmap()
     x = x
     y = y
     hue = None
@@ -47,7 +46,7 @@ def plot_rt_diff_vs_chrX(df, ax, x='chrX', y='RT_diff', test='t-test_ind', text_
     ]
     order = ['autosomes', 'chrX']
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
-                       text_format=text_format, loc=loc, verbose=verbose)
+                       text_format=text_format, loc=loc, verbose=verbose, palette=chrom_cmap)
     return ax
 
 

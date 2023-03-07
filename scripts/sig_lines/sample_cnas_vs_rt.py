@@ -6,8 +6,9 @@ import seaborn as sns
 from statannot import add_stat_annotation
 from argparse import ArgumentParser
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.plot_utils import plot_cell_cn_profile2
+from common.colors import get_cna_cmap
 
 
 def get_args():
@@ -143,8 +144,8 @@ def merge_cn_and_rt_info(cn, rt, bk, argv):
     return df
 
 
-def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0):
-    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order)
+def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0, palette=None):
+    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order, palette=palette)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test, order=order,
                         text_format=text_format, loc=loc, verbose=verbose)
@@ -156,6 +157,7 @@ def plot_WT_rt_vs_cna_type(df, ax, test='t-test_ind', text_format='star', loc='i
     in the other hTERT cell lines. This data will show whether gains and losses preferentially
     emerge in early or late replicating regions.
     '''
+    cna_cmap = get_cna_cmap()
     x = "cna_type"
     y = "WT_pseudobulk_rt"
     hue = None
@@ -166,7 +168,7 @@ def plot_WT_rt_vs_cna_type(df, ax, test='t-test_ind', text_format='star', loc='i
     ]
     order = ['loss', 'neutral', 'gain']
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
-                       text_format=text_format, loc=loc, verbose=verbose)
+                       text_format=text_format, loc=loc, verbose=verbose, palette=cna_cmap)
     return ax
 
 
@@ -204,7 +206,7 @@ def plot_rt_distributions(df, argv):
     sns.histplot(
         data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='CNA type', 
         common_norm=False, stat='density', ax=ax[1],
-        palette={'loss': 'C0', 'neutral': 'C1', 'gain': 'C2'}
+        palette=get_cna_cmap()
     )
     ax[1].set_xlabel('RT in hTERT WT\n<--late | early-->')
 

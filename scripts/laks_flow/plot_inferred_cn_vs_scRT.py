@@ -77,7 +77,7 @@ def plot_cn_and_rep_states(df, argv):
     secondary_sort_label = 'Time in S-phase'
 
     # create a color map for the replication states and accuracies
-    rt_cmap, rt_color_dict = get_rt_cmap()
+    rt_cmap, rt_color_dict = get_rt_cmap(return_colors=True)
     
     # add 3 subplots, leaving space for the colorbars on the far left
     # the heatmaps should be arranged in 1 row and 3 columns, having a height of 1 and a width of 0.29

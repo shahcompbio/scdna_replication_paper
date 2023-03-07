@@ -54,7 +54,7 @@ def main():
 
     for i in range(4):
         ax[i].set_xlabel('Inferred fraction of replicated bins')
-        ax[i].set_title('Distribution of cells\nwithin S-phase')
+        ax[i].set_title('Cell S-phase times')
     
     fig.savefig(argv.plot, dpi=300, bbox_inches='tight')
 

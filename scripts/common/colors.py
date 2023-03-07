@@ -3,11 +3,11 @@ from matplotlib.colors import ListedColormap
 def get_phase_cmap():
     ''' Global color map for cell cycle phases '''
     cmap = {
-        'S': '#BA0021',  # red
-        'G1/2': '#003263',  # dark blue
-        'G1': '#003263',  # dark blue
-        'G2': '#6CACE4',  # light blue
-        'LQ': '#C4CED4'  # silver
+        'S': 'goldenrod',
+        'G1/2': 'dodgerblue',
+        'G1': 'dodgerblue',
+        'G2': 'lightblue',
+        'LQ': 'lightgrey'
     }
     return cmap
 
@@ -15,8 +15,22 @@ def get_phase_cmap():
 def get_cell_line_cmap():
     ''' Global color map for cell lines '''
     cmap = {
-        'T47D': 'C0',  # blue
-        'GM18507': 'C1',  # orange
+        # orange for GM18507
+        'GM18507': 'C1',
+        1: 'C1',
+        # blue for T47D
+        'T47D': 'C0',
+        2: 'C0'
+    }
+    return cmap
+
+
+def get_cna_cmap():
+    ''' Global color map for copy number alterations '''
+    cmap = {
+        'gain': '#BA0021',  # red
+        'loss': '#003263',  # dark blue
+        'neutral': '#C4CED4'  # silver
     }
     return cmap
 
@@ -63,5 +77,13 @@ def get_methods_cmap():
         'PERT': '#0054c0',  # TRUE BLUE
         'Kronos': '#c6aa55',  # GOLD
         'laks': '#ffc000',  # YELLOW
+    }
+    return cmap
+
+
+def get_chrom_cmap():
+    cmap = {
+        'autosomes': 'lightsteelblue',
+        'chrX': 'salmon'
     }
     return cmap
