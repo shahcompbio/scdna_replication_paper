@@ -9,7 +9,7 @@ def get_args():
 
     p.add_argument('cn_g', type=str, help='full df for filtered G1/2-phase cells')
     p.add_argument('cn_s', type=str, help='full df for filtered S-phase cells')
-    p.add_argument('cn_low', type=str, help='full df for filtered low quality cells')
+    p.add_argument('cn_low', type=str, help='full df for filtered LQity cells')
     p.add_argument('cn_g_init', type=str, help='df for cells initialized as G1/2-phase')
     p.add_argument('cn_s_init', type=str, help='df for cells initialized as S-phase')
     p.add_argument('dataset', type=str, help='name of this dataset')
@@ -19,6 +19,19 @@ def get_args():
     p.add_argument('plot2', type=str, help='violin plots of the features across different phase calls')
 
     return p.parse_args()
+
+
+def get_phase_cmap():
+    ''' Global color map for cell cycle phases '''
+    cmap = {
+        'S': '#BA0021',  # red
+        'G1/2': '#003263',  # dark blue
+        'G1': '#003263',  # dark blue
+        'G2': '#6CACE4',  # light blue
+        'LQ': '#C4CED4'  # silver
+    }
+    return cmap
+
 
 def plot_confusion_matrix(cn, argv):
     """ Plot a confusion matrix comparing laks_phase to pert_phase for each cell. """
@@ -63,9 +76,11 @@ def plot_violin_plots(cn, argv):
     fig, axes = plt.subplots(3, 3, figsize=(12, 12), tight_layout=True)
     ax = axes.flatten()
 
+    phase_cmap = get_phase_cmap()
+
     # loop through each column in y_cols, plotting the violin plot on the corresponding axis
     for y_col in y_cols:
-        sns.violinplot(data=cn, x='laks_phase', hue='pert_phase', y=y_col, ax=ax[y_cols.index(y_col)])
+        sns.violinplot(data=cn, x='laks_phase', hue='pert_phase', y=y_col, ax=ax[y_cols.index(y_col)], palette=phase_cmap, linewidth=1)
         ax[y_cols.index(y_col)].set_xlabel('Laks et al phase')
         ax[y_cols.index(y_col)].set_ylabel(y_label_dict[y_col])
         ax[y_cols.index(y_col)].legend(loc='upper right', title='PERT phase')
@@ -109,7 +124,7 @@ def main():
     # add column to both dataframes to indicate whether the cell is in G1/2 or S phase
     cn_g['pert_phase'] = 'G1/2'
     cn_s['pert_phase'] = 'S'
-    cn_lowqual['pert_phase'] = 'low qual'
+    cn_lowqual['pert_phase'] = 'LQ'
 
     # concatenate the two dataframes
     cn = pd.concat([cn_g, cn_s, cn_lowqual], ignore_index=True)
@@ -135,11 +150,11 @@ def main():
     # merge cn_init with cn
     cn = cn.merge(cn_init, on='cell_id', how='left')
 
-    # create a new column named 'laks_phase' which has values 'G1/2', 'S', or 'low qual'
+    # create a new column named 'laks_phase' which has values 'G1/2', 'S', or 'LQ'
     # create a map of is_s_phase_laks to laks_phase
     cn['laks_phase'] = cn['is_s_phase_laks'].map({False: 'G1/2', True: 'S'})
-    # for rows where quality < 0.75 and is_s_phase_laks is False, set laks_phase to 'low qual'
-    cn.loc[(cn['quality'] < 0.75) & (cn['is_s_phase_laks'] == False), 'laks_phase'] = 'low qual'
+    # for rows where quality < 0.75 and is_s_phase_laks is False, set laks_phase to 'LQ'
+    cn.loc[(cn['quality'] < 0.75) & (cn['is_s_phase_laks'] == False), 'laks_phase'] = 'LQ'
 
     # plot the confusion matrix
     plot_confusion_matrix(cn, argv)

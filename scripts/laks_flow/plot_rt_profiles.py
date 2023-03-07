@@ -193,14 +193,14 @@ def plot_rt_diff(df, argv):
     # plot the difference in RT values between the two cell lines
     # for the merged model
     fig, ax = plt.subplots(1, 1, figsize=(12,4))
-    plot_cell_cn_profile2(ax, df, 'rt_diff_merged', color='C3', max_cn=None, scale_data=False, lines=True)
+    plot_cell_cn_profile2(ax, df, 'rt_diff_merged', color='#BA0021', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
     ax.set_title('Merged PERT input')
     fig.savefig(argv.rt_diff_merged, bbox_inches='tight', dpi=300)
 
     # for the split model
     fig, ax = plt.subplots(1, 1, figsize=(12,4))
-    plot_cell_cn_profile2(ax, df, 'rt_diff_split', color='C3', max_cn=None, scale_data=False, lines=True)
+    plot_cell_cn_profile2(ax, df, 'rt_diff_split', color='#BA0021', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
     ax.set_title('Split PERT input')
     fig.savefig(argv.rt_diff_split, bbox_inches='tight', dpi=300)

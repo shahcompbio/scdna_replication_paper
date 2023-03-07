@@ -14,6 +14,18 @@ def get_args():
     return p.parse_args()
 
 
+def get_phase_cmap():
+    ''' Global color map for cell cycle phases '''
+    cmap = {
+        'S': '#BA0021',  # red
+        'G1/2': '#003263',  # dark blue
+        'G1': '#003263',  # dark blue
+        'G2': '#6CACE4',  # light blue
+        'LQ': '#C4CED4'  # silver
+    }
+    return cmap
+
+
 def plot_confusion_matrix(cn, argv):
     """ Plot a confusion matrix comparing laks_phase to pert_phase for each cell. """
     # create a figure
@@ -57,9 +69,11 @@ def plot_violin_plots(cn, argv):
     fig, axes = plt.subplots(3, 3, figsize=(12, 12), tight_layout=True)
     ax = axes.flatten()
 
+    phase_cmap = get_phase_cmap()
+
     # loop through each column in y_cols, plotting the violin plot on the corresponding axis
     for y_col in y_cols:
-        sns.violinplot(data=cn, x='laks_phase', hue='pert_phase', y=y_col, ax=ax[y_cols.index(y_col)])
+        sns.violinplot(data=cn, x='laks_phase', hue='pert_phase', y=y_col, ax=ax[y_cols.index(y_col)], palette=phase_cmap, linewidth=1)
         ax[y_cols.index(y_col)].set_xlabel('Laks et al phase')
         ax[y_cols.index(y_col)].set_ylabel(y_label_dict[y_col])
         ax[y_cols.index(y_col)].legend(loc='upper right', title='PERT phase')

@@ -15,12 +15,26 @@ def get_args():
     return p.parse_args()
 
 
+def get_phase_cmap():
+    ''' Global color map for cell cycle phases '''
+    cmap = {
+        'S': '#BA0021',  # red
+        'G1/2': '#003263',  # dark blue
+        'G1': '#003263',  # dark blue
+        'G2': '#6CACE4',  # light blue
+        'LQ': '#C4CED4'  # silver
+    }
+    return cmap
+
+
 def make_plots(legend_df, metrics_df, argv):
     fig, ax = plt.subplots(1, 2, figsize=(12, 4), tight_layout=True)
     ax = ax.flatten()
 
+    phase_cmap = get_phase_cmap()
+
     # barplot of the fraction of G1/2-cells accurately removed out of all those with swapped flow labels
-    sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[1], color='C0')
+    sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[1], color='#C4CED4')
     ax[1].set_ylabel('Fraction of mislabeled\ncells detected by model')
     ax[1].set_xlabel('Fraction of flow G1/2-phase cells\nmislabeled as high variance in PERT input')
     ax[1].set_title('PERT phase accuracy')
@@ -28,7 +42,7 @@ def make_plots(legend_df, metrics_df, argv):
     # distribution of cell_frac_rep values based on the true flow sorting states
     # copy true_cell_cycle_state to a new column named 'Flow phase'
     metrics_df['Flow phase'] = metrics_df['true_cell_cycle_state']
-    sns.histplot(data=metrics_df.query("cell_cycle_state=='S'"), x='cell_frac_rep', hue='Flow phase', bins=20, multiple='stack', ax=ax[0])
+    sns.histplot(data=metrics_df.query("cell_cycle_state=='S'"), x='cell_frac_rep', hue='Flow phase', bins=20, multiple='stack', ax=ax[0], palette=phase_cmap)
     ax[0].set_title('Cells labeled as high variance in PERT input')
     ax[0].set_xlabel('Inferred fraction of replicated bins')
     ax[0].set_ylabel('# cells')
@@ -36,7 +50,7 @@ def make_plots(legend_df, metrics_df, argv):
     fig.savefig(argv.summary_plots, bbox_inches='tight', dpi=300)
 
     # create a new column entitled 'PERT phase' that is 'G' when extreme_cell_frac is True and 'S' when extreme_cell_frac is False
-    metrics_df['PERT phase'] = metrics_df['extreme_cell_frac'].apply(lambda x: 'G' if x else 'S')
+    metrics_df['PERT phase'] = metrics_df['extreme_cell_frac'].apply(lambda x: 'G1/2' if x else 'S')
 
     # rename the columns in metrics df to make the plots more readable
     metrics_df.rename(columns={
@@ -50,12 +64,12 @@ def make_plots(legend_df, metrics_df, argv):
     fig, ax = plt.subplots(2, 3, figsize=(12, 8), tight_layout=True)
     ax = ax.flatten()
 
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[0])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='RPM median absolute deviation', hue='PERT phase', alpha=0.5, ax=ax[1])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[2])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[3])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='CN breakpoints', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[4])
-    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[5])
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[0], palette=phase_cmap)
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='RPM median absolute deviation', hue='PERT phase', alpha=0.5, ax=ax[1], palette=phase_cmap)
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='Laks S-phase probability', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[2], palette=phase_cmap)
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[3], palette=phase_cmap)
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='CN breakpoints', y='Laks quality score', hue='PERT phase', alpha=0.5, ax=ax[4], palette=phase_cmap)
+    sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[5], palette=phase_cmap)
 
     for i in range(6):
         ax[i].set_title('Mislabeled flow G1/2 cells')
