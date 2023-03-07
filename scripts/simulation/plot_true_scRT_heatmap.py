@@ -2,11 +2,12 @@ from argparse import ArgumentParser
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from scgenome import cncluster
-from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap
 
 
 def get_args():
@@ -51,14 +52,6 @@ def make_color_mat_float(values, palette_color):
         color_mat.append(pal(val))
     color_dict = {0: pal(0.0), 1: pal(1.0)}
     return color_mat, color_dict
-
-
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
 
 
 def plot_true_rt_state(df, argv):

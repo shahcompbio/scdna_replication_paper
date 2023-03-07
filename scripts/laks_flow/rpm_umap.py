@@ -4,6 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_phase_cmap, get_cell_line_cmap
+
 
 def get_args():
     p = ArgumentParser()
@@ -60,8 +64,12 @@ def main():
     # plot the UMAP embedding colored by various features
     fig, axes = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
     for ax, col in zip(axes.ravel(), ['cell line', 'flow phase', 'PERT phase']):
+        if col == 'cell line':
+            palette = get_cell_line_cmap()
+        else:
+            palette = get_phase_cmap()
         sns.scatterplot(
-            data=umap_df, x='embedding_0', y='embedding_1', hue=col, ax=ax, alpha=0.5
+            data=umap_df, x='embedding_0', y='embedding_1', hue=col, ax=ax, alpha=0.5, palette=palette
         )
         ax.set_title('Reads per million UMAP')
         ax.set_xlabel('UMAP 0')

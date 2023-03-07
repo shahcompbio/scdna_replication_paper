@@ -1,10 +1,7 @@
 from argparse import ArgumentParser
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scdna_replication_tools.calculate_twidth import compute_and_plot_twidth
-from scdna_replication_tools.compute_pseudobulk_rt_profiles import compute_pseudobulk_rt_profiles
 
 
 def get_args():

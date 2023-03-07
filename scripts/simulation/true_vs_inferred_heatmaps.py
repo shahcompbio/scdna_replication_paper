@@ -3,9 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from scgenome import cncluster
-from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap
 
 
 def get_args():
@@ -59,24 +61,6 @@ def make_color_mat_float(values, palette_color):
     return color_mat, color_dict
 
 
-def get_rt_cmap():
-    """ Return a colormap for replication states. """
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list), rt_colors
-
-
-def get_acc_cmap():
-    """ Return a colormap for replication accuracy states. False positives are green, false negatives are purple, and correct calls are gray. """
-    acc_colors = {0:'#CCCCCC', -1: '#532A44', 1: '#00685E'}
-    color_list = []
-    for i in [-1, 0, 1]:
-        color_list.append(acc_colors[i])
-    return ListedColormap(color_list), acc_colors
-
-
 def plot_true_vs_inferred_heatmaps(df, argv):
     """ 
     Plot heatmaps of true and inferred replication and copy states, as well as false positive/negative calls and input read depth.
@@ -94,24 +78,13 @@ def plot_true_vs_inferred_heatmaps(df, argv):
     secondary_sort_label = 'Time in S-phase'
 
     # create a color map for the replication states and accuracies
-    acc_cmap, acc_color_dict = get_acc_cmap()
-    rt_cmap, rt_color_dict = get_rt_cmap()
+    rt_cmap = get_rt_cmap()
 
     # compute accuracy of inferred rt_state values
     rep_accuracy = 1.0 - (sum(abs(df[argv.true_rep_state] - df[argv.model_rep_state])) / df.shape[0])
 
     # compute accuracy of inferred cn states
     cn_accuracy = sum(df[argv.true_cn_state] == df[argv.model_cn_state]) / df.shape[0]
-    
-    # add 6 subplots for the 6 different heatmaps, leaving space for the colorbars on the far left
-    # the 6 heatmaps should be arranged in 2 rows and 3 columns, having a height of 0.45 and a width of 0.29
-    # fig = plt.figure(figsize=(18, 10))
-    # ax0 = fig.add_axes([0.1, 0.5, 0.29, 0.45]) # top left
-    # ax1 = fig.add_axes([0.4, 0.5, 0.29, 0.45]) # top middle
-    # ax2 = fig.add_axes([0.7, 0.5, 0.29, 0.45]) # top right
-    # ax3 = fig.add_axes([0.1, 0.0, 0.29, 0.45]) # bottom left
-    # ax4 = fig.add_axes([0.4, 0.0, 0.29, 0.45]) # bottom middle
-    # ax5 = fig.add_axes([0.7, 0.0, 0.29, 0.45]) # bottom right
 
     # create a 2x2 grid of colorbars for the replication and cn states
     fig = plt.figure(figsize=(12, 10))
@@ -120,11 +93,7 @@ def plot_true_vs_inferred_heatmaps(df, argv):
     ax2 = fig.add_axes([0.05, 0.0, 0.47, 0.45]) # bottom left
     ax3 = fig.add_axes([0.53, 0.0, 0.47, 0.45]) # bottom right
 
-    # # top left: true read depth
-    # plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'true_reads_norm', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap='viridis', max_cn=None)
-    # ax0.set_title('{}: Reads per million'.format(argv.dataset))
-
-    # top middle: true CN state
+    # top left: true CN state
     plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, argv.true_cn_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
     ax0.set_title('{}: True CN state'.format(argv.dataset))
 
@@ -132,11 +101,7 @@ def plot_true_vs_inferred_heatmaps(df, argv):
     plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, argv.model_cn_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
     ax1.set_title('{}: Inferred CN state (accuracy={})'.format(argv.dataset, round(cn_accuracy, 3)))
 
-    # # bottom left: comparison of true and inferred replication states
-    # plot_data3 = plot_clustered_cell_cn_matrix(ax3, df, 'rt_state_diff', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=acc_cmap)
-    # ax3.set_title('Replication accuracy: {}'.format(round(accuracy, 3)))
-
-    # bottom middle: true replication state
+    # bottom left: true replication state
     plot_data2 = plot_clustered_cell_cn_matrix(ax2, df, argv.true_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
     ax2.set_title('{}: True replication state'.format(argv.dataset))
 
@@ -191,27 +156,6 @@ def plot_true_vs_inferred_heatmaps(df, argv):
         plot_colorbar(ax, color_mat0)
         ax = fig.add_axes([0.04, 0.0, 0.01, 0.45])
         plot_colorbar(ax, secondary_color_mat)
-
-        # # create legend to match colors to clone ids
-        # ax = fig.add_axes([0.0, 0.75, 0.04, 0.25])
-        # plot_color_legend(ax, clones_to_colors0, title='Clone ID')
-
-        # # create legend to match colors to secondary sort values
-        # ax = fig.add_axes([0.0,0.5,0.04,0.25])
-        # plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
-
-        # # create a legend for the rt_state_diff heatmap
-        # # replace the 1s and -1s with 'FP' and 'FN', respectively
-        # acc = acc_color_dict.copy()
-        # acc['FP'] = acc.pop(1)
-        # acc['FN'] = acc.pop(-1)
-        # acc['T'] = acc.pop(0)
-        # ax = fig.add_axes([0.0, 0.25, 0.04, 0.25])
-        # plot_color_legend(ax, acc, title='Accuracy')
-
-        # # create a legend for the true and inferred replication states
-        # ax = fig.add_axes([0.0, 0.25, 0.04, 0.25])
-        # plot_color_legend(ax, rt_color_dict, title='Rep state')
 
     # save figure
     fig.savefig(argv.output, bbox_inches='tight', dpi=300)

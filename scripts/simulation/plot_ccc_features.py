@@ -2,6 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_phase_cmap
 
 
 def get_args():
@@ -38,13 +41,15 @@ def get_cell_metrics(cn_pyro_s, cn_pyro_g, cn_pyro_lq, frac_rt_col='cell_frac_re
 
 
 def plot_ccc_distributions(cell_metrics, argv):
+    phase_cmap = get_phase_cmap()
+
     # plot histogram of each feature split by cell cycle state
     fig, ax = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
     ax = ax.flatten()
 
-    sns.histplot(data=cell_metrics, x='corrected_madn', hue='PERT_phase', multiple='stack', ax=ax[0])
-    sns.histplot(data=cell_metrics, x='lrs', hue='PERT_phase', multiple='stack', ax=ax[1])
-    sns.histplot(data=cell_metrics, x='corrected_breakpoints', hue='PERT_phase', multiple='stack', ax=ax[2])
+    sns.histplot(data=cell_metrics, x='corrected_madn', hue='PERT_phase', multiple='stack', ax=ax[0], palette=phase_cmap)
+    sns.histplot(data=cell_metrics, x='lrs', hue='PERT_phase', multiple='stack', ax=ax[1], palette=phase_cmap)
+    sns.histplot(data=cell_metrics, x='corrected_breakpoints', hue='PERT_phase', multiple='stack', ax=ax[2], palette=phase_cmap)
 
     # set the dataset to the title of every subplot
     for a in ax:
@@ -56,9 +61,9 @@ def plot_ccc_distributions(cell_metrics, argv):
     fig, ax = plt.subplots(2, 3, figsize=(12, 8), tight_layout=True)
     ax = ax.flatten()
 
-    sns.scatterplot(data=cell_metrics, x='corrected_madn', y='lrs', hue='PERT_phase', alpha=0.3, ax=ax[0])
-    sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='lrs', hue='PERT_phase', alpha=0.3, ax=ax[1])
-    sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='corrected_madn', hue='PERT_phase', alpha=0.3, ax=ax[2])
+    sns.scatterplot(data=cell_metrics, x='corrected_madn', y='lrs', hue='PERT_phase', alpha=0.3, ax=ax[0], palette=phase_cmap)
+    sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='lrs', hue='PERT_phase', alpha=0.3, ax=ax[1], palette=phase_cmap)
+    sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='corrected_madn', hue='PERT_phase', alpha=0.3, ax=ax[2], palette=phase_cmap)
     sns.scatterplot(data=cell_metrics, x='corrected_madn', y='lrs', hue=argv.frac_rt_col, alpha=0.3, ax=ax[3])
     sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='lrs', hue=argv.frac_rt_col, alpha=0.3, ax=ax[4])
     sns.scatterplot(data=cell_metrics, x='corrected_breakpoints', y='corrected_madn', hue=argv.frac_rt_col, alpha=0.3, ax=ax[5])

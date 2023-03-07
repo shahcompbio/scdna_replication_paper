@@ -1,13 +1,6 @@
 from argparse import ArgumentParser
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-from scgenome.cnplot import plot_clustered_cell_cn_matrix
-from matplotlib.colors import ListedColormap
-from scipy.optimize import curve_fit
-from scgenome import cncluster
-from matplotlib.patches import Patch
 from scdna_replication_tools.calculate_twidth import compute_and_plot_twidth
 
 

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scgenome.cnplot import plot_clustered_cell_cn_matrix, plot_cell_cn_profile
+from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from argparse import ArgumentParser
 
 

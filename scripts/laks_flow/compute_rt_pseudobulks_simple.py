@@ -1,7 +1,5 @@
 from argparse import ArgumentParser
-import numpy as np
 import pandas as pd
-from scdna_replication_tools.compute_pseudobulk_rt_profiles import compute_pseudobulk_rt_profiles
 
 
 def get_args():

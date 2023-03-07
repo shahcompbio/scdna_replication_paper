@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
 from sklearn.decomposition import PCA
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_phase_cmap
 
 
 def get_args():
@@ -17,18 +20,6 @@ def get_args():
     p.add_argument('output_png', help='plot containinig pca embeddings')
 
     return p.parse_args()
-
-
-def get_phase_cmap():
-    ''' Global color map for cell cycle phases '''
-    cmap = {
-        'S': '#BA0021',  # red
-        'G1/2': '#003263',  # dark blue
-        'G1': '#003263',  # dark blue
-        'G2': '#6CACE4',  # light blue
-        'LQ': '#C4CED4'  # silver
-    }
-    return cmap
 
 
 def main():
@@ -63,21 +54,22 @@ def main():
     })
     pca_df = pd.merge(pca_df, metrics_df)
 
+    # rename clone_id to 'Clone ID' and 'PERT_phase' to 'PERT phase' for plotting
+    pca_df.rename(columns={'clone_id': 'Clone ID', 'PERT_phase': 'PERT phase'}, inplace=True)
+
     # create and save the pca embeddings
     fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
     ax = ax.flatten()
 
     phase_cmap = get_phase_cmap()
 
-    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='clone_id', alpha=0.5, ax=ax[0])
-    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='PERT_phase', alpha=0.5, ax=ax[1], palette=phase_cmap)
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='Clone ID', alpha=0.5, ax=ax[0])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='PERT phase', alpha=0.5, ax=ax[1], palette=phase_cmap)
 
     for i in range(2):
         ax[i].set_title('{} reads per million PCA'.format(argv.dataset))
         ax[i].set_xlabel('PC1')
         ax[i].set_ylabel('PC2')
-        # remove underscore from legend title
-        ax[i].get_legend().set_title(ax[i].get_legend().get_title().replace('_', ' '))
     
     fig.savefig(argv.output_png, bbox_inches='tight', dpi=300)
 

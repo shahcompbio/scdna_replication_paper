@@ -1,6 +1,5 @@
 import matplotlib
 matplotlib.use('Agg')
-import sys
 import scgenome.cnplot
 import matplotlib.pyplot as plt
 import pandas as pd

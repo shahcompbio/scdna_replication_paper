@@ -4,7 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
-from matplotlib.colors import ListedColormap
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap
 
 
 def get_args():
@@ -18,14 +20,6 @@ def get_args():
     p.add_argument('output_frac_rt', help='plot for frac_rt distribution across all cells')
 
     return p.parse_args()
-
-
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
 
 
 def plot_cn_and_rep_states(df, argv):

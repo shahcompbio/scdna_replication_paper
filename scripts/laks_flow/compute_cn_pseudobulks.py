@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-import numpy as np
 import pandas as pd
 from scdna_replication_tools.compute_consensus_clone_profiles import compute_consensus_clone_profiles
 

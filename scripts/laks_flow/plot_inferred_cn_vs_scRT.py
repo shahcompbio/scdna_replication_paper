@@ -5,8 +5,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from scgenome import cncluster
-from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap, get_cell_line_cmap
 
 
 def get_args():
@@ -56,15 +58,6 @@ def make_color_mat_float(values, palette_color):
         color_mat.append(pal(val))
     color_dict = {0: pal(0.0), 1: pal(1.0)}
     return color_mat, color_dict
-
-
-def get_rt_cmap():
-    """ Return a colormap for replication states. """
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list), rt_colors
 
 
 def plot_cn_and_rep_states(df, argv):
@@ -169,15 +162,20 @@ def plot_frac_rt_distributions(df, argv):
     # map the sample_id to a new column called cell_line
     # if sample_id is 'SA928' then the cell line is 'GM18507'
     # if sample_id is 'SA1044' then the cell line is 'T47D'
-    df_frac['cell_line'] = df_frac['sample_id'].apply(lambda x: 'GM18507' if x == 'SA928' else 'T47D')
+    df_frac['Cell line'] = df_frac['sample_id'].apply(lambda x: 'GM18507' if x == 'SA928' else 'T47D')
+
+    # rename 'clone_id' to 'Clone ID' for plotting purposes
+    df_frac.rename(columns={'clone_id': 'Clone ID'}, inplace=True)
     
     fig, ax = plt.subplots(1,3, figsize=(12, 4), tight_layout=True)
     ax = ax.flatten()
 
+    cell_line_cmap = get_cell_line_cmap()
+
     # violinplot
     sns.histplot(data=df_frac, x=argv.frac_rt_col, ax=ax[0])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='cell_line', multiple='stack', ax=ax[1])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2])
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Cell line', multiple='stack', ax=ax[1], palette=cell_line_cmap)
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Clone ID', multiple='stack', ax=ax[2])
 
     for i in range(3):
         ax[i].set_xlabel('Inferred fraction of replicated bins')

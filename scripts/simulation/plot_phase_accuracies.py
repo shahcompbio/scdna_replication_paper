@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from statannot import add_stat_annotation
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_methods_cmap
+
 
 def get_args():
     parser = ArgumentParser()
@@ -12,17 +16,6 @@ def get_args():
     parser.add_argument('plot2', type=str, help='Plot of phase accuracies in parameter sweep')
     parser.add_argument('plot3', type=str, help='Jointplot of true vs inferred fraction of replicated bins')
     return parser.parse_args()
-
-
-def custom_color_palette():
-    pal = {
-        'PERT clone': '#3da2ff',  # POWDERKEG BLUE
-        'PERT comp.': '#0054c0',  # TRUE BLUE
-        'PERT': '#0054c0',  # TRUE BLUE
-        'Kronos': '#c6aa55',  # GOLD
-        'laks': '#ffc000',  # YELLOW
-    }
-    return pal
 
 
 def plot_confusion_matrix(df, argv):
@@ -43,7 +36,7 @@ def plot_confusion_matrix(df, argv):
 def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_format='star', loc='inside', verbose=0, show_hue=True):
     """ Create a violinplot with p-values annotated. """
     if show_hue:
-        palette = custom_color_palette()
+        palette = get_methods_cmap()
         sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, saturation=1, linewidth=1)
     else:
         sns.violinplot(data=df, x=x, y=y, ax=ax, saturation=1, linewidth=1)
@@ -61,12 +54,6 @@ def plot_cna_rate_phase_acc(df, ax, n=1, test='t-test_ind', text_format='star', 
     hue = "method"
     temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2')
     box_pairs = [
-        # ((0.02, 'PERT'), (0.00, 'PERT')),
-        # ((0.02, 'PERT'), (0.05, 'PERT')),
-        # ((0.00, 'PERT'), (0.05, 'PERT')),
-        # ((0.02, 'laks'), (0.00, 'laks')),
-        # ((0.02, 'laks'), (0.05, 'laks')),
-        # ((0.00, 'laks'), (0.05, 'laks')),
         ((0.02, 'PERT'), (0.02, 'laks')),
         ((0.00, 'PERT'), (0.00, 'laks')),
         ((0.05, 'PERT'), (0.05, 'laks'))
@@ -85,8 +72,6 @@ def plot_clone_effect_phase_acc(df, ax, rate=0.02, test='t-test_ind', text_forma
     hue = "method"
     temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2')
     box_pairs = [
-        # ((1, 'PERT'), (3, 'PERT')),
-        # ((1, 'laks'), (3, 'laks')),
         ((1, 'PERT'), (1, 'laks')),
         ((3, 'PERT'), (3, 'laks'))
     ]
@@ -105,12 +90,6 @@ def plot_alpha_effect(df, ax, test='t-test_ind', text_format='star', loc='inside
     hue = "method"
     temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02')
     box_pairs = [
-        # ((10.0, 'PERT'), (5.0, 'PERT')),
-        # ((15.0, 'PERT'), (5.0, 'PERT')),
-        # ((10.0, 'PERT'), (15.0, 'PERT')),
-        # ((10.0, 'laks'), (5.0, 'laks')),
-        # ((15.0, 'laks'), (5.0, 'laks')),
-        # ((10.0, 'laks'), (15.0, 'laks')),
         ((10.0, 'PERT'), (10.0, 'laks')),
         ((5.0, 'PERT'), (5.0, 'laks')),
         ((15.0, 'PERT'), (15.0, 'laks'))
@@ -129,26 +108,6 @@ def plot_lambda_effect(df, ax, test='t-test_ind', text_format='star', loc='insid
     hue = "method"
     temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2')
     box_pairs = [
-        # ((0.5, 'PERT'), (0.6, 'PERT')),
-        # ((0.5, 'PERT'), (0.75, 'PERT')),
-        # ((0.5, 'PERT'), (0.9, 'PERT')),
-        # ((0.5, 'PERT'), (0.99, 'PERT')),
-        # ((0.6, 'PERT'), (0.75, 'PERT')),
-        # ((0.6, 'PERT'), (0.9, 'PERT')),
-        # ((0.6, 'PERT'), (0.99, 'PERT')),
-        # ((0.75, 'PERT'), (0.9, 'PERT')),
-        # ((0.75, 'PERT'), (0.99, 'PERT')),
-        # ((0.9, 'PERT'), (0.99, 'PERT')),
-        # ((0.5, 'laks'), (0.6, 'laks')),
-        # ((0.5, 'laks'), (0.75, 'laks')),
-        # ((0.5, 'laks'), (0.9, 'laks')),
-        # ((0.5, 'laks'), (0.99, 'laks')),
-        # ((0.6, 'laks'), (0.75, 'laks')),
-        # ((0.6, 'laks'), (0.9, 'laks')),
-        # ((0.6, 'laks'), (0.99, 'laks')),
-        # ((0.75, 'laks'), (0.9, 'laks')),
-        # ((0.75, 'laks'), (0.99, 'laks')),
-        # ((0.9, 'laks'), (0.99, 'laks')),
         ((0.5, 'laks'), (0.5, 'PERT')),
         ((0.6, 'laks'), (0.6, 'PERT')),
         ((0.75, 'laks'), (0.75, 'PERT')),
@@ -169,8 +128,6 @@ def plot_gc_bias_effect(df, ax, test='t-test_ind', text_format='star', loc='insi
     hue = "method"
     temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75')
     box_pairs = [
-        # ((1.2, 'PERT'), (-1.2, 'PERT')),
-        # ((1.2, 'laks'), (-1.2, 'laks')),
         ((1.2, 'PERT'), (1.2, 'laks')),
         ((-1.2, 'PERT'), (-1.2, 'laks')),
     ]
@@ -203,7 +160,7 @@ def plot_param_sweep(df, argv):
     axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
 
     # barplots of phase accuracies for all simulated datasets
-    sns.barplot(data=df, x='datatag', y='phase_acc', hue='method', ax=axbig_bottom_row, palette=custom_color_palette(), saturation=1)
+    sns.barplot(data=df, x='datatag', y='phase_acc', hue='method', ax=axbig_bottom_row, palette=get_methods_cmap(), saturation=1)
     axbig_bottom_row.set_ylabel('Phase accuracy')
     axbig_bottom_row.set_title('All simulated datasets')
 
@@ -248,10 +205,6 @@ def main():
     df['true_phase'] = df['true_phase'].astype(str)
     df['laks_phase'] = df['laks_phase'].astype(str)
     df['cell_id'] = df['cell_id'].astype(str)
-
-    # specify the method name to use as a hue
-    # statannot requires hues as input
-    # df['method'] = 'PERT'
 
     # rename the lambda column to lambd to avoid conflict with python keyword
     df.rename(columns={'lambda': 'lamb'}, inplace=True)

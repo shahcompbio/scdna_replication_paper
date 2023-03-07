@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statannot import add_stat_annotation
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_methods_cmap
 
 
 def get_args():
@@ -15,20 +18,9 @@ def get_args():
     return p.parse_args()
 
 
-def custom_color_palette():
-    pal = {
-        'PERT clone': '#3da2ff',  # POWDERKEG BLUE
-        'PERT comp.': '#0054c0',  # TRUE BLUE
-        'PERT': '#0054c0',  # TRUE BLUE
-        'Kronos': '#c6aa55',  # GOLD
-        'laks': '#ffc000',  # YELLOW
-    }
-    return pal
-
-
 def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_format='star', loc='inside', verbose=0, hue_order=None):
     """ Create a violinplot with p-values annotated. """
-    palette = custom_color_palette()
+    palette = get_methods_cmap()
     sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, saturation=1, linewidth=1, hue_order=hue_order)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test,
@@ -273,7 +265,7 @@ def plot_param_sweep_rep_acc(df, argv):
     # barplots of phase accuracies for all simulated datasets
     sns.barplot(
         data=df, x='datatag', y='rep_accuracy', hue='method', hue_order=hue_order, 
-        ax=axbig_bottom_row, palette=custom_color_palette(), saturation=1
+        ax=axbig_bottom_row, palette=get_methods_cmap(), saturation=1
     )
     axbig_bottom_row.set_ylabel('Replication state accuracy')
     axbig_bottom_row.set_title('All simulated datasets')
@@ -318,7 +310,7 @@ def plot_param_sweep_cn_acc(df, argv):
     # barplots of phase accuracies for all simulated datasets
     sns.barplot(
         data=df, x='datatag', y='cn_accuracy', hue='method', hue_order=hue_order,
-        ax=axbig_bottom_row, palette=custom_color_palette(), saturation=1)
+        ax=axbig_bottom_row, palette=get_methods_cmap(), saturation=1)
     axbig_bottom_row.set_ylabel('CN state accuracy')
     axbig_bottom_row.set_title('All simulated datasets')
 

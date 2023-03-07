@@ -2,6 +2,9 @@ from argparse import ArgumentParser
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_phase_cmap
 
 
 def get_args():
@@ -13,18 +16,6 @@ def get_args():
     p.add_argument('ccc_plots', help='plot showing the ccc features for mislabeled cells')
 
     return p.parse_args()
-
-
-def get_phase_cmap():
-    ''' Global color map for cell cycle phases '''
-    cmap = {
-        'S': '#BA0021',  # red
-        'G1/2': '#003263',  # dark blue
-        'G1': '#003263',  # dark blue
-        'G2': '#6CACE4',  # light blue
-        'LQ': '#C4CED4'  # silver
-    }
-    return cmap
 
 
 def make_plots(legend_df, metrics_df, argv):

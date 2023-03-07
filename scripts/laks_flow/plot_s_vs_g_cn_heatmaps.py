@@ -1,6 +1,5 @@
 import matplotlib
 matplotlib.use('Agg')
-import sys
 import scgenome.cnplot
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,6 +8,9 @@ from argparse import ArgumentParser
 from scgenome import cncluster
 from matplotlib.patches import Patch
 from matplotlib import colors as mcolors
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_cell_line_cmap
 
 
 def get_args():
@@ -95,10 +97,10 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(14,7), dataset=None, line_col='library_
         # annotate the lines for G1-phase cells
         cluster_ids_g1 = plot_data_g1.columns.get_level_values(1).values
         print(cluster_ids_g1)
-        cell_line_cmap = {
-            2: mcolors.to_rgba('C0'),  # blue for T47D
-            1: mcolors.to_rgba('C1')  # orange for GM18507,
-        }
+        cell_line_cmap = get_cell_line_cmap()
+        # use mcolors to change every element in the dict to rgba
+        for key in cell_line_cmap.keys():
+            cell_line_cmap[key] = mcolors.to_rgba(cell_line_cmap[key])
         color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, color_map=cell_line_cmap, return_map=True)
         print(color_mat_g1)
 

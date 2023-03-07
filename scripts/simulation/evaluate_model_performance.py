@@ -4,7 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
-from matplotlib.colors import ListedColormap
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from common.colors import get_rt_cmap, get_acc_cmap
 
 
 def get_args():
@@ -20,32 +22,6 @@ def get_args():
     p.add_argument('output_frac_rt', help='Compare distributions of frac_rt between true and inferred')
 
     return p.parse_args()
-
-
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
-
-
-def get_chng_cmap(max_int):
-    changepoint_colors = {0:'#CCCCCC'}
-    color_list = []
-    for i in [0]:
-        color_list.append(changepoint_colors[i])
-    for i in range(1, max_int+1):
-        color_list.append('C{}'.format(i))
-    return ListedColormap(color_list)
-
-
-def get_acc_cmap():
-    acc_colors = {0:'#CCCCCC', -1: '#532A44', 1: '#00685E'}
-    color_list = []
-    for i in [-1, 0, 1]:
-        color_list.append(acc_colors[i])
-    return ListedColormap(color_list)
 
 
 def compute_cell_frac(cn, frac_rt_col='cell_frac_rep', rep_state_col='model_rep_state'):

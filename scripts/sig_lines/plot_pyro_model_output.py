@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scgenome.cnplot import plot_clustered_cell_cn_matrix, plot_cell_cn_profile
-from matplotlib.colors import ListedColormap
+from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap
 
 def get_args():
     p = ArgumentParser()
@@ -17,14 +19,6 @@ def get_args():
     p.add_argument('plot3', help='heatmaps of G1- vs S-phase reads per million')
 
     return p.parse_args()
-
-
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
 
 
 def plot_model_results(cn_s, cn_g, argv):

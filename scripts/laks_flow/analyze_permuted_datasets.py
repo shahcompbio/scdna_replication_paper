@@ -31,12 +31,6 @@ def main():
     argv = get_args()
 
     # build table that matches config file for each permuted dataset
-    # rates = [0.01] * 3
-    # rates.extend([0.03]*3)
-    # rates.extend([0.05]*3)
-    # rates.extend([0.1]*3)
-    # rates.extend([0.2]*3)
-    # rates.extend([0.3]*3)
     legend_df = pd.DataFrame({
         'dataset': argv.datasets,
         'rate': argv.rates

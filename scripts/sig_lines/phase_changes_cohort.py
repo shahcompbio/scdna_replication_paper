@@ -3,6 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_phase_cmap
+
 
 def get_args():
     p = ArgumentParser()
@@ -14,29 +18,17 @@ def get_args():
     return p.parse_args()
 
 
-def get_phase_cmap():
-    ''' Global color map for cell cycle phases '''
-    cmap = {
-        'S': '#BA0021',  # red
-        'G1/2': '#003263',  # dark blue
-        'G1': '#003263',  # dark blue
-        'G2': '#6CACE4',  # light blue
-        'LQ': '#C4CED4'  # silver
-    }
-    return cmap
-
-
 def plot_confusion_matrix(cn, argv):
     """ Plot a confusion matrix comparing laks_phase to pert_phase for each cell. """
     # create a figure
     fig, ax = plt.subplots(figsize=(4, 4))
 
     # plot a confusion matrix of cn where the rows are laks phase and the columns are pert phase
-    sns.heatmap(pd.crosstab(cn['laks_phase'], cn['pert_phase']), annot=True, fmt='d', cmap='Blues', ax=ax)
+    sns.heatmap(pd.crosstab(cn['pert_phase'], cn['laks_phase']), annot=True, fmt='d', cmap='Blues', ax=ax)
 
     # rename the x and y axis labels
-    ax.set_xlabel('PERT phase')
-    ax.set_ylabel('Laks et al phase')
+    ax.set_xlabel('Laks phase')
+    ax.set_ylabel('PERT phase')
     ax.set_title(f'Signatures cell lines\n # cells')
 
     # save the figure
