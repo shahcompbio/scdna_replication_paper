@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.plot_utils import plot_cell_cn_profile2
-from common.colors import get_chrom_cmap
+from common.colors import get_chrom_cmap, get_clone_cmap
 
 
 def get_args():
@@ -101,6 +101,8 @@ def plot_clone_rt_profiles(rt, ax0, ax1, dataset_id, counts):
     # get the clone RT columns for this dataset
     clone_rt_cols = [c for c in rt.columns if c.startswith(dataset_id) and 'clone' in c]
 
+    clone_cmap = get_clone_cmap()
+
     # plot each clone RT profile as a different color
     # only plot the X chromosome for now
     for i, col in enumerate(clone_rt_cols):
@@ -109,12 +111,12 @@ def plot_clone_rt_profiles(rt, ax0, ax1, dataset_id, counts):
         n = int(counts.query("dataset=='{}'".format(dataset_id)).query("clone_id=='{}'".format(clone_id))['num_cells_s'].values[0])
         # plot the X chromosome
         plot_cell_cn_profile2(
-            ax1, rt, col, color='C{}'.format(i), chromosome='X',
+            ax1, rt, col, color=clone_cmap[clone_id], chromosome='X',
             max_cn=None, scale_data=False, lines=True, label='{} (n={})'.format(clone_id, n)
         )
         # plot the whole genome
         plot_cell_cn_profile2(
-            ax0, rt, col, color='C{}'.format(i),
+            ax0, rt, col, color=clone_cmap[clone_id],
             max_cn=None, scale_data=False, lines=True, label='{} (n={})'.format(clone_id, n)
         )
     
@@ -128,7 +130,8 @@ def plot_clone_rt_profiles(rt, ax0, ax1, dataset_id, counts):
 def plot_clone_rt_profiles_wrapper(rt, counts, argv):
     # plot clone RT profiles for each dataset
     # find the number of datasets
-    datasets = set([c.split('_')[0] for c in rt.columns if (c.startswith('SA') or c.startswith('OV')) and 'clone' not in c])
+    # datasets = set([c.split('_')[0] for c in rt.columns if (c.startswith('SA') or c.startswith('OV')) and 'clone' not in c])
+    datasets = ['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055', 'OV2295']
     n_datasets = len(datasets)
 
     # create a grid of subplots where each row is a dataset and the height is propotional to the number of datasets

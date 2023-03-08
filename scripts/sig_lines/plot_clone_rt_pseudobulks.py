@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.plot_utils import plot_cell_cn_profile2
+from common.colors import get_clone_cmap
 
 
 def get_args():
@@ -23,18 +24,20 @@ def plot_clone_rt_profiles(rt, argv):
     clones = [x.split('_')[1].replace('clone', '') for x in cols]
     ref_clone = clones[0]
 
+    clone_cmap = get_clone_cmap()
+
     fig, ax = plt.subplots(4, 1, figsize=(16,16), tight_layout=True)
     ax = ax.flatten()
     i = 0
     for clone_id, col in zip(clones, cols):
         # plot the whole genome
         plot_cell_cn_profile2(
-            ax[0], rt, col, color='C{}'.format(i), 
+            ax[0], rt, col, color=clone_cmap[clone_id],
             max_cn=None, scale_data=False, lines=True, label=clone_id
         )
         # zoom in on chr1
         plot_cell_cn_profile2(
-            ax[1], rt, col, color='C{}'.format(i), chromosome='1',
+            ax[1], rt, col, color=clone_cmap[clone_id], chromosome='1',
             max_cn=None, scale_data=False, lines=True, label=clone_id
         )
         
@@ -44,12 +47,12 @@ def plot_clone_rt_profiles(rt, argv):
 
             # plot the whole genome
             plot_cell_cn_profile2(
-                ax[2], rt, 'temp_diff_rt', color='C{}'.format(i), 
+                ax[2], rt, 'temp_diff_rt', color=clone_cmap[clone_id], 
                 max_cn=None, scale_data=False, lines=True, label=clone_id
             )
             # zoom in on chr1
             plot_cell_cn_profile2(
-                ax[3], rt, 'temp_diff_rt', color='C{}'.format(i), chromosome='1',
+                ax[3], rt, 'temp_diff_rt', color=clone_cmap[clone_id], chromosome='1',
                 max_cn=None, scale_data=False, lines=True, label=clone_id
             )
             

@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from sklearn.decomposition import PCA
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from common.colors import get_phase_cmap
+from common.colors import get_phase_cmap, get_clone_cmap
 
 
 def get_args():
@@ -62,8 +62,10 @@ def main():
     ax = ax.flatten()
 
     phase_cmap = get_phase_cmap()
+    clone_cmap = get_clone_cmap()
+    clone_order = sorted(pca_df['Clone ID'].unique())
 
-    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='Clone ID', alpha=0.5, ax=ax[0])
+    sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='Clone ID', alpha=0.5, ax=ax[0], palette=clone_cmap, hue_order=clone_order)
     sns.scatterplot(data=pca_df, x='embedding_0', y='embedding_1', hue='PERT phase', alpha=0.5, ax=ax[1], palette=phase_cmap)
 
     for i in range(2):

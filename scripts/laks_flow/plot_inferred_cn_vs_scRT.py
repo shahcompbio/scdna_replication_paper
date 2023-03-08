@@ -6,9 +6,10 @@ import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from scgenome import cncluster
 from matplotlib.patches import Patch
+from matplotlib import colors as mcolors
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from common.colors import get_rt_cmap, get_cell_line_cmap
+from common.colors import get_rt_cmap, get_cell_line_cmap, get_clone_cmap
 
 
 def get_args():
@@ -107,7 +108,11 @@ def plot_cn_and_rep_states(df, argv):
         # annotate the clones for G1-phase cells
         cell_ids = plot_data0.columns.get_level_values(0).values
         cluster_ids0 = plot_data0.columns.get_level_values(1).values
-        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, return_map=True)
+        clone_cmap = get_clone_cmap()
+        # use mcolors to change every element in the dict to rgba
+        for key in clone_cmap.keys():
+            clone_cmap[key] = mcolors.to_rgba(clone_cmap[key])
+        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, color_map=clone_cmap, return_map=True)
 
         # get list of color pigments in the same order as clone_dict
         colors_used0 = []
@@ -171,11 +176,13 @@ def plot_frac_rt_distributions(df, argv):
     ax = ax.flatten()
 
     cell_line_cmap = get_cell_line_cmap()
+    clone_cmap = get_clone_cmap()
+    clone_order = sorted(df_frac['Clone ID'].unique())
 
     # violinplot
     sns.histplot(data=df_frac, x=argv.frac_rt_col, ax=ax[0])
     sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Cell line', multiple='stack', ax=ax[1], palette=cell_line_cmap)
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Clone ID', multiple='stack', ax=ax[2])
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Clone ID', multiple='stack', ax=ax[2], palette=clone_cmap, hue_order=clone_order)
 
     for i in range(3):
         ax[i].set_xlabel('Inferred fraction of replicated bins')

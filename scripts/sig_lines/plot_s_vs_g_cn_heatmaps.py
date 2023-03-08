@@ -7,6 +7,10 @@ import numpy as np
 from argparse import ArgumentParser
 from scgenome import cncluster
 from matplotlib.patches import Patch
+from matplotlib import colors as mcolors
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_clone_cmap
 
 
 def get_args():
@@ -85,7 +89,11 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
     if len(clone_dict) > 1:
         # annotate the clones for G1-phase cells
         cluster_ids_g1 = plot_data_g1.columns.get_level_values(1).values
-        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, return_map=True)
+        # use mcolors to change every element in the dict to rgba
+        clone_cmap = get_clone_cmap()
+        for key in clone_cmap.keys():
+            clone_cmap[key] = mcolors.to_rgba(clone_cmap[key])
+        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, color_map=clone_cmap, return_map=True)
 
         # get list of color pigments in the same order as clone_dict
         colors_used_g1 = []

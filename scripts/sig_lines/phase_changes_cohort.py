@@ -29,7 +29,7 @@ def plot_confusion_matrix(cn, argv):
     # rename the x and y axis labels
     ax.set_xlabel('Laks phase')
     ax.set_ylabel('PERT phase')
-    ax.set_title(f'Signatures cell lines\n # cells')
+    ax.set_title(f'Unsorted hTERT & OV2295 cell lines\n # cells')
 
     # save the figure
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)

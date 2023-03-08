@@ -64,7 +64,7 @@ def main():
     fig, ax = plt.subplots(1, 1, figsize=(6,4))
     ax = plot_clone_rt_diff_vs_cna_types(df, ax)
     ax.set_title('RT shifts at subclonal CNAs - all hTERTs')
-    ax.set_xlabel('CNA type')
+    ax.set_xlabel('Subclonal CNA type')
     ax.set_ylabel('Clone RT relative to reference\n<--later | earlier-->')
     fig.savefig(argv.plot, bbox_inches='tight', dpi=300)
 

@@ -5,9 +5,10 @@ from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from scgenome import cncluster
 from matplotlib.patches import Patch
 from argparse import ArgumentParser
+from matplotlib import colors as mcolors
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from common.colors import get_rt_cmap
+from common.colors import get_rt_cmap, get_clone_cmap
 
 
 def get_args():
@@ -95,19 +96,19 @@ def plot_true_vs_inferred_heatmaps(df, argv):
 
     # top left: true CN state
     plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, argv.true_cn_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
-    ax0.set_title('{}: True CN state'.format(argv.dataset))
+    ax0.set_title('{} S-phase: True somatic CN state'.format(argv.dataset))
 
     # top right: inferred CN state
     plot_data1 = plot_clustered_cell_cn_matrix(ax1, df, argv.model_cn_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
-    ax1.set_title('{}: Inferred CN state (accuracy={})'.format(argv.dataset, round(cn_accuracy, 3)))
+    ax1.set_title('{} S-phase: Inferred CN state (accuracy={})'.format(argv.dataset, round(cn_accuracy, 3)))
 
     # bottom left: true replication state
     plot_data2 = plot_clustered_cell_cn_matrix(ax2, df, argv.true_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
-    ax2.set_title('{}: True replication state'.format(argv.dataset))
+    ax2.set_title('{} S-phase: True replication state'.format(argv.dataset))
 
     # bottom right: inferred replication state
     plot_data3 = plot_clustered_cell_cn_matrix(ax3, df, argv.model_rep_state, cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column, cmap=rt_cmap)
-    ax3.set_title('{}: Inferred replication state (accuracy={})'.format(argv.dataset, round(rep_accuracy, 3)))
+    ax3.set_title('{} S-phase: Inferred replication state (accuracy={})'.format(argv.dataset, round(rep_accuracy, 3)))
 
     # hide the y-ticks and labels for all heatmaps
     for ax in [ax0, ax1, ax2, ax3]:
@@ -118,7 +119,11 @@ def plot_true_vs_inferred_heatmaps(df, argv):
         # annotate the clones for G1-phase cells
         cell_ids = plot_data0.columns.get_level_values(0).values
         cluster_ids0 = plot_data0.columns.get_level_values(1).values
-        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, return_map=True)
+        clone_cmap = get_clone_cmap()
+        # use mcolors to change every element in the dict to rgba
+        for key in clone_cmap.keys():
+            clone_cmap[key] = mcolors.to_rgba(clone_cmap[key])
+        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, color_map=clone_cmap, return_map=True)
 
         # get list of color pigments in the same order as clone_dict
         colors_used0 = []

@@ -47,18 +47,18 @@ def plot_model_results(cn_s, cn_g, argv):
     ax[2].set_title('{} S-phase cells\nInferred CN states'.format(argv.dataset))
     ax[3].set_title('{} S-phase cells\nInferred replication states'.format(argv.dataset))
 
-    # bottom row is the G1/2-phase cells
-    # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
+    # # bottom row is the G1/2-phase cells
+    # # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
     # plot_clustered_cell_cn_matrix(ax[4], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
     # plot_clustered_cell_cn_matrix(ax[5], cn_g, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
     # plot_clustered_cell_cn_matrix(ax[6], cn_g, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
     # plot_clustered_cell_cn_matrix(ax[7], cn_g, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
 
-    # add titles for each subplot
-    ax[4].set_title('{} G1/2-phase cells\nReads per million'.format(argv.dataset))
-    ax[5].set_title('{} G1/2-phase cells\n10x CN states'.format(argv.dataset))
-    ax[6].set_title('{} G1/2-phase cells\nPERT CN states'.format(argv.dataset))
-    ax[7].set_title('{} G1/2-phase cells\nPERT replication states'.format(argv.dataset))
+    # # add titles for each subplot
+    # ax[4].set_title('{} G1/2-phase cells\nReads per million'.format(argv.dataset))
+    # ax[5].set_title('{} G1/2-phase cells\n10x CN states'.format(argv.dataset))
+    # ax[6].set_title('{} G1/2-phase cells\nPERT CN states'.format(argv.dataset))
+    # ax[7].set_title('{} G1/2-phase cells\nPERT replication states'.format(argv.dataset))
 
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 

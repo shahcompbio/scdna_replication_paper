@@ -230,7 +230,7 @@ rule plot_cn_clone_heatmaps_lf:
     output: 'plots/laks_flow/{dataset}/cn_clone_heatmaps.png'
     params:
         value_col = 'state',
-        dataset = 'flow-sorted'
+        dataset = 'FACS'
     log:
         'logs/laks_flow/{dataset}/plot_cn_clone_heatmaps.log'
     shell:

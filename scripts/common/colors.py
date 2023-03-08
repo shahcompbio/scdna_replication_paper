@@ -87,3 +87,35 @@ def get_chrom_cmap():
         'chrX': 'salmon'
     }
     return cmap
+
+
+def get_clone_cmap():
+    cmap = {
+        'A': 'C0',
+        1: 'C0',
+        'B': 'C1',
+        2: 'C1',
+        'C': 'C2',
+        3: 'C2',
+        'D': 'C3',
+        4: 'C3',
+        'E': 'C4',
+        5: 'C4',
+        'F': 'C5',
+        6: 'C5',
+        'G': 'C6',
+        7: 'C6',
+        'H': 'C7',
+        8: 'C7',
+        'I': 'C8',
+        9: 'C8',
+        'J': 'C9',
+        10: 'C9',
+        'K': 'lightsteelblue',
+        11: 'lightsteelblue',
+        'L': 'darksalmon',
+        12: 'darksalmon',
+        'M': 'lightgreen',
+        13: 'lightgreen'
+    }
+    return cmap

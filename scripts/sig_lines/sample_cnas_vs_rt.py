@@ -28,9 +28,18 @@ def load_rt_data(argv):
     rt = pd.DataFrame()
     for rt_path, d in zip(argv.input_rt, argv.datasets):
         temp_rt = pd.read_csv(rt_path, sep='\t')
-        temp_rt = temp_rt[[
-            'chr', 'start', 'pseudobulk_model_rep_state', 'pseudobulk_hours',
-        ]]
+        if 'SA039' in rt_path:
+            temp_rt = temp_rt[[
+                'chr', 'start', 'pseudobulk_cloneA_model_rep_state', 'pseudobulk_cloneA_hours', 'pseudobulk_model_rep_state', 'pseudobulk_hours'
+            ]]
+            temp_rt.rename(columns={
+                'pseudobulk_cloneA_model_rep_state': '{}_cloneA_pseudobulk_rt'.format(d),
+                'pseudobulk_cloneA_hours': '{}_cloneA_pseudobulk_rt_hours'.format(d)
+            }, inplace=True)
+        else:
+            temp_rt = temp_rt[[
+                'chr', 'start', 'pseudobulk_model_rep_state', 'pseudobulk_hours',
+            ]]
         temp_rt.rename(columns={
             'pseudobulk_model_rep_state': '{}_pseudobulk_rt'.format(d),
             'pseudobulk_hours': '{}_pseudobulk_rt_hours'.format(d)
@@ -48,7 +57,7 @@ def load_rt_data(argv):
     rt['end'] = rt['start'] + 500000 - 1
             
     return rt
-
+    
 
 def load_cn_data(argv):
     # load dataset pseudobulk cn profiles
@@ -100,7 +109,7 @@ def make_bk(cn, argv):
 
 def compute_relative_rt_and_cn(cn, rt, argv):
     for d in argv.datasets:
-        ref_rt_col = 'SA039_pseudobulk_rt'
+        ref_rt_col = 'SA039_cloneA_pseudobulk_rt'
         ref_cn_col = 'SA039_pseudobulk_cn'
         
         temp_rt_col = '{}_pseudobulk_rt'.format(d)
@@ -120,7 +129,7 @@ def merge_cn_and_rt_info(cn, rt, bk, argv):
     df = []
 
     for i, d in enumerate(argv.datasets):
-        ref_rt_col = 'SA039_pseudobulk_rt'
+        ref_rt_col = 'SA039_cloneA_pseudobulk_rt'
         ref_cn_col = 'SA039_pseudobulk_cn'
         
         temp_rt_col = '{}_pseudobulk_rt'.format(d)
@@ -197,9 +206,9 @@ def plot_rt_distributions(df, argv):
 
     # violin plots of RT distributions split by CNA type
     plot_WT_rt_vs_cna_type(df.query('dataset!="SA039"'), ax[0])
-    ax[0].set_xlabel('Relative CN in hTERT non-WT cell line')
-    ax[0].set_ylabel('RT in hTERT WT\n<--late | early-->')
-    ax[0].set_title('CNA type vs RT')
+    ax[0].set_xlabel('Clonal CN in hTERT mutant cell lines')
+    ax[0].set_ylabel('Ancestral hTERT RT\n<--late | early-->')
+    ax[0].set_title('Location of clonal CNAs')
 
     # histogram of RT values split by CNA type
     df['CNA type'] = df['cna_type']
@@ -208,13 +217,14 @@ def plot_rt_distributions(df, argv):
         common_norm=False, stat='density', ax=ax[1],
         palette=get_cna_cmap()
     )
-    ax[1].set_xlabel('RT in hTERT WT\n<--late | early-->')
+    ax[1].set_xlabel('Ancestral hTERT RT\n<--late | early-->')
+    ax[1].set_title('Location of clonal CNAs')
 
     # violin plots of RT distributions split by breakpoint presence
     plot_WT_rt_vs_bk(df.query('dataset!="SA039"'), ax[2])
-    ax[2].set_xlabel('CN breakpoint in hTERT non-WT cell line')
-    ax[2].set_ylabel('RT in hTERT WT\n<--late | early-->')
-    ax[2].set_title('CN breakpoints vs RT')
+    ax[2].set_xlabel('Clonal CN breakpoint in hTERT mutant cell lines')
+    ax[2].set_ylabel('Ancestral hTERT RT\n<--late | early-->')
+    ax[2].set_title('Location of clonal CNA breakpoints')
 
     # histogram of RT values split by breakpoint presence
     sns.histplot(
@@ -222,7 +232,8 @@ def plot_rt_distributions(df, argv):
         common_norm=False, stat='density', ax=ax[3],
         palette={'No': 'C0', 'Yes': 'C1'}
     )
-    ax[3].set_xlabel('RT in hTERT WT\n<--late | early-->')
+    ax[3].set_xlabel('Ancestral hTERT RT\n<--late | early-->')
+    ax[3].set_title('Location of clonal CNA breakpoints')
 
     # save the figure
     fig.savefig(argv.plot1, dpi=300, bbox_inches='tight')
@@ -231,7 +242,7 @@ def plot_rt_distributions(df, argv):
 def plot_profiles(cn, rt, argv):
     # plot the reference RT profile and the relative CN profiles for each dataset
     # get the reference pseudobulk rt column
-    ref_rt_col = 'SA039_pseudobulk_rt'
+    ref_rt_col = 'SA039_cloneA_pseudobulk_rt'
 
     fig, ax = plt.subplots(2, 1, figsize=(16,8), tight_layout=True)
     ax = ax.flatten()
@@ -239,7 +250,7 @@ def plot_profiles(cn, rt, argv):
     # plot pseudobulk rt values of the reference WT dataset
     plot_cell_cn_profile2(
         ax[0], rt, ref_rt_col,
-        max_cn=None, scale_data=False, lines=True, label='SA039'
+        max_cn=None, scale_data=False, lines=True
     )
 
     for i, d in enumerate(argv.datasets):
@@ -251,11 +262,10 @@ def plot_profiles(cn, rt, argv):
             max_cn=None, scale_data=False, lines=True, label=d
         )
 
-    ax[0].set_title('Sample Pseudobulk RT')
+    ax[0].set_title('Ancestral hTERT RT (SA039 clone A)')
     ax[1].set_title('Sample Pseudobulk CN')
-    ax[0].set_ylabel('RT of hTERT WT\n<--late | early-->')
+    ax[0].set_ylabel('Pseudobulk RT\n<--late | early-->')
     ax[1].set_ylabel('CN relative to hTERT WT and ploidy\n<--loss | gain-->')
-    ax[0].legend(title='Sample ID')
     ax[1].legend(title='Sample ID')
 
     # manually set the y-ticks for ax[1] to range from -1 to 1, spaced by 0.2
@@ -295,7 +305,7 @@ def main():
     # plot the RT distributions
     plot_rt_distributions(df, argv)
 
-    # plot the CN and RT profiles
+    # plot the CN and ref RT profiles
     plot_profiles(cn, rt, argv)
 
 
