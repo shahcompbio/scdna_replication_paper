@@ -72,11 +72,11 @@ def get_cn_cmap(cn_data):
 
 def get_methods_cmap():
     cmap = {
-        'PERT clone': '#3da2ff',  # POWDERKEG BLUE
-        'PERT comp.': '#0054c0',  # TRUE BLUE
-        'PERT': '#0054c0',  # TRUE BLUE
-        'Kronos': '#c6aa55',  # GOLD
-        'laks': '#ffc000',  # YELLOW
+        'PERT clone': 'lightblue',  # POWDERKEG BLUE
+        'PERT comp.': 'dodgerblue',  # TRUE BLUE
+        'PERT': 'dodgerblue',  # TRUE BLUE
+        'Kronos': 'goldenrod',  # GOLD
+        'laks': 'gold',  # YELLOW
     }
     return cmap
 

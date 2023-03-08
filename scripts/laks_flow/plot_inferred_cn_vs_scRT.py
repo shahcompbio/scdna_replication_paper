@@ -82,9 +82,9 @@ def plot_cn_and_rep_states(df, argv):
     # add 3 subplots, leaving space for the colorbars on the far left
     # the heatmaps should be arranged in 1 row and 3 columns, having a height of 1 and a width of 0.29
     fig = plt.figure(figsize=(21, 7))
-    ax0 = fig.add_axes([0.1, 0.0, 0.29, 1.0]) # left
-    ax1 = fig.add_axes([0.4, 0.0, 0.29, 1.0]) # middle
-    ax2 = fig.add_axes([0.7, 0.0, 0.29, 1.0]) # right
+    ax0 = fig.add_axes([0.02, 0.0, 0.315, 1.0]) # left
+    ax1 = fig.add_axes([0.345, 0.0, 0.315, 1.0]) # middle
+    ax2 = fig.add_axes([0.67, 0.0, 0.315, 1.0]) # right
 
     # left: hmmcopy states
     plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
@@ -132,25 +132,25 @@ def plot_cn_and_rep_states(df, argv):
 
         # create color bar that shows clone id to the left of the heatmap in the top left corner
         # color bar should be 0.01 wide and 1.0 tall
-        ax = fig.add_axes([0.08, 0.0, 0.01, 1.0])
+        ax = fig.add_axes([0.00, 0.0, 0.01, 1.0])
         plot_colorbar(ax, color_mat0)
 
         # create color bar that shows secondary sort value just to the right of the clone id color bar
         # color bar should be 0.01 wide and 1.0 tall
-        ax = fig.add_axes([0.09, 0.0, 0.01, 1.0])
+        ax = fig.add_axes([0.01, 0.0, 0.01, 1.0])
         plot_colorbar(ax, secondary_color_mat)
 
-        # create legend to match colors to clone ids
-        ax = fig.add_axes([0.0, 0.75, 0.04, 0.25])
-        plot_color_legend(ax, clones_to_colors0, title='Clone ID')
+        # # create legend to match colors to clone ids
+        # ax = fig.add_axes([0.0, 0.75, 0.04, 0.25])
+        # plot_color_legend(ax, clones_to_colors0, title='Clone ID')
 
-        # create legend to match colors to secondary sort values
-        ax = fig.add_axes([0.0,0.5,0.04,0.25])
-        plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
+        # # create legend to match colors to secondary sort values
+        # ax = fig.add_axes([0.0,0.5,0.04,0.25])
+        # plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
 
-        # create a legend for the true and inferred replication states
-        ax = fig.add_axes([0.0, 0.25, 0.04, 0.25])
-        plot_color_legend(ax, rt_color_dict, title='Rep state')
+        # # create a legend for the true and inferred replication states
+        # ax = fig.add_axes([0.0, 0.25, 0.04, 0.25])
+        # plot_color_legend(ax, rt_color_dict, title='Rep state')
 
     # save figure
     fig.savefig(argv.output_rt_state, bbox_inches='tight', dpi=300)

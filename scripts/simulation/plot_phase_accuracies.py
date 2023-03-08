@@ -6,7 +6,7 @@ from statannot import add_stat_annotation
 from argparse import ArgumentParser
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from common.colors import get_methods_cmap
+from common.colors import get_methods_cmap, get_phase_cmap
 
 
 def get_args():
@@ -37,9 +37,9 @@ def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_for
     """ Create a violinplot with p-values annotated. """
     if show_hue:
         palette = get_methods_cmap()
-        sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, saturation=1, linewidth=1)
+        sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, linewidth=1)
     else:
-        sns.violinplot(data=df, x=x, y=y, ax=ax, saturation=1, linewidth=1)
+        sns.violinplot(data=df, x=x, y=y, ax=ax, linewidth=1)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test,
                         text_format=text_format, loc=loc, verbose=verbose)
@@ -181,9 +181,10 @@ def plot_jointplot(df, argv):
     ''' Plot a jointplot of the PERT and true fraction of replicated bins per cell. Use the phase class (TP, FP, TN, FN) as the hue. '''
     # subset to just the rows with method=='PERT'
     df = df.query('method=="PERT"').query('lamb==0.75')
-    pal = {'TP': 'green', 'TN': 'blue', 'FP': 'red', 'FN': 'orange'}
+    # phase_class_pal = {'TP': 'green', 'TN': 'blue', 'FP': 'red', 'FN': 'orange'}
+    pal = get_phase_cmap()
     # create a JointGrid instance
-    g = sns.JointGrid(data=df, x='true_cell_frac_rep', y='cell_frac_rep', hue='phase_class', hue_order=['TP', 'TN', 'FP', 'FN'], palette=pal, height=4)
+    g = sns.JointGrid(data=df, x='true_cell_frac_rep', y='cell_frac_rep', hue='true_phase', palette=pal, height=4)
     # plot a scatterplot on the joint axes with alpha=0.2   
     # order the hues such that S is first, G1/2 is second
     g.plot_joint(sns.scatterplot, alpha=0.2, s=5)
@@ -192,7 +193,7 @@ def plot_jointplot(df, argv):
     # rename the axes
     g.set_axis_labels('True fraction of replicated bins', 'PERT inferred fraction of replicated bins')
     # rename the legend title to 'Phase class'
-    g.ax_joint.legend(title='Phase class')
+    g.ax_joint.legend(title='True phase')
     g.savefig(argv.plot3, bbox_inches='tight', dpi=300)
 
 
@@ -245,6 +246,9 @@ def main():
     
     # fill missing true_cell_frac_rep values with 0.0 as these are G1/2 cells with no replicated bins
     df['true_cell_frac_rep'].fillna(0.0, inplace=True)
+
+    # rename 'LowQual' entries in the 'predicted_phase' column to 'LQ'
+    df['predicted_phase'] = df['predicted_phase'].str.replace('LowQual', 'LQ')
 
     # Plot confusion matrix
     plot_confusion_matrix(df, argv)

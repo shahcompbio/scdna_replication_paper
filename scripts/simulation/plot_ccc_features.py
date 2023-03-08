@@ -78,19 +78,19 @@ def plot_ccc_distributions(cell_metrics, argv):
     fig, ax = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
 
     # true (x-axis) vs PERT (y-axis) in ax[0]
-    sns.heatmap(pd.crosstab(cell_metrics.PERT_phase, cell_metrics.true_phase), annot=True, fmt='d', ax=ax[0])
+    sns.heatmap(pd.crosstab(cell_metrics.PERT_phase, cell_metrics.true_phase), annot=True, fmt='d', ax=ax[0], cmap='Blues')
     ax[0].set_ylabel('PERT phase')
     ax[0].set_xlabel('True phase')
     ax[0].set_title(argv.dataset)
 
     # true (x-axis) vs laks (y-axis) in ax[1]
-    sns.heatmap(pd.crosstab(cell_metrics.laks_phase, cell_metrics.true_phase), annot=True, fmt='d', ax=ax[1])
+    sns.heatmap(pd.crosstab(cell_metrics.laks_phase, cell_metrics.true_phase), annot=True, fmt='d', ax=ax[1], cmap='Blues')
     ax[1].set_ylabel('Laks phase')
     ax[1].set_xlabel('True phase')
     ax[1].set_title(argv.dataset)
 
     # laks (x-axis) vs PERT (y-axis) in ax[2]
-    sns.heatmap(pd.crosstab(cell_metrics.PERT_phase, cell_metrics.laks_phase), annot=True, fmt='d', ax=ax[2])
+    sns.heatmap(pd.crosstab(cell_metrics.PERT_phase, cell_metrics.laks_phase), annot=True, fmt='d', ax=ax[2], cmap='Blues')
     ax[2].set_ylabel('PERT phase')
     ax[2].set_xlabel('Laks phase')
     ax[2].set_title(argv.dataset)

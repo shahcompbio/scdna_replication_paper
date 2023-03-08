@@ -21,7 +21,7 @@ def get_args():
 def violins_with_pvals(df, x, y, hue, ax, box_pairs, test='t-test_ind', text_format='star', loc='inside', verbose=0, hue_order=None):
     """ Create a violinplot with p-values annotated. """
     palette = get_methods_cmap()
-    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, saturation=1, linewidth=1, hue_order=hue_order)
+    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, palette=palette, linewidth=1, hue_order=hue_order)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test,
                         text_format=text_format, loc=loc, verbose=verbose, hue_order=hue_order)
