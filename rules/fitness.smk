@@ -101,6 +101,7 @@ rule all_fitness:
         ),
         'plots/fitness/fitness_proxy_s_coefficients.png',
         'plots/fitness/s_predictiveness.png',
+        'plots/fitness/frac_rep_distribution.png'
         
 
 def dataset_cn_files(wildcards):
@@ -612,7 +613,7 @@ rule plot_fitness_proxy_s_coefficients_f:
         'deactivate'
 
 
-rule plot_s_predictiveness:
+rule plot_s_predictiveness_f:
     input:
         expand(
             'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
@@ -637,78 +638,21 @@ rule plot_s_predictiveness:
         'deactivate'
 
 
-# rule infer_SPF:
-#     input:
-#         cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
-#         cn_g1 = 'analysis/fitness/{dataset}/non_s_phase_cells.tsv'
-#     output:
-#         cn_s_out = 'analysis/fitness/{dataset}/s_phase_cells_with_clones.tsv',
-#         spf_table = 'analysis/fitness/{dataset}/spf_table.tsv',
-#         clone_copy = 'analysis/fitness/{dataset}/clone_copy.tsv'
-#     params:
-#         input_col = 'copy'
-#     log: 'logs/fitness/{dataset}/infer_SPF.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv3/bin/activate ; '
-#         'python3 scripts/fitness/infer_SPF.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
-
-
-# rule compute_consensus_clone_states:
-#     input: 'analysis/fitness/{dataset}/non_s_phase_cells.tsv'
-#     output: 'analysis/fitness/{dataset}/clone_states.tsv'
-#     params:
-#         input_col = 'state',
-#         clone_col = 'clone_id'
-#     log: 'logs/fitness/{dataset}/compute_consensus_clone_states.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv3/bin/activate ; '
-#         'python3 scripts/common/compute_consensus_clone_profiles.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
-
-
-# rule plot_consensus_clone_copynumber:
-#     input:
-#         clone_states = 'analysis/fitness/{dataset}/clone_states.tsv',
-#         clone_copy = 'analysis/fitness/{dataset}/clone_copy.tsv'
-#     output: 'plots/fitness/{dataset}/consensus_clone_copynumber.pdf'
-#     log: 'logs/fitness/{dataset}/plot_consensus_clone_copynumber.log'
-#     shell:
-#         'source ../scgenome/venv/bin/activate ; '
-#         'python3 scripts/fitness/plot_consensus_clone_copynumber.py '
-#         '{input} {output} &> {log}'
-#         ' ; deactivate'
-
-
-# rule plot_clone_tree_heatmap:
-#     input: 'analysis/fitness/{dataset}/clone_states.tsv',
-#     output: 'plots/fitness/{dataset}/clone_tree_heatmap.png'
-#     params:
-#         dataset = lambda wildcards: wildcards.dataset
-#     log: 'logs/fitness/{dataset}/plot_clone_tree_heatmap.log'
-#     shell:
-#         'source ../scgenome/venv/bin/activate ; '
-#         'python3 scripts/fitness/plot_clone_tree_heatmap.py '
-#         '{input} {params} {output} &> {log}'
-#         ' ; deactivate'
-
-
-# rule plot_clonal_evolution:
-#     input: 
-#         s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_clones.tsv',
-#         non_s_phase = 'analysis/fitness/{dataset}/non_s_phase_cells.tsv',
-#         times = 'data/fitness/fitness_time_scale.tsv'
-#     output:
-#         s_out = 'analysis/fitness/{dataset}/s_phase_clone_time_counts.tsv',
-#         non_s_out = 'analysis/fitness/{dataset}/non_s_phase_clone_time_counts.tsv',
-#         plot = 'plots/fitness/{dataset}/clonal_evolution.pdf'
-#     params:
-#         dataset = lambda wildcards: wildcards.dataset
-#     log: 'logs/fitness/{dataset}/plot_clonal_evolution.log'
-#     shell:
-#         'python3 scripts/fitness/plot_clonal_evolution.py '
-#         '{input} {params} {output} &> {log}'
-
-
+rule cohort_frac_rep_distribution_f:
+    input: 
+        expand(
+            'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        )
+    output: 'plots/fitness/frac_rep_distribution.png'
+    log: 'logs/fitness/cohort_frac_rep_distribution.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cohort_frac_rep_distribution.py '
+        '-i {input} '
+        '--plot {output} '
+        '&> {log} ; '
+        'deactivate'

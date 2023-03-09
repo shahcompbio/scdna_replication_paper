@@ -59,30 +59,34 @@ def remove_nonreplicating_cells(cn, frac_rt_col='cell_frac_rep'):
 def compute_quality_features(cn, rep_state_col='model_rep_state', cn_state_col='model_cn_state', rpm_col='rpm'):
     cell_metrics = []
     for cell_id, cell_cn in cn.groupby('cell_id'):
-        # compute read depth autocorrelation
-        rpm_auto = autocorr(cell_cn[rpm_col].values, min_lag=250, max_lag=1250)
+        # # compute read depth autocorrelation
+        # rpm_auto = autocorr(cell_cn[rpm_col].values, min_lag=250, max_lag=1250)
         # compute replication state autocorrelation
-        rep_auto = autocorr(cell_cn[rep_state_col].values, min_lag=250, max_lag=1250)
+        # rep_auto = autocorr(cell_cn[rep_state_col].values, min_lag=250, max_lag=1250)
         # compute number of breakpoints for inferred CN
-        cn_bk = breakpoints(cell_cn[cn_state_col].values)
-        # compute number of breakpoints for inferred rep states
-        rep_bk = breakpoints(cell_cn[rep_state_col].values)
+        # cn_bk = breakpoints(cell_cn[cn_state_col].values)
+        # # compute number of breakpoints for inferred rep states
+        # rep_bk = breakpoints(cell_cn[rep_state_col].values)
         # compute fraction of genome with inferred CN=0
         frac_cn0 = sum(cell_cn[cn_state_col]==0) / cell_cn.shape[0]
 
         temp_df = pd.DataFrame({
-            'cell_id': [cell_id], 'rpm_auto': [rpm_auto], 'rep_auto': [rep_auto],
-            'cn_bk': [cn_bk], 'rep_bk': [rep_bk], 'frac_cn0': [frac_cn0]
+            'cell_id': [cell_id], 
+            # 'rpm_auto': [rpm_auto], 
+            # 'rep_auto': [rep_auto],
+            # 'cn_bk': [cn_bk], 
+            # 'rep_bk': [rep_bk], 
+            'frac_cn0': [frac_cn0]
         })
         cell_metrics.append(temp_df)
 
     cell_metrics = pd.concat(cell_metrics, ignore_index=True)
     
     # normalize autocorrelations by mean values
-    rpm_auto_mean = np.mean(cell_metrics['rpm_auto'].values)
-    cell_metrics['rpm_auto_norm'] = cell_metrics['rpm_auto'] - rpm_auto_mean
-    rep_auto_mean = np.mean(cell_metrics['rep_auto'].values)
-    cell_metrics['rep_auto_norm'] = cell_metrics['rep_auto'] - rep_auto_mean
+    # rpm_auto_mean = np.mean(cell_metrics['rpm_auto'].values)
+    # cell_metrics['rpm_auto_norm'] = cell_metrics['rpm_auto'] - rpm_auto_mean
+    # rep_auto_mean = np.mean(cell_metrics['rep_auto'].values)
+    # cell_metrics['rep_auto_norm'] = cell_metrics['rep_auto'] - rep_auto_mean
 
     # merge quality features into cn
     cn = pd.merge(cn, cell_metrics)
@@ -93,7 +97,9 @@ def compute_quality_features(cn, rep_state_col='model_rep_state', cn_state_col='
 def remove_low_quality_cells(cn):
     # set thresholds on which cells are high or low quality
     # note that this thresholding takes place after removing cells with extreme fractions of replicated bins
-    low_qual_cells = cn.loc[(cn['rpm_auto']>0.5) | (cn['rep_auto']>0.2) | (cn['frac_cn0']>0.05)].cell_id.unique()
+    # low_qual_cells = cn.loc[(cn['rpm_auto']>0.5) | (cn['rep_auto']>0.2) | (cn['frac_cn0']>0.05)].cell_id.unique()
+
+    low_qual_cells = cn.loc[cn['frac_cn0']>0.05].cell_id.unique()
 
     cn_good = cn[~cn['cell_id'].isin(low_qual_cells)].reset_index(drop=True)
     cn_bad = cn[cn['cell_id'].isin(low_qual_cells)].reset_index(drop=True)

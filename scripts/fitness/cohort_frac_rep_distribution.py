@@ -27,7 +27,10 @@ def load_data(argv):
         # add the dataset name as a column
         temp_df['dataset'] = d
         # keep only the relevant columns
-        temp_df = temp_df[['dataset', 'cell_id', 'library_id', 'clone_id', 'cell_frac_rep', 'model_tau']].drop_duplicates().reset_index(drop=True)
+        temp_df = temp_df[['dataset', 'label', 'datasetname', 'cell_id', 'library_id', 'clone_id', 'cell_frac_rep', 'model_tau']].drop_duplicates().reset_index(drop=True)
+        # add a 'cisplatin' column that is False if a 'U' appears in the datasetname of the cell, True otherwise
+        temp_df['cisplatin'] = temp_df['datasetname'].apply(lambda x: 'Rx-' if 'U' in x else 'Rx+')
+        
         # append to the list
         df.append(temp_df)
     
@@ -47,10 +50,10 @@ def main():
     ax = ax.flatten()
 
     # plot both a histogram and kdeplot
-    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', multiple='stack', ax=ax[0])
-    sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', ax=ax[1])
-    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, multiple='stack', ax=ax[2])
-    sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, ax=ax[3])
+    sns.kdeplot(data=df, x='cell_frac_rep', hue='label', ax=ax[0])
+    sns.kdeplot(data=df, x='cell_frac_rep', hue='cisplatin', ax=ax[1])
+    sns.kdeplot(data=df, x='cell_frac_rep', hue='label', common_norm=False, ax=ax[2])
+    sns.kdeplot(data=df, x='cell_frac_rep', hue='cisplatin', common_norm=False, ax=ax[3])
 
     for i in range(4):
         ax[i].set_xlabel('Inferred fraction of replicated loci')

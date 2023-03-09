@@ -30,13 +30,13 @@ rule all_gastric_10x:
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/gastric_10x/{dataset}/inferred_cn_rep_results_filtered.png',
-        #     dataset=[
-        #         d for d in config['10x_gastric_cell_lines']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/gastric_10x/{dataset}/inferred_cn_rep_results_filtered.png',
+            dataset=[
+                d for d in config['10x_gastric_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 rule collect_cn_data_g10x:
@@ -133,8 +133,8 @@ rule plot_filtered_pyro_model_output_g10x:
         g1_phase = 'analysis/gastric_10x/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
     output:
         plot1 = 'plots/gastric_10x/{dataset}/inferred_cn_rep_results_filtered.png',
-        plot2 = 'plots/gastric_10x/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
-        plot3 = 'plots/gastric_10x/{dataset}/s_vs_g_rpm_filtered.png',
+        # plot2 = 'plots/gastric_10x/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
+        # plot3 = 'plots/gastric_10x/{dataset}/s_vs_g_rpm_filtered.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/gastric_10x/{dataset}/plot_filtered_pyro_model_output.log'
