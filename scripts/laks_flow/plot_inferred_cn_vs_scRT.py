@@ -161,7 +161,17 @@ def plot_cn_and_rep_states(df, argv):
     fig.savefig(argv.output_rt_state, bbox_inches='tight', dpi=300)
 
 
+def compute_cell_frac(cn, frac_rt_col='cell_frac_rep', rep_state_col='model_rep_state'):
+    ''' Compute the fraction of replicated bins for all cells in `cn`, noting which cells have extreme values. '''
+    for cell_id, cell_cn in cn.groupby('cell_id'):
+        temp_rep = cell_cn[rep_state_col].values
+        temp_frac = sum(temp_rep) / len(temp_rep)
+        cn.loc[cell_cn.index, frac_rt_col] = temp_frac
+    return cn
+
+
 def plot_frac_rt_distributions(df, argv):
+    # subset to just the cell-level columns of interest
     df_frac = df[['cell_id', argv.frac_rt_col, 'sample_id', 'clone_id']].drop_duplicates().reset_index(drop=True)
 
     # map the sample_id to a new column called cell_line
@@ -172,21 +182,20 @@ def plot_frac_rt_distributions(df, argv):
     # rename 'clone_id' to 'Clone ID' for plotting purposes
     df_frac.rename(columns={'clone_id': 'Clone ID'}, inplace=True)
     
-    fig, ax = plt.subplots(1,3, figsize=(12, 4), tight_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
     ax = ax.flatten()
 
     cell_line_cmap = get_cell_line_cmap()
     clone_cmap = get_clone_cmap()
     clone_order = sorted(df_frac['Clone ID'].unique())
 
-    # violinplot
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, ax=ax[0])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Cell line', multiple='stack', ax=ax[1], palette=cell_line_cmap)
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Clone ID', multiple='stack', ax=ax[2], palette=clone_cmap, hue_order=clone_order)
+    # histograms of fraction of replicated loci
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Cell line', multiple='stack', ax=ax[0], palette=cell_line_cmap)
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Clone ID', multiple='stack', ax=ax[1], palette=clone_cmap, hue_order=clone_order)
 
-    for i in range(3):
-        ax[i].set_xlabel('Inferred fraction of replicated bins')
-        ax[i].set_title('Distribution of S-phase times')
+    for i in range(2):
+        ax[i].set_xlabel('Inferred fraction of replicated loci')
+        ax[i].set_title('Cell S-phase times')
 
     fig.savefig(argv.output_frac_rt, bbox_inches='tight', dpi=300)
 
@@ -194,6 +203,10 @@ def plot_frac_rt_distributions(df, argv):
 def main():
     argv = get_args()
     df = pd.read_csv(argv.cn_s, sep='\t')
+
+    # compute the cell_frac_rep column if it is not in the input df
+    if argv.frac_rt_col not in df.columns:
+        df = compute_cell_frac(df, frac_rt_col=argv.frac_rt_col)
 
     # set chr column to category
     df.chr = df.chr.astype('str')

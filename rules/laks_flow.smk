@@ -80,7 +80,7 @@ rule all_laks_flow:
         ),
         'plots/laks_flow/GM18507/cn_s_example.png',
         'plots/laks_flow/all/flow_error_cells.png',
-        'plots/laks_flow/all/rpm_umap.png',
+        'plots/laks_flow/all/rpm_pca.png',
         'plots/laks_flow/all/rt_corr.png',
         'plots/laks_flow/all/rt_corr_composite.png',
         'plots/laks_flow/all/hic_vs_rt_corr.png',
@@ -294,7 +294,7 @@ rule plot_inferred_cn_vs_scRT_lf:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_tau'
+        frac_rt_col = 'cell_frac_rep'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_vs_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -311,7 +311,7 @@ rule plot_inferred_cn_g_vs_scRT_lf:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_tau'
+        frac_rt_col = 'cell_frac_rep'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_g_vs_scRT.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -328,7 +328,7 @@ rule plot_inferred_cn_vs_scRT_composite_lf:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_tau'
+        frac_rt_col = 'cell_frac_rep'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_vs_scRT_composite.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -345,7 +345,7 @@ rule plot_inferred_cn_g_vs_scRT_composite_lf:
     params:
         rep_col = 'model_rep_state',
         cn_col = 'model_cn_state',
-        frac_rt_col = 'model_tau'
+        frac_rt_col = 'cell_frac_rep'
     log: 'logs/laks_flow/{dataset}/plot_inferred_cn_g_vs_scRT_composite.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -396,17 +396,17 @@ rule revise_cell_cycle_labels_composite_lf:
         'deactivate'
 
 
-rule rpm_umap_lf:
+rule rpm_pca_lf:
     input: 
         cn_s = 'analysis/laks_flow/all/cn_s_pyro_inferred_composite_filtered.tsv',
         cn_g = 'analysis/laks_flow/all/cn_g_pyro_inferred_composite_filtered.tsv',
-    output: 'plots/laks_flow/all/rpm_umap.png'
+    output: 'plots/laks_flow/all/rpm_pca.png'
     params:
         rpm_col = 'rpm'
-    log: 'logs/laks_flow/all/rpm_umap.log'
+    log: 'logs/laks_flow/all/rpm_pca.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/laks_flow/rpm_umap.py '
+        'python3 scripts/laks_flow/plot_rpm_pca.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
