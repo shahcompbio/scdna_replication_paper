@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.plot_utils import plot_cell_cn_profile2
-from common.colors import get_cna_cmap
+from common.colors import get_cna_cmap, get_bkpt_cmap
 
 
 def get_args():
@@ -187,6 +187,7 @@ def plot_WT_rt_vs_bk(df, ax, test='t-test_ind', text_format='star', loc='inside'
     in the other hTERT cell lines. This data will show whether CN breakpoints preferentially
     emerge in early or late replicating regions.
     '''
+    bk_cmap = get_bkpt_cmap()
     x = "breakpoint"
     y = "WT_pseudobulk_rt"
     hue = None
@@ -195,7 +196,7 @@ def plot_WT_rt_vs_bk(df, ax, test='t-test_ind', text_format='star', loc='inside'
     ]
     order = ['No', 'Yes']
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
-                       text_format=text_format, loc=loc, verbose=verbose)
+                       text_format=text_format, loc=loc, verbose=verbose, palette=bk_cmap)
     return ax
 
 
@@ -230,7 +231,7 @@ def plot_rt_distributions(df, argv):
     sns.histplot(
         data=df.query('dataset!="SA039"'), x='WT_pseudobulk_rt', hue='breakpoint', 
         common_norm=False, stat='density', ax=ax[3],
-        palette={'No': 'C0', 'Yes': 'C1'}
+        palette=get_bkpt_cmap()
     )
     ax[3].set_xlabel('Ancestral hTERT RT\n<--late | early-->')
     ax[3].set_title('Location of clonal CNA breakpoints')

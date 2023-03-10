@@ -28,9 +28,9 @@ def get_cell_line_cmap():
 def get_cna_cmap():
     ''' Global color map for copy number alterations '''
     cmap = {
-        'gain': '#BA0021',  # red
-        'loss': '#003263',  # dark blue
-        'neutral': '#C4CED4'  # silver
+        'gain': 'red',  # red
+        'loss': 'deepskyblue',  # dark blue
+        'neutral': '#CCCCCC'  # grey
     }
     return cmap
 
@@ -83,8 +83,18 @@ def get_methods_cmap():
 
 def get_chrom_cmap():
     cmap = {
-        'autosomes': 'lightsteelblue',
-        'chrX': 'salmon'
+        'autosomes': '#CCCCCC', # grey
+        'chrX': 'C1' # orange
+    }
+    return cmap
+
+
+def get_bkpt_cmap():
+    cmap = {
+        'No': '#CCCCCC', # grey
+        False: '#CCCCCC', # grey
+        'Yes': 'C2', # green
+        True: 'C2' # green
     }
     return cmap
 
