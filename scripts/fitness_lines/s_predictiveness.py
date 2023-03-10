@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_clone_cmap, get_htert_cmap
 
 
 def get_args():
@@ -77,15 +80,15 @@ def plot_s_predictiveness(df, ax=None, title=None):
     """Plots the instantaneous selection coefficient vs. the clone's S-phase enrichment/depletion"""
     # if ax is None, create a new figure
     if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=(6, 6))
+        fig, ax = plt.subplots(1, 1, figsize=(4, 4))
 
     # fit a regression line to the data
     sns.regplot(x='instantaneous_s', y='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
     # create a seaborn scatterplot comparing the instantaneous selection coefficient to the clone's S-phase enrichment/depletion
-    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='clone_id', style='timepoint', ax=ax)
+    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='clone_id', style='timepoint', ax=ax, palette=get_clone_cmap())
     # set the x-axis label
-    ax.set_xlabel('Instantaneous selection coefficient\n<-contraction | expansion->')
+    ax.set_xlabel('Observed clone shift in G1/2 population\n<-contraction | expansion->')
     # set the y-axis label
     ax.set_ylabel('S-phase\n<-depletion | enrichment->')
     # set the title
@@ -94,7 +97,6 @@ def plot_s_predictiveness(df, ax=None, title=None):
 
     # expand the x axis limits to be slightly larger than the data
     ax.set_xlim(left=ax.get_xlim()[0] - 0.05, right=ax.get_xlim()[1] + 0.05)
-
 
 
 # create a new plotting function that colors the data points by sample_id
@@ -102,15 +104,15 @@ def plot_s_predictiveness_combined(df, ax=None, title=None):
     """Plots the instantaneous selection coefficient vs. the clone's S-phase enrichment/depletion"""
     # if ax is None, create a new figure
     if ax is None:
-        fig, ax = plt.subplots(1, 1, figsize=(6, 6))
+        fig, ax = plt.subplots(1, 1, figsize=(4, 4))
 
     # fit a regression line to the data
     sns.regplot(x='instantaneous_s', y='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
     # create a seaborn scatterplot comparing the instantaneous selection coefficient to the clone's S-phase enrichment/depletion
-    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='sample_id', alpha=0.5, ax=ax)
+    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='sample_id', alpha=0.5, ax=ax, palette=get_htert_cmap())
     # set the x-axis label
-    ax.set_xlabel('Instantaneous selection coefficient\n<-contraction | expansion->')
+    ax.set_xlabel('Observed clone shift in G1/2 population\n<-contraction | expansion->')
     # set the y-axis label
     ax.set_ylabel('S-phase\n<-depletion | enrichment->')
     # set the title
@@ -119,7 +121,6 @@ def plot_s_predictiveness_combined(df, ax=None, title=None):
 
     # expand the x axis limits to be slightly larger than the data
     ax.set_xlim(left=ax.get_xlim()[0] - 0.05, right=ax.get_xlim()[1] + 0.05)
-
 
 
 def main():
@@ -165,7 +166,7 @@ def main():
     # combine the dataframes from SA039, SA906a, and SA906b
     df_combined = pd.concat([df_SA039, df_SA906a, df_SA906b])
 
-    fig, ax = plt.subplots(2, 2, figsize=(12, 12), tight_layout=True)
+    fig, ax = plt.subplots(2, 2, figsize=(10, 10), tight_layout=True)
 
     # plot the combined data in the top left subplot
     plot_s_predictiveness_combined(df_combined, ax=ax[0, 0], title='All hTERT time-series')
