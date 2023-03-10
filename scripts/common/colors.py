@@ -129,3 +129,24 @@ def get_clone_cmap():
         13: 'lightgreen'
     }
     return cmap
+
+
+def get_htert_cmap():
+    cmap = {
+        'WT': 'C0',
+        'SA039': 'C0',
+        'TP53-/-': 'C1',
+        'SA906a': 'C1',
+        'SA906b': 'orange',
+        'TP53-/-,BRCA1+/-' : 'C2',
+        'SA1292': 'C2',
+        'TP53-/-,BRCA1-/-': 'C3',
+        'SA1056': 'C3',
+        'TP53-/-,BRCA2+/-': 'C4',
+        'SA1188': 'C4',
+        'TP53-/-,BRCA2-/-': 'C5',
+        'SA1054': 'C5',
+        'SA1055': 'chocolate',
+        'OV2295': 'C6'
+    }
+    return cmap

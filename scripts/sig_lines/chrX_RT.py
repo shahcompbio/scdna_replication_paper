@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.plot_utils import plot_cell_cn_profile2
-from common.colors import get_chrom_cmap, get_clone_cmap
+from common.colors import get_chrom_cmap, get_clone_cmap, get_htert_cmap
 
 
 def get_args():
@@ -54,6 +54,8 @@ def plot_sample_rt_profiles(rt, rt_coi, counts, argv):
     fig, ax = plt.subplots(2, 1, figsize=(16,8), tight_layout=True)
     ax = ax.flatten()
 
+    htert_cmap = get_htert_cmap()
+
     for i, col in enumerate(rt_coi):
         dataset_id = col.split('_')[0]
 
@@ -63,12 +65,12 @@ def plot_sample_rt_profiles(rt, rt_coi, counts, argv):
         
         # plot pseudobulk rt profile for this dataset
         plot_cell_cn_profile2(
-            ax[0], rt, col, color='C{}'.format(i), 
+            ax[0], rt, col, color=htert_cmap[dataset_id],
             max_cn=None, scale_data=False, lines=True, label=label
         )
         # zoom in on chrX
         plot_cell_cn_profile2(
-            ax[1], rt, col, color='C{}'.format(i), chromosome='X',
+            ax[1], rt, col, color=htert_cmap[dataset_id], chromosome='X',
             max_cn=None, scale_data=False, lines=True, label=label
         )
 

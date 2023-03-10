@@ -2,6 +2,9 @@ from argparse import ArgumentParser
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_htert_cmap
 
 
 def get_args():
@@ -41,22 +44,36 @@ def main():
     print(df)
 
     # save figure of twidth curves
-    fig, ax = plt.subplots(2, 2, figsize=(10, 8), tight_layout=True)
+    fig, ax = plt.subplots(2, 2, figsize=(8, 8), tight_layout=True)
     ax = ax.flatten()
 
-    sns.barplot(data=df.query('per_cell==False'), x='cell_type', y='T-width', ax=ax[0])
+    htert_cmap = get_htert_cmap()
+
+    # barplots of T-width values
+    # 1. T-width values for each genetic condition
+    sns.barplot(data=df.query('per_cell==False'), x='cell_type', y='T-width', ax=ax[0], palette=htert_cmap)
     ax[0].tick_params(axis='x', labelrotation=45)
-    ax[0].set_title('cellular scRT heterogeneity')
+    ax[0].set_title('Cellular scRT heterogeneity')
+    ax[0].set_xlabel('Genetic background (cell line)')
 
-    sns.barplot(data=df.query('per_cell==True'), x='cell_type', y='T-width', ax=ax[1])
+    # 2. T-width values for each dataset
+    sns.barplot(data=df.query('per_cell==False'), x='dataset', y='T-width', ax=ax[1], palette=htert_cmap)
     ax[1].tick_params(axis='x', labelrotation=45)
-    ax[1].set_title('cellular scRT heterogeneity (per-cell)')
+    ax[1].set_title('Cellular scRT heterogeneity')
+    ax[1].set_xlabel('')
 
-    sns.scatterplot(data=df.query('per_cell==False'), y='num_cells', x='T-width', hue='cell_type', ax=ax[2])
+    # scatterplots of T-width values vs number of cells
+    # 3. T-width values for each genetic condition
+    sns.scatterplot(data=df.query('per_cell==False'), x='num_cells', y='T-width', hue='cell_type', ax=ax[2], palette=htert_cmap)
+    ax[2].set_title('Cellular scRT heterogeneity')
+    ax[2].set_xlabel('Number of cells')
 
-    sns.scatterplot(data=df.query('per_cell==True'), y='num_cells', x='T-width', hue='cell_type', ax=ax[3])    
+    # 4. T-width values for each dataset
+    sns.scatterplot(data=df.query('per_cell==False'), x='num_cells', y='T-width', hue='dataset', ax=ax[3], palette=htert_cmap)    
+    ax[3].set_title('Cellular scRT heterogeneity')
+    ax[3].set_xlabel('Number of cells')
     
-    fig.savefig(argv.plot, bbox_inches='tight')
+    fig.savefig(argv.plot, bbox_inches='tight', dpi=300)
 
     # save a table of all the computed T-width values
     df.to_csv(argv.table, sep='\t', index=False)
