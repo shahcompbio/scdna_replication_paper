@@ -71,7 +71,52 @@ def add_genome_tracks(f):
         df.append(temp_df)
     # concatenate all the chromsome dataframes into one dataframe
     df = pd.concat(df, ignore_index=True)
-    return df
+    return df, bin_size
+
+
+def aggregate_500kb(df, input_bin_size=20000, output_bin_size=500000):
+    ''' Given a long form dataframe at resolution input_bin_size, aggregate the data into bins of size output_bin_size '''
+    # create a new dataframe with the aggregated data
+    df_500kb = []
+    bin_ratio = int(output_bin_size / input_bin_size)
+    # loop through each cell
+    for cell_id in df['cell_id'].unique():
+        # subset the dataframe to only include the current cell
+        df_cell = df[df['cell_id'] == cell_id]
+        # loop through each chromosome
+        for chrom in df_cell['chr'].unique():
+            # subset the dataframe to only include the current chromosome
+            df_chrom = df_cell[df_cell['chr'] == chrom]
+            # loop through each 500kb bin
+            for start in range(df_chrom['start'].min(), df_chrom['end'].max(), output_bin_size):
+                # subset the dataframe to only include the current 500kb bin
+                df_bin = df_chrom[(df_chrom['start'] >= start) & (df_chrom['start'] < start + output_bin_size)]
+                # check to make sure df_bin has the appropriate number of rows (i.e. this isn't the end of the chromosome)
+                if df_bin.shape[0] != bin_ratio:
+                    print('skipping', chrom, start)
+                    continue
+                # create temporary df to aggregate the data
+                temp_df = pd.DataFrame(
+                    {'chr': [chrom], 'start': [start], 'end': [start + output_bin_size - 1], 'cell_id': [cell_id]}
+                )
+                # aggregate the 'reads' and 'reads_norm' columns by taking the sum
+                temp_df['reads'] = df_bin['reads'].sum()
+                temp_df['reads_norm'] = df_bin['reads_norm'].sum()
+                # aggregate 'gc' and 'n_fraction' by taking the mean
+                temp_df['gc'] = df_bin['gc'].mean()
+                temp_df['n_fraction'] = df_bin['n_fraction'].mean()
+                # aggregate 'is_mappable' by taking the mode
+                temp_df['is_mappable'] = df_bin['is_mappable'].mode()[0]
+                # aggregate 'state' by taking the median
+                temp_df['state'] = df_bin['state'].median()
+                # append the aggregated data to the new dataframe
+                df_500kb.append(temp_df)
+    # concatentate the output dataframe
+    df_500kb = pd.concat(df_500kb, ignore_index=True)
+    # convert the 'start' and 'end' columns to integers
+    df_500kb['start'] = df_500kb['start'].astype(int)
+    df_500kb['end'] = df_500kb['end'].astype(int)
+    return df_500kb
 
 
 def parse_h5_input(f):
@@ -84,7 +129,7 @@ def parse_h5_input(f):
     cnvs = counts_to_df(f, data_type='cnvs', col_name='state')
     print('Loaded cnvs')
     # load gc, start, end, is_mappable, n_fraction for each locus
-    genome_tracks = add_genome_tracks(f)
+    genome_tracks, bin_size = add_genome_tracks(f)
     print('Loaded genome tracks')
     # merge the cnvs and genome_tracks dataframes
     cnvs = cnvs.merge(genome_tracks)
@@ -99,6 +144,9 @@ def parse_h5_input(f):
     df = pd.merge(raw_counts, norm_counts)
     df = pd.merge(df, cnvs)
     print('Merged raw counts, normalized counts and cnvs')
+    # aggregate data from current bin_size into 500kb bins
+    df = aggregate_500kb(df, input_bin_size=bin_size, output_bin_size=500000)
+    print('Aggregated data into 500kb bins')
     # filter out the unmappable regions
     df = df[(df['is_mappable'] == 1)]
     print('Filtered out unmappable regions')

@@ -217,5 +217,14 @@
     "plot_filtered_pyro_model_output_g10x" :
     {
         "mem" : 256
+    },
+    "collect_cn_data_g500" :
+    {
+        "mem" : 350
+    },
+    "infer_scRT_pyro_g500" :
+    {
+        "time" : "120:00",
+        "mem" : 256
     }
 }

@@ -1,0 +1,126 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scgenome.cnplot import plot_clustered_cell_cn_matrix, plot_cell_cn_profile
+from matplotlib.colors import ListedColormap
+from argparse import ArgumentParser
+
+def get_args():
+    p = ArgumentParser()
+
+    p.add_argument('cn_s', help='long-form dataframe of S-phase cells with pyro model results')
+    p.add_argument('cn_g', help='long-form dataframe of G1/2-phase cells')
+    p.add_argument('dataset')
+    p.add_argument('plot1', help='heatmaps of all S-phase cells sorted the same')
+    # p.add_argument('plot2', help='heatmaps of G1- vs S-phase hmmcopy states')
+    # p.add_argument('plot3', help='heatmaps of G1- vs S-phase reads per million')
+
+    return p.parse_args()
+
+
+def get_rt_cmap():
+    rt_colors = {0: '#552583', 1: '#FDB927'}
+    color_list = []
+    for i in [0, 1]:
+        color_list.append(rt_colors[i])
+    return ListedColormap(color_list)
+
+
+def plot_model_results(cn_s, cn_g, argv):
+    rt_cmap = get_rt_cmap()
+
+    # create 2 x 4 grid of plots
+    fig, ax = plt.subplots(2, 4, figsize=(28, 14), tight_layout=True)
+    ax = ax.flatten()
+
+    # top row is the S-phase cells
+    # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
+    plot_clustered_cell_cn_matrix(ax[0], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[2], cn_s, 'model_cn_state', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau')
+    plot_clustered_cell_cn_matrix(ax[3], cn_s, 'model_rep_state', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
+
+    # add titles for each subplot
+    ax[0].set_title('{} S-phase cells\nReads per million'.format(argv.dataset))
+    ax[1].set_title('{} S-phase cells\nHMMCopy states'.format(argv.dataset))
+    ax[2].set_title('{} S-phase cells\nInferred CN states'.format(argv.dataset))
+    ax[3].set_title('{} S-phase cells\nInferred replication states'.format(argv.dataset))
+
+    # # bottom row is the G1/2-phase cells
+    # # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
+    # plot_clustered_cell_cn_matrix(ax[4], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    # plot_clustered_cell_cn_matrix(ax[5], cn_g, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    # plot_clustered_cell_cn_matrix(ax[6], cn_g, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
+    # plot_clustered_cell_cn_matrix(ax[7], cn_g, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
+
+    # # add titles for each subplot
+    # ax[4].set_title('{} G1/2-phase cells\nReads per million'.format(argv.dataset))
+    # ax[5].set_title('{} G1/2-phase cells\n10x CN states'.format(argv.dataset))
+    # ax[6].set_title('{} G1/2-phase cells\nPERT CN states'.format(argv.dataset))
+    # ax[7].set_title('{} G1/2-phase cells\nPERT replication states'.format(argv.dataset))
+
+    fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
+
+
+def plot_hmmcopy(cn_s, cn_g, argv):
+    fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
+    ax = ax.flatten()
+
+    plot_clustered_cell_cn_matrix(ax[0], cn_g, 'state', cluster_field_name='clone_id')
+    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='clone_id')
+
+    ax[0].set_title('{}\nG1/2-phase 10x CN states'.format(argv.dataset))
+    ax[1].set_title('{}\nS-phase 10x CN states'.format(argv.dataset))
+    fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
+
+
+def plot_rpm(cn_s, cn_g, argv):
+    fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
+    ax = ax.flatten()
+
+    plot_clustered_cell_cn_matrix(ax[0], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id')
+    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id')
+
+    ax[0].set_title('{}\nG1-phase reads per million'.format(argv.dataset))
+    ax[1].set_title('{}\nS-phase reads per million'.format(argv.dataset))
+    fig.savefig(argv.plot3, bbox_inches='tight', dpi=300)
+
+
+def main():
+    argv = get_args()
+
+    cn_s = pd.read_csv(argv.cn_s, dtype={'chr': str, 'cell_id': int, 'barcode': str, 'assigned_clone_id': str})
+    cn_g = pd.read_csv(argv.cn_g, dtype={'chr': str, 'cell_id': int, 'barcode': str, 'clone_id': str})
+
+    # convert the 'chr' column to a string and then categorical
+    cn_s.chr = cn_s.chr.astype('category')
+    cn_g.chr = cn_s.chr.astype('category')
+
+    print('S-phase cells')
+    print(cn_s.head())
+    print(cn_s.dtypes)
+    print('G1/2-phase cells')
+    print(cn_g.head())
+    print(cn_g.dtypes)
+
+    # use the barcode column as the cell_id
+    # this is necessary for scgenome plotting functions to work
+    # as the cell_id needs to be a string, not an integer
+    cn_s['cell_id'] = cn_s['barcode'].astype(str)
+    cn_g['cell_id'] = cn_g['barcode'].astype(str)
+
+    # show rpm, hmmcopy, inferred cn, inferred rep heatmaps for S-phase cells and G1/2-phase cells
+    # where all the rows are sorted the same in all four heatmaps
+    plot_model_results(cn_s, cn_g, argv)
+
+    # # show hmmcopy state heatmaps for both S-phase and G1-phase cells
+    # plot_hmmcopy(cn_s, cn_g, argv)
+
+    # # show reads per million heatmaps for both S-phase and G1-phase cells
+    # plot_rpm(cn_s, cn_g, argv)
+
+
+
+if __name__=='__main__':
+    main()
