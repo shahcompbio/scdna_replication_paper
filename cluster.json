@@ -220,7 +220,8 @@
     },
     "collect_cn_data_g500" :
     {
-        "mem" : 350
+        "mem" : 350,
+        "time" : "48:00"
     },
     "infer_scRT_pyro_g500" :
     {

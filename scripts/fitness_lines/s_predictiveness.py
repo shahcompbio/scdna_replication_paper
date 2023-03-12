@@ -83,14 +83,14 @@ def plot_s_predictiveness(df, ax=None, title=None):
         fig, ax = plt.subplots(1, 1, figsize=(4, 4))
 
     # fit a regression line to the data
-    sns.regplot(x='instantaneous_s', y='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
+    sns.regplot(y='instantaneous_s', x='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
     # create a seaborn scatterplot comparing the instantaneous selection coefficient to the clone's S-phase enrichment/depletion
-    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='clone_id', style='timepoint', ax=ax, palette=get_clone_cmap())
-    # set the x-axis label
-    ax.set_xlabel('Observed clone shift in G1/2 population\n<-contraction | expansion->')
+    sns.scatterplot(y='instantaneous_s', x='clone_frac_diff', data=df, hue='clone_id', style='timepoint', ax=ax, palette=get_clone_cmap())
     # set the y-axis label
-    ax.set_ylabel('S-phase\n<-depletion | enrichment->')
+    ax.set_ylabel('Clone\n<-contraction | expansion->')
+    # set the x-axis label
+    ax.set_xlabel('S-phase\n<-depletion | enrichment->')
     # set the title
     if title is not None:
         ax.set_title(title)
@@ -107,14 +107,14 @@ def plot_s_predictiveness_combined(df, ax=None, title=None):
         fig, ax = plt.subplots(1, 1, figsize=(4, 4))
 
     # fit a regression line to the data
-    sns.regplot(x='instantaneous_s', y='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
+    sns.regplot(y='instantaneous_s', x='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
     # create a seaborn scatterplot comparing the instantaneous selection coefficient to the clone's S-phase enrichment/depletion
-    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='sample_id', alpha=0.5, ax=ax, palette=get_htert_cmap())
-    # set the x-axis label
-    ax.set_xlabel('Observed clone shift in G1/2 population\n<-contraction | expansion->')
+    sns.scatterplot(y='instantaneous_s', x='clone_frac_diff', data=df, hue='sample_id', alpha=0.5, ax=ax, palette=get_htert_cmap())
     # set the y-axis label
-    ax.set_ylabel('S-phase\n<-depletion | enrichment->')
+    ax.set_ylabel('Clone\n<-contraction | expansion->')
+    # set the x-axis label
+    ax.set_xlabel('S-phase\n<-depletion | enrichment->')
     # set the title
     if title is not None:
         ax.set_title(title)

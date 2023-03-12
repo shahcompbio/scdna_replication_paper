@@ -150,3 +150,13 @@ def get_htert_cmap():
         'OV2295': 'C6'
     }
     return cmap
+
+
+def get_rx_cmap():
+    cmap = {
+        'Rx-': '#CCCCCC', # grey
+        'U': '#CCCCCC', # grey
+        'Rx+': 'dodgerblue',
+        'T': 'dodgerblue'
+    }
+    return cmap

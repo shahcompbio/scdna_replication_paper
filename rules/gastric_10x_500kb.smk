@@ -7,7 +7,7 @@ configfile: "config.yaml"
 
 bad_datasets = []
 
-rule all_gastric_10x:
+rule all_gastric_10x_500kb:
     input:
         expand(
             'plots/gastric_10x_500kb/{dataset}/cn_heatmaps_input.png',
