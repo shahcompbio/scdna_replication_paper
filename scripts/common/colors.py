@@ -155,8 +155,10 @@ def get_htert_cmap():
 def get_rx_cmap():
     cmap = {
         'Rx-': '#CCCCCC', # grey
-        'U': '#CCCCCC', # grey
-        'Rx+': 'dodgerblue',
-        'T': 'dodgerblue'
+        'U': '#CCCCCC',
+        'untreated': '#CCCCCC',
+        'Rx+': 'C0',
+        'T': 'C0',
+        'treated': 'C0'
     }
     return cmap

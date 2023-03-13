@@ -148,11 +148,11 @@ def main():
         # save the sample_id in a new column
         temp_df['sample_id'] = sample
 
-        # if 'U' is in the sample name, add a column that indicates that the sample is 'Rx-', otherwise it is 'Rx+'
+        # if 'U' is in the sample name, add a column that indicates that the sample is 'untreated', otherwise it is 'treated'
         if 'U' in sample:
-            temp_df['cisplatin'] = 'Rx-'
+            temp_df['cisplatin'] = 'untreated'
         else:
-            temp_df['cisplatin'] = 'Rx+'
+            temp_df['cisplatin'] = 'treated'
         
         # add the dataframe to the list
         df_pdx_combined.append(temp_df)
