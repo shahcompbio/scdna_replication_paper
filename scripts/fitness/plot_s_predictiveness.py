@@ -85,10 +85,13 @@ def plot_s_predictiveness(df, ax=None, title=None):
     # fit a regression line to the data
     sns.regplot(y='instantaneous_s', x='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
+    # rename columns clone_id to Clone ID and timepoint to Timepoint for plotting purposes
+    df = df.rename(columns={'clone_id': 'Clone ID', 'timepoint': 'Timepoint'})
+
     # create a seaborn scatterplot comparing the observed clone shift in G1/2 population to the clone's S-phase enrichment/depletion
-    sns.scatterplot(y='instantaneous_s', x='clone_frac_diff', data=df, hue='clone_id', style='timepoint', palette=get_clone_cmap(), ax=ax)
+    sns.scatterplot(y='instantaneous_s', x='clone_frac_diff', data=df, hue='Clone ID', style='Timepoint', palette=get_clone_cmap(), ax=ax)
     # set the y-axis label
-    ax.set_ylabel('Clone\n<-contraction | expansion->')
+    ax.set_ylabel('Change in G1/2-phase clone fraction\n<-contraction | expansion->')
     # set the x-axis label
     ax.set_xlabel('S-phase\n<-depletion | enrichment->')
     # set the title
@@ -107,7 +110,7 @@ def plot_s_predictiveness_cisplatin_combined(df, argv, title=None):
     sns.lmplot(y='instantaneous_s', x='clone_frac_diff', data=df, scatter=True, hue='cisplatin', palette=get_rx_cmap())
 
     # set the y-axis label
-    plt.ylabel('Clone\n<-contraction | expansion->')
+    plt.ylabel('Change in G1/2-phase clone fraction\n<-contraction | expansion->')
     # set the x-axis label
     plt.xlabel('S-phase\n<-depletion | enrichment->')
     # set the title

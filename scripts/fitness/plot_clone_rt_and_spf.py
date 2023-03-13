@@ -219,7 +219,7 @@ def clone_spf_analysis(cn_s, cn_g, argv):
         color = viridis((t - min_time) / (max_time - min_time))
         timepoint_str = 'X{}'.format(t)
         timepoint_cmap[timepoint_str] = color
-        timepoint_legend_elements.append(Patch(facecolor=color, label=t))
+        timepoint_legend_elements.append(Patch(facecolor=color, label=timepoint_str))
 
     # draw scatterplot comparing the relative fraction of each clone in S vs G1/2 phases
     for i, row in df2.iterrows():
@@ -246,14 +246,11 @@ def clone_spf_analysis(cn_s, cn_g, argv):
     dataset = argv.dataset.replace('_CISPLATIN_Combined', '')
 
     ax[0].legend(handles=clone_legend_elements, title='Clone ID')
-    ax[0].set_xlabel('Fraction of G1/2 cells in timepoint assigned to clone')
-    ax[0].set_ylabel('Fraction of S cells in timepoint assigned to clone')
-    ax[0].set_title('Phase enrichment of {} clones'.format(dataset))
-    
-    ax[1].legend(handles=timepoint_legend_elements, title='timepoint')
-    ax[1].set_xlabel('Fraction of G1/2 cells in timepoint assigned to clone')
-    ax[1].set_ylabel('Fraction of S cells in timepoint assigned to clone')
-    ax[1].set_title('Phase enrichment of {} clones'.format(dataset))
+    ax[1].legend(handles=timepoint_legend_elements, title='Timepoint')
+    for i in range(2):
+        ax[i].set_xlabel('G1/2-phase clone fraction')
+        ax[i].set_ylabel('S-phase clone fraction')
+        ax[i].set_title('S-phase enrichment of {} clones'.format(dataset))
 
     # save spf figure
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)

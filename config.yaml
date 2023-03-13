@@ -4,7 +4,7 @@ ticket_dir_500kb: /work/shah/tantalus
 #                    'SA609X3X8a', 'SA906a', 'SA906b', 'SA1035U',
 #                    'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT']
 fitness_rx_datasets: [
-  'SA1035U', 'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT', 
+  'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT', 'SA1035U', 'SA1035T',
   'SA609U', 'SA609U2', 'SA609T', 'SA609T2'
 ]
 fitness_datasets: ['SA1035', 'SA535', 'SA609']
