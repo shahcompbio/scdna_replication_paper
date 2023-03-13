@@ -5,7 +5,7 @@ np.random.seed(2794834348)
 
 configfile: "config.yaml"
 
-bad_datasets = []
+bad_datasets = ['KATOIII']
 
 rule all_gastric_10x_500kb:
     input:
@@ -18,6 +18,13 @@ rule all_gastric_10x_500kb:
         ),
         expand(
             'plots/gastric_10x_500kb/{dataset}/inferred_cn_rep_results.png',
+            dataset=[
+                d for d in config['10x_gastric_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/gastric_10x_500kb/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['10x_gastric_cell_lines']
                 if (d not in bad_datasets)
@@ -80,11 +87,52 @@ rule plot_pyro_model_output_g500:
         g1_phase = 'analysis/gastric_10x_500kb/{dataset}/g1_phase_cells_with_scRT.csv.gz'
     output:
         plot1 = 'plots/gastric_10x_500kb/{dataset}/inferred_cn_rep_results.png',
-        # plot2 = 'plots/gastric_10x_500kb/{dataset}/s_vs_g_hmmcopy_states.png',
-        # plot3 = 'plots/gastric_10x_500kb/{dataset}/s_vs_g_rpm.png',
+        plot2 = 'plots/gastric_10x_500kb/{dataset}/s_vs_g_hmmcopy_states.png',
+        plot3 = 'plots/gastric_10x_500kb/{dataset}/s_vs_g_rpm.png',
     params:
+        clone_col = 'assigned_clone_id',
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/gastric_10x_500kb/{dataset}/plot_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/gastric_10x_500kb/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule revise_cell_cycle_labels_g500:
+    input: 
+        cn_s = 'analysis/gastric_10x_500kb/{dataset}/s_phase_cells_with_scRT.csv.gz',
+        cn_g = 'analysis/gastric_10x_500kb/{dataset}/g1_phase_cells_with_scRT.csv.gz',
+    output:
+        out_s = 'analysis/gastric_10x_500kb/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
+        out_g = 'analysis/gastric_10x_500kb/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz',
+        out_lowqual = 'analysis/gastric_10x_500kb/{dataset}/model_lowqual_cells.csv.gz',
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        rpm_col = 'rpm'
+    log: 'logs/gastric_10x_500kb/{dataset}/revise_cell_cycle_labels.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/gastric_10x_500kb/revise_cell_cycle_labels.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_filtered_pyro_model_output_g10x:
+    input:
+        s_phase = 'analysis/gastric_10x_500kb/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
+        g1_phase = 'analysis/gastric_10x_500kb/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
+    output:
+        plot1 = 'plots/gastric_10x_500kb/{dataset}/inferred_cn_rep_results_filtered.png',
+        plot2 = 'plots/gastric_10x_500kb/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
+        plot3 = 'plots/gastric_10x_500kb/{dataset}/s_vs_g_rpm_filtered.png',
+    params:
+        clone_col = 'assigned_clone_id',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/gastric_10x_500kb/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/gastric_10x_500kb/plot_pyro_model_output.py '

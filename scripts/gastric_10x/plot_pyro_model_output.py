@@ -2,85 +2,213 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scgenome.cnplot import plot_clustered_cell_cn_matrix, plot_cell_cn_profile
-from matplotlib.colors import ListedColormap
+from scgenome.cnplot import plot_clustered_cell_cn_matrix
+from matplotlib import colors as mcolors
+from matplotlib.patches import Patch
+from scgenome import cncluster
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap, get_clone_cmap
+
 
 def get_args():
     p = ArgumentParser()
 
     p.add_argument('cn_s', help='long-form dataframe of S-phase cells with pyro model results')
     p.add_argument('cn_g', help='long-form dataframe of G1/2-phase cells')
+    p.add_argument('clone_col')
     p.add_argument('dataset')
     p.add_argument('plot1', help='heatmaps of all S-phase cells sorted the same')
-    # p.add_argument('plot2', help='heatmaps of G1- vs S-phase hmmcopy states')
-    # p.add_argument('plot3', help='heatmaps of G1- vs S-phase reads per million')
+    p.add_argument('plot2', help='heatmaps of G1- vs S-phase hmmcopy states')
+    p.add_argument('plot3', help='heatmaps of G1- vs S-phase reads per million')
 
     return p.parse_args()
 
 
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
+# helper functions for plotting heatmaps
+def plot_colorbar(ax, color_mat, title=None):
+    ax.imshow(np.array(color_mat)[::-1, np.newaxis], aspect='auto', origin='lower')
+    ax.grid(False)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    if title is not None:
+        ax.set_title(title)
+
+
+def plot_color_legend(ax, color_map, title=None):
+    legend_elements = []
+    for name, color in color_map.items():
+        legend_elements.append(Patch(facecolor=color, label=name))
+    ax.legend(handles=legend_elements, loc='center left', title=title)
+    ax.grid(False)
+    ax.axis('off')
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+
+def make_color_mat_float(values, palette_color):
+    """
+    Make a color_mat for a 0-1 float array `values` and a
+    corresponding color pallete.
+    """
+    pal = plt.get_cmap(palette_color)
+    color_mat = []
+    for val in values:
+        color_mat.append(pal(val))
+    color_dict = {0: pal(0.0), 1: pal(1.0)}
+    return color_mat, color_dict
 
 
 def plot_model_results(cn_s, cn_g, argv):
     rt_cmap = get_rt_cmap()
+    clone_cmap = get_clone_cmap()
 
-    # create 2 x 4 grid of plots
-    fig, ax = plt.subplots(2, 4, figsize=(28, 14), tight_layout=True)
-    ax = ax.flatten()
+    # create mapping of clone IDs
+    cluster_col = 'cluster_id'
+    clone_dict = dict([(y,x+1) for x,y in enumerate(sorted(cn_g[argv.clone_col].unique()))])
+    cn_g[cluster_col] = cn_g[argv.clone_col]
+    cn_g = cn_g.replace({cluster_col: clone_dict})
+    cn_s[cluster_col] = cn_s[argv.clone_col]
+    cn_s = cn_s.replace({cluster_col: clone_dict})
 
-    # top row is the S-phase cells
-    # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
-    plot_clustered_cell_cn_matrix(ax[0], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau')
-    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau')
-    plot_clustered_cell_cn_matrix(ax[2], cn_s, 'model_cn_state', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau')
-    plot_clustered_cell_cn_matrix(ax[3], cn_s, 'model_rep_state', cluster_field_name='assigned_clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
+    # plot the heatmaps
+    fig = plt.figure(figsize=(28,14))
 
-    # add titles for each subplot
-    ax[0].set_title('{} S-phase cells\nReads per million'.format(argv.dataset))
-    ax[1].set_title('{} S-phase cells\nHMMCopy states'.format(argv.dataset))
-    ax[2].set_title('{} S-phase cells\nInferred CN states'.format(argv.dataset))
-    ax[3].set_title('{} S-phase cells\nInferred replication states'.format(argv.dataset))
+    # plot the S-phase cells in the top row
+    # top left corner is the rpm
+    ax0 = fig.add_axes([0.05,0.5,0.23,0.45])
+    plot_data0 = plot_clustered_cell_cn_matrix(
+        ax0, cn_s, 'rpm', cluster_field_name=cluster_col, secondary_field_name='model_tau', max_cn=None, raw=True, cmap='viridis'
+    )
+    ax0.set_title('{} S-phase cells\nReads per million'.format(argv.dataset))
 
-    # # bottom row is the G1/2-phase cells
-    # # from left to right, show rpm, hmmcopy states, model cn states, and replication states, all sorted by clone_id and model_tau
-    # plot_clustered_cell_cn_matrix(ax[4], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id', secondary_field_name='model_tau')
-    # plot_clustered_cell_cn_matrix(ax[5], cn_g, 'state', cluster_field_name='clone_id', secondary_field_name='model_tau')
-    # plot_clustered_cell_cn_matrix(ax[6], cn_g, 'model_cn_state', cluster_field_name='clone_id', secondary_field_name='model_tau')
-    # plot_clustered_cell_cn_matrix(ax[7], cn_g, 'model_rep_state', cluster_field_name='clone_id', secondary_field_name='model_tau', cmap=rt_cmap)
+    # top mid-left is the hmmcopy states
+    ax1 = fig.add_axes([0.29,0.5,0.23,0.45])
+    plot_data1 = plot_clustered_cell_cn_matrix(
+        ax1, cn_s, 'state', cluster_field_name=cluster_col, secondary_field_name='model_tau'
+    )
+    ax1.set_title('{} S-phase cells\nHMMcopy states'.format(argv.dataset))
 
-    # # add titles for each subplot
-    # ax[4].set_title('{} G1/2-phase cells\nReads per million'.format(argv.dataset))
-    # ax[5].set_title('{} G1/2-phase cells\n10x CN states'.format(argv.dataset))
-    # ax[6].set_title('{} G1/2-phase cells\nPERT CN states'.format(argv.dataset))
-    # ax[7].set_title('{} G1/2-phase cells\nPERT replication states'.format(argv.dataset))
+    # top mid-right is the model cn states
+    ax2 = fig.add_axes([0.53,0.5,0.23,0.45])
+    plot_data2 = plot_clustered_cell_cn_matrix(
+        ax2, cn_s, 'model_cn_state', cluster_field_name=cluster_col, secondary_field_name='model_tau'
+    )
+    ax2.set_title('{} S-phase cells\nPERT CN states'.format(argv.dataset))
+
+    # top right corner is the replication states
+    ax3 = fig.add_axes([0.77,0.5,0.23,0.45])
+    plot_data3 = plot_clustered_cell_cn_matrix(
+        ax3, cn_s, 'model_rep_state', cluster_field_name=cluster_col, secondary_field_name='model_tau', cmap=rt_cmap
+    )
+    ax3.set_title('{} S-phase cells\nPERT replication states'.format(argv.dataset))
+
+    # plot the G1/2-phase cells in the bottom row
+    # bottom left corner is the rpm
+    ax4 = fig.add_axes([0.05,0.0,0.23,0.45])
+    plot_data4 = plot_clustered_cell_cn_matrix(
+        ax4, cn_g, 'rpm', cluster_field_name=cluster_col, secondary_field_name='model_tau', max_cn=None, raw=True, cmap='viridis'
+    )
+    ax4.set_title('{} G1/2-phase cells\nReads per million'.format(argv.dataset))
+
+    # bottom mid-left is the hmmcopy states
+    ax5 = fig.add_axes([0.29,0.0,0.23,0.45])
+    plot_data5 = plot_clustered_cell_cn_matrix(
+        ax5, cn_g, 'state', cluster_field_name=cluster_col, secondary_field_name='model_tau'
+    )
+    ax5.set_title('{} G1/2-phase cells\nHMMcopy states'.format(argv.dataset))
+
+    # bottom mid-right is the model cn states
+    ax6 = fig.add_axes([0.53,0.0,0.23,0.45])
+    plot_data6 = plot_clustered_cell_cn_matrix(
+        ax6, cn_g, 'model_cn_state', cluster_field_name=cluster_col, secondary_field_name='model_tau'
+    )
+    ax6.set_title('{} G1/2-phase cells\nPERT CN states'.format(argv.dataset))
+
+    # bottom right corner is the replication states
+    ax7 = fig.add_axes([0.77,0.0,0.23,0.45])
+    plot_data7 = plot_clustered_cell_cn_matrix(
+        ax7, cn_g, 'model_rep_state', cluster_field_name=cluster_col, secondary_field_name='model_tau', cmap=rt_cmap
+    )
+    ax7.set_title('{} G1/2-phase cells\nPERT replication states'.format(argv.dataset))
+
+    # turn off the y-axis ticks in all subplots
+    for ax in [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7]:
+        ax.set_yticks([])
+        ax.set_ylabel('')
+
+    # add the colorbars for clone_id and model_tau
+    if len(clone_dict) > 1:
+        cell_ids = plot_data0.columns.get_level_values(0).values
+        cluster_ids0 = plot_data0.columns.get_level_values(1).values
+        # use mcolors to change every element in the dict to rgba
+        for key in clone_cmap.keys():
+            clone_cmap[key] = mcolors.to_rgba(clone_cmap[key])
+        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, color_map=clone_cmap, return_map=True)
+
+        # get array of 'model_tau' values that that match the cell_id order
+        condensed_cn = cn_s[['cell_id', 'model_tau']].drop_duplicates()
+        secondary_array = []
+        for cell in cell_ids:
+            s = condensed_cn[condensed_cn['cell_id'] == cell]['model_tau'].values[0]
+            secondary_array.append(s)
+
+        # make color mat according to secondary array
+        secondary_color_mat, secondary_to_colors = make_color_mat_float(secondary_array, 'Blues')
+
+        # create color bar that shows clone id for each row in heatmap
+        ax = fig.add_axes([0.03,0.5,0.01,0.45])
+        plot_colorbar(ax, color_mat0)
+
+        # create color bar that shows secondary sort value for each row in heatmap
+        ax = fig.add_axes([0.04,0.5,0.01,0.45])
+        plot_colorbar(ax, secondary_color_mat)
+
+        # repeat for the G1/2-phase cells in the bottom row
+        cell_ids = plot_data4.columns.get_level_values(0).values
+        cluster_ids4 = plot_data4.columns.get_level_values(1).values
+        color_mat4, color_map4 = cncluster.get_cluster_colors(cluster_ids4, color_map=clone_cmap, return_map=True)
+
+        # get array of 'model_tau' values that that match the cell_id order
+        condensed_cn = cn_g[['cell_id', 'model_tau']].drop_duplicates()
+        secondary_array = []
+        for cell in cell_ids:
+            s = condensed_cn[condensed_cn['cell_id'] == cell]['model_tau'].values[0]
+            secondary_array.append(s)
+        
+        # make color mat according to secondary array
+        secondary_color_mat, secondary_to_colors = make_color_mat_float(secondary_array, 'Blues')
+
+        # create color bar that shows clone id for each row in heatmap
+        ax = fig.add_axes([0.03,0.0,0.01,0.45])
+        plot_colorbar(ax, color_mat4)
+
+        # create color bar that shows secondary sort value for each row in heatmap
+        ax = fig.add_axes([0.04,0.0,0.01,0.45])
+        plot_colorbar(ax, secondary_color_mat)
 
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
-def plot_hmmcopy(cn_s, cn_g, argv):
+def plot_hmmcopy(cn_s, cn_g1, argv):
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
     ax = ax.flatten()
 
-    plot_clustered_cell_cn_matrix(ax[0], cn_g, 'state', cluster_field_name='clone_id')
-    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name='clone_id')
+    plot_clustered_cell_cn_matrix(ax[0], cn_g1, 'state', cluster_field_name=argv.clone_col)
+    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'state', cluster_field_name=argv.clone_col)
 
-    ax[0].set_title('{}\nG1/2-phase 10x CN states'.format(argv.dataset))
-    ax[1].set_title('{}\nS-phase 10x CN states'.format(argv.dataset))
+    ax[0].set_title('{}\nG1-phase HMMCopy states'.format(argv.dataset))
+    ax[1].set_title('{}\nS-phase HMMCopy states'.format(argv.dataset))
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
 
-def plot_rpm(cn_s, cn_g, argv):
+def plot_rpm(cn_s, cn_g1, argv):
     fig, ax = plt.subplots(1, 2, figsize=(14, 7), tight_layout=True)
     ax = ax.flatten()
 
-    plot_clustered_cell_cn_matrix(ax[0], cn_g, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id')
-    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name='clone_id')
+    plot_clustered_cell_cn_matrix(ax[0], cn_g1, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name=argv.clone_col)
+    plot_clustered_cell_cn_matrix(ax[1], cn_s, 'rpm', max_cn=None, raw=True, cmap='viridis', cluster_field_name=argv.clone_col)
 
     ax[0].set_title('{}\nG1-phase reads per million'.format(argv.dataset))
     ax[1].set_title('{}\nS-phase reads per million'.format(argv.dataset))
@@ -90,35 +218,22 @@ def plot_rpm(cn_s, cn_g, argv):
 def main():
     argv = get_args()
 
-    cn_s = pd.read_csv(argv.cn_s, dtype={'chr': str, 'cell_id': int, 'barcode': str, 'assigned_clone_id': str})
-    cn_g = pd.read_csv(argv.cn_g, dtype={'chr': str, 'cell_id': int, 'barcode': str, 'clone_id': str})
+    cn_s = pd.read_csv(argv.cn_s)
+    cn_g = pd.read_csv(argv.cn_g)
 
-    # convert the 'chr' column to a string and then categorical
-    cn_s.chr = cn_s.chr.astype('category')
-    cn_g.chr = cn_s.chr.astype('category')
-
-    print('S-phase cells')
-    print(cn_s.head())
-    print(cn_s.dtypes)
-    print('G1/2-phase cells')
-    print(cn_g.head())
-    print(cn_g.dtypes)
-
-    # use the barcode column as the cell_id
-    # this is necessary for scgenome plotting functions to work
-    # as the cell_id needs to be a string, not an integer
-    cn_s['cell_id'] = cn_s['barcode'].astype(str)
-    cn_g['cell_id'] = cn_g['barcode'].astype(str)
+    # convert the chr column to string and then category
+    cn_s['chr'] = cn_s['chr'].astype(str).astype('category')
+    cn_g['chr'] = cn_g['chr'].astype(str).astype('category')
 
     # show rpm, hmmcopy, inferred cn, inferred rep heatmaps for S-phase cells and G1/2-phase cells
     # where all the rows are sorted the same in all four heatmaps
     plot_model_results(cn_s, cn_g, argv)
 
-    # # show hmmcopy state heatmaps for both S-phase and G1-phase cells
-    # plot_hmmcopy(cn_s, cn_g, argv)
+    # show hmmcopy state heatmaps for both S-phase and G1-phase cells
+    plot_hmmcopy(cn_s, cn_g, argv)
 
-    # # show reads per million heatmaps for both S-phase and G1-phase cells
-    # plot_rpm(cn_s, cn_g, argv)
+    # show reads per million heatmaps for both S-phase and G1-phase cells
+    plot_rpm(cn_s, cn_g, argv)
 
 
 

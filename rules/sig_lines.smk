@@ -99,13 +99,13 @@ rule all_sig_lines:
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/sig_lines/{dataset}/signals_heatmaps.png',
-        #     dataset=[
-        #         d for d in config['signatures_cell_lines']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/sig_lines/{dataset}/signals_heatmaps.png',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/sig_lines/phase_changes_cohort_confusion.png',
         'plots/sig_lines/subclonal_rt_diffs_summary.png',
         'plots/sig_lines/sample_cnas_vs_rt_dists.png',
@@ -658,24 +658,24 @@ rule twidth_downsampling_sl:
         'deactivate'
 
 
-# rule signals_heatmaps_sl:
-#     input: 
-#         ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
-#         clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
-#     output: 
-#         figure = 'plots/sig_lines/{dataset}/signals_heatmaps.png'
-#     params:
-#         dataset = lambda wildcards: wildcards.dataset,
-#     log: 'logs/sig_lines/{dataset}/signals_heatmaps.log'
-#     # singularity: 'docker://marcjwilliams1/signals'
-#     singularity: '/juno/work/shah/users/william1/singularity/signals_v0.7.6.sif'
-#     shell:
-#         'Rscript scripts/sig_lines/signals_heatmaps.R '
-#         '--ascn {input.ascn} '
-#         '--clones {input.clones} '
-#         '--dataset {params.dataset} '
-#         '--heatmap {output.figure} '
-#         '&> {log}'
+rule signals_heatmaps_sl:
+    input: 
+        ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
+        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
+    output: 
+        figure = 'plots/sig_lines/{dataset}/signals_heatmaps.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+    log: 'logs/sig_lines/{dataset}/signals_heatmaps.log'
+    singularity: 'docker://marcjwilliams1/signals'
+    # singularity: '/juno/work/shah/users/william1/singularity/signals_v0.7.6.sif'
+    shell:
+        'Rscript scripts/sig_lines/signals_heatmaps.R '
+        '--ascn {input.ascn} '
+        '--clones {input.clones} '
+        '--dataset {params.dataset} '
+        '--heatmap {output.figure} '
+        '&> {log}'
     
 
 # TODO: split tsv and png outputs into separate rules
