@@ -23,7 +23,7 @@ bad_datasets = []
 rule all_fitness:
     input:
         expand(
-            'plots/fitness/{dataset}/s_vs_g_rpm_filtered.png',
+            'plots/fitness/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
@@ -101,6 +101,7 @@ rule all_fitness:
         ),
         'plots/fitness/fitness_proxy_s_coefficients.png',
         'plots/fitness/s_predictiveness.png',
+        'plots/fitness/sample_corrs.png',
         'plots/fitness/frac_rep_distribution.png'
         
 
@@ -386,7 +387,7 @@ rule plot_pyro_model_output_f:
     log: 'logs/fitness/{dataset}/plot_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/common/plot_pyro_model_output.py '
+        'python3 scripts/fitness/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -459,7 +460,7 @@ rule plot_filtered_pyro_model_output_f:
     log: 'logs/fitness/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/common/plot_pyro_model_output.py '
+        'python3 scripts/fitness/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -654,5 +655,61 @@ rule cohort_frac_rep_distribution_f:
         'python3 scripts/fitness/cohort_frac_rep_distribution.py '
         '-i {input} '
         '--plot {output} '
+        '&> {log} ; '
+        'deactivate'
+
+
+rule cohort_clone_counts_f:
+    input:
+        expand(
+            'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+    output: 'analysis/fitness/cohort_clone_counts.tsv'
+    log: 'logs/fitness/cohort_clone_counts.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cohort_clone_counts.py '
+        '--input {input} '
+        '--output {output} '
+        '&> {log} ; '
+        'deactivate'
+
+
+
+rule cn_and_rt_correlations_f:
+    input:
+        rt = expand(
+            'analysis/fitness/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        cn = expand(
+            'analysis/fitness/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        counts = 'analysis/fitness/cohort_clone_counts.tsv'
+    output:
+        sample_corrs = 'plots/fitness/sample_corrs.png',
+        clone_corrs = 'plots/fitness/clone_corrs.png',
+        rx_corrs = 'plots/fitness/rx_corrs.png'
+    log: 'logs/fitness/cn_and_rt_correlations.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cn_and_rt_correlations.py '
+        '--input_cn {input.cn} '
+        '--input_rt {input.rt} '
+        '--counts {input.counts} '
+        '--sample_corrs {output.sample_corrs} '
+        '--clone_corrs {output.clone_corrs} '
+        '--rx_corrs {output.rx_corrs} '
         '&> {log} ; '
         'deactivate'

@@ -78,6 +78,12 @@ rule all_laks_flow:
                 d for d in ['T47D', 'GM18507', 'all']
             ]
         ),
+        expand(
+            'plots/laks_flow/{dataset}/inferred_cn_rep_results_filtered.png',
+            dataset=[
+                d for d in ['T47D', 'GM18507', 'all']
+            ]
+        ),
         'plots/laks_flow/GM18507/cn_s_example.png',
         'plots/laks_flow/all/flow_error_cells.png',
         'plots/laks_flow/all/rpm_pca.png',
@@ -441,6 +447,24 @@ rule plot_inferred_cn_vs_scRT_composite_filtered_lf:
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/plot_inferred_cn_vs_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_filtered_pyro_model_output_lf:
+    input:
+        s_phase = 'analysis/laks_flow/{dataset}/cn_s_pyro_inferred_composite_filtered.tsv',
+        g1_phase = 'analysis/laks_flow/{dataset}/cn_g_pyro_inferred_composite_filtered.tsv',
+    output:
+        plot1 = 'plots/laks_flow/{dataset}/inferred_cn_rep_results_filtered.png',
+        plot2 = 'plots/laks_flow/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
+        plot3 = 'plots/laks_flow/{dataset}/s_vs_g_rpm_filtered.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/laks_flow/{dataset}/plot_filtered_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/laks_flow/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
