@@ -30,9 +30,9 @@ rule all_gastric_10x_500kb:
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/gastric_10x_500kb/sample_cell_cycle_counts.png'
+        'plots/gastric_10x_500kb/sample_cell_cycle_counts.png',
+        'plots/gastric_10x_500kb/clone_cell_cycle_counts.png'
         
-
 
 rule collect_cn_data_g500:
     input:
@@ -145,10 +145,11 @@ rule plot_filtered_pyro_model_output_g10x:
 rule cell_cycle_counts_g500:
     input:
         s_phase = 'analysis/gastric_10x_500kb/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
-        g1_phase = 'analysis/gastric_10x_500kb/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
+        g1_phase = 'analysis/gastric_10x_500kb/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz',
+        rna = 'data/gastric_10x/{dataset}/scRNA_clone_assignmnent_s_phase.csv'
     output:
         clone = 'analysis/gastric_10x_500kb/{dataset}/clone_cell_cycle_counts.csv.gz',
-        sample = 'analysis/gastric_10x_500kb/{dataset}/sample_cell_cycle_counts.csv.gz'
+        sample = 'analysis/gastric_10x_500kb/{dataset}/sample_cell_cycle_counts.csv.gz',
     log: 'logs/gastric_10x_500kb/{dataset}/cell_cycle_counts.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -176,4 +177,28 @@ rule sample_cell_cycle_counts_g500:
         'python3 scripts/gastric_10x_500kb/sample_cell_cycle_counts.py '
         '-s {input.sample_counts} -d {input.doubling_times} '
         '-t {output.table} -p {output.plot} &> {log} ; '
+        'deactivate'
+
+
+rule clone_cell_cycle_counts_g500:
+    input:
+        clone_counts = expand(
+            'analysis/gastric_10x_500kb/{dataset}/clone_cell_cycle_counts.csv.gz',
+            dataset=[
+                d for d in config['10x_gastric_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        doubling_times = 'data/gastric_10x/andor2020_doubling_times.csv'
+    output:
+        table = 'analysis/gastric_10x_500kb/clone_cell_cycle_counts.csv.gz',
+        plot = 'plots/gastric_10x_500kb/clone_cell_cycle_counts.png'
+    log: 'logs/gastric_10x_500kb/clone_cell_cycle_counts.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/gastric_10x_500kb/clone_cell_cycle_counts.py '
+        '-c {input.clone_counts} '
+        '-d {input.doubling_times} '
+        '-t {output.table} '
+        '-p {output.plot} &> {log} ; '
         'deactivate'

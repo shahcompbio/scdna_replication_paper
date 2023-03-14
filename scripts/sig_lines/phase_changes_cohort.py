@@ -29,7 +29,7 @@ def plot_confusion_matrix(cn, argv):
     # rename the x and y axis labels
     ax.set_xlabel('Laks phase')
     ax.set_ylabel('PERT phase')
-    ax.set_title(f'Unsorted hTERT & OV2295 cell lines\n # cells')
+    ax.set_title(f'Unsorted hTERT & OV2295\n # cells')
 
     # save the figure
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
@@ -39,26 +39,22 @@ def plot_violin_plots(cn, argv):
     """ Use violin plots to show the distribution of features across different phase calls. """
     # list of columns to plot on the y-axis
     y_cols = [
-        'corrected_breakpoints', 'corrected_madn', 'rpm_auto_norm',
-        'rep_auto_norm', 'cell_frac_rep', 'quality',
-        'gc_intercept', 'gc_slope', 'ploidy'
+        'corrected_breakpoints', 'ploidy', 'corrected_madn', 
+        'rpm_auto_norm', 'gc_intercept', 'gc_slope',
     ]
 
     # create a dictionary that maps each y-column name to a y-axis label
     y_label_dict = {
-        'corrected_breakpoints': 'CN breakpoints',
-        'corrected_madn': 'RPM median absolute deviation\nbetween neighboring bins',
+        'corrected_breakpoints': 'HMMcopy breakpoints',
+        'ploidy': 'HMMcopy ploidy',
+        'corrected_madn': 'RPM median absolute deviation\nbetween neighboring bins (madn)',
         'rpm_auto_norm': 'RPM autocorrelation',
-        'rep_auto_norm': 'PERT rep state autocorrelation',
-        'cell_frac_rep': 'PERT fraction of replicated bins',
-        'quality': 'Laks et al quality score',
         'gc_intercept': 'GC bias intercept',
-        'gc_slope': 'GC bias slope',
-        'ploidy': 'HMMcopy ploidy'
+        'gc_slope': 'GC bias slope'
     }
 
     # create a matplotlib figure with 3 rows and 3 columns
-    fig, axes = plt.subplots(3, 3, figsize=(12, 12), tight_layout=True)
+    fig, axes = plt.subplots(2, 3, figsize=(12, 8), tight_layout=True)
     ax = axes.flatten()
 
     phase_cmap = get_phase_cmap()
@@ -69,6 +65,7 @@ def plot_violin_plots(cn, argv):
         ax[y_cols.index(y_col)].set_xlabel('Laks et al phase')
         ax[y_cols.index(y_col)].set_ylabel(y_label_dict[y_col])
         ax[y_cols.index(y_col)].legend(loc='upper right', title='PERT phase')
+        ax[y_cols.index(y_col)].set_title(f'Unsorted hTERT & OV2295')
 
     # save the figure
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
