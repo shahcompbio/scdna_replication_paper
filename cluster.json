@@ -189,6 +189,10 @@
     {
         "mem": 256
     },
+    "plot_pyro_model_output_f" :
+    {
+        "mem": 256
+    },
     "plot_clone_rt_and_spf_f" :
     {
         "mem": 128

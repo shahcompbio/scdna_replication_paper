@@ -102,7 +102,8 @@ rule all_fitness:
         'plots/fitness/fitness_proxy_s_coefficients.png',
         'plots/fitness/s_predictiveness.png',
         'plots/fitness/sample_corrs.png',
-        'plots/fitness/frac_rep_distribution.png'
+        'plots/fitness/frac_rep_violinplots.png',
+        'plots/fitness/rx_clone_spf.png'
         
 
 def dataset_cn_files(wildcards):
@@ -648,13 +649,16 @@ rule cohort_frac_rep_distribution_f:
                 if (d not in bad_datasets)
             ]
         )
-    output: 'plots/fitness/frac_rep_distribution.png'
+    output: 
+        plot1 = 'plots/fitness/frac_rep_histograms.png',
+        plot2 = 'plots/fitness/frac_rep_violinplots.png'
     log: 'logs/fitness/cohort_frac_rep_distribution.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness/cohort_frac_rep_distribution.py '
         '-i {input} '
-        '--plot {output} '
+        '--plot1 {output.plot1} '
+        '--plot2 {output.plot2} '
         '&> {log} ; '
         'deactivate'
 
@@ -677,7 +681,6 @@ rule cohort_clone_counts_f:
         '--output {output} '
         '&> {log} ; '
         'deactivate'
-
 
 
 rule cn_and_rt_correlations_f:
@@ -712,4 +715,35 @@ rule cn_and_rt_correlations_f:
         '--clone_corrs {output.clone_corrs} '
         '--rx_corrs {output.rx_corrs} '
         '&> {log} ; '
+        'deactivate'
+
+
+rule cohort_rx_clone_counts_f:
+    input:
+        expand(
+            'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
+            dataset=[
+                d for d in config['fitness_rx_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+    output: 'analysis/fitness/cohort_rx_clone_counts.tsv'
+    log: 'logs/fitness/cohort_rx_clone_counts.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cohort_rx_clone_counts.py '
+        '--input {input} '
+        '--output {output} '
+        '&> {log} ; '
+        'deactivate'
+
+
+rule plot_rx_clone_spf_f:
+    input: 'analysis/fitness/cohort_rx_clone_counts.tsv',
+    output: 'plots/fitness/rx_clone_spf.png'
+    log: 'logs/fitness/plot_rx_clone_spf.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/plot_rx_clone_spf.py '
+        '{input} {params} {output} &> {log} ; '
         'deactivate'

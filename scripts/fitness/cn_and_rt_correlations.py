@@ -168,8 +168,8 @@ def plot_rx_corrs(rt, clone_rt_cols, argv):
     rt_corrs = rt[clone_rt_cols].corr()
     mask = np.zeros_like(rt_corrs, dtype=bool)
     mask[np.triu_indices_from(mask)] = True
-    sns.heatmap(rt_corrs, square=False, linewidths=.5, cbar_kws={"shrink": .5}, mask=mask, ax=ax)
-    ax.set_title('Correlation in U vs T pseudobulk RT')
+    sns.heatmap(rt_corrs, square=False, linewidths=.5, cbar_kws={"shrink": .5}, annot=True, fmt='.2f', mask=mask, ax=ax)
+    ax.set_title('Treated vs untreated RT correlation')
 
     # only include the sample ID prefix and the T or U suffix in the xticklabels and yticklabels
     ax.set_xticklabels(['{} {}'.format(str(c.get_text()).split('_')[0], str(c.get_text()).split('_')[-1]) for c in ax.get_xticklabels()])

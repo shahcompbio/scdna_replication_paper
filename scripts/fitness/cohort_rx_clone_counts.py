@@ -25,7 +25,19 @@ def load_clone_counts(argv):
         temp_counts = temp_counts.groupby('clone_id').sum().reset_index()
         # add dataset name as column
         d = path.split('/')[2]
-        temp_counts['dataset'] = d
+        # check to see if this is treated or untreated
+        if 'U' in d:
+            rx_status = 'untreated'
+        else:
+            rx_status = 'treated'
+        # check to see which dataset this is
+        datasetnames = ['SA1035', 'SA535', 'SA609']
+        for dataset in datasetnames:
+            if dataset in d:
+                datasetname = dataset
+        # store rx_status and dataset name
+        temp_counts['rx_status'] = rx_status
+        temp_counts['dataset'] = datasetname
         # compute the fraction of cells in each clone for each cell cycle phase
         temp_counts['frac_cells_s'] = temp_counts['num_cells_s'] / (temp_counts['num_cells_s'] + temp_counts['num_cells_g'])
         temp_counts['frac_cells_g'] = temp_counts['num_cells_g'] / (temp_counts['num_cells_s'] + temp_counts['num_cells_g'])
