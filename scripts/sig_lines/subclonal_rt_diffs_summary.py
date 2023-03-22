@@ -45,10 +45,10 @@ def plot_clone_rt_diff_vs_cna_types(df, ax, test='t-test_ind', text_format='star
     hue = None
     box_pairs = [
         ('loss', 'gain'),
-        ('loss', 'neutral'),
-        ('neutral', 'gain'),
+        ('loss', 'unaltered'),
+        ('unaltered', 'gain'),
     ]
-    order = ['loss', 'neutral', 'gain']
+    order = ['loss', 'unaltered', 'gain']
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
                        text_format=text_format, loc=loc, verbose=verbose, palette=cna_cmap)
     return ax

@@ -99,6 +99,13 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fitness/{dataset}/signals_heatmaps.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/fitness/fitness_proxy_s_coefficients.png',
         'plots/fitness/s_predictiveness.png',
         'plots/fitness/sample_corrs.png',
@@ -747,3 +754,23 @@ rule plot_rx_clone_spf_f:
         'python3 scripts/fitness/plot_rx_clone_spf.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+
+
+rule signals_heatmaps_f:
+    input: 
+        ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
+        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
+    output: 
+        figure = 'plots/fitness/{dataset}/signals_heatmaps.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+    log: 'logs/fitness/{dataset}/signals_heatmaps.log'
+    singularity: 'docker://marcjwilliams1/signals'
+    # singularity: '/juno/work/shah/users/william1/singularity/signals_v0.7.6.sif'
+    shell:
+        'Rscript scripts/fitness/signals_heatmaps.R '
+        '--ascn {input.ascn} '
+        '--clones {input.clones} '
+        '--dataset {params.dataset} '
+        '--heatmap {output.figure} '
+        '&> {log}'

@@ -30,7 +30,8 @@ def get_cna_cmap():
     cmap = {
         'gain': 'red',  # red
         'loss': 'deepskyblue',  # dark blue
-        'neutral': '#CCCCCC'  # grey
+        'neutral': '#CCCCCC',  # grey
+        'unaltered': '#CCCCCC'  # grey
     }
     return cmap
 

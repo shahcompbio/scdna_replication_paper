@@ -43,18 +43,14 @@ def plot_rx_spf(df, ax, x='rx_status', y='frac_cells_s', test='t-test_ind', text
     return ax
 
 
-def plot_spf_distributions(df, argv):
-
-    fig, ax = plt.subplots(1, 1, figsize=(4, 4), tight_layout=True)
-
+def plot_clone_spf_distributions(df, ax):
+    ''' Plot the distribution of clone S-phase fractions for each rx_status '''
     # swarmplot with p-values
     plot_rx_spf(df, ax, x='rx_status', y='frac_cells_s')
-
-    ax.set_ylabel('Clone S-phase fraction')
+    ax.set_ylabel('S-phase fraction')
     ax.set_xlabel('')
-    ax.set_title('Cell cycle distribution')
+    ax.set_title('Clone cell cycle distributions')
 
-    fig.savefig(argv.output, bbox_inches='tight', dpi=300)
 
 
 def filter_rows(df, threshold=10):
@@ -89,13 +85,25 @@ def main():
     # load the data
     df = pd.read_csv(argv.input, sep='\t')
 
-    # filter the data
-    # df = filter_rows(df)
-    df = simple_filter_rows(df)
+    # aggregate the clones by dataset and treatment status
+    sample_df = df[['dataset', 'rx_status', 'num_cells_s', 'num_cells_g']].groupby(['dataset', 'rx_status']).agg({'num_cells_s': 'sum', 'num_cells_g': 'sum'}).reset_index()
+    # calculate the fraction of cells in S-phase
+    sample_df['frac_cells_s'] = sample_df['num_cells_s'] / (sample_df['num_cells_s'] + sample_df['num_cells_g'])
+    sample_df['frac_cells_g'] = sample_df['num_cells_g'] / (sample_df['num_cells_s'] + sample_df['num_cells_g'])
 
-    # plot
-    plot_spf_distributions(df, argv)
+    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
 
+    # plot the fraction of cells in S-phase for each dataset, split by treatment status
+    sns.barplot(data=sample_df, x='dataset', y='frac_cells_s', hue='rx_status', ax=ax[0], palette=get_rx_cmap(), hue_order=['untreated', 'treated'])
+    ax[0].set_ylabel('S-phase fraction')
+    ax[0].set_xlabel('')
+    ax[0].set_title('Sample cell cycle distributions')
+    ax[0].legend(title='', loc='upper left')
+
+    # plot a swarmplot of the clone S-phase fractions, split by treatment status
+    plot_clone_spf_distributions(simple_filter_rows(df), ax[1])
+
+    fig.savefig(argv.output, bbox_inches='tight', dpi=300)
 
 if __name__ == '__main__':
     main()

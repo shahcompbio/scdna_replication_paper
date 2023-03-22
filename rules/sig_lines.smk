@@ -546,7 +546,6 @@ rule subclonal_rt_diffs_summary_sl:
         'deactivate'
 
 
-# TODO: finish this script according to the notebook
 rule sample_cnas_vs_rt:
     input:
         rt = expand(

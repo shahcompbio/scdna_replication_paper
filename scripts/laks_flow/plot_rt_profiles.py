@@ -71,19 +71,25 @@ def plot_rt_corr(df, argv):
 
 
 def plot_rt_diff(df, argv):
+    # compute the number of loci that have a >0.25 absolute difference between the two cell lines
+    thresh = 0.25
+    num_loci = int(len(df))
+    num_sig_diff_loci_merged = int(np.sum(np.abs(df['rt_diff_merged']) > thresh))
+    num_sig_diff_loci_split = int(np.sum(np.abs(df['rt_diff_split']) > thresh))
+
     # plot the difference in RT values between the two cell lines
     # for the merged model
     fig, ax = plt.subplots(1, 1, figsize=(12,4))
     plot_cell_cn_profile2(ax, df, 'rt_diff_merged', color='#BA0021', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
-    ax.set_title('Merged PERT input')
+    ax.set_title('Merged PERT input\n{} of {} loci with >{} absolute difference'.format(num_sig_diff_loci_merged, num_loci, thresh))
     fig.savefig(argv.rt_diff_merged, bbox_inches='tight', dpi=300)
 
     # for the split model
     fig, ax = plt.subplots(1, 1, figsize=(12,4))
     plot_cell_cn_profile2(ax, df, 'rt_diff_split', color='#BA0021', max_cn=None, scale_data=False, lines=True)
     ax.set_ylabel('Pseudobulk RT difference\n<--GM18507 earlier | T47D earlier -->')
-    ax.set_title('Split PERT input')
+    ax.set_title('Split PERT input\n{} of {} loci with >{} absolute difference'.format(num_sig_diff_loci_split, num_loci, thresh))
     fig.savefig(argv.rt_diff_split, bbox_inches='tight', dpi=300)
 
 

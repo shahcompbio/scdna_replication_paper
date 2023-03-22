@@ -172,10 +172,10 @@ def plot_WT_rt_vs_cna_type(df, ax, test='t-test_ind', text_format='star', loc='i
     hue = None
     box_pairs = [
         ('loss', 'gain'),
-        ('loss', 'neutral'),
-        ('neutral', 'gain'),
+        ('loss', 'unaltered'),
+        ('unaltered', 'gain'),
     ]
-    order = ['loss', 'neutral', 'gain']
+    order = ['loss', 'unaltered', 'gain']
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
                        text_format=text_format, loc=loc, verbose=verbose, palette=cna_cmap)
     return ax
@@ -293,7 +293,7 @@ def main():
     df = merge_cn_and_rt_info(cn, rt, bk, argv)
 
     # create column to denote whether a particular bin has a gain, loss, or no cna
-    df['cna_type'] = 'neutral'
+    df['cna_type'] = 'unaltered'
     for i, row in df.iterrows():
         if row['relative_cn'] > 0:
             df.loc[i, 'cna_type'] = 'gain'
