@@ -32,8 +32,9 @@ def main():
     # compute time from scheduled replication column
     df['time_from_scheduled_rt'] = df['pseudobulk_hours'] - (df[argv.frac_rt_col] * 10.0)
 
-    # find the number of S-phase cells used to compute the Twidth curve
+    # find the number of clones and S-phase cells used to compute the Twidth curve
     num_cells = len(df.cell_id.unique())
+    num_clones = len(df.assigned_clone_id.unique())
 
     # dataframe storing computed T-width values
     t_width_df = []
@@ -45,14 +46,22 @@ def main():
         df, tfs_col='time_from_scheduled_rt', rs_col=argv.rep_col, alpha=1,
         title='{} scRT heterogeneity'.format(argv.dataset), curve='sigmoid', ax=ax[0]
     )
-    t_width_df.append(pd.DataFrame({'dataset': [argv.dataset], 'infer_mode': [argv.infer_mode], 'per_cell': [False], 'T-width': [Tw], 'num_cells': [num_cells]}))
+    t_width_df.append(pd.DataFrame({
+        'dataset': [argv.dataset], 'infer_mode': [argv.infer_mode],
+        'per_cell': [False], 'T-width': [Tw],
+        'num_cells': [num_cells], 'num_clones': [num_clones]
+    }))
 
     # compute and plot twidth for per_cell==True
     ax[1], Tw = compute_and_plot_twidth(
         df, tfs_col='time_from_scheduled_rt', rs_col=argv.rep_col, alpha=0.1, per_cell=True,
         title='{} scRT heterogeneity'.format(argv.dataset), curve='sigmoid', ax=ax[1]
     )
-    t_width_df.append(pd.DataFrame({'dataset': [argv.dataset], 'infer_mode': [argv.infer_mode], 'per_cell': [True], 'T-width': [Tw], 'num_cells': [num_cells]}))
+    t_width_df.append(pd.DataFrame({
+        'dataset': [argv.dataset], 'infer_mode': [argv.infer_mode],
+        'per_cell': [True], 'T-width': [Tw],
+        'num_cells': [num_cells], 'num_clones': [num_clones]
+    }))
 
     # save figure of twidth curves
     fig.savefig(argv.output_pdf, bbox_inches='tight')

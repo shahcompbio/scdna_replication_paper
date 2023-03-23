@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import linregress
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common.colors import get_htert_cmap
@@ -62,16 +63,29 @@ def main():
     ax[1].set_title('Cellular scRT heterogeneity')
     ax[1].set_xlabel('')
 
+    # compute pearson correlation coefficient between T-width and number of clones
+    x = df.query('per_cell==False')['num_clones']
+    y = df.query('per_cell==False')['T-width']
+    slope, intercept, r_value, p_value, std_err = linregress(x, y)
+
     # scatterplots of T-width values vs number of cells
     # 3. T-width values for each genetic condition
-    sns.scatterplot(data=df.query('per_cell==False'), x='num_cells', y='T-width', hue='cell_type', ax=ax[2], palette=htert_cmap)
-    ax[2].set_title('Cellular scRT heterogeneity')
-    ax[2].set_xlabel('Number of cells')
+    sns.regplot(data=df.query('per_cell==False'), x='num_clones', y='T-width', ax=ax[2], scatter=False, color='black', line_kws={'linestyle':'--'})
+    sns.scatterplot(data=df.query('per_cell==False'), x='num_clones', y='T-width', hue='cell_type', ax=ax[2], palette=htert_cmap)
+    ax[2].set_title('Cellular scRT heterogeneity\nPearson r={:.2f}, p={:.2e}'.format(r_value, p_value))
+    ax[2].set_xlabel('Number of clones')
+    # change xlim to be -1 from the current left limit and +1 from the current right limit
+    ax[2].set_xlim(ax[2].get_xlim()[0]-1, ax[2].get_xlim()[1]+1)
 
     # 4. T-width values for each dataset
-    sns.scatterplot(data=df.query('per_cell==False'), x='num_cells', y='T-width', hue='dataset', ax=ax[3], palette=htert_cmap)    
-    ax[3].set_title('Cellular scRT heterogeneity')
-    ax[3].set_xlabel('Number of cells')
+    # compute linear regression line between T-width and number of clones
+    sns.regplot(data=df.query('per_cell==False'), x='num_clones', y='T-width', ax=ax[3], scatter=False, color='black', line_kws={'linestyle':'--'})
+    sns.scatterplot(data=df.query('per_cell==False'), x='num_clones', y='T-width', hue='dataset', ax=ax[3], palette=htert_cmap)    
+    ax[3].set_title('Cellular scRT heterogeneity\nPearson r={:.2f}, p={:.2e}'.format(r_value, p_value))
+    ax[3].set_xlabel('Number of clones')
+    # change xlim to be -1 from the current left limit and +1 from the current right limit
+    ax[3].set_xlim(ax[3].get_xlim()[0]-1, ax[3].get_xlim()[1]+1)
+
     
     fig.savefig(argv.plot, bbox_inches='tight', dpi=300)
 
