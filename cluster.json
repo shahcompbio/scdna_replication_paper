@@ -105,7 +105,11 @@
         "time" : "120:00",
         "mem" : 256
     },
-    "model_accuracies_sim" :
+    "scRT_accuracies_sim" :
+    {
+        "time" : "12:00"
+    },
+    "phase_accuracies_sim" :
     {
         "time" : "12:00"
     },
@@ -185,8 +189,51 @@
     {
         "mem": 256
     },
+    "plot_pyro_model_output_f" :
+    {
+        "mem": 256
+    },
+    "plot_clone_rt_and_spf_f" :
+    {
+        "mem": 128
+    },
     "compute_rt_pseudobulks_f" :
     {
         "mem": 256
+    },
+    "collect_cn_data_g10x" :
+    {
+        "mem" : 350
+    },
+    "plot_cn_heatmaps_input_g10x" :
+    {
+        "mem" : 256
+    },
+    "infer_scRT_pyro_g10x" :
+    {
+        "mem" : 600,
+        "time" : "160:00"
+    },
+    "revise_cell_cycle_labels_g10x" :
+    {
+        "mem": 256
+    },
+    "plot_pyro_model_output_g10x" :
+    {
+        "mem" : 256
+    },
+    "plot_filtered_pyro_model_output_g10x" :
+    {
+        "mem" : 256
+    },
+    "collect_cn_data_g500" :
+    {
+        "mem" : 350,
+        "time" : "48:00"
+    },
+    "infer_scRT_pyro_g500" :
+    {
+        "time" : "120:00",
+        "mem" : 256
     }
 }

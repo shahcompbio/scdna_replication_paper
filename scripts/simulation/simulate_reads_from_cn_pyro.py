@@ -15,7 +15,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('-si', '--df_s', help='True somatic CN profiles for S-phase cells')
-    p.add_argument('-gi', '--df_g', help='True somatic CN profiles for S-phase cells')
+    p.add_argument('-gi', '--df_g', help='True somatic CN profiles for G1/2-phase cells')
     p.add_argument('-n', '--num_reads', type=int, help='number of reads per cell')
     p.add_argument('-l', '--lamb', type=float, help='negative binomial success probability term lambda (controls overdispersion)')
     p.add_argument('-a', '--a', type=int, help='amplitude of sigmoid curve when generating rt noise')
@@ -35,7 +35,7 @@ def make_gc_features(x, K):
     return torch.cat([x ** i for i in reversed(range(0, K+1))], 1)
 
 
-def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=None, u_guess=70., lambda_init=1e-1, t_alpha_prior=None, t_beta_prior=None, t_init=None,  K=4):
+def model_s(gammas, libs, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=None, u_guess=70., lambda_init=1e-1, t_alpha_prior=None, t_beta_prior=None, t_init=None,  K=4, L=1):
     with ignore_jit_warnings():
         if cn0 is not None:
             num_loci, num_cells = cn0.shape
@@ -48,8 +48,10 @@ def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=Non
     # variance of negative binomial distribution is governed by the success probability of each trial
     lamb = pyro.param('expose_lambda', torch.tensor([lambda_init]), constraint=constraints.unit_interval)
 
-    # gc bias params are set globally when simulating data
-    betas = pyro.sample('expose_betas', dist.Normal(0., 1.).expand([K+1]).to_event(1))
+    # gc bias params
+    beta_means = pyro.sample('expose_beta_means', dist.Normal(0., 1.).expand([L, K+1]).to_event(2))
+    beta_stds = pyro.param('expose_beta_stds', torch.logspace(start=0, end=-K, steps=(K+1)).reshape(1, -1).expand([L, K+1]),
+                            constraint=constraints.positive)
     
     # define cell and loci plates
     loci_plate = pyro.plate('num_loci', num_loci, dim=-2)
@@ -76,6 +78,9 @@ def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=Non
         
         # per cell reads per copy per bin
         u = pyro.sample('expose_u', dist.Normal(torch.tensor([u_guess]), torch.tensor([u_guess/10.])))
+    
+        # sample the gc bias params from a normal distribution for this cell
+        betas = pyro.sample('expose_betas', dist.Normal(beta_means[libs], beta_stds[libs]).to_event(1))
         
         with loci_plate:
 
@@ -101,9 +106,9 @@ def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=Non
             # total copy number accounting for replication
             chi = cn * (1. + rep)
 
-            # find the gc bias rate of each bin using betas
-            gc_features = make_gc_features(gammas, K)
-            omega = torch.exp(torch.sum(betas * gc_features, 1)).reshape(-1, 1)
+            # copy number accounting for gc bias
+            gc_features = make_gc_features(gammas, K).reshape(num_loci, 1, K+1)
+            omega = torch.exp(torch.sum(torch.mul(betas, gc_features), 2))  # compute the gc 'rate' of each bin
 
             # expected reads per bin per cell
             theta = u * chi * omega
@@ -120,7 +125,7 @@ def model_s(gammas, cn0=None, rho0=None, num_cells=None, num_loci=None, etas=Non
 
 
 
-def model_g1(gammas, cn=None, num_cells=None, num_loci=None, u_guess=70., lambda_init=1e-1, K=4):
+def model_g1(gammas, libs, cn=None, num_cells=None, num_loci=None, u_guess=70., lambda_init=1e-1, K=4, L=1):
     with ignore_jit_warnings():
         if cn is not None:
             num_loci, num_cells = cn.shape
@@ -131,22 +136,27 @@ def model_g1(gammas, cn=None, num_cells=None, num_loci=None, u_guess=70., lambda
     lamb = pyro.param('expose_lambda', torch.tensor([lambda_init]), constraint=constraints.positive)
 
     # gc bias params
-    betas = pyro.sample('expose_betas', dist.Normal(0., 1.).expand([K+1]).to_event(1))
+    beta_means = pyro.sample('expose_beta_means', dist.Normal(0., 1.).expand([L, K+1]).to_event(2))
+    beta_stds = pyro.param('expose_beta_stds', torch.logspace(start=0, end=-K, steps=(K+1)).reshape(1, -1).expand([L, K+1]),
+                            constraint=constraints.positive)
 
     with pyro.plate('num_cells', num_cells):
 
         # per cell reads per copy per bin
         u = pyro.sample('expose_u', dist.Normal(torch.tensor([u_guess]), torch.tensor([u_guess/10.])))
 
+        # sample the gc bias params from a normal distribution for this cell
+        betas = pyro.sample('expose_betas', dist.Normal(beta_means[libs], beta_stds[libs]).to_event(1))
+
         with pyro.plate('num_loci', num_loci):
 
             # copy number accounting for gc bias
-            gc_features = make_gc_features(gammas, K)
-            omega = torch.exp(torch.sum(betas * gc_features, 1)).reshape(-1, 1)
+            gc_features = make_gc_features(gammas, K).reshape(num_loci, 1, K+1)
+            omega = torch.exp(torch.sum(torch.mul(betas, gc_features), 2))  # compute the gc 'rate' of each bin
             
-            print('u.shape', u.shape)
-            print('cn.shape', cn.shape)
-            print('omega.shape', omega.shape)
+            # print('u.shape', u.shape)
+            # print('cn.shape', cn.shape)
+            # print('omega.shape', omega.shape)
 
             # expected reads per bin per cell
             theta = u * cn * omega
@@ -169,7 +179,26 @@ def convert_rt_units(rt):
     return 1 - ((rt - rt.min()) / (rt.max() - rt.min()))
 
 
-def simulate_s_cells(gc_profile, cn, rt, argv):
+def get_libraries_tensor(cn):
+    """ Create a tensor of integers representing the unique library_id of each cell. """
+    libs = cn[['cell_id', 'library_id']].drop_duplicates()
+
+    # get all unique library ids found across cells of both cell cycle phases
+    all_library_ids =libs['library_id'].unique()
+
+    L = int(len(all_library_ids))
+    
+    # replace library_id strings with integer values
+    for i, library_id in enumerate(all_library_ids):
+        libs['library_id'].replace(library_id, i, inplace=True)
+    
+    # convert to tensors of type int (ints needed to index other tensors)
+    libs = torch.tensor(libs['library_id'].values).to(torch.int64)
+
+    return libs, L
+
+
+def simulate_s_cells(gc_profile, libs, cn, rt, L_val, argv):
     pyro.clear_param_store()
 
     num_loci, num_cells = cn.shape
@@ -177,7 +206,7 @@ def simulate_s_cells(gc_profile, cn, rt, argv):
     cn = torch.tensor(cn.values)
     rt_profile = torch.tensor(convert_rt_units(rt.values))
 
-    u_guess = float(argv.num_reads) / (1.5 * torch.mean(cn))
+    u_guess = float(argv.num_reads) / (1.5 * num_loci * torch.mean(cn))
     true_lambda = torch.tensor([argv.lamb])
 
     print('num_loci', num_loci)
@@ -190,14 +219,16 @@ def simulate_s_cells(gc_profile, cn, rt, argv):
     conditioned_model = poutine.condition(
         model_s,
         data={
+            'expose_beta_means': torch.tensor(argv.betas).reshape(1, -1).expand([L_val, len(argv.betas)]),
+            'expose_lambda': true_lambda,
+            'expose_u': u_guess,
             'expose_a': torch.tensor([argv.a]),
-            'expose_betas': torch.tensor(argv.betas),
             'expose_rho': rt_profile
         })
 
     model_trace = pyro.poutine.trace(conditioned_model)
 
-    samples = model_trace.get_trace(gc_profile, cn0=cn, u_guess=u_guess, lambda_init=true_lambda, K=len(argv.betas)-1)
+    samples = model_trace.get_trace(gc_profile, libs, cn0=cn, u_guess=u_guess, lambda_init=true_lambda, K=len(argv.betas)-1, L=L_val)
 
     t = samples.nodes['expose_tau']['value']
     u = samples.nodes['expose_u']['value']
@@ -218,25 +249,27 @@ def simulate_s_cells(gc_profile, cn, rt, argv):
     return reads_norm, reads, rep, p_rep, t
 
 
-def simulate_g_cells(gc_profile, cn, argv):
+def simulate_g_cells(gc_profile, libs, cn, L_val, argv):
     pyro.clear_param_store()
 
     num_loci, num_cells = cn.shape
     gc_profile = torch.tensor(gc_profile.values)
     cn = torch.tensor(cn.values)
 
-    u_guess = float(argv.num_reads) / (1. * torch.mean(cn))
+    u_guess = float(argv.num_reads) / (1. * num_loci * torch.mean(cn))
     true_lambda = torch.tensor([argv.lamb])
 
     conditioned_model = poutine.condition(
         model_g1,
         data={
-            'expose_betas': torch.tensor(argv.betas),
+            'expose_beta_means': torch.tensor(argv.betas).reshape(1, -1).expand([L_val, len(argv.betas)]),
+            'expose_lambda': true_lambda,
+            'expose_u': u_guess,
         })
 
     model_trace = pyro.poutine.trace(conditioned_model)
 
-    samples = model_trace.get_trace(gc_profile, cn=cn, u_guess=u_guess, lambda_init=true_lambda, K=len(argv.betas)-1)
+    samples = model_trace.get_trace(gc_profile, libs, cn=cn, u_guess=u_guess, lambda_init=true_lambda, K=len(argv.betas)-1, L=L_val)
 
     u = samples.nodes['expose_u']['value']
 
@@ -262,12 +295,16 @@ def main():
     gc_profile = df_s[['chr', 'start', argv.gc_col]].drop_duplicates()[argv.gc_col]
 
     # make sure there's exactly one rt column per clone before looping through clones
-    assert len(argv.rt_col) == len(argv.clones)
+    assert len(argv.rt_col) == len(argv.clones) 
 
     df_s_out = []
     for (rt_col, clone_id) in zip(argv.rt_col, argv.clones):
         # subset df_s to just S-phase cells belonging to this clone
         clone_df_s = df_s.query('clone_id=="{}"'.format(clone_id))
+
+        # dummy column where all cells have the same library_id
+        clone_df_s['library_id'] = 'ABCD'
+        libs_s, L_val_s = get_libraries_tensor(clone_df_s)
 
         # pivot clone cn states into matrix
         clone_cn_s = pd.pivot_table(clone_df_s, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
@@ -276,7 +313,7 @@ def main():
         rt_profile = clone_df_s[['chr', 'start', rt_col]].drop_duplicates()[rt_col]
 
         # S-phase: condition each model based in argv parameters and simulate read count
-        clone_reads_norm, clone_reads, clone_rep, clone_p_rep, clone_t = simulate_s_cells(gc_profile, clone_cn_s, rt_profile, argv)
+        clone_reads_norm, clone_reads, clone_rep, clone_p_rep, clone_t = simulate_s_cells(gc_profile, libs_s, clone_cn_s, rt_profile, L_val_s, argv)
 
         # convert tensors to dataframes
         clone_reads_norm_df = pd.DataFrame(clone_reads_norm.numpy(), columns=clone_cn_s.columns, index=clone_cn_s.index)
@@ -317,47 +354,13 @@ def main():
     df_s_out = pd.concat(df_s_out, ignore_index=True)
     df_s = df_s_out
 
-    # cn_s = pd.pivot_table(df_s, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
-    # gc_profile = df_s[['chr', 'start', argv.gc_col]].drop_duplicates()[argv.gc_col]
-    # rt_profile = df_s[['chr', 'start', argv.rt_col]].drop_duplicates()[argv.rt_col]
-
-    # # S-phase: condition each model based in argv parameters and simulate read count
-    # reads_norm, reads, rep, p_rep, t = simulate_s_cells(gc_profile, cn_s, rt_profile, argv)
-
-    # reads_norm_df = pd.DataFrame(reads_norm.numpy(), columns=cn_s.columns, index=cn_s.index)
-    # reads_df = pd.DataFrame(reads.numpy(), columns=cn_s.columns, index=cn_s.index)
-    # rep_df = pd.DataFrame(rep.numpy(), columns=cn_s.columns, index=cn_s.index)
-    # p_rep_df = pd.DataFrame(p_rep.numpy(), columns=cn_s.columns, index=cn_s.index)
-    # t_df = pd.DataFrame(t.numpy(), columns=['true_t'], index=cn_s.columns)
-
-    # print('reads_norm_df\n', reads_norm_df.head())
-    # print('reads_df\n', reads_df.head())
-    # print('rep_df\n', rep_df.head())
-    # print('p_rep_df\n', p_rep_df.head())
-    # print('t_df\n', t_df.head())
-
-    # # merge normalized read count
-    # reads_norm_df = reads_norm_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_norm')
-    # reads_norm_df.chr = reads_norm_df.chr.astype(str)
-    # df_s = pd.merge(df_s, reads_norm_df)
-    # # merge raw reads before normalizing total read count
-    # reads_df = reads_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_reads_raw')
-    # reads_df.chr = reads_df.chr.astype(str)
-    # df_s = pd.merge(df_s, reads_df)
-    # # merge true replication states
-    # rep_df = rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_rep')
-    # rep_df.chr = rep_df.chr.astype(str)
-    # df_s = pd.merge(df_s, rep_df)
-    # # merge probability of each bin being replicated
-    # p_rep_df = p_rep_df.reset_index().melt(id_vars=['chr', 'start'], var_name='cell_id', value_name='true_p_rep')
-    # p_rep_df.chr = p_rep_df.chr.astype(str)
-    # df_s = pd.merge(df_s, p_rep_df)
-    # # merge s-phase times
-    # df_s = pd.merge(df_s, t_df.reset_index(), on='cell_id')
+    # dummy column where all cells have the same library_id
+    df_g['library_id'] = 'ABCD'
+    libs_g, L_val_g = get_libraries_tensor(df_g)
 
     # G1-phase: condition each model based in argv parameters and simulate read count
     cn_g = pd.pivot_table(df_g, index=['chr', 'start'], columns='cell_id', values='true_G1_state')
-    reads_norm_g, reads_g = simulate_g_cells(gc_profile, cn_g, argv)
+    reads_norm_g, reads_g = simulate_g_cells(gc_profile, libs_g, cn_g, L_val_g, argv)
     
     reads_norm_g_df = pd.DataFrame(reads_norm_g.numpy(), columns=cn_g.columns, index=cn_g.index)
     reads_g_df = pd.DataFrame(reads_g.numpy(), columns=cn_g.columns, index=cn_g.index)

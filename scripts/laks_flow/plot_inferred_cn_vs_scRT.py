@@ -5,8 +5,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from scgenome import cncluster
-from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
+from matplotlib import colors as mcolors
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap, get_cell_line_cmap, get_clone_cmap
 
 
 def get_args():
@@ -58,15 +61,6 @@ def make_color_mat_float(values, palette_color):
     return color_mat, color_dict
 
 
-def get_rt_cmap():
-    """ Return a colormap for replication states. """
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list), rt_colors
-
-
 def plot_cn_and_rep_states(df, argv):
     """ 
     Plot 3 heatmaps for S-phase cells: hmmcopy state, inferred CN state, inferred rep state
@@ -84,14 +78,14 @@ def plot_cn_and_rep_states(df, argv):
     secondary_sort_label = 'Time in S-phase'
 
     # create a color map for the replication states and accuracies
-    rt_cmap, rt_color_dict = get_rt_cmap()
+    rt_cmap, rt_color_dict = get_rt_cmap(return_colors=True)
     
     # add 3 subplots, leaving space for the colorbars on the far left
     # the heatmaps should be arranged in 1 row and 3 columns, having a height of 1 and a width of 0.29
     fig = plt.figure(figsize=(21, 7))
-    ax0 = fig.add_axes([0.1, 0.0, 0.29, 1.0]) # left
-    ax1 = fig.add_axes([0.4, 0.0, 0.29, 1.0]) # middle
-    ax2 = fig.add_axes([0.7, 0.0, 0.29, 1.0]) # right
+    ax0 = fig.add_axes([0.02, 0.0, 0.315, 1.0]) # left
+    ax1 = fig.add_axes([0.345, 0.0, 0.315, 1.0]) # middle
+    ax2 = fig.add_axes([0.67, 0.0, 0.315, 1.0]) # right
 
     # left: hmmcopy states
     plot_data0 = plot_clustered_cell_cn_matrix(ax0, df, 'state', cluster_field_name=cluster_col, secondary_field_name=secondary_sort_column)
@@ -114,7 +108,11 @@ def plot_cn_and_rep_states(df, argv):
         # annotate the clones for G1-phase cells
         cell_ids = plot_data0.columns.get_level_values(0).values
         cluster_ids0 = plot_data0.columns.get_level_values(1).values
-        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, return_map=True)
+        clone_cmap = get_clone_cmap()
+        # use mcolors to change every element in the dict to rgba
+        for key in clone_cmap.keys():
+            clone_cmap[key] = mcolors.to_rgba(clone_cmap[key])
+        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, color_map=clone_cmap, return_map=True)
 
         # get list of color pigments in the same order as clone_dict
         colors_used0 = []
@@ -139,44 +137,65 @@ def plot_cn_and_rep_states(df, argv):
 
         # create color bar that shows clone id to the left of the heatmap in the top left corner
         # color bar should be 0.01 wide and 1.0 tall
-        ax = fig.add_axes([0.08, 0.0, 0.01, 1.0])
+        ax = fig.add_axes([0.00, 0.0, 0.01, 1.0])
         plot_colorbar(ax, color_mat0)
 
         # create color bar that shows secondary sort value just to the right of the clone id color bar
         # color bar should be 0.01 wide and 1.0 tall
-        ax = fig.add_axes([0.09, 0.0, 0.01, 1.0])
+        ax = fig.add_axes([0.01, 0.0, 0.01, 1.0])
         plot_colorbar(ax, secondary_color_mat)
 
-        # create legend to match colors to clone ids
-        ax = fig.add_axes([0.0, 0.75, 0.04, 0.25])
-        plot_color_legend(ax, clones_to_colors0, title='Clone ID')
+        # # create legend to match colors to clone ids
+        # ax = fig.add_axes([0.0, 0.75, 0.04, 0.25])
+        # plot_color_legend(ax, clones_to_colors0, title='Clone ID')
 
-        # create legend to match colors to secondary sort values
-        ax = fig.add_axes([0.0,0.5,0.04,0.25])
-        plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
+        # # create legend to match colors to secondary sort values
+        # ax = fig.add_axes([0.0,0.5,0.04,0.25])
+        # plot_color_legend(ax, secondary_to_colors, title=secondary_sort_label)
 
-        # create a legend for the true and inferred replication states
-        ax = fig.add_axes([0.0, 0.25, 0.04, 0.25])
-        plot_color_legend(ax, rt_color_dict, title='Rep state')
+        # # create a legend for the true and inferred replication states
+        # ax = fig.add_axes([0.0, 0.25, 0.04, 0.25])
+        # plot_color_legend(ax, rt_color_dict, title='Rep state')
 
     # save figure
     fig.savefig(argv.output_rt_state, bbox_inches='tight', dpi=300)
 
 
+def compute_cell_frac(cn, frac_rt_col='cell_frac_rep', rep_state_col='model_rep_state'):
+    ''' Compute the fraction of replicated bins for all cells in `cn`, noting which cells have extreme values. '''
+    for cell_id, cell_cn in cn.groupby('cell_id'):
+        temp_rep = cell_cn[rep_state_col].values
+        temp_frac = sum(temp_rep) / len(temp_rep)
+        cn.loc[cell_cn.index, frac_rt_col] = temp_frac
+    return cn
+
+
 def plot_frac_rt_distributions(df, argv):
-    df_frac = df[['cell_id', argv.frac_rt_col, 'library_id', 'clone_id']].drop_duplicates().reset_index(drop=True)
+    # subset to just the cell-level columns of interest
+    df_frac = df[['cell_id', argv.frac_rt_col, 'sample_id', 'clone_id']].drop_duplicates().reset_index(drop=True)
+
+    # map the sample_id to a new column called cell_line
+    # if sample_id is 'SA928' then the cell line is 'GM18507'
+    # if sample_id is 'SA1044' then the cell line is 'T47D'
+    df_frac['Cell line'] = df_frac['sample_id'].apply(lambda x: 'GM18507' if x == 'SA928' else 'T47D')
+
+    # rename 'clone_id' to 'Clone ID' for plotting purposes
+    df_frac.rename(columns={'clone_id': 'Clone ID'}, inplace=True)
     
-    fig, ax = plt.subplots(1,3, figsize=(12, 4), tight_layout=True)
+    fig, ax = plt.subplots(1, 2, figsize=(8, 4), tight_layout=True)
     ax = ax.flatten()
 
-    # violinplot
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, ax=ax[0])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='library_id', multiple='stack', ax=ax[1])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2])
+    cell_line_cmap = get_cell_line_cmap()
+    clone_cmap = get_clone_cmap()
+    clone_order = sorted(df_frac['Clone ID'].unique())
 
-    for i in range(3):
-        ax[i].set_xlabel('Inferred fraction of replicated bins')
-        ax[i].set_title('Distribution of cells\nwithin S-phase')
+    # histograms of fraction of replicated loci
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Cell line', multiple='stack', ax=ax[0], palette=cell_line_cmap)
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='Clone ID', multiple='stack', ax=ax[1], palette=clone_cmap, hue_order=clone_order)
+
+    for i in range(2):
+        ax[i].set_xlabel('Inferred fraction of replicated loci')
+        ax[i].set_title('Cell S-phase times')
 
     fig.savefig(argv.output_frac_rt, bbox_inches='tight', dpi=300)
 
@@ -184,6 +203,10 @@ def plot_frac_rt_distributions(df, argv):
 def main():
     argv = get_args()
     df = pd.read_csv(argv.cn_s, sep='\t')
+
+    # compute the cell_frac_rep column if it is not in the input df
+    if argv.frac_rt_col not in df.columns:
+        df = compute_cell_frac(df, frac_rt_col=argv.frac_rt_col)
 
     # set chr column to category
     df.chr = df.chr.astype('str')

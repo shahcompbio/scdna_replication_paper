@@ -1,9 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 from scgenome.cnplot import plot_cell_cn_profile
-from matplotlib.colors import ListedColormap
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap
 
 
 def get_args():
@@ -13,14 +14,6 @@ def get_args():
     p.add_argument('output', help='representative cell profiles for that were thought to be in G1/2 phase by PERT but were in S phase by flow')
 
     return p.parse_args()
-
-
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
 
 
 def main():

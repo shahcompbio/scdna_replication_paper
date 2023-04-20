@@ -441,22 +441,44 @@ rule plot_cn_pseudobulks_sl:
         'deactivate'
 
 
-rule plot_clone_rt_and_spf_sl:
+rule plot_clone_rt_pseudobulks_sl:
     input: 
         cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        cn_g ='analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
         rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv'
-    output:
-        tsv = 'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv',
-        clone_rt = 'plots/sig_lines/{dataset}/clone_rt.png',
-        clone_spf = 'plots/sig_lines/{dataset}/clone_spf.png'
+    output: 'plots/sig_lines/{dataset}/clone_rt.png'
     params:
         rep_col = 'model_rep_state',
         dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/sig_lines/{dataset}/plot_clone_rt_and_spf.log'
+    log: 'logs/sig_lines/{dataset}/plot_clone_rt_pseudobulks.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/plot_clone_rt_and_spf.py '
+        'python3 scripts/sig_lines/plot_clone_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_cell_cycle_clone_counts_sl:
+    input:
+        cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+        cn_g = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv'
+    output: 'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv'
+    log: 'logs/sig_lines/{dataset}/compute_cell_cycle_clone_counts.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/compute_cell_cycle_clone_counts.py '
+        '{input} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_clone_spf_sl:
+    input: 'analysis/sig_lines/{dataset}/cell_cycle_clone_counts.tsv'
+    output: 'plots/sig_lines/{dataset}/clone_spf.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_lines/{dataset}/plot_clone_spf.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/plot_clone_spf.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -481,6 +503,7 @@ rule cohort_clone_counts_sl:
         'deactivate'
 
 
+# TODO: split tsv and png into separate rules
 rule subclonal_rt_diffs_sl:
     input:
         rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
@@ -499,6 +522,7 @@ rule subclonal_rt_diffs_sl:
         'deactivate'
 
 
+# TODO: split tsv and png into separate rules
 rule subclonal_rt_diffs_summary_sl:
     input:
         rt = expand(
@@ -522,7 +546,6 @@ rule subclonal_rt_diffs_summary_sl:
         'deactivate'
 
 
-# TODO: finish this script according to the notebook
 rule sample_cnas_vs_rt:
     input:
         rt = expand(
@@ -644,6 +667,7 @@ rule signals_heatmaps_sl:
         dataset = lambda wildcards: wildcards.dataset,
     log: 'logs/sig_lines/{dataset}/signals_heatmaps.log'
     singularity: 'docker://marcjwilliams1/signals'
+    # singularity: '/juno/work/shah/users/william1/singularity/signals_v0.7.6.sif'
     shell:
         'Rscript scripts/sig_lines/signals_heatmaps.R '
         '--ascn {input.ascn} '
@@ -653,6 +677,7 @@ rule signals_heatmaps_sl:
         '&> {log}'
     
 
+# TODO: split tsv and png outputs into separate rules
 rule phase_changes_sl:
     input:
         cn_g ='analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',

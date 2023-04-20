@@ -2,8 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.linear_model import LinearRegression
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_clone_cmap, get_rx_cmap
+
 
 
 def get_args():
@@ -15,14 +18,6 @@ def get_args():
     p.add_argument('-ot', '--output_tsv', help='table of all the data used to make the plots')
 
     return p.parse_args()
-
-
-def get_clone_color_dict():
-    clone_color_dict = {
-        'A': 'C0', 'B': 'C1', 'C': 'C2', 'D': 'C3', 'E': 'C4', 'F': 'C5', 'G': 'C6', 'H': 'C7', 'I': 'C8', 'J': 'C9',
-        'K': 'C0', 'L': 'C1', 'M': 'C2'
-    }
-    return clone_color_dict
 
 
 def timepoint_to_int(df):
@@ -55,7 +50,7 @@ def filter_rows(df, num_cells=10):
 
 
 def add_instantaneous_s_and_enrichment(df):
-    """Adds a column to the dataframe that contains the instantaneous selection coefficient for each clone at each timepoint"""
+    """Adds a column to the dataframe that contains the observed clone shift in G1/2 population for each clone at each timepoint"""
     # compute the enrichment or depletion for S-phase cells at a given timepoint
     df['clone_frac_diff'] = df['clone_frac_s'] - df['clone_frac_g']
 
@@ -82,22 +77,23 @@ def add_instantaneous_s_and_enrichment(df):
 
 
 def plot_s_predictiveness(df, ax=None, title=None):
-    """Plots the instantaneous selection coefficient vs. the clone's S-phase enrichment/depletion"""
+    """Plots the observed clone shift in G1/2 population vs. the clone's S-phase enrichment/depletion"""
     # if ax is None, create a new figure
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=(6, 6))
 
     # fit a regression line to the data
-    sns.regplot(x='instantaneous_s', y='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
+    sns.regplot(y='instantaneous_s', x='clone_frac_diff', data=df, ax=ax, scatter=False, color='black')
 
-    clone_color_dict = get_clone_color_dict()
+    # rename columns clone_id to Clone ID and timepoint to Timepoint for plotting purposes
+    df = df.rename(columns={'clone_id': 'Clone ID', 'timepoint': 'Timepoint'})
 
-    # create a seaborn scatterplot comparing the instantaneous selection coefficient to the clone's S-phase enrichment/depletion
-    sns.scatterplot(x='instantaneous_s', y='clone_frac_diff', data=df, hue='clone_id', style='timepoint', palette=clone_color_dict, ax=ax)
-    # set the x-axis label
-    ax.set_xlabel('Instantaneous selection coefficient\n<-contraction | expansion->')
+    # create a seaborn scatterplot comparing the observed clone shift in G1/2 population to the clone's S-phase enrichment/depletion
+    sns.scatterplot(y='instantaneous_s', x='clone_frac_diff', data=df, hue='Clone ID', style='Timepoint', palette=get_clone_cmap(), ax=ax)
     # set the y-axis label
-    ax.set_ylabel('S-phase\n<-depletion | enrichment->')
+    ax.set_ylabel('Change in G1/2-phase clone fraction\n<-contraction | expansion->')
+    # set the x-axis label
+    ax.set_xlabel('S-phase\n<-depletion | enrichment->')
     # set the title
     if title is not None:
         ax.set_title(title)
@@ -109,14 +105,14 @@ def plot_s_predictiveness(df, ax=None, title=None):
 
 # create a new plotting function that colors the data points by sample_id and uses different markers for the treatment status
 def plot_s_predictiveness_cisplatin_combined(df, argv, title=None):
-    """Plots the instantaneous selection coefficient vs. the clone's S-phase enrichment/depletion"""
+    """Plots the observed clone shift in G1/2 population vs. the clone's S-phase enrichment/depletion"""
     # fit a regression line to the data
-    sns.lmplot(x='instantaneous_s', y='clone_frac_diff', data=df, scatter=True, hue='cisplatin')
+    sns.lmplot(y='instantaneous_s', x='clone_frac_diff', data=df, scatter=True, hue='cisplatin', palette=get_rx_cmap())
 
-    # set the x-axis label
-    plt.xlabel('Instantaneous selection coefficient\n<-contraction | expansion->')
     # set the y-axis label
-    plt.ylabel('S-phase\n<-depletion | enrichment->')
+    plt.ylabel('Change in G1/2-phase clone fraction\n<-contraction | expansion->')
+    # set the x-axis label
+    plt.xlabel('S-phase\n<-depletion | enrichment->')
     # set the title
     if title is not None:
         plt.title(title)
@@ -131,7 +127,9 @@ def main():
     df_pdx_combined = []
 
     # create a panel of figures to plot the S-predictiveness for each sample
-    fig, ax = plt.subplots(2, 4, figsize=(16, 8), tight_layout=True)
+    nrows = 8
+    ncols = 1
+    fig, ax = plt.subplots(nrows, ncols, figsize=(4*ncols, 4*nrows), tight_layout=True)
     ax = ax.flatten()
 
     # loop through the samples and plot their S-predictiveness in separate subpanels
@@ -150,11 +148,11 @@ def main():
         # save the sample_id in a new column
         temp_df['sample_id'] = sample
 
-        # if 'U' is in the sample name, add a column that indicates that the sample is 'Rx-', otherwise it is 'Rx+'
+        # if 'U' is in the sample name, add a column that indicates that the sample is 'untreated', otherwise it is 'treated'
         if 'U' in sample:
-            temp_df['cisplatin'] = 'Rx-'
+            temp_df['cisplatin'] = 'untreated'
         else:
-            temp_df['cisplatin'] = 'Rx+'
+            temp_df['cisplatin'] = 'treated'
         
         # add the dataframe to the list
         df_pdx_combined.append(temp_df)

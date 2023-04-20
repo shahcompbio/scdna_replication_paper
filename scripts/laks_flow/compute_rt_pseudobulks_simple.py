@@ -1,7 +1,5 @@
 from argparse import ArgumentParser
-import numpy as np
 import pandas as pd
-from scdna_replication_tools.compute_pseudobulk_rt_profiles import compute_pseudobulk_rt_profiles
 
 
 def get_args():
@@ -35,7 +33,7 @@ def compute_rt_pseudobulks(cn, argv):
     loci_metrics_gm = cn_gm[loci_metric_cols].drop_duplicates()
     loci_metrics_all = cn_all[loci_metric_cols].drop_duplicates()
 
-    # rename columns based on joint vs split and cell line
+    # rename columns based on merged vs split and cell line
     loci_metrics_t = loci_metrics_t.rename(columns={'loci_frac_rep': 'rt_T47D'})
     loci_metrics_gm = loci_metrics_gm.rename(columns={'loci_frac_rep': 'rt_GM18507'})
     loci_metrics_all = loci_metrics_all.rename(columns={'loci_frac_rep': 'rt_all'})

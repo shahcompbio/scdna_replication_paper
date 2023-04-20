@@ -1,6 +1,5 @@
 import matplotlib
 matplotlib.use('Agg')
-import sys
 import scgenome.cnplot
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -8,6 +7,10 @@ import numpy as np
 from argparse import ArgumentParser
 from scgenome import cncluster
 from matplotlib.patches import Patch
+from matplotlib import colors as mcolors
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_cell_line_cmap
 
 
 def get_args():
@@ -57,73 +60,82 @@ def make_color_mat_float(values, palette_color):
     return color_mat, color_dict
 
 
-def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, lib_col='library_id', value_col='state'):
+def plot_cn_heatmap(cn_g, cn_s, figsize=(14,7), dataset=None, line_col='library_id', value_col='state'):
     cn_g = cn_g.copy()
     cn_s = cn_s.copy()
 
-    # create mapping of libraries
+    # create mapping of cell lines
     cluster_col = 'cluster_id'
-    lib_dict = dict([(y,x+1) for x,y in enumerate(sorted(cn_g[lib_col].unique()))])
-    cn_g[cluster_col] = cn_g[lib_col]
-    cn_g = cn_g.replace({cluster_col: lib_dict})
-    cn_s[cluster_col] = cn_s[lib_col]
-    cn_s = cn_s.replace({cluster_col: lib_dict})
+    line_dict = dict([(y,x+1) for x,y in enumerate(sorted(cn_g[line_col].unique()))])
+    cn_g[cluster_col] = cn_g[line_col]
+    cn_g = cn_g.replace({cluster_col: line_dict})
+    cn_s[cluster_col] = cn_s[line_col]
+    cn_s = cn_s.replace({cluster_col: line_dict})
 
+    # plot the heatmaps
     fig = plt.figure(figsize=figsize)
-    ax_g1 = fig.add_axes([0.1,0.0,0.4,1.])
+    ax_g1 = fig.add_axes([0.1,0.0,0.425,1.])
     plot_data_g1 = scgenome.cnplot.plot_clustered_cell_cn_matrix(
         ax_g1, cn_g, value_col, cluster_field_name=cluster_col
     )
 
-    ax_s = fig.add_axes([0.6,0.0,0.4,1.])
+    ax_s = fig.add_axes([0.575,0.0,0.425,1.])
     plot_data_s = scgenome.cnplot.plot_clustered_cell_cn_matrix(
         ax_s, cn_s, value_col, cluster_field_name=cluster_col
     )
+
+    # turn off the y-axis ticks
+    for ax in [ax_g1, ax_s]:
+        ax.set_yticks([])
+        ax.set_ylabel('')
     
     if dataset:
-        ax_g1.set_title('{}: G1/2-phase'.format(dataset))
-        ax_s.set_title('{}: S-phase'.format(dataset))
+        ax_g1.set_title('{} G1/2-phase HMMcopy state'.format(dataset))
+        ax_s.set_title('{} S-phase HMMcopy state'.format(dataset))
     
-    if len(lib_dict) > 1:
-        # annotate the libs for G1-phase cells
+    if len(line_dict) > 1:
+        # annotate the lines for G1-phase cells
         cluster_ids_g1 = plot_data_g1.columns.get_level_values(1).values
-        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, return_map=True)
+        print(cluster_ids_g1)
+        cell_line_cmap = get_cell_line_cmap()
+        # use mcolors to change every element in the dict to rgba
+        for key in cell_line_cmap.keys():
+            cell_line_cmap[key] = mcolors.to_rgba(cell_line_cmap[key])
+        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, color_map=cell_line_cmap, return_map=True)
+        print(color_mat_g1)
 
-        # get list of color pigments in the same order as lib_dict
+        # get list of color pigments in the same order as line_dict
         colors_used_g1 = []
         for c in color_mat_g1:
             if c not in colors_used_g1:
                 colors_used_g1.append(c)
 
-        # match lib IDs to color pigments
-        libs_to_colors_g1 = {}
-        for i, key in enumerate(lib_dict.keys()):
-            libs_to_colors_g1[key] = colors_used_g1[i]
+        # match line IDs to color pigments
+        lines_to_colors_g1 = {}
+        for i, key in enumerate(line_dict.keys()):
+            lines_to_colors_g1[key] = colors_used_g1[i]
 
-        # create color bar that shows lib id for each row in heatmap
-        ax = fig.add_axes([0.05,0.0,0.03,1.])
+        # create color bar that shows line id for each row in heatmap
+        ax = fig.add_axes([0.07,0.0,0.03,1.])
         plot_colorbar(ax, color_mat_g1)
 
-        # create legend to match colors to lib ids
+        # create legend to match colors to line ids
         ax = fig.add_axes([0.0,0.75,0.02,0.25])
-        plot_color_legend(ax, libs_to_colors_g1, title='Library ID')
+        plot_color_legend(ax, lines_to_colors_g1, title='Cell Line')
 
-        # annotate the libs for S-phase cells.. using the same colors as G1 libs
+        # annotate the lines for S-phase cells.. using the same colors as G1 lines
         cluster_ids_s = plot_data_s.columns.get_level_values(1).values
         color_mat_s = cncluster.get_cluster_colors(cluster_ids_s, color_map=color_map_g1)
 
-        # match lib IDs to color pigments
-        libs_to_colors_s = {}
-        for i, key in enumerate(lib_dict.keys()):
-            libs_to_colors_s[key] = colors_used_g1[i]
+        # match line IDs to color pigments
+        lines_to_colors_s = {}
+        for i, key in enumerate(line_dict.keys()):
+            lines_to_colors_s[key] = colors_used_g1[i]
 
-        # create color bar that shows lib id for each row in heatmap
-        ax = fig.add_axes([0.55,0.0,0.03,1.])
+        # create color bar that shows line id for each row in heatmap
+        ax = fig.add_axes([0.545,0.0,0.03,1.])
         plot_colorbar(ax, color_mat_s)
 
-        # create legend to match colors to lib ids
-        ax = fig.add_axes([0.5,0.75,0.02,0.25])
-        plot_color_legend(ax, libs_to_colors_s, title='Library ID')
 
     return fig
 
@@ -141,9 +153,13 @@ def main():
     cn_s.chr = cn_s.chr.astype(str)
     cn_g.chr = cn_g.chr.astype(str)
 
-    fig = plot_cn_heatmap(cn_g, cn_s, dataset=argv.dataset, value_col=argv.value_col, lib_col='library_id')
+    # create a column named cell_line that is 'GM18507' for cells with sample_id=='SA928' and 'T47D' for cells with sample_id=='SA1044'
+    cn_s['cell_line'] = cn_s['sample_id'].apply(lambda x: x.replace('SA1044', 'T47D').replace('SA928', 'GM18507'))
+    cn_g['cell_line'] = cn_g['sample_id'].apply(lambda x: x.replace('SA1044', 'T47D').replace('SA928', 'GM18507'))
 
-    fig.savefig(argv.output_png, bbox_inches='tight')
+    fig = plot_cn_heatmap(cn_g, cn_s, dataset=argv.dataset, value_col=argv.value_col, line_col='cell_line')
+
+    fig.savefig(argv.output_png, bbox_inches='tight', dpi=300)
 
 
 if __name__ == '__main__':

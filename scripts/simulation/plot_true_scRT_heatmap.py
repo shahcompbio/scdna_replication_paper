@@ -2,11 +2,13 @@ from argparse import ArgumentParser
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
 from scgenome import cncluster
-from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
+from matplotlib import colors as mcolors
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap, get_clone_cmap
 
 
 def get_args():
@@ -53,14 +55,6 @@ def make_color_mat_float(values, palette_color):
     return color_mat, color_dict
 
 
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
-
-
 def plot_true_rt_state(df, argv):
     df = df.copy()
 
@@ -90,7 +84,11 @@ def plot_true_rt_state(df, argv):
         # annotate the clones for G1-phase cells
         cell_ids = plot_data0.columns.get_level_values(0).values
         cluster_ids0 = plot_data0.columns.get_level_values(1).values
-        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, return_map=True)
+        clone_cmap = get_clone_cmap()
+        # use mcolors to change every element in the dict to rgba
+        for key in clone_cmap.keys():
+            clone_cmap[key] = mcolors.to_rgba(clone_cmap[key])
+        color_mat0, color_map0 = cncluster.get_cluster_colors(cluster_ids0, color_map=clone_cmap, return_map=True)
 
         # get list of color pigments in the same order as clone_dict
         colors_used0 = []
@@ -159,7 +157,7 @@ def plot_true_rt_state(df, argv):
 
 def main():
     argv = get_args()
-    df = pd.read_csv(argv.cn_s, sep='\t')
+    df = pd.read_csv(argv.cn_s)
 
     # set chr column to category
     df.chr = df.chr.astype(str)

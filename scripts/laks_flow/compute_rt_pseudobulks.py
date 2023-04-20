@@ -7,7 +7,7 @@ def get_args():
 
     p.add_argument('t47d_input', type=str, help='pyro model output for t47d s-phase cells')
     p.add_argument('GM18507_input', type=str, help='pyro model output for GM18507 s-phase cells')
-    p.add_argument('joint_input', type=str, help='pyro model output for s-phase cells when run on both cell lines combined')
+    p.add_argument('merged_input', type=str, help='pyro model output for s-phase cells when run on both cell lines combined')
     p.add_argument('output', type=str, help='tsv file containing pseudobulk replication time for each locus')
 
 
@@ -25,34 +25,34 @@ def compute_loci_frac(cn):
 
 def compute_rt_pseudobulks(cn_t, cn_gm, cn_all):
     # compute the fraction of replicated bins at each locus
-    cn_joint_t = compute_loci_frac(cn_all.query("sample_id=='SA1044'"))
-    cn_joint_gm = compute_loci_frac(cn_all.query("sample_id=='SA928'"))
+    cn_merged_t = compute_loci_frac(cn_all.query("sample_id=='SA1044'"))
+    cn_merged_gm = compute_loci_frac(cn_all.query("sample_id=='SA928'"))
     cn_t = compute_loci_frac(cn_t)
     cn_gm = compute_loci_frac(cn_gm)
     print('computed loci frac')
 
     # create metric columns for each locus
     loci_metric_cols = ['chr', 'start', 'end', 'gc', 'loci_frac_rep']
-    loci_metrics_joint_t = cn_joint_t[loci_metric_cols].drop_duplicates()
-    loci_metrics_joint_gm = cn_joint_gm[loci_metric_cols].drop_duplicates()
+    loci_metrics_merged_t = cn_merged_t[loci_metric_cols].drop_duplicates()
+    loci_metrics_merged_gm = cn_merged_gm[loci_metric_cols].drop_duplicates()
     loci_metrics_t = cn_t[loci_metric_cols].drop_duplicates()
     loci_metrics_gm = cn_gm[loci_metric_cols].drop_duplicates()
     print('created metric columns for each locus')
 
-    # rename columns based on joint vs split and cell line
-    loci_metrics_joint_t = loci_metrics_joint_t.rename(columns={'loci_frac_rep': 'rt_joint_T47D'})
-    loci_metrics_joint_gm = loci_metrics_joint_gm.rename(columns={'loci_frac_rep': 'rt_joint_GM18507'})
+    # rename columns based on merged vs split and cell line
+    loci_metrics_merged_t = loci_metrics_merged_t.rename(columns={'loci_frac_rep': 'rt_merged_T47D'})
+    loci_metrics_merged_gm = loci_metrics_merged_gm.rename(columns={'loci_frac_rep': 'rt_merged_GM18507'})
     loci_metrics_t = loci_metrics_t.rename(columns={'loci_frac_rep': 'rt_split_T47D'})
     loci_metrics_gm = loci_metrics_gm.rename(columns={'loci_frac_rep': 'rt_split_GM18507'})
     print('renamed columns')
 
     # merge together
-    merged_loci_metrics = pd.merge(pd.merge(pd.merge(loci_metrics_joint_t, loci_metrics_joint_gm), loci_metrics_t), loci_metrics_gm)
+    merged_loci_metrics = pd.merge(pd.merge(pd.merge(loci_metrics_merged_t, loci_metrics_merged_gm), loci_metrics_t), loci_metrics_gm)
     print('merged together')
 
     # compute the difference in RT between the two cell lines
     merged_loci_metrics['rt_diff_split'] = merged_loci_metrics['rt_split_T47D'] - merged_loci_metrics['rt_split_GM18507']
-    merged_loci_metrics['rt_diff_joint'] = merged_loci_metrics['rt_joint_T47D'] - merged_loci_metrics['rt_joint_GM18507']
+    merged_loci_metrics['rt_diff_merged'] = merged_loci_metrics['rt_merged_T47D'] - merged_loci_metrics['rt_merged_GM18507']
 
     print('returning merged copies')
 
@@ -66,7 +66,7 @@ if __name__=='__main__':
     # load in data
     cn_t = pd.read_csv(argv.t47d_input, sep='\t')
     cn_gm = pd.read_csv(argv.GM18507_input, sep='\t')
-    cn_all = pd.read_csv(argv.joint_input, sep='\t')
+    cn_all = pd.read_csv(argv.merged_input, sep='\t')
 
     print('data is loaded')
 

@@ -1,10 +1,12 @@
-import matplotlib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statannot import add_stat_annotation
 from argparse import ArgumentParser
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_cna_cmap
 
 
 def get_args():
@@ -53,47 +55,47 @@ def stratify_loci(df, clones, ploidies):
 
 
 def subclonal_rt_diffs(df3, cols, clones, ploidies, argv):
-    """ Find the RT difference between clones with a subclonal CNA and the reference (CN neutral) clones at the same locus. """
+    """ Find the RT difference between clones with a subclonal CNA and the reference (CN unaltered) clones at the same locus. """
     cna_rt_diffs = []
     for i, row in df3.iterrows():
         cn_diff = row[clones] - ploidies
         x = cn_diff.values.tolist()[0]
-        neutral_cols = []
+        unaltered_cols = []
         gain_cols = []
         loss_cols = []
         
         # get rt columns that correspond to clones with gain, loss, or no CNA at this locus
         for c, clone_id in enumerate(clones):
             if x[c]==0:
-                neutral_cols.append(cols[c])
+                unaltered_cols.append(cols[c])
             elif x[c] < 0:
                 loss_cols.append(cols[c])
             else:
                 gain_cols.append(cols[c])
        
         # define the reference RT for clones that don't have a CNA at this locus
-        if len(neutral_cols) > 0:
-            avg_neutral_rt = np.mean(row[neutral_cols])
+        if len(unaltered_cols) > 0:
+            avg_unaltered_rt = np.mean(row[unaltered_cols])
         else:
             # use the sample pseudbulk when there are subclonal CNAs in all clones
-            avg_neutral_rt = row['pseudobulk_{}'.format(argv.rep_col)]
+            avg_unaltered_rt = row['pseudobulk_{}'.format(argv.rep_col)]
         
         if len(gain_cols) > 0:
             avg_gain_rt = np.mean(row[gain_cols])
-            gain_rt_diff = avg_gain_rt - avg_neutral_rt
+            gain_rt_diff = avg_gain_rt - avg_unaltered_rt
             temp_df = pd.DataFrame({
                 'chr': [row['chr']], 'start': [row['start']], 'end': [row['end']],
-                'reference_rt': [avg_neutral_rt], 'clone_rt': [avg_gain_rt],
+                'reference_rt': [avg_unaltered_rt], 'clone_rt': [avg_gain_rt],
                 'clone_rt_diff': [gain_rt_diff], 'clone_cna_type': ['gain'],
             })
             cna_rt_diffs.append(temp_df)
 
         if len(loss_cols) > 0:
             avg_loss_rt = np.mean(row[loss_cols])
-            loss_rt_diff = avg_loss_rt - avg_neutral_rt
+            loss_rt_diff = avg_loss_rt - avg_unaltered_rt
             temp_df = pd.DataFrame({
                 'chr': [row['chr']], 'start': [row['start']], 'end': [row['end']],
-                'reference_rt': [avg_neutral_rt], 'clone_rt': [avg_loss_rt],
+                'reference_rt': [avg_unaltered_rt], 'clone_rt': [avg_loss_rt],
                 'clone_rt_diff': [loss_rt_diff], 'clone_cna_type': ['loss'],
             })
             cna_rt_diffs.append(temp_df)
@@ -106,7 +108,7 @@ def subclonal_rt_diffs(df3, cols, clones, ploidies, argv):
 
 def no_cna_rt_diffs(df1, cols, clones, ploidies, argv):
     """ Find the difference between a random reference clone and all other clones at a locus with no CNAs. This will serve as a background distribution. """
-    neutral_rt_diffs = []
+    unaltered_rt_diffs = []
     for i, row in df1.iterrows():
         # use the first clone as a reference
         reference_col = cols[0]
@@ -120,17 +122,17 @@ def no_cna_rt_diffs(df1, cols, clones, ploidies, argv):
                 temp_df = pd.DataFrame({
                     'chr': [row['chr']], 'start': [row['start']], 'end': [row['end']],
                     'reference_rt': [reference_rt], 'clone_rt': [clone_rt],
-                    'clone_rt_diff': [rt_diff], 'clone_cna_type': ['neutral'],
+                    'clone_rt_diff': [rt_diff], 'clone_cna_type': ['unaltered'],
                 })
-                neutral_rt_diffs.append(temp_df)
+                unaltered_rt_diffs.append(temp_df)
 
-    neutral_rt_diffs = pd.concat(neutral_rt_diffs, ignore_index=True)
+    unaltered_rt_diffs = pd.concat(unaltered_rt_diffs, ignore_index=True)
 
-    return neutral_rt_diffs
+    return unaltered_rt_diffs
 
 
-def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0):
-    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order)
+def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_ind', text_format='star', loc='inside', verbose=0, palette=None):
+    sns.violinplot(data=df, x=x, y=y, hue=hue, ax=ax, order=order, palette=palette)
     add_stat_annotation(ax, data=df, x=x, y=y, hue=hue,
                         box_pairs=box_pairs, test=test, order=order,
                         text_format=text_format, loc=loc, verbose=verbose)
@@ -138,17 +140,18 @@ def violins_with_pvals(df, x, y, hue, ax, box_pairs, order=None, test='t-test_in
 
 def plot_clone_rt_diff_vs_cna_types(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
     ''' Plot the distribution of clone RT differences against the CNA type of that particular locus. '''
+    cna_cmap = get_cna_cmap()
     x = "clone_cna_type"
     y = "clone_rt_diff"
     hue = None
     box_pairs = [
         ('loss', 'gain'),
-        ('loss', 'neutral'),
-        ('neutral', 'gain'),
+        ('loss', 'unaltered'),
+        ('unaltered', 'gain'),
     ]
-    order = ['loss', 'neutral', 'gain']
+    order = ['loss', 'unaltered', 'gain']
     violins_with_pvals(df, x, y, hue, ax, box_pairs, test=test, order=order,
-                       text_format=text_format, loc=loc, verbose=verbose)
+                       text_format=text_format, loc=loc, verbose=verbose, palette=cna_cmap)
     return ax
 
 
@@ -188,16 +191,16 @@ def main():
     cna_rt_diffs = subclonal_rt_diffs(df3, cols, clones, ploidies, argv)
 
     # find background distribition of clone RT differences in loci with no CNAs
-    neutral_rt_diffs = no_cna_rt_diffs(df1, cols, clones, ploidies, argv)
+    unaltered_rt_diffs = no_cna_rt_diffs(df1, cols, clones, ploidies, argv)
 
     # concatenate into one dataframe
-    cna_rt_diffs = pd.concat([cna_rt_diffs, neutral_rt_diffs], ignore_index=True)
+    cna_rt_diffs = pd.concat([cna_rt_diffs, unaltered_rt_diffs], ignore_index=True)
 
     # create violinplot with t-tests for significance
     fig, ax = plt.subplots(1, 1, figsize=(6,4))
     ax = plot_clone_rt_diff_vs_cna_types(cna_rt_diffs, ax)
     ax.set_title('RT shifts at subclonal CNAs - {}'.format(argv.dataset))
-    ax.set_xlabel('CNA type')
+    ax.set_xlabel('Subclonall CNA type')
     ax.set_ylabel('Clone RT relative to reference\n<--later | earlier-->')
     fig.savefig(argv.out_png, bbox_inches='tight', dpi=300)
 

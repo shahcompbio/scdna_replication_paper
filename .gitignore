@@ -136,7 +136,7 @@ logs/
 analysis/
 notebooks/
 plots/
-envs/
+# envs/
 err.txt
 out.txt
 .DS_Store
@@ -146,4 +146,6 @@ data/gc_rt_bins.csv
 data/replication_timing/
 data/fitness/
 data/signatures/clone_trees/
+data/HiC/
+data/gastric_10x/
 manuscript/._*.pdf

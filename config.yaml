@@ -4,11 +4,12 @@ ticket_dir_500kb: /work/shah/tantalus
 #                    'SA609X3X8a', 'SA906a', 'SA906b', 'SA1035U',
 #                    'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT']
 fitness_rx_datasets: [
-  'SA1035U', 'SA1035T', 'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT', 
+  'SA535_CISPLATIN_CombinedU', 'SA535_CISPLATIN_CombinedT', 'SA1035U', 'SA1035T',
   'SA609U', 'SA609U2', 'SA609T', 'SA609T2'
 ]
 fitness_datasets: ['SA1035', 'SA535', 'SA609']
 fitness_lines: ['SA039', 'SA906a', 'SA906b']
+10x_gastric_cell_lines: ['HGC-27', 'KATOIII', 'NCI-N87', 'SNU-668']
 permuted_datasets:
   A:
     rate: 0.01
@@ -135,7 +136,7 @@ signatures_patient_tumors:
 simulated_datasets:
   # fully diploid datasets
   D1.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -150,7 +151,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -165,7 +166,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -180,7 +181,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -195,7 +196,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -210,7 +211,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -225,7 +226,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -240,7 +241,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -255,7 +256,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -270,7 +271,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D1.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -285,7 +286,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -300,7 +301,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -315,7 +316,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -330,7 +331,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -345,7 +346,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -360,7 +361,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -375,7 +376,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -390,7 +391,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -405,7 +406,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -420,7 +421,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D2.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -435,7 +436,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -450,7 +451,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -465,7 +466,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -480,7 +481,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -495,7 +496,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -510,7 +511,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -525,7 +526,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -540,7 +541,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -555,7 +556,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -570,7 +571,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D3.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -585,9 +586,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -600,9 +601,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -615,9 +616,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -630,9 +631,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -645,9 +646,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -660,9 +661,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -675,9 +676,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -690,9 +691,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -705,9 +706,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -720,9 +721,9 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D4.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
-    gc_betas: [0.1, 0.2, -1, 1, -0.25]
+    gc_betas: [-1.2, 0.0]
     rt_col: ['mcf7_rt']
     A: 10
     num_reads: 1000000
@@ -886,7 +887,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.0:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -901,7 +902,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.1:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -916,7 +917,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.2:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -931,7 +932,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.3:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -946,7 +947,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.4:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -961,7 +962,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.5:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -976,7 +977,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.6:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -991,7 +992,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.7:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1006,7 +1007,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.8:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1021,7 +1022,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D6.9:
-    lambda: 0.85
+    lambda: 0.9
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1037,7 +1038,7 @@ simulated_datasets:
     cell_CNA_prob: 0
   # test effect of cell-specific CNAs in diploid background
   D7.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1052,7 +1053,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1067,7 +1068,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1082,7 +1083,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1097,7 +1098,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1112,7 +1113,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1127,7 +1128,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1142,7 +1143,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1157,7 +1158,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1172,7 +1173,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D7.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1187,7 +1188,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.02
   D8.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1202,7 +1203,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1217,7 +1218,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1232,7 +1233,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1247,7 +1248,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1262,7 +1263,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1277,7 +1278,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1292,7 +1293,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1307,7 +1308,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1322,7 +1323,7 @@ simulated_datasets:
     state_probs: [0.02, 0.95, 0.01, 0.01, 0.005, 0.005]
     cell_CNA_prob: 0.05
   D8.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1488,7 +1489,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.0:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1503,7 +1504,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.1:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1518,7 +1519,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.2:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1533,7 +1534,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.3:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1548,7 +1549,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.4:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1563,7 +1564,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.5:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1578,7 +1579,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.6:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1593,7 +1594,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.7:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1608,7 +1609,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.8:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1623,7 +1624,7 @@ simulated_datasets:
     state_probs: [1]
     cell_CNA_prob: 0
   D10.9:
-    lambda: 0.1
+    lambda: 0.6
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt']
@@ -1639,7 +1640,7 @@ simulated_datasets:
     cell_CNA_prob: 0
   # polyclonal datasets
   P1.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1654,7 +1655,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1669,7 +1670,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1684,7 +1685,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1699,7 +1700,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1714,7 +1715,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1729,7 +1730,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1744,7 +1745,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1759,7 +1760,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1774,7 +1775,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P1.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1789,7 +1790,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P2.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1804,7 +1805,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1819,7 +1820,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1834,7 +1835,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1849,7 +1850,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1864,7 +1865,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1879,7 +1880,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1894,7 +1895,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1909,7 +1910,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1924,7 +1925,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P2.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1939,7 +1940,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P3.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1954,7 +1955,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1969,7 +1970,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1984,7 +1985,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -1999,7 +2000,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2014,7 +2015,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2029,7 +2030,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2044,7 +2045,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2059,7 +2060,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2074,7 +2075,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P3.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2089,7 +2090,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P4.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2104,7 +2105,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2119,7 +2120,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2134,7 +2135,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2149,7 +2150,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2164,7 +2165,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2179,7 +2180,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2194,7 +2195,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2209,7 +2210,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2224,7 +2225,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P4.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2239,7 +2240,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P5.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2254,7 +2255,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2269,7 +2270,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2284,7 +2285,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2299,7 +2300,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2314,7 +2315,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2329,7 +2330,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2344,7 +2345,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2359,7 +2360,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2374,7 +2375,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P5.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2389,7 +2390,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P6.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2404,7 +2405,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2419,7 +2420,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2434,7 +2435,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2449,7 +2450,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2464,7 +2465,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2479,7 +2480,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2494,7 +2495,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2509,7 +2510,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2524,7 +2525,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P6.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2539,7 +2540,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P7.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2554,7 +2555,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2569,7 +2570,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2584,7 +2585,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2599,7 +2600,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2614,7 +2615,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2629,7 +2630,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2644,7 +2645,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2659,7 +2660,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2674,7 +2675,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P7.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2689,7 +2690,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.00
   P8.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2704,7 +2705,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2719,7 +2720,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2734,7 +2735,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2749,7 +2750,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2764,7 +2765,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2779,7 +2780,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2794,7 +2795,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2809,7 +2810,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2824,7 +2825,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P8.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2839,7 +2840,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.02
   P9.0:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2854,7 +2855,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.1:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2869,7 +2870,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.2:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2884,7 +2885,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.3:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2899,7 +2900,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.4:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2914,7 +2915,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.5:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2929,7 +2930,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.6:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2944,7 +2945,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.7:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2959,7 +2960,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.8:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2974,7 +2975,7 @@ simulated_datasets:
     state_probs: [0.06, 0.8, 0.05, 0.03, 0.02, 0.02, 0.02]
     cell_CNA_prob: 0.05
   P9.9:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['mcf7_rt', 'mcf7_rt', 'mcf7_rt']
@@ -2990,7 +2991,7 @@ simulated_datasets:
     cell_CNA_prob: 0.05
   # four clones with different, yet similar RT profiles
   P10:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['gm06990_rt', 'gm12801_rt', 'gm12812_rt', 'gm12813_rt']
@@ -3007,7 +3008,7 @@ simulated_datasets:
   # four clones which should have vastly different RT profiles
   # each RT comes from a different tissue of origin
   P11:
-    lambda: 0.7
+    lambda: 0.75
     gc_col: 'gc'
     gc_betas: [1.2, 0.0]
     rt_col: ['bj_rt', 'mcf7_rt', 'hepg2_rt', 'gm12813_rt']

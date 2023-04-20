@@ -23,7 +23,7 @@ bad_datasets = []
 rule all_fitness:
     input:
         expand(
-            'plots/fitness/{dataset}/s_vs_g_rpm_filtered.png',
+            'plots/fitness/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
                 d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
@@ -99,8 +99,18 @@ rule all_fitness:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/fitness/{dataset}/signals_heatmaps.png',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/fitness/fitness_proxy_s_coefficients.png',
         'plots/fitness/s_predictiveness.png',
+        'plots/fitness/sample_corrs.png',
+        'plots/fitness/frac_rep_violinplots.png',
+        'plots/fitness/rx_clone_spf.png'
         
 
 def dataset_cn_files(wildcards):
@@ -385,7 +395,7 @@ rule plot_pyro_model_output_f:
     log: 'logs/fitness/{dataset}/plot_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/common/plot_pyro_model_output.py '
+        'python3 scripts/fitness/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -458,7 +468,7 @@ rule plot_filtered_pyro_model_output_f:
     log: 'logs/fitness/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/common/plot_pyro_model_output.py '
+        'python3 scripts/fitness/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -612,7 +622,7 @@ rule plot_fitness_proxy_s_coefficients_f:
         'deactivate'
 
 
-rule plot_s_predictiveness:
+rule plot_s_predictiveness_f:
     input:
         expand(
             'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
@@ -637,78 +647,130 @@ rule plot_s_predictiveness:
         'deactivate'
 
 
-# rule infer_SPF:
-#     input:
-#         cn_s = 'analysis/fitness/{dataset}/s_phase_cells.tsv',
-#         cn_g1 = 'analysis/fitness/{dataset}/non_s_phase_cells.tsv'
-#     output:
-#         cn_s_out = 'analysis/fitness/{dataset}/s_phase_cells_with_clones.tsv',
-#         spf_table = 'analysis/fitness/{dataset}/spf_table.tsv',
-#         clone_copy = 'analysis/fitness/{dataset}/clone_copy.tsv'
-#     params:
-#         input_col = 'copy'
-#     log: 'logs/fitness/{dataset}/infer_SPF.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv3/bin/activate ; '
-#         'python3 scripts/fitness/infer_SPF.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
+rule cohort_frac_rep_distribution_f:
+    input: 
+        expand(
+            'analysis/fitness/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        )
+    output: 
+        plot1 = 'plots/fitness/frac_rep_histograms.png',
+        plot2 = 'plots/fitness/frac_rep_violinplots.png'
+    log: 'logs/fitness/cohort_frac_rep_distribution.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cohort_frac_rep_distribution.py '
+        '-i {input} '
+        '--plot1 {output.plot1} '
+        '--plot2 {output.plot2} '
+        '&> {log} ; '
+        'deactivate'
 
 
-# rule compute_consensus_clone_states:
-#     input: 'analysis/fitness/{dataset}/non_s_phase_cells.tsv'
-#     output: 'analysis/fitness/{dataset}/clone_states.tsv'
-#     params:
-#         input_col = 'state',
-#         clone_col = 'clone_id'
-#     log: 'logs/fitness/{dataset}/compute_consensus_clone_states.log'
-#     shell:
-#         'source ../scdna_replication_tools/venv3/bin/activate ; '
-#         'python3 scripts/common/compute_consensus_clone_profiles.py '
-#         '{input} {params} {output} &> {log} ; '
-#         'deactivate'
+rule cohort_clone_counts_f:
+    input:
+        expand(
+            'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+    output: 'analysis/fitness/cohort_clone_counts.tsv'
+    log: 'logs/fitness/cohort_clone_counts.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cohort_clone_counts.py '
+        '--input {input} '
+        '--output {output} '
+        '&> {log} ; '
+        'deactivate'
 
 
-# rule plot_consensus_clone_copynumber:
-#     input:
-#         clone_states = 'analysis/fitness/{dataset}/clone_states.tsv',
-#         clone_copy = 'analysis/fitness/{dataset}/clone_copy.tsv'
-#     output: 'plots/fitness/{dataset}/consensus_clone_copynumber.pdf'
-#     log: 'logs/fitness/{dataset}/plot_consensus_clone_copynumber.log'
-#     shell:
-#         'source ../scgenome/venv/bin/activate ; '
-#         'python3 scripts/fitness/plot_consensus_clone_copynumber.py '
-#         '{input} {output} &> {log}'
-#         ' ; deactivate'
+rule cn_and_rt_correlations_f:
+    input:
+        rt = expand(
+            'analysis/fitness/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        cn = expand(
+            'analysis/fitness/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                d for d in config['fitness_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+        counts = 'analysis/fitness/cohort_clone_counts.tsv'
+    output:
+        sample_corrs = 'plots/fitness/sample_corrs.png',
+        clone_corrs = 'plots/fitness/clone_corrs.png',
+        rx_corrs = 'plots/fitness/rx_corrs.png'
+    log: 'logs/fitness/cn_and_rt_correlations.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cn_and_rt_correlations.py '
+        '--input_cn {input.cn} '
+        '--input_rt {input.rt} '
+        '--counts {input.counts} '
+        '--sample_corrs {output.sample_corrs} '
+        '--clone_corrs {output.clone_corrs} '
+        '--rx_corrs {output.rx_corrs} '
+        '&> {log} ; '
+        'deactivate'
 
 
-# rule plot_clone_tree_heatmap:
-#     input: 'analysis/fitness/{dataset}/clone_states.tsv',
-#     output: 'plots/fitness/{dataset}/clone_tree_heatmap.png'
-#     params:
-#         dataset = lambda wildcards: wildcards.dataset
-#     log: 'logs/fitness/{dataset}/plot_clone_tree_heatmap.log'
-#     shell:
-#         'source ../scgenome/venv/bin/activate ; '
-#         'python3 scripts/fitness/plot_clone_tree_heatmap.py '
-#         '{input} {params} {output} &> {log}'
-#         ' ; deactivate'
+rule cohort_rx_clone_counts_f:
+    input:
+        expand(
+            'analysis/fitness/{dataset}/cell_cycle_clone_counts.tsv',
+            dataset=[
+                d for d in config['fitness_rx_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
+    output: 'analysis/fitness/cohort_rx_clone_counts.tsv'
+    log: 'logs/fitness/cohort_rx_clone_counts.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/cohort_rx_clone_counts.py '
+        '--input {input} '
+        '--output {output} '
+        '&> {log} ; '
+        'deactivate'
 
 
-# rule plot_clonal_evolution:
-#     input: 
-#         s_phase = 'analysis/fitness/{dataset}/s_phase_cells_with_clones.tsv',
-#         non_s_phase = 'analysis/fitness/{dataset}/non_s_phase_cells.tsv',
-#         times = 'data/fitness/fitness_time_scale.tsv'
-#     output:
-#         s_out = 'analysis/fitness/{dataset}/s_phase_clone_time_counts.tsv',
-#         non_s_out = 'analysis/fitness/{dataset}/non_s_phase_clone_time_counts.tsv',
-#         plot = 'plots/fitness/{dataset}/clonal_evolution.pdf'
-#     params:
-#         dataset = lambda wildcards: wildcards.dataset
-#     log: 'logs/fitness/{dataset}/plot_clonal_evolution.log'
-#     shell:
-#         'python3 scripts/fitness/plot_clonal_evolution.py '
-#         '{input} {params} {output} &> {log}'
+rule plot_rx_clone_spf_f:
+    input: 'analysis/fitness/cohort_rx_clone_counts.tsv',
+    output: 'plots/fitness/rx_clone_spf.png'
+    log: 'logs/fitness/plot_rx_clone_spf.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness/plot_rx_clone_spf.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
 
 
+rule signals_heatmaps_f:
+    input: 
+        ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
+        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
+    output: 
+        figure = 'plots/fitness/{dataset}/signals_heatmaps.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+    log: 'logs/fitness/{dataset}/signals_heatmaps.log'
+    singularity: 'docker://marcjwilliams1/signals'
+    # singularity: '/juno/work/shah/users/william1/singularity/signals_v0.7.6.sif'
+    shell:
+        'Rscript scripts/fitness/signals_heatmaps.R '
+        '--ascn {input.ascn} '
+        '--clones {input.clones} '
+        '--dataset {params.dataset} '
+        '--heatmap {output.figure} '
+        '&> {log}'

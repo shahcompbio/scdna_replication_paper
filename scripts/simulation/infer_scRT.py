@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-import numpy as np
 import pandas as pd
 from scdna_replication_tools.infer_scRT import scRT
 
@@ -25,8 +24,8 @@ def get_args():
 
 def main():
     argv = get_args()
-    cn_s = pd.read_csv(argv.cn_s, sep='\t')
-    cn_g1 = pd.read_csv(argv.cn_g1, sep='\t')
+    cn_s = pd.read_csv(argv.cn_s)
+    cn_g1 = pd.read_csv(argv.cn_g1)
     print('loaded data')
 
     # make sure clone_id column is present if none are listed

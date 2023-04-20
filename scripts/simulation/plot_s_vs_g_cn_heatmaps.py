@@ -1,6 +1,5 @@
 import matplotlib
 matplotlib.use('Agg')
-import sys
 import scgenome.cnplot
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -8,6 +7,10 @@ import numpy as np
 from argparse import ArgumentParser
 from scgenome import cncluster
 from matplotlib.patches import Patch
+from matplotlib import colors as mcolors
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_clone_cmap
 
 
 def get_args():
@@ -69,24 +72,39 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
     cn_s = cn_s.replace({cluster_col: clone_dict})
 
     fig = plt.figure(figsize=figsize)
-    ax_g1 = fig.add_axes([0.1,0.0,0.4,1.])
+    ax_g1 = fig.add_axes([0.06,0.0,0.45,1.])
     plot_data_g1 = scgenome.cnplot.plot_clustered_cell_cn_matrix(
         ax_g1, cn_g, value_col, cluster_field_name=cluster_col
     )
 
-    ax_s = fig.add_axes([0.6,0.0,0.4,1.])
+    ax_s = fig.add_axes([0.55,0.0,0.45,1.])
     plot_data_s = scgenome.cnplot.plot_clustered_cell_cn_matrix(
         ax_s, cn_s, value_col, cluster_field_name=cluster_col
     )
     
     if dataset:
-        ax_g1.set_title('{}: G1/2-phase'.format(dataset))
-        ax_s.set_title('{}: S-phase'.format(dataset))
+        if value_col=='state':
+            suffix = 'HMMcopy state'
+        elif 'true_G1' in value_col:
+            suffix = 'true somatic CN state'
+        else:
+            suffix = ''
+        ax_g1.set_title('{}: G1/2-phase {}'.format(dataset, suffix))
+        ax_s.set_title('{}: S-phase {}'.format(dataset, suffix))
+    
+    # hide the y-ticks and labels for all heatmaps
+    for ax in [ax_g1, ax_s]:
+        ax.set_yticks([])
+        ax.set_yticklabels([])
     
     if len(clone_dict) > 1:
         # annotate the clones for G1-phase cells
         cluster_ids_g1 = plot_data_g1.columns.get_level_values(1).values
-        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, return_map=True)
+        clone_cmap = get_clone_cmap()
+        # use mcolors to change every element in the dict to rgba
+        for key in clone_cmap.keys():
+            clone_cmap[key] = mcolors.to_rgba(clone_cmap[key])
+        color_mat_g1, color_map_g1 = cncluster.get_cluster_colors(cluster_ids_g1, color_map=clone_cmap, return_map=True)
 
         # get list of color pigments in the same order as clone_dict
         colors_used_g1 = []
@@ -100,7 +118,7 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
             clones_to_colors_g1[key] = colors_used_g1[i]
 
         # create color bar that shows clone id for each row in heatmap
-        ax = fig.add_axes([0.05,0.0,0.03,1.])
+        ax = fig.add_axes([0.05,0.0,0.01,1.])
         plot_colorbar(ax, color_mat_g1)
 
         # create legend to match colors to clone ids
@@ -117,12 +135,12 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
             clones_to_colors_s[key] = colors_used_g1[i]
 
         # create color bar that shows clone id for each row in heatmap
-        ax = fig.add_axes([0.55,0.0,0.03,1.])
+        ax = fig.add_axes([0.54,0.0,0.01,1.])
         plot_colorbar(ax, color_mat_s)
 
-        # create legend to match colors to clone ids
-        ax = fig.add_axes([0.5,0.75,0.02,0.25])
-        plot_color_legend(ax, clones_to_colors_s, title='Clone ID')
+        # # create legend to match colors to clone ids
+        # ax = fig.add_axes([0.5,0.75,0.02,0.25])
+        # plot_color_legend(ax, clones_to_colors_s, title='Clone ID')
 
     return fig
 
@@ -131,8 +149,8 @@ def plot_cn_heatmap(cn_g, cn_s, figsize=(18,9), dataset=None, clone_col='clone_i
 def main():
     argv = get_args()
 
-    cn_s = pd.read_csv(argv.s_phase, sep='\t')
-    cn_g = pd.read_csv(argv.non_s_phase, sep='\t')
+    cn_s = pd.read_csv(argv.s_phase)
+    cn_g = pd.read_csv(argv.non_s_phase)
 
     cn_s.chr = cn_s.chr.astype(str)
     cn_g.chr = cn_g.chr.astype(str)

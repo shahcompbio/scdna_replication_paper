@@ -4,7 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scgenome.cnplot import plot_clustered_cell_cn_matrix
-from matplotlib.colors import ListedColormap
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_rt_cmap, get_clone_cmap
 
 
 def get_args():
@@ -18,14 +20,6 @@ def get_args():
     p.add_argument('output_frac_rt', help='plot for frac_rt distribution across all cells')
 
     return p.parse_args()
-
-
-def get_rt_cmap():
-    rt_colors = {0: '#552583', 1: '#FDB927'}
-    color_list = []
-    for i in [0, 1]:
-        color_list.append(rt_colors[i])
-    return ListedColormap(color_list)
 
 
 def plot_cn_and_rep_states(df, argv):
@@ -50,14 +44,19 @@ def plot_frac_rt_distributions(df, argv):
     fig, ax = plt.subplots(1, 3, figsize=(12, 4), tight_layout=True)
     ax = ax.flatten()
 
+    clone_cmap = get_clone_cmap()
+
+    # sort all the clone_ids alphabetically
+    clone_id_order = sorted(df_frac.clone_id.unique())
+
     # violinplot
     sns.histplot(data=df_frac, x=argv.frac_rt_col, ax=ax[0])
     sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='library_id', multiple='stack', ax=ax[1])
-    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2])
+    sns.histplot(data=df_frac, x=argv.frac_rt_col, hue='clone_id', multiple='stack', ax=ax[2], palette=clone_cmap, hue_order=clone_id_order)
 
     for i in range(3):
         ax[i].set_xlabel('Inferred fraction of replicated bins')
-        ax[i].set_title('Distribution of cells\nwithin S-phase')
+        ax[i].set_title('Cell S-phase times')
 
     fig.savefig(argv.output_frac_rt, bbox_inches='tight', dpi=300)
 

@@ -1,5 +1,4 @@
 import scgenome
-import scipy.stats
 import pandas as pd
 
 def main():

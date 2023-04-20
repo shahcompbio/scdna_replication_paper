@@ -1,13 +1,6 @@
 from argparse import ArgumentParser
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-from scgenome.cnplot import plot_clustered_cell_cn_matrix
-from matplotlib.colors import ListedColormap
-from scipy.optimize import curve_fit
-from scgenome import cncluster
-from matplotlib.patches import Patch
 from scdna_replication_tools.calculate_twidth import compute_and_plot_twidth
 
 
@@ -71,7 +64,7 @@ def main():
     cn_split = pd.concat([cn_t, cn_gm], ignore_index=True)
 
     # compute a pseudobulk RT column that is the average of the two cell lines
-    cn_all = compute_loci_frac(cn_all, rt_state=argv.rep_state, col_name='rt_joint_all')
+    cn_all = compute_loci_frac(cn_all, rt_state=argv.rep_state, col_name='rt_merged_all')
     cn_split = compute_loci_frac(cn_split, rt_state=argv.rep_state, col_name='rt_split_all')
 
     t_width_df = []
@@ -90,14 +83,14 @@ def main():
     ax[2], Tw = run_twidth_analysis(cn_split, 'rt_split_all', argv.frac_rt_col, argv.rep_state, title_second_line='Split T47D + GM18507', ax=ax[2])
     t_width_df.append(pd.DataFrame({'cell_line': ['T47D+GM18507'], 'model_condition': ['split'], 'per_cell': [False], 'T-width': [Tw]}))
 
-    ax[3], Tw = run_twidth_analysis(cn_gm, 'rt_joint_GM18507', argv.frac_rt_col, argv.rep_state, title_second_line='GM18507 Joint', ax=ax[3])
-    t_width_df.append(pd.DataFrame({'cell_line': ['GM18507'], 'model_condition': ['joint'], 'per_cell': [False], 'T-width': [Tw]}))
+    ax[3], Tw = run_twidth_analysis(cn_gm, 'rt_merged_GM18507', argv.frac_rt_col, argv.rep_state, title_second_line='GM18507 merged', ax=ax[3])
+    t_width_df.append(pd.DataFrame({'cell_line': ['GM18507'], 'model_condition': ['merged'], 'per_cell': [False], 'T-width': [Tw]}))
 
-    ax[4], Tw = run_twidth_analysis(cn_t, 'rt_joint_T47D', argv.frac_rt_col, argv.rep_state, title_second_line='T47D Joint', ax=ax[4])
-    t_width_df.append(pd.DataFrame({'cell_line': ['T47D'], 'model_condition': ['joint'], 'per_cell': [False], 'T-width': [Tw]}))
+    ax[4], Tw = run_twidth_analysis(cn_t, 'rt_merged_T47D', argv.frac_rt_col, argv.rep_state, title_second_line='T47D merged', ax=ax[4])
+    t_width_df.append(pd.DataFrame({'cell_line': ['T47D'], 'model_condition': ['merged'], 'per_cell': [False], 'T-width': [Tw]}))
 
-    ax[5], Tw = run_twidth_analysis(cn_all, 'rt_joint_all', argv.frac_rt_col, argv.rep_state, title_second_line='Joint T47D + GM18507', ax=ax[5])
-    t_width_df.append(pd.DataFrame({'cell_line': ['T47D+GM18507'], 'model_condition': ['joint'], 'per_cell': [False], 'T-width': [Tw]}))
+    ax[5], Tw = run_twidth_analysis(cn_all, 'rt_merged_all', argv.frac_rt_col, argv.rep_state, title_second_line='merged T47D + GM18507', ax=ax[5])
+    t_width_df.append(pd.DataFrame({'cell_line': ['T47D+GM18507'], 'model_condition': ['merged'], 'per_cell': [False], 'T-width': [Tw]}))
 
     # plots for per-cell==True
     ax[6], Tw = run_twidth_analysis(cn_gm, 'rt_split_GM18507', argv.frac_rt_col, argv.rep_state, title_second_line='GM18507 Split', ax=ax[6], per_cell=True, alpha=0.1)
@@ -109,14 +102,14 @@ def main():
     ax[8], Tw = run_twidth_analysis(cn_split, 'rt_split_all', argv.frac_rt_col, argv.rep_state, title_second_line='Split T47D + GM18507', ax=ax[8], per_cell=True, alpha=0.1)
     t_width_df.append(pd.DataFrame({'cell_line': ['T47D+GM18507'], 'model_condition': ['split'], 'per_cell': [True], 'T-width': [Tw]}))
 
-    ax[9], Tw = run_twidth_analysis(cn_gm, 'rt_joint_GM18507', argv.frac_rt_col, argv.rep_state, title_second_line='GM18507 Joint', ax=ax[9], per_cell=True, alpha=0.1)
-    t_width_df.append(pd.DataFrame({'cell_line': ['GM18507'], 'model_condition': ['joint'], 'per_cell': [True], 'T-width': [Tw]}))
+    ax[9], Tw = run_twidth_analysis(cn_gm, 'rt_merged_GM18507', argv.frac_rt_col, argv.rep_state, title_second_line='GM18507 merged', ax=ax[9], per_cell=True, alpha=0.1)
+    t_width_df.append(pd.DataFrame({'cell_line': ['GM18507'], 'model_condition': ['merged'], 'per_cell': [True], 'T-width': [Tw]}))
 
-    ax[10], Tw = run_twidth_analysis(cn_t, 'rt_joint_T47D', argv.frac_rt_col, argv.rep_state, title_second_line='T47D Joint', ax=ax[10], per_cell=True, alpha=0.1)
-    t_width_df.append(pd.DataFrame({'cell_line': ['T47D'], 'model_condition': ['joint'], 'per_cell': [True], 'T-width': [Tw]}))
+    ax[10], Tw = run_twidth_analysis(cn_t, 'rt_merged_T47D', argv.frac_rt_col, argv.rep_state, title_second_line='T47D merged', ax=ax[10], per_cell=True, alpha=0.1)
+    t_width_df.append(pd.DataFrame({'cell_line': ['T47D'], 'model_condition': ['merged'], 'per_cell': [True], 'T-width': [Tw]}))
 
-    ax[11], Tw = run_twidth_analysis(cn_all, 'rt_joint_all', argv.frac_rt_col, argv.rep_state, title_second_line='Joint T47D + GM18507', ax=ax[11], per_cell=True, alpha=0.1)
-    t_width_df.append(pd.DataFrame({'cell_line': ['T47D+GM18507'], 'model_condition': ['joint'], 'per_cell': [True], 'T-width': [Tw]}))
+    ax[11], Tw = run_twidth_analysis(cn_all, 'rt_merged_all', argv.frac_rt_col, argv.rep_state, title_second_line='merged T47D + GM18507', ax=ax[11], per_cell=True, alpha=0.1)
+    t_width_df.append(pd.DataFrame({'cell_line': ['T47D+GM18507'], 'model_condition': ['merged'], 'per_cell': [True], 'T-width': [Tw]}))
 
     # save figure of all the t-width curves
     fig.savefig(argv.output_curves, bbox_inches='tight')

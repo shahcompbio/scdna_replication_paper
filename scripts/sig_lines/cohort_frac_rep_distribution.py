@@ -3,6 +3,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from common.colors import get_htert_cmap
 
 
 def get_args():
@@ -46,15 +49,17 @@ def main():
     fig, ax = plt.subplots(2, 2, figsize=(8, 8), tight_layout=True)
     ax = ax.flatten()
 
+    htert_cmap = get_htert_cmap()
+
     # plot both a histogram and kdeplot
-    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', multiple='stack', ax=ax[0])
-    sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', ax=ax[1])
-    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, multiple='stack', ax=ax[2])
-    sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, ax=ax[3])
+    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', multiple='stack', ax=ax[0], palette=htert_cmap)
+    sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', ax=ax[1], palette=htert_cmap)
+    sns.histplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, multiple='stack', ax=ax[2], palette=htert_cmap)
+    sns.kdeplot(data=df, x='cell_frac_rep', hue='dataset', common_norm=False, ax=ax[3], palette=htert_cmap)
 
     for i in range(4):
-        ax[i].set_xlabel('Inferred fraction of replicated bins')
-        ax[i].set_title('Distribution of cells\nwithin S-phase')
+        ax[i].set_xlabel('Inferred fraction of replicated loci')
+        ax[i].set_title('Cell S-phase times')
     
     fig.savefig(argv.plot, dpi=300, bbox_inches='tight')
 

@@ -58,6 +58,8 @@ rule all_fitness_lines:
                 if (d not in bad_datasets)
             ]
         ),
+        'plots/fitness_lines/s_predictiveness.png'
+
 
 # use the model output files from sig_lines.smk to assign S-phase cells to timepoints
 rule assign_timepoints_fl:
@@ -201,4 +203,20 @@ rule plot_cn_pseudobulks_fl:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/fitness_lines/plot_cn_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule s_predictiveness_fl:
+    input:
+        SA039 = 'analysis/fitness_lines/SA039/cell_cycle_clone_counts.tsv',
+        SA906a = 'analysis/fitness_lines/SA906a/cell_cycle_clone_counts.tsv',
+        SA906b = 'analysis/fitness_lines/SA906b/cell_cycle_clone_counts.tsv',
+    output:
+        tsv = 'analysis/fitness_lines/s_predictiveness.tsv',
+        plot = 'plots/fitness_lines/s_predictiveness.png'
+    log: 'logs/fitness_lines/s_predictiveness.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/s_predictiveness.py '
+        '{input} {output} &> {log} ; '
         'deactivate'
