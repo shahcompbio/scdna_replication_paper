@@ -37,27 +37,27 @@ rule all_sig_tumors:
                 if (d not in bad_datasets)
             ]
         ),
-        expand(
-            'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
-            dataset=[
-                d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
-            dataset=[
-                d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets)
-            ]
-        ),
-        expand(
-            'plots/sig_tumors/{dataset}/twidth_curves.png',
-            dataset=[
-                d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # expand(
+        #     'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
+        #     dataset=[
+        #         d for d in config['signatures_patient_tumors']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
+        #     dataset=[
+        #         d for d in config['signatures_patient_tumors']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
+        # expand(
+        #     'plots/sig_tumors/{dataset}/twidth_curves.png',
+        #     dataset=[
+        #         d for d in config['signatures_patient_tumors']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
 
 
 rule collect_cn_data_st:
@@ -97,7 +97,7 @@ rule compute_ccc_features_st:
     log: 'logs/sig_tumors/{dataset}/compute_ccc_features.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/compute_ccc_features.py '
+        'python3 scripts/sig_tumors/compute_ccc_features.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -133,21 +133,21 @@ rule infer_scRT_pyro_st:
         cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
     output:
-        main_s_out = 'analysis/laks_flow/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_s_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_s_output.tsv',
-        main_g_out = 'analysis/laks_flow/{dataset}/g1_phase_cells_with_scRT.tsv',
-        supp_g_out = 'analysis/laks_flow/{dataset}/scRT_pyro_supp_g_output.tsv',
+        main_s_out = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_s_out = 'analysis/sig_tumors/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.tsv',
+        supp_g_out = 'analysis/sig_tumors/{dataset}/scRT_pyro_supp_g_output.tsv',
     params:
         input_col = 'rpm',
         cn_col = 'state',
         copy_col = 'copy',
         gc_col = 'gc',
         cn_prior_method = 'g1_composite',
-        infer_mode = 'pyro'
+        infer_mode = 'pert'
     log: 'logs/sig_tumors/{dataset}/infer_scRT.log'
     shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/infer_scRT.py '
+        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'python3 scripts/sig_tumors/infer_scRT.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -168,35 +168,32 @@ rule plot_cn_heatmaps_st:
         ' ; deactivate'
 
 
-rule plot_rt_heatmap_st:
-    input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv'
-    output: 'plots/sig_tumors/{dataset}/rt_heatmap.png'
-    params:
-        value_col = 'model_rep_state',
-        sort_col = 'model_s_time',
-        dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/sig_tumors/{dataset}/plot_rt_heatmap.log'
-    shell:
-        'source ../scgenome/venv/bin/activate ; '
-        'python3 scripts/sig_lines/plot_rt_heatmap.py '
-        '{input} {params} {output} &> {log}'
-        ' ; deactivate'
+# rule plot_rt_heatmap_st:
+#     input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv'
+#     output: 'plots/sig_tumors/{dataset}/rt_heatmap.png'
+#     params:
+#         value_col = 'model_rep_state',
+#         sort_col = 'model_s_time',
+#         dataset = lambda wildcards: wildcards.dataset
+#     log: 'logs/sig_tumors/{dataset}/plot_rt_heatmap.log'
+#     shell:
+#         'source ../scgenome/venv/bin/activate ; '
+#         'python3 scripts/sig_lines/plot_rt_heatmap.py '
+#         '{input} {params} {output} &> {log}'
+#         ' ; deactivate'
 
 
 rule plot_pyro_model_output_st:
     input:
         s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv',
-        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
-    output:
-        plot1 = 'plots/sig_tumors/{dataset}/inferred_cn_rep_results.png',
-        plot2 = 'plots/sig_tumors/{dataset}/s_vs_g_hmmcopy_states.png',
-        plot3 = 'plots/sig_tumors/{dataset}/s_vs_g_rpm.png',
+        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.tsv'
+    output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/plot_pyro_model_output.py '
+        'python3 scripts/sig_tumors/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -221,16 +218,13 @@ rule plot_filtered_pyro_model_output_st:
     input:
         s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
-    output:
-        plot1 = 'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
-        plot2 = 'plots/sig_tumors/{dataset}/s_vs_g_hmmcopy_states_filtered.png',
-        plot3 = 'plots/sig_tumors/{dataset}/s_vs_g_rpm_filtered.png',
+    output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_filtered_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/plot_pyro_model_output.py '
+        'python3 scripts/sig_tumors/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
@@ -239,16 +233,13 @@ rule plot_nonrep_pyro_model_output_st:
     input:
         s_phase = 'analysis/sig_tumors/{dataset}/model_nonrep_cells.tsv',
         g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
-    output:
-        plot1 = 'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
-        plot2 = 'plots/sig_tumors/{dataset}/s_vs_g_hmmcopy_states_nonrep.png',
-        plot3 = 'plots/sig_tumors/{dataset}/s_vs_g_rpm_nonrep.png',
+    output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_nonrep_pyro_model_output.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/plot_pyro_model_output.py '
+        'python3 scripts/sig_tumors/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
