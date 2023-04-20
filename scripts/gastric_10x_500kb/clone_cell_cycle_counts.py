@@ -56,11 +56,11 @@ def main():
     df.rename(columns={'cell_line': 'Cell Line', 'dna_num_cells_g1': '#cells'}, inplace=True)
 
     # create a list of y-axis columns to plot against 'pert_g1g2_pct'
-    y_cols = ['doubling_time', 'rna_g0g1_pct_cell_line', 'dna_g0g1_pct_cell_line']
-    y_labels = ['Doubling time (h)', 'Andor scRNA G1%', 'Andor scDNA G1/2%']
+    y_cols = ['doubling_time', 'rna_g0g1_pct_cell_line']
+    y_labels = ['Doubling time (h)', 'Andor scRNA G1%']
 
     # create a panel of plots
-    fig, ax = plt.subplots(nrows=1, ncols=len(y_cols), figsize=(4*len(y_cols), 4), tight_layout=True)
+    fig, ax = plt.subplots(nrows=1, ncols=len(y_cols), figsize=(5*len(y_cols), 5), tight_layout=True)
     ax = ax.flatten()
 
     # plot the data
@@ -70,21 +70,22 @@ def main():
         Y = df[y_col].values
         weights = df['#cells'].values
         results = sm.WLS(Y, X, weights=weights).fit()
-        # results.plot(ax=ax[i])
+        # extract the r and p-values from the regression results
+        p_value = results.pvalues[1]
+        r_value = np.sqrt(results.rsquared)
         # plot the points colored by cell line
         sns.scatterplot(x='pert_g1g2_pct', y=y_col, data=df, hue='Cell Line', size='#cells', ax=ax[i])
         # adjust legend and axis labels
-        ax[i].set_xlabel('PERT scDNA G1/2%')
+        ax[i].set_xlabel('PERT sWGS G1/2%')
         ax[i].set_ylabel(y_labels[i])
-        ax[i].set_title('10x Gastric Cancer Sublones')
+        ax[i].set_title('10x Gastric Cancer Sublones\nr={:.2f}, p={:.2e}'.format(r_value, p_value))
         # plot the regression line
-        left_lim = max(df['pert_g1g2_pct'].min() - 5, 0)
-        right_lim = min(df['pert_g1g2_pct'].max() + 5, 100)
-        x = np.arange(left_lim, right_lim, 1)
+        x = np.arange(df['pert_g1g2_pct'].min(), df['pert_g1g2_pct'].max(), 1)
         y = results.params[0] + results.params[1] * x
         ax[i].plot(x, y, color='black', linestyle='--', alpha=0.5)
         # set the x-axis limits to be 5% wider than the data
-        
+        left_lim = max(df['pert_g1g2_pct'].min() - 5, 0)
+        right_lim = min(df['pert_g1g2_pct'].max() + 5, 100)
         ax[i].set_xlim(left=left_lim, right=right_lim)
     
     # save the plot

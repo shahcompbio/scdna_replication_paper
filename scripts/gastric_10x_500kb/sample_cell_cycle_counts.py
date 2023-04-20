@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import linregress
 from argparse import ArgumentParser
 
 
@@ -43,24 +44,28 @@ def main():
     df = sample_counts.merge(doubling_times, on='cell_line', how='inner')
 
     # create a list of y-axis columns to plot against 'pert_g1g2_pct'
-    y_cols = ['doubling_time', 'rna_g0g1_pct', 'dna_g0g1_pct']
-    y_labels = ['Doubling time (h)', 'Andor scRNA G0/G1%', 'Andor scDNA G1/2%']
+    y_cols = ['doubling_time', 'rna_g0g1_pct']
+    y_labels = ['Doubling time (h)', 'Andor scRNA G0/G1%']
 
     # create a panel of plots
-    fig, ax = plt.subplots(nrows=1, ncols=len(y_cols), figsize=(4*len(y_cols), 4), tight_layout=True)
+    fig, ax = plt.subplots(nrows=1, ncols=len(y_cols), figsize=(5*len(y_cols), 5), tight_layout=True)
     ax = ax.flatten()
 
     # plot the data
     for i, y_col in enumerate(y_cols):
+        # compute correlation coefficient between current x and y axes
+        x = df['pert_g1g2_pct']
+        y = df[y_col]
+        slope, intercept, r_value, p_value, std_err = linregress(x, y)
         # fit a regression line to the data but don't plot the points
-        sns.regplot(x='pert_g1g2_pct', y=y_col, data=df, ax=ax[i], scatter=False, color='black', line_kws={'alpha': 0.5}, ci=None)
+        sns.regplot(x='pert_g1g2_pct', y=y_col, data=df, ax=ax[i], scatter=False, color='black', line_kws={'alpha': 0.5, 'linestyle': '--'}, ci=None)
         # plot the points colored by cell line
         sns.scatterplot(x='pert_g1g2_pct', y=y_col, data=df, hue='cell_line', ax=ax[i])
         # adjust legend and axis labels
-        ax[i].set_xlabel('PERT scDNA G1/2%')
+        ax[i].set_xlabel('PERT scWGS G1/2%')
         ax[i].set_ylabel(y_labels[i])
         ax[i].legend(title='Cell Line')
-        ax[i].set_title('10x Gastric Cancer')
+        ax[i].set_title('10x Gastric Cancer\nr={:.2f}, p={:.2e}'.format(r_value, p_value))
         # set the x-axis limits to be 5% wider than the data
         left_lim = max(df['pert_g1g2_pct'].min() - 5, 0)
         right_lim = min(df['pert_g1g2_pct'].max() + 5, 100)

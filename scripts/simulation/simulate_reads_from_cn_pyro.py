@@ -15,7 +15,7 @@ def get_args():
     p = ArgumentParser()
 
     p.add_argument('-si', '--df_s', help='True somatic CN profiles for S-phase cells')
-    p.add_argument('-gi', '--df_g', help='True somatic CN profiles for S-phase cells')
+    p.add_argument('-gi', '--df_g', help='True somatic CN profiles for G1/2-phase cells')
     p.add_argument('-n', '--num_reads', type=int, help='number of reads per cell')
     p.add_argument('-l', '--lamb', type=float, help='negative binomial success probability term lambda (controls overdispersion)')
     p.add_argument('-a', '--a', type=int, help='amplitude of sigmoid curve when generating rt noise')
