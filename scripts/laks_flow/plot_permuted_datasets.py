@@ -24,17 +24,17 @@ def make_plots(legend_df, metrics_df, argv):
 
     phase_cmap = get_phase_cmap()
 
-    # barplot of the fraction of G1/2-cells accurately removed out of all those with swapped flow labels
+    # barplot of the fraction of G1/2-cells accurately removed out of all those with swapped FACS labels
     sns.barplot(data=legend_df, x='rate', y='accuracy', ax=ax[1], color='#C4CED4')
     ax[1].set_ylabel('Fraction of mislabeled\ncells detected by model')
-    ax[1].set_xlabel('Fraction of flow G1/2-phase cells\nmislabeled as high variance in PERT input')
+    ax[1].set_xlabel('Fraction of FACS G1/2-phase cells\nmislabeled as S-phase')
     ax[1].set_title('PERT phase accuracy')
 
-    # distribution of cell_frac_rep values based on the true flow sorting states
-    # copy true_cell_cycle_state to a new column named 'Flow phase'
-    metrics_df['Flow phase'] = metrics_df['true_cell_cycle_state']
-    sns.histplot(data=metrics_df.query("cell_cycle_state=='S'"), x='cell_frac_rep', hue='Flow phase', bins=20, multiple='stack', ax=ax[0], palette=phase_cmap)
-    ax[0].set_title('Cells labeled as high variance in PERT input')
+    # distribution of cell_frac_rep values based on the true FACS sorting states
+    # copy true_cell_cycle_state to a new column named 'FACS phase'
+    metrics_df['FACS phase'] = metrics_df['true_cell_cycle_state']
+    sns.histplot(data=metrics_df.query("cell_cycle_state=='S'"), x='cell_frac_rep', hue='FACS phase', bins=20, multiple='stack', ax=ax[0], palette=phase_cmap)
+    ax[0].set_title('Permutation of FACS labels for PERT initialization')
     ax[0].set_xlabel('Inferred fraction of replicated bins')
     ax[0].set_ylabel('# cells')
 
@@ -63,7 +63,7 @@ def make_plots(legend_df, metrics_df, argv):
     sns.scatterplot(data=metrics_df.query("permuted==True"), x='RPM median absolute deviation', y='CN breakpoints', hue='PERT phase', alpha=0.5, ax=ax[5], palette=phase_cmap)
 
     for i in range(6):
-        ax[i].set_title('Mislabeled flow G1/2 cells')
+        ax[i].set_title('Mislabeled FACS G1/2 cells')
         ax[i].legend(title='PERT phase')
 
     fig.savefig(argv.ccc_plots, bbox_inches='tight', dpi=300)
