@@ -9,13 +9,13 @@ bad_datasets = ['SA535', 'SA609']
 
 rule all_sig_tumors:
     input:
-        expand(
-            'plots/sig_tumors/{dataset}/cn_heatmaps.png',
-            dataset=[
-                d for d in config['signatures_patient_tumors']
-                if (d not in bad_datasets)
-            ]
-        ),
+        # expand(
+        #     'plots/sig_tumors/{dataset}/cn_heatmaps.png',
+        #     dataset=[
+        #         d for d in config['signatures_patient_tumors']
+        #         if (d not in bad_datasets)
+        #     ]
+        # ),
         # expand(
         #     'plots/sig_tumors/{dataset}/rt_heatmap.png',
         #     dataset=[
@@ -133,10 +133,10 @@ rule infer_scRT_pyro_st:
         cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells.tsv',
         cn_g1 = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
     output:
-        main_s_out = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv',
-        supp_s_out = 'analysis/sig_tumors/{dataset}/scRT_pyro_supp_s_output.tsv',
-        main_g_out = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.tsv',
-        supp_g_out = 'analysis/sig_tumors/{dataset}/scRT_pyro_supp_g_output.tsv',
+        main_s_out = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz',
+        supp_s_out = 'analysis/sig_tumors/{dataset}/scRT_pyro_supp_s_output.csv.gz',
+        main_g_out = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.csv.gz',
+        supp_g_out = 'analysis/sig_tumors/{dataset}/scRT_pyro_supp_g_output.csv.gz'
     params:
         input_col = 'rpm',
         cn_col = 'state',
@@ -144,12 +144,13 @@ rule infer_scRT_pyro_st:
         gc_col = 'gc',
         cn_prior_method = 'g1_composite',
         infer_mode = 'pert'
-    log: 'logs/sig_tumors/{dataset}/infer_scRT.log'
+    log: 'logs/sig_tumors/{dataset}/infer_scRT_pyro.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools'
     shell:
-        'source ../scdna_replication_tools/venv/bin/activate ; '
+        'source ../scdna_replication_tools/venv3/bin/activate && '
         'python3 scripts/sig_tumors/infer_scRT.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
+        '{input} {params} {output} &> {log}'
+        ' && deactivate'
 
 
 rule plot_cn_heatmaps_st:
@@ -161,15 +162,16 @@ rule plot_cn_heatmaps_st:
         value_col = 'state',
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_cn_heatmaps.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools'
     shell:
-        'source ../scgenome/venv/bin/activate ; '
+        'source ../scgenome/venv/bin/activate && '
         'python3 scripts/sig_lines/plot_s_vs_g_cn_heatmaps.py '
         '{input} {params} {output} &> {log}'
-        ' ; deactivate'
+        ' && deactivate'
 
 
 # rule plot_rt_heatmap_st:
-#     input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv'
+#     input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz'
 #     output: 'plots/sig_tumors/{dataset}/rt_heatmap.png'
 #     params:
 #         value_col = 'model_rep_state',
@@ -185,8 +187,8 @@ rule plot_cn_heatmaps_st:
 
 rule plot_pyro_model_output_st:
     input:
-        s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv',
-        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.tsv'
+        s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz',
+        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.csv.gz'
     output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
@@ -199,7 +201,7 @@ rule plot_pyro_model_output_st:
 
 
 rule remove_nonreplicating_cells_st:
-    input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.tsv'
+    input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz'
     output: 
         good = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
         bad = 'analysis/sig_tumors/{dataset}/model_nonrep_cells.tsv',
