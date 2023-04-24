@@ -17,7 +17,7 @@ def main():
     argv = get_args()
 
     # load in data
-    cn = pd.read_csv(argv.cn_input, sep='\t')
+    cn = pd.read_csv(argv.cn_input)
 
     # treat each library as a unique clone when computing the cell cycle classifier features
     cn_temp, cell_features = compute_ccc_features(
@@ -31,7 +31,7 @@ def main():
     cn_out = pd.merge(cn, cell_features)
 
     # save output files
-    cn_out.to_csv(argv.cn_out, sep='\t', index=False)
+    cn_out.to_csv(argv.cn_out, index=False)
 
 
 if __name__ == '__main__':

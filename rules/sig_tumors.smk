@@ -30,34 +30,27 @@ rule all_sig_tumors:
                 if (d not in bad_datasets)
             ]
         ),
-        # expand(
-        #     'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
-        #     dataset=[
-        #         d for d in config['signatures_patient_tumors']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
-        #     dataset=[
-        #         d for d in config['signatures_patient_tumors']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
-        # expand(
-        #     'plots/sig_tumors/{dataset}/twidth_curves.png',
-        #     dataset=[
-        #         d for d in config['signatures_patient_tumors']
-        #         if (d not in bad_datasets)
-        #     ]
-        # ),
+        expand(
+            'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/sig_tumors/{dataset}/twidth_curves.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
 
 
 rule collect_cn_data_st:
     input: 
         hmm = 'data/signatures/signatures-hmmcopy.csv',
         annotation = 'data/signatures/signatures-annotation.csv'
-    output: 'analysis/sig_tumors/{dataset}/cn_data.tsv'
+    output: 'analysis/sig_tumors/{dataset}/cn_data.csv.gz'
     log: 'logs/sig_tumors/{dataset}/collect_cn_data.log'
     params:
         dataset = lambda wildcards: wildcards.dataset
@@ -70,22 +63,22 @@ rule collect_cn_data_st:
 
 rule clone_assignments_st:
     input: 
-        cn = 'analysis/sig_tumors/{dataset}/cn_data.tsv',
+        cn = 'analysis/sig_tumors/{dataset}/cn_data.csv.gz',
         clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
-    output: 'analysis/sig_tumors/{dataset}/cn_data_clones.tsv'
+    output: 'analysis/sig_tumors/{dataset}/cn_data_clones.csv.gz'
     params:
         dataset = lambda wildcards: wildcards.dataset,
         assign_col = 'copy'
     log: 'logs/sig_tumors/{dataset}/clone_assignments.log'
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
-        'python3 scripts/sig_lines/clone_assignments.py '
+        'python3 scripts/sig_tumors/clone_assignments.py '
         '{input} {params} {output} &> {log} ; '
 
 
 rule compute_ccc_features_st:
-    input: 'analysis/sig_tumors/{dataset}/cn_data_clones.tsv'
-    output: 'analysis/sig_tumors/{dataset}/cn_data_features.tsv'
+    input: 'analysis/sig_tumors/{dataset}/cn_data_clones.csv.gz'
+    output: 'analysis/sig_tumors/{dataset}/cn_data_features.csv.gz'
     log: 'logs/sig_tumors/{dataset}/compute_ccc_features.log'
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
@@ -94,7 +87,7 @@ rule compute_ccc_features_st:
 
 
 rule plot_ccc_features_st:
-    input: 'analysis/sig_tumors/{dataset}/cn_data_features.tsv'
+    input: 'analysis/sig_tumors/{dataset}/cn_data_features.csv.gz'
     output: 
         plot1 = 'plots/sig_tumors/{dataset}/ccc_features_hist.png',
         plot2 = 'plots/sig_tumors/{dataset}/ccc_features_scatter.png'
@@ -106,10 +99,10 @@ rule plot_ccc_features_st:
 
 
 rule split_cell_cycle_st:
-    input: 'analysis/sig_tumors/{dataset}/cn_data_features.tsv'
+    input: 'analysis/sig_tumors/{dataset}/cn_data_features.csv.gz'
     output:
-        cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells.tsv',
-        cn_g1 = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
+        cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells.csv.gz',
+        cn_g1 = 'analysis/sig_tumors/{dataset}/g1_phase_cells.csv.gz'
     log: 'logs/sig_tumors/{dataset}/split_cell_cycle.log'
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
@@ -117,10 +110,25 @@ rule split_cell_cycle_st:
         '{input} {params} {output} &> {log} ; '
 
 
+rule plot_cn_heatmaps_st:
+    input:
+        s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells.csv.gz',
+        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells.csv.gz'
+    output: 'plots/sig_tumors/{dataset}/cn_heatmaps.png'
+    params:
+        value_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_tumors/{dataset}/plot_cn_heatmaps.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/plot_s_vs_g_cn_heatmaps.py '
+        '{input} {params} {output} &> {log}'
+
+
 rule infer_scRT_pyro_st:
     input:
-        cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells.tsv',
-        cn_g1 = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
+        cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells.csv.gz',
+        cn_g1 = 'analysis/sig_tumors/{dataset}/g1_phase_cells.csv.gz'
     output:
         main_s_out = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz',
         supp_s_out = 'analysis/sig_tumors/{dataset}/scRT_pyro_supp_s_output.csv.gz',
@@ -140,21 +148,6 @@ rule infer_scRT_pyro_st:
         '{input} {params} {output} &> {log}'
 
 
-rule plot_cn_heatmaps_st:
-    input:
-        s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells.tsv',
-        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
-    output: 'plots/sig_tumors/{dataset}/cn_heatmaps.png'
-    params:
-        value_col = 'state',
-        dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/sig_tumors/{dataset}/plot_cn_heatmaps.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
-    shell:
-        'python3 scripts/sig_lines/plot_s_vs_g_cn_heatmaps.py '
-        '{input} {params} {output} &> {log}'
-
-
 rule plot_pyro_model_output_st:
     input:
         s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz',
@@ -169,80 +162,65 @@ rule plot_pyro_model_output_st:
         '{input} {params} {output} &> {log} ; '
 
 
-rule remove_nonreplicating_cells_st:
-    input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz'
+rule predict_cycle_phase_st:
+    input: 
+        cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT.csv.gz',
+        cn_g = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.csv.gz'
     output: 
-        good = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        bad = 'analysis/sig_tumors/{dataset}/model_nonrep_cells.tsv',
+        out_s = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
+        out_g = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz',
+        out_lowqual = 'analysis/sig_tumors/{dataset}/model_lowqual_cells.csv.gz'
     params:
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
-    log: 'logs/sig_tumors/{dataset}/remove_nonreplicating_cells.log'
+        cn_col = 'model_cn_state',
+        rpm_col = 'rpm'
+    log: 'logs/sig_tumors/{dataset}/predict_cycle_phase.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/remove_nonreplicating_cells.py '
+        'python3 scripts/sig_tumors/predict_cycle_phase.py '
         '{input} {params} {output} &> {log} ; '
-        'deactivate'
 
 
 rule plot_filtered_pyro_model_output_st:
     input:
-        s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
+        s_phase = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
+        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
     output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/sig_tumors/{dataset}/plot_filtered_pyro_model_output.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_tumors/plot_pyro_model_output.py '
         '{input} {params} {output} &> {log} ; '
-        'deactivate'
-
-
-rule plot_nonrep_pyro_model_output_st:
-    input:
-        s_phase = 'analysis/sig_tumors/{dataset}/model_nonrep_cells.tsv',
-        g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells.tsv'
-    output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results_nonrep.png',
-    params:
-        dataset = lambda wildcards: wildcards.dataset
-    log: 'logs/sig_tumors/{dataset}/plot_nonrep_pyro_model_output.log'
-    shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_tumors/plot_pyro_model_output.py '
-        '{input} {params} {output} &> {log} ; '
-        'deactivate'
 
 
 rule compute_rt_pseudobulks_st:
-    input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.tsv'
-    output: 'analysis/sig_tumors/{dataset}/scRT_pseudobulks.tsv'
+    input: 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz'
+    output: 'analysis/sig_tumors/{dataset}/scRT_pseudobulks.csv.gz'
     params:
         rep_col = 'model_rep_state',
     log: 'logs/sig_tumors/{dataset}/compute_rt_pseudobulks.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/compute_rt_pseudobulks.py '
+        'python3 scripts/sig_tumors/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
-        'deactivate'
 
 
 rule twidth_analysis_st:
     input: 
-        scrt = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        bulks = 'analysis/sig_tumors/{dataset}/scRT_pseudobulks.tsv'
+        scrt = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
+        bulks = 'analysis/sig_tumors/{dataset}/scRT_pseudobulks.csv.gz'
     output: 
-        output_tsv = 'analysis/sig_tumors/{dataset}/twidth_values.tsv',
+        output_csv = 'analysis/sig_tumors/{dataset}/twidth_values.csv.gz',
         output_png = 'plots/sig_tumors/{dataset}/twidth_curves.png'
     params:
         dataset = lambda wildcards: wildcards.dataset,
-        infer_mode = 'pyro_composite',
         frac_rt_col = 'cell_frac_rep',
         rep_col = 'model_rep_state',
     log: 'logs/sig_tumors/{dataset}/twidth_analysis.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
-        'source ../scdna_replication_tools/venv3/bin/activate ; '
-        'python3 scripts/sig_lines/twidth_analysis.py '
+        'python3 scripts/sig_tumors/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
-        'deactivate'

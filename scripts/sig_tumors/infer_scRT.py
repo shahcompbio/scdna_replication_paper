@@ -24,10 +24,9 @@ def get_args():
 
 def main():
     argv = get_args()
-    cn_s = pd.read_csv(argv.cn_s, sep='\t')
-    cn_g = pd.read_csv(argv.cn_g1, sep='\t')
+    cn_s = pd.read_csv(argv.cn_s)
+    cn_g = pd.read_csv(argv.cn_g1)
     print('loaded data')
-
 
     # use library_id as the clone_id when it is not provided
     if 'clone_id' not in cn_g.columns:
