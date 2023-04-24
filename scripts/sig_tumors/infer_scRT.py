@@ -50,7 +50,7 @@ def main():
     print('creating scrt object')
     # create SPF object with input
     scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.copy_col,
-                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=15)
+                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=1500)
 
     # run inference
     print('running inference')
@@ -67,21 +67,13 @@ def main():
     cn_g_out = pd.merge(cn_g, cn_g_with_scrt)
     print('cn_g_out.shape', cn_g_out.shape)
 
-    print('supp_s_output', supp_s_output.head(), supp_s_output.shape, sep='\n')
-    print('supp_g_output.shape', supp_g_output.head(), supp_g_output.shape, sep='\n')
-
     # save output files
     cn_s_out.to_csv(argv.cn_s_out, index=False)
     cn_g_out.to_csv(argv.cn_g_out, index=False)
-    print('done saving cn_s_out and cn_g_out')
 
     # this will be an empty df when argv.infer_mode!='pyro'
-    print('paths to save supp_s_output and supp_g_output')
-    print(argv.supp_s_output, argv.supp_g_output, sep='\n')
     supp_s_output.to_csv(argv.supp_s_output, index=False)
-    print('done saving supp_s_output')
     supp_g_output.to_csv(argv.supp_g_output, index=False)
-    print('done saving supp_g_output')
 
 
 if __name__ == '__main__':
