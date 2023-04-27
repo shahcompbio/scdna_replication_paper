@@ -44,6 +44,21 @@ rule all_sig_tumors:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/sig_tumors/{dataset}/clone_spf.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/sig_tumors/{dataset}/clone_rt.png',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        
 
 
 rule collect_cn_data_st:
@@ -224,3 +239,62 @@ rule twidth_analysis_st:
     shell:
         'python3 scripts/sig_tumors/twidth_analysis.py '
         '{input} {params} {output} &> {log} ; '
+
+
+rule compute_cell_cycle_clone_counts_st:
+    input:
+        cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
+        cn_g = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
+    output: 'analysis/sig_tumors/{dataset}/cell_cycle_clone_counts.csv.gz'
+    log: 'logs/sig_tumors/{dataset}/compute_cell_cycle_clone_counts.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/compute_cell_cycle_clone_counts.py '
+        '{input} {output} &> {log} ; '
+
+
+rule plot_clone_spf_st:
+    input: 'analysis/sig_tumors/{dataset}/cell_cycle_clone_counts.csv.gz'
+    output: 'plots/sig_tumors/{dataset}/clone_spf.png'
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_tumors/{dataset}/plot_clone_spf.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/plot_clone_spf.py '
+        '{input} {params} {output} &> {log} ; '
+
+
+rule plot_clone_rt_pseudobulks_st:
+    input: 
+        cn_s = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
+        rt = 'analysis/sig_tumors/{dataset}/scRT_pseudobulks.csv.gz',
+        counts = 'analysis/sig_tumors/{dataset}/cell_cycle_clone_counts.csv.gz'
+    output: 'plots/sig_tumors/{dataset}/clone_rt.png'
+    params:
+        rep_col = 'model_rep_state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_tumors/{dataset}/plot_clone_rt_pseudobulks.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/plot_clone_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+
+
+rule cohort_clone_counts_st:
+    input:
+        expand(
+            'analysis/sig_tumors/{dataset}/cell_cycle_clone_counts.csv.gz',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+    output: 'analysis/sig_tumors/cohort_clone_counts.csv.gz'
+    log: 'logs/sig_tumors/cohort_clone_counts.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/cohort_clone_counts.py '
+        '--input {input} '
+        '--output {output} '
+        '&> {log} ; '
