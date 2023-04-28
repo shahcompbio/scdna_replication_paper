@@ -78,9 +78,9 @@ def clone_spf_analysis(cn_s, cn_g, argv):
     cn_s['cell_cycle'] = 'S'
     cn_g['cell_cycle'] = 'G1/2'
 
-    # rename the clone_id column to match the cells in the tree
-    cn_s['clone_id'] = cn_s['assigned_clone_id']
-    cn_g['clone_id'] = cn_g['assigned_clone_id']
+    # # rename the clone_id column to match the cells in the tree
+    # cn_s['clone_id'] = cn_s['assigned_clone_id']
+    # cn_g['clone_id'] = cn_g['assigned_clone_id']
 
     # concatenate all cells into one df but only store relevant columns
     coi = ['cell_id', 'cell_cycle', 'clone_id', 'library_id']

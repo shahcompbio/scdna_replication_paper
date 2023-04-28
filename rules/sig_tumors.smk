@@ -58,6 +58,7 @@ rule all_sig_tumors:
                 if (d not in bad_datasets)
             ]
         ),
+        'plots/sig_tumors/cohort_spf.png'
         
 
 
@@ -88,7 +89,7 @@ rule clone_assignments_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/clone_assignments.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule compute_ccc_features_st:
@@ -98,7 +99,7 @@ rule compute_ccc_features_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/compute_ccc_features.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule plot_ccc_features_st:
@@ -110,7 +111,7 @@ rule plot_ccc_features_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/plot_ccc_features.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule split_cell_cycle_st:
@@ -122,7 +123,7 @@ rule split_cell_cycle_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/split_cell_cycle.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule plot_cn_heatmaps_st:
@@ -174,7 +175,7 @@ rule plot_pyro_model_output_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/plot_pyro_model_output.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule predict_cycle_phase_st:
@@ -194,7 +195,7 @@ rule predict_cycle_phase_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/predict_cycle_phase.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule plot_filtered_pyro_model_output_st:
@@ -208,7 +209,7 @@ rule plot_filtered_pyro_model_output_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/plot_pyro_model_output.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule compute_rt_pseudobulks_st:
@@ -220,7 +221,7 @@ rule compute_rt_pseudobulks_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/compute_rt_pseudobulks.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule twidth_analysis_st:
@@ -238,7 +239,7 @@ rule twidth_analysis_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/twidth_analysis.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule compute_cell_cycle_clone_counts_st:
@@ -250,7 +251,7 @@ rule compute_cell_cycle_clone_counts_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/compute_cell_cycle_clone_counts.py '
-        '{input} {output} &> {log} ; '
+        '{input} {output} &> {log}'
 
 
 rule plot_clone_spf_st:
@@ -262,7 +263,7 @@ rule plot_clone_spf_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/plot_clone_spf.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule plot_clone_rt_pseudobulks_st:
@@ -278,7 +279,7 @@ rule plot_clone_rt_pseudobulks_st:
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/plot_clone_rt_pseudobulks.py '
-        '{input} {params} {output} &> {log} ; '
+        '{input} {params} {output} &> {log}'
 
 
 rule cohort_clone_counts_st:
@@ -297,4 +298,14 @@ rule cohort_clone_counts_st:
         'python3 scripts/sig_tumors/cohort_clone_counts.py '
         '--input {input} '
         '--output {output} '
-        '&> {log} ; '
+        '&> {log}'
+
+
+rule plot_cohort_spf_st:
+    input: 'analysis/sig_tumors/cohort_clone_counts.csv.gz'
+    output: 'plots/sig_tumors/cohort_spf.png'
+    log: 'logs/sig_tumors/plot_cohort_spf.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/plot_cohort_spf.py '
+        '{input} {output} &> {log}'
