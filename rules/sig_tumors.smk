@@ -58,7 +58,8 @@ rule all_sig_tumors:
                 if (d not in bad_datasets)
             ]
         ),
-        'plots/sig_tumors/cohort_spf.png'
+        'plots/sig_tumors/cohort_spf.png',
+        'plots/sig_tumors/cn_rt_corrs.png',
         
 
 
@@ -224,6 +225,19 @@ rule compute_rt_pseudobulks_st:
         '{input} {params} {output} &> {log}'
 
 
+rule compute_cn_pseudobulks_st:
+    input: 'analysis/sig_tumors/{dataset}/g1_phase_cells.csv.gz'
+    output: 'analysis/sig_tumors/{dataset}/cn_pseudobulks.csv.gz'
+    params:
+        cn_state_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_tumors/{dataset}/compute_cn_pseudobulks.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/compute_cn_pseudobulks.py '
+        '{input} {params} {output} &> {log}'
+
+
 rule twidth_analysis_st:
     input: 
         scrt = 'analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz',
@@ -309,3 +323,78 @@ rule plot_cohort_spf_st:
     shell:
         'python3 scripts/sig_tumors/plot_cohort_spf.py '
         '{input} {output} &> {log}'
+    
+
+rule cn_and_rt_correlations_st:
+    input:
+        rt = expand(
+            'analysis/sig_tumors/{dataset}/scRT_pseudobulks.csv.gz',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        cn = expand(
+            'analysis/sig_tumors/{dataset}/cn_pseudobulks.csv.gz',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
+        counts = 'analysis/sig_tumors/cohort_clone_counts.csv.gz'
+    output:
+        sample_rt_corrs = 'analysis/sig_tumors/sample_rt_corrs.csv.gz',
+        sample_cn_dists = 'analysis/sig_tumors/sample_cn_dists.csv.gz',
+        clone_rt_corrs = 'analysis/sig_tumors/clone_rt_corrs.csv.gz',
+        clone_cn_dists = 'analysis/sig_tumors/clone_cn_dists.csv.gz',
+        sample_corrs = 'plots/sig_tumors/sample_corrs.png',
+        clone_corrs = 'plots/sig_tumors/clone_corrs.png',
+    log: 'logs/sig_tumors/cn_and_rt_correlations.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/sig_tumors/cn_and_rt_correlations.py '
+        '--input_cn {input.cn} '
+        '--input_rt {input.rt} '
+        '--counts {input.counts} '
+        '--sample_rt_corrs {output.sample_rt_corrs} '
+        '--sample_cn_dists {output.sample_cn_dists} '
+        '--clone_rt_corrs {output.clone_rt_corrs} '
+        '--clone_cn_dists {output.clone_cn_dists} '
+        '--sample_corrs {output.sample_corrs} '
+        '--clone_corrs {output.clone_corrs} '
+        '&> {log}'
+
+
+rule plot_cohort_cn_and_rt_correlations_st:
+    input:
+        sample_rt_corrs = 'analysis/sig_tumors/sample_rt_corrs.csv.gz',
+        sample_cn_dists = 'analysis/sig_tumors/sample_cn_dists.csv.gz',
+        clone_rt_corrs = 'analysis/sig_tumors/clone_rt_corrs.csv.gz',
+        clone_cn_dists = 'analysis/sig_tumors/clone_cn_dists.csv.gz',
+    output: 'plots/sig_tumors/cn_rt_corrs.png',
+    params:
+        datasets = [
+            d for d in config['signatures_patient_tumors']
+            if (d not in bad_datasets)
+        ],
+        types = [
+            config['signatures_patient_tumors'][d]['type'] for d in config['signatures_patient_tumors']
+            if (d not in bad_datasets)
+        ],
+        signatures = [
+            config['signatures_patient_tumors'][d]['signature'] for d in config['signatures_patient_tumors']
+            if (d not in bad_datasets)
+        ]
+    log: 'logs/sig_tumors/plot_cohort_cn_and_rt_correlations.log'
+    singularity: 'docker://marcjwilliams1/signals'
+    shell:
+        'Rscript scripts/sig_tumors/plot_cn_rt_corrs.R '
+        '--sample_rt_corrs {input.sample_rt_corrs} '
+        '--sample_cn_dists {input.sample_cn_dists} '
+        '--clone_rt_corrs {input.clone_rt_corrs} '
+        '--clone_cn_dists {input.clone_cn_dists} '
+        '--datasets {params.datasets} '
+        '--types {params.types} '
+        '--signatures {params.signatures} '
+        '--heatmap {output} '
+        '&> {log}'
