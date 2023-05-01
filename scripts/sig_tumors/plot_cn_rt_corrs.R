@@ -61,14 +61,22 @@ sample_cn_dists <- sample_cn_dists[, -c('dataset', 'V1')]
 # plot a complex heatmap of the correlation and distance matrices
 # annotate each row with categorial data (dataset, cancer type, signature)
 row_ha = rowAnnotation(dataset = datasets_df$dataset, type = datasets_df$type, signature = datasets_df$signature)
-h1 <- Heatmap(sample_rt_corrs, name = "RT corr", left_annotation = row_ha)
+h1 <- Heatmap(
+    sample_rt_corrs, name = "RT corr", left_annotation = row_ha, column_title = "Sample RT correlation",
+    show_column_dend = FALSE, show_row_dend = FALSE, show_column_names = FALSE,
+    rect_gp = gpar(col = "white", lwd = 2)
+)
 print('Made h1')
-h2 <- Heatmap(sample_cn_dists, name = "CN dist", left_annotation = row_ha)
+h2 <- Heatmap(
+    sample_cn_dists, name = "CN dist", left_annotation = row_ha, column_title = "Sample CN distance",
+    show_column_dend = FALSE, show_row_dend = FALSE, show_column_names = FALSE,
+    rect_gp = gpar(col = "white", lwd = 2)
+)
 print('Made h2')
 
-png(args$heatmap, width = 25, height = 12, units = "in", res = 300)
+png(args$heatmap, width = 8, height = 4, units = "in", res = 300)
 print(ComplexHeatmap::draw(h1 + h2,
-                            ht_gap = unit(0.6, "cm"),
+                            ht_gap = unit(0.2, "cm"),
                             # heatmap_legend_side = "bottom",
                             annotation_legend_side = "bottom",
                             show_heatmap_legend = TRUE))
