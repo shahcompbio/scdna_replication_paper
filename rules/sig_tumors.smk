@@ -59,7 +59,7 @@ rule all_sig_tumors:
             ]
         ),
         'plots/sig_tumors/cohort_spf.png',
-        'plots/sig_tumors/cn_rt_corrs.png',
+        'plots/sig_tumors/sample_cn_rt_corrs.png',
         
 
 
@@ -371,7 +371,9 @@ rule plot_cohort_cn_and_rt_correlations_st:
         sample_cn_dists = 'analysis/sig_tumors/sample_cn_dists.csv.gz',
         clone_rt_corrs = 'analysis/sig_tumors/clone_rt_corrs.csv.gz',
         clone_cn_dists = 'analysis/sig_tumors/clone_cn_dists.csv.gz',
-    output: 'plots/sig_tumors/cn_rt_corrs.png',
+    output: 
+        sample_heatmap = 'plots/sig_tumors/sample_cn_rt_corrs.png',
+        clone_heatmap = 'plots/sig_tumors/clone_cn_rt_corrs.png',
     params:
         datasets = [
             d for d in config['signatures_patient_tumors']
@@ -396,5 +398,6 @@ rule plot_cohort_cn_and_rt_correlations_st:
         '--datasets {params.datasets} '
         '--types {params.types} '
         '--signatures {params.signatures} '
-        '--heatmap {output} '
+        '--sample_heatmap {output.sample_heatmap} '
+        '--clone_heatmap {output.clone_heatmap} '
         '&> {log}'
