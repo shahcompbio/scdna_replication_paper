@@ -31,7 +31,10 @@ def remove_hlamp_loci(cn_g, cn_s, argv, chrom=None, max_cn=11, pct_thresh=0.1):
     num_cells_g = len(cn_g['cell_id'].unique())
     print('num_cells_g', num_cells_g)
     # filter cn_s to all rows which have state==11 and copy>11
-    hlamp_cn_g = cn_g.loc[cn_g[argv.cn_col]==max_cn, cn_g[argv.copy_col]>max_cn]
+    hlamp_cn_g = cn_g.loc[(cn_g[argv.cn_col]==max_cn) & (cn_g[argv.copy_col]>max_cn)]
+    # filter to just one chromosome if chrom is not None
+    if chrom is not None:
+        hlamp_cn_g = hlamp_cn_g.loc[hlamp_cn_g['chr']==chrom]
     # compute the number of cells each hlamp loci appears
     hlamp_cn_g = hlamp_cn_g.groupby(['chr', 'start', 'end']).cell_id.nunique().reset_index()
     print('hlamp_cn_g.shape', hlamp_cn_g.shape)
@@ -64,7 +67,7 @@ def main():
         print('cn_g.shape', cn_g.shape) 
         print('cn_s.shape', cn_s.shape)
     
-    
+
     # use library_id as the clone_id when it is not provided
     if 'clone_id' not in cn_g.columns:
         cn_g['clone_id'] = cn_g['library_id']
