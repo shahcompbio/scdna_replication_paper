@@ -46,9 +46,11 @@ def remove_hlamp_loci(cn_g, cn_s, argv, chrom=None, max_cn=11, pct_thresh=0.1):
     print('removing {} loci', hlamp_cn_g.shape[0])
     print('hlamp_cn_g.head()', hlamp_cn_g.head())
     # remove all loci in cn_s and cn_g that appear in hlamp_cn_g
-    cn_s = cn_s.loc[~cn_s[['chr', 'start', 'end']].isin(hlamp_cn_g[['chr', 'start', 'end']]).all(axis=1)]
-    cn_g = cn_g.loc[~cn_g[['chr', 'start', 'end']].isin(hlamp_cn_g[['chr', 'start', 'end']]).all(axis=1)]
-    return cn_g, cn_s
+    merged_cn_g = pd.merge(cn_g, hlamp_cn_g[['chr', 'start', 'end']], how='outer', indicator=True)
+    cn_g_filtered = merged_cn_g.loc[merged_cn_g['_merge']=='left_only'].drop(columns='_merge')
+    merged_cn_s = pd.merge(cn_s, hlamp_cn_g[['chr', 'start', 'end']], how='outer', indicator=True)
+    cn_s_filtered = merged_cn_s.loc[merged_cn_s['_merge']=='left_only'].drop(columns='_merge')
+    return cn_g_filtered, cn_s_filtered
 
 
 def main():
