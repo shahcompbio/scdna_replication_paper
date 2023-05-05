@@ -22,12 +22,49 @@ def get_args():
     return p.parse_args()
 
 
+def remove_hlamp_loci(cn_g, cn_s, argv, chrom=None, max_cn=11, pct_thresh=0.1):
+    """
+    Remove loci which contain high level amplifications `state==max_cn` and `copy>max_cn` in more than pct_thresh% of all the cells in cn_g.
+    Restrict this filtering to just one chromosome if `chrom` is not None.
+    """
+    # compute the total number of cells in cn_g
+    num_cells_g = len(cn_g['cell_id'].unique())
+    print('num_cells_g', num_cells_g)
+    # filter cn_s to all rows which have state==11 and copy>11
+    hlamp_cn_g = cn_g.loc[cn_g[argv.cn_col]==max_cn, cn_g[argv.copy_col]>max_cn]
+    # compute the number of cells each hlamp loci appears
+    hlamp_cn_g = hlamp_cn_g.groupby(['chr', 'start', 'end']).cell_id.nunique().reset_index()
+    print('hlamp_cn_g.shape', hlamp_cn_g.shape)
+    print('hlamp_cn_g.head()', hlamp_cn_g.head())
+    # compute the fraction of cells each hlamp loci appears
+    hlamp_cn_g['frac_cells'] = hlamp_cn_g['cell_id'] / num_cells_g
+    # filter hlamp loci to those that appear in more than pct_thresh of all cells
+    hlamp_cn_g = hlamp_cn_g.loc[hlamp_cn_g['frac_cells'] > pct_thresh]
+    print('removing {} loci', hlamp_cn_g.shape[0])
+    print('hlamp_cn_g.head()', hlamp_cn_g.head())
+    # remove all loci in cn_s and cn_g that appear in hlamp_cn_g
+    cn_s = cn_s.loc[~cn_s[['chr', 'start', 'end']].isin(hlamp_cn_g[['chr', 'start', 'end']]).all(axis=1)]
+    cn_g = cn_g.loc[~cn_g[['chr', 'start', 'end']].isin(hlamp_cn_g[['chr', 'start', 'end']]).all(axis=1)]
+    return cn_g, cn_s
+
+
 def main():
     argv = get_args()
     cn_s = pd.read_csv(argv.cn_s)
     cn_g = pd.read_csv(argv.cn_g1)
     print('loaded data')
 
+    # check if this is dataset SA1091
+    dataset = argv.cn_s.split('/')[-2]
+    if dataset == 'SA1091':
+        print('removing hlamp loci')
+        print('cn_g.shape', cn_g.shape)
+        print('cn_s.shape', cn_s.shape)
+        cn_g, cn_s = remove_hlamp_loci(cn_g, cn_s, argv)
+        print('cn_g.shape', cn_g.shape) 
+        print('cn_s.shape', cn_s.shape)
+    
+    
     # use library_id as the clone_id when it is not provided
     if 'clone_id' not in cn_g.columns:
         cn_g['clone_id'] = cn_g['library_id']
