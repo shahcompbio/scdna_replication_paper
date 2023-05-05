@@ -29,7 +29,6 @@ def remove_hlamp_loci(cn_g, cn_s, argv, chrom=None, max_cn=11, pct_thresh=0.1):
     """
     # compute the total number of cells in cn_g
     num_cells_g = len(cn_g['cell_id'].unique())
-    print('num_cells_g', num_cells_g)
     # filter cn_s to all rows which have state==11 and copy>11
     hlamp_cn_g = cn_g.loc[(cn_g[argv.cn_col]==max_cn) & (cn_g[argv.copy_col]>max_cn)]
     # filter to just one chromosome if chrom is not None
@@ -37,14 +36,11 @@ def remove_hlamp_loci(cn_g, cn_s, argv, chrom=None, max_cn=11, pct_thresh=0.1):
         hlamp_cn_g = hlamp_cn_g.loc[hlamp_cn_g['chr']==chrom]
     # compute the number of cells each hlamp loci appears
     hlamp_cn_g = hlamp_cn_g.groupby(['chr', 'start', 'end']).cell_id.nunique().reset_index()
-    print('hlamp_cn_g.shape', hlamp_cn_g.shape)
-    print('hlamp_cn_g.head()', hlamp_cn_g.head())
     # compute the fraction of cells each hlamp loci appears
     hlamp_cn_g['frac_cells'] = hlamp_cn_g['cell_id'] / num_cells_g
     # filter hlamp loci to those that appear in more than pct_thresh of all cells
     hlamp_cn_g = hlamp_cn_g.loc[hlamp_cn_g['frac_cells'] > pct_thresh]
-    print('removing {} loci', hlamp_cn_g.shape[0])
-    print('hlamp_cn_g.head()', hlamp_cn_g.head())
+    print('removing {} loci'.format(hlamp_cn_g.shape[0]))
     # remove all loci in cn_s and cn_g that appear in hlamp_cn_g
     merged_cn_g = pd.merge(cn_g, hlamp_cn_g[['chr', 'start', 'end']], how='outer', indicator=True)
     cn_g_filtered = merged_cn_g.loc[merged_cn_g['_merge']=='left_only'].drop(columns='_merge')
