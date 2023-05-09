@@ -65,7 +65,8 @@ def main():
     # the ID for each row is the dataset + clone ID
     df['id'] = df['dataset'] + ' clone ' + df['clone_id']
 
-    fig, ax = plt.subplots(2, 1, figsize=(12, 8), tight_layout=True)
+    fig, ax = plt.subplots(3, 2, figsize=(18, 12), tight_layout=True)
+    ax = ax.flatten()
     
     # plot the S-phase fraction for each clone
     for dataset in df['dataset'].unique():
@@ -99,6 +100,48 @@ def main():
     ax[1].set_title('All samples in the cohort')
     ax[1].set_xlim(-1, len(df['dataset'].unique()))
     ax[1].legend(loc='upper right', ncol=2)
+
+    # plot the number of cells in S-phase for each clone
+    for dataset in df['dataset'].unique():
+        idx = df[df['dataset'] == dataset].index
+        ax[2].bar(x=idx, height=df[df['dataset'] == dataset]['num_cells_s'], color=dataset_to_color[dataset], label=dataset)
+    ax[2].set_xticklabels('')
+    ax[2].set_ylabel('# S-phase cells')
+    ax[2].set_title('All clones in the cohort')
+    ax[2].set_xlim(-1, len(df))
+    ax[2].legend(loc='upper right', ncol=2)
+
+    # plot the number of cells in S-phase for each sample
+    for i, dataset in enumerate(df['dataset'].unique()):
+        temp_num_s = df[df['dataset'] == dataset]['num_cells_s'].sum()
+        ax[3].bar(x=i, height=temp_num_s, color=dataset_to_color[dataset], label=dataset)
+    ax[3].set_xticklabels('')
+    ax[3].set_ylabel('# S-phase cells')
+    ax[3].set_title('All samples in the cohort')
+    ax[3].set_xlim(-1, len(df['dataset'].unique()))
+    ax[3].legend(loc='upper right', ncol=2)
+
+
+    # plot the total number of cells for each clone
+    for dataset in df['dataset'].unique():
+        idx = df[df['dataset'] == dataset].index
+        ax[4].bar(x=idx, height=df[df['dataset'] == dataset]['num_cells_s'] + df[df['dataset'] == dataset]['num_cells_g'], color=dataset_to_color[dataset], label=dataset)
+    ax[4].set_xticklabels('')
+    ax[4].set_ylabel('# cells')
+    ax[4].set_title('All clones in the cohort')
+    ax[4].set_xlim(-1, len(df))
+    ax[4].legend(loc='upper right', ncol=2)
+
+    # plot the total number of cells for each sample
+    for i, dataset in enumerate(df['dataset'].unique()):
+        temp_num_s = df[df['dataset'] == dataset]['num_cells_s'].sum()
+        temp_num_g = df[df['dataset'] == dataset]['num_cells_g'].sum()
+        ax[5].bar(x=i, height=temp_num_s + temp_num_g, color=dataset_to_color[dataset], label=dataset)
+    ax[5].set_xticklabels('')
+    ax[5].set_ylabel('# cells')
+    ax[5].set_title('All samples in the cohort')
+    ax[5].set_xlim(-1, len(df['dataset'].unique()))
+    ax[5].legend(loc='upper right', ncol=2)
         
     fig.savefig(argv.output, dpi=300)
 

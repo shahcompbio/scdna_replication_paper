@@ -171,12 +171,20 @@ rule plot_pyro_model_output_st:
         g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT.csv.gz'
     output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results.png',
     params:
-        dataset = lambda wildcards: wildcards.dataset
+        dataset = lambda wildcards: wildcards.dataset,
+        top_title_prefix = 'input_set:_unknown',
+        bottom_title_prefix = 'input_set:_high-confidence_G1/2-phase'
     log: 'logs/sig_tumors/{dataset}/plot_pyro_model_output.log'
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/plot_pyro_model_output.py '
-        '{input} {params} {output} &> {log}'
+        '--cn_s {input.s_phase} '
+        '--cn_g {input.g1_phase} '
+        '--dataset {params.dataset} '
+        '--top_title_prefix {params.top_title_prefix} '
+        '--bottom_title_prefix {params.bottom_title_prefix} '
+        '--output {output} '
+        '&> {log}'
 
 
 rule predict_cycle_phase_st:
@@ -205,12 +213,20 @@ rule plot_filtered_pyro_model_output_st:
         g1_phase = 'analysis/sig_tumors/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
     output: 'plots/sig_tumors/{dataset}/inferred_cn_rep_results_filtered.png',
     params:
-        dataset = lambda wildcards: wildcards.dataset
+        dataset = lambda wildcards: wildcards.dataset,
+        top_title_prefix = 'PERT_S-phase',
+        bottom_title_prefix = 'PERT_G1/2-phase'
     log: 'logs/sig_tumors/{dataset}/plot_filtered_pyro_model_output.log'
     singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'python3 scripts/sig_tumors/plot_pyro_model_output.py '
-        '{input} {params} {output} &> {log}'
+        '--cn_s {input.s_phase} '
+        '--cn_g {input.g1_phase} '
+        '--dataset {params.dataset} '
+        '--top_title_prefix {params.top_title_prefix} '
+        '--bottom_title_prefix {params.bottom_title_prefix} '
+        '--output {output} '
+        '&> {log}'
 
 
 rule compute_rt_pseudobulks_st:

@@ -8,10 +8,12 @@ from argparse import ArgumentParser
 def get_args():
     p = ArgumentParser()
 
-    p.add_argument('cn_s', help='long-form dataframe of S-phase cells with pyro model results')
-    p.add_argument('cn_g', help='long-form dataframe of G1/2-phase cells with pyro model results')
-    p.add_argument('dataset')
-    p.add_argument('output', help='heatmaps of all S-phase cells sorted the same')
+    p.add_argument('--cn_s', help='long-form dataframe of S-phase cells with pyro model results')
+    p.add_argument('--cn_g', help='long-form dataframe of G1/2-phase cells with pyro model results')
+    p.add_argument('--dataset', type=str)
+    p.add_argument('--top_title_prefix', type=str)
+    p.add_argument('--bottom_title_prefix', type=str)
+    p.add_argument('--output', help='heatmaps of all S-phase cells sorted the same')
 
     return p.parse_args()
 
@@ -20,8 +22,11 @@ def get_args():
 def main():
     argv = get_args()
 
-    cn_s = pd.read_csv(argv.cn_s)
-    cn_g = pd.read_csv(argv.cn_g)
+    cn_s = pd.read_csv(argv.cn_s, dtype={'chr':str})
+    cn_g = pd.read_csv(argv.cn_g, dtype={'chr':str})
+
+    top_title_prefix = '{} {}'.format(argv.dataset, argv.top_title_prefix).replace('_', ' ')
+    bottom_title_prefix = '{} {}'.format(argv.dataset, argv.bottom_title_prefix).replace('_', ' ')
 
     # show rpm, hmmcopy, inferred cn, inferred rep heatmaps for S-phase cells and G1/2-phase cells
     # where all the rows are sorted the same in all four heatmaps
@@ -31,8 +36,8 @@ def main():
         output_rep_col='model_rep_state', rpm_col='rpm',
         rpm_title='Reads per million', input_cn_title='HMMcopy states',
         output_cn_title='PERT somatic CN states', rep_title='PERT replication states',
-        top_title_prefix='{} input set: unknown'.format(argv.dataset),
-        bottom_title_prefix='{} input set: high-confidence G1/2-phase'.format(argv.dataset)
+        top_title_prefix=top_title_prefix,
+        bottom_title_prefix=bottom_title_prefix
     )
 
     # save the figure
