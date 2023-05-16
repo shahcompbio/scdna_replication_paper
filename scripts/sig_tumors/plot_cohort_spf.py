@@ -110,6 +110,7 @@ def main():
     ax[2].set_title('All clones in the cohort')
     ax[2].set_xlim(-1, len(df))
     ax[2].legend(loc='upper right', ncol=2)
+    ax[2].set_yscale('log')
 
     # plot the number of cells in S-phase for each sample
     for i, dataset in enumerate(df['dataset'].unique()):
@@ -120,7 +121,7 @@ def main():
     ax[3].set_title('All samples in the cohort')
     ax[3].set_xlim(-1, len(df['dataset'].unique()))
     ax[3].legend(loc='upper right', ncol=2)
-
+    ax[3].set_yscale('log')
 
     # plot the total number of cells for each clone
     for dataset in df['dataset'].unique():
@@ -131,6 +132,7 @@ def main():
     ax[4].set_title('All clones in the cohort')
     ax[4].set_xlim(-1, len(df))
     ax[4].legend(loc='upper right', ncol=2)
+    ax[4].set_yscale('log')
 
     # plot the total number of cells for each sample
     for i, dataset in enumerate(df['dataset'].unique()):
@@ -142,6 +144,7 @@ def main():
     ax[5].set_title('All samples in the cohort')
     ax[5].set_xlim(-1, len(df['dataset'].unique()))
     ax[5].legend(loc='upper right', ncol=2)
+    ax[5].set_yscale('log')
         
     fig.savefig(argv.output, dpi=300)
 
