@@ -505,7 +505,6 @@ rule cohort_clone_counts_sl:
         'deactivate'
 
 
-# TODO: split tsv and png into separate rules
 rule subclonal_rt_diffs_sl:
     input:
         rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
@@ -524,7 +523,6 @@ rule subclonal_rt_diffs_sl:
         'deactivate'
 
 
-# TODO: split tsv and png into separate rules
 rule subclonal_rt_diffs_summary_sl:
     input:
         rt = expand(

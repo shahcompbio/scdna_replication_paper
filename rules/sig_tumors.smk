@@ -60,6 +60,7 @@ rule all_sig_tumors:
         ),
         'plots/sig_tumors/cohort_spf.png',
         'plots/sig_tumors/sample_cn_rt_corrs.png',
+        'plots/sig_tumors/subclonal_rt_diffs_summary.png'
         
 
 
@@ -417,3 +418,47 @@ rule plot_cohort_cn_and_rt_correlations_st:
         '--sample_heatmap {output.sample_heatmap} '
         '--clone_heatmap {output.clone_heatmap} '
         '&> {log}'
+
+
+rule subclonal_rt_diffs_st:
+    input:
+        rt = 'analysis/sig_tumors/{dataset}/scRT_pseudobulks.csv.gz',
+        cn = 'analysis/sig_tumors/{dataset}/cn_pseudobulks.csv.gz',
+        counts = 'analysis/sig_tumors/cohort_clone_counts.csv.gz'
+    output:
+        tsv = 'analysis/sig_tumors/{dataset}/subclonal_rt_diffs.csv.gz',
+        png = 'plots/sig_tumors/{dataset}/subclonal_rt_diffs.png'
+    params:
+        rep_col = 'model_rep_state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_tumors/{dataset}/subclonal_rt_diffs.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        # 'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_tumors/subclonal_rt_diffs.py '
+        '{input} {params} {output} &> {log}'
+        # ' ; deactivate'
+
+
+rule subclonal_rt_diffs_summary_st:
+    input:
+        rt = expand(
+            'analysis/sig_tumors/{dataset}/subclonal_rt_diffs.csv.gz',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if ((d not in bad_datasets) and (d not in ['SA1182', 'SA1047']))  # filter samples that don't have enough clones with >10 S-phase cells
+            ]
+        )
+    output:
+        tsv = 'analysis/sig_tumors/subclonal_rt_diffs_summary.csv.gz',
+        png = 'plots/sig_tumors/subclonal_rt_diffs_summary.png'
+    log: 'logs/sig_tumors/subclonal_rt_diffs_summary.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        # 'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_tumors/subclonal_rt_diffs_summary.py '
+        '-i {input} '
+        '--table {output.tsv} '
+        '--plot {output.png} '
+        '&> {log}'
+        # ' ; deactivate'
