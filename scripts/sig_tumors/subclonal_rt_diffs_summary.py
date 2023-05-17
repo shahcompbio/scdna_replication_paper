@@ -69,13 +69,17 @@ def main():
     ax[0].set_title('RT shifts at subclonal CNAs - all tumors')
     ax[0].set_xlabel('Subclonal CNA type')
     ax[0].set_ylabel('Clone RT relative to reference\n<--later | earlier-->')
+    # draw a dashed horizontal line at y=0
+    ax[0].axhline(y=0, linestyle='--', color='black')
 
     # plot histograms
     sns.histplot(
         data=df, x='clone_rt_diff', hue='clone_cna_type', ax=ax[1], 
         palette=get_cna_cmap(), alpha=0.5, hue_order=['loss', 'unaltered', 'gain'],
-        common_norm=False, stat='density'
+        common_norm=False, stat='density', bins=20
     )
+    # draw a dashed vertical line at x=0
+    ax[1].axvline(x=0, linestyle='--', color='black')
     ax[1].set_title('RT shifts at subclonal CNAs - all tumors')
     ax[1].set_xlabel('Clone RT relative to reference\n<--later | earlier-->')
     ax[1].set_ylabel('Density')
