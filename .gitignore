@@ -148,4 +148,6 @@ data/fitness/
 data/signatures/clone_trees/
 data/HiC/
 data/gastric_10x/
+data/signals/
+data/spectrum/
 manuscript/._*.pdf

@@ -14,20 +14,57 @@ def get_args():
     p.add_argument('gc_col', help='column containing gc values')
     p.add_argument('cn_prior_method', help='method for assigning the cn prior of each S-phase cell (i.e. g1_clones, g1_composite, diploid, etc)')
     p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
-    p.add_argument('cn_s_out', help='output tsv that is same as cn_s input with inferred scRT added')
-    p.add_argument('supp_s_output', help='supplementerary output tsv containing sample- and library-level params inferred by the model')
-    p.add_argument('cn_g_out', help='output tsv that is same as cn_g input with inferred scRT added')
-    p.add_argument('supp_g_output', help='supplementerary output tsv containing sample- and library-level params inferred by the model')
+    p.add_argument('cn_s_out', help='output csv that is same as cn_s input with inferred scRT added')
+    p.add_argument('supp_s_output', help='supplementerary output csv containing sample- and library-level params inferred by the model')
+    p.add_argument('cn_g_out', help='output csv that is same as cn_g input with inferred scRT added')
+    p.add_argument('supp_g_output', help='supplementerary output csv containing sample- and library-level params inferred by the model')
 
     return p.parse_args()
 
 
+def remove_hlamp_loci(cn_g, cn_s, argv, chrom=None, max_cn=11, pct_thresh=0.1):
+    """
+    Remove loci which contain high level amplifications `state==max_cn` and `copy>max_cn` in more than pct_thresh% of all the cells in cn_g.
+    Restrict this filtering to just one chromosome if `chrom` is not None.
+    """
+    # compute the total number of cells in cn_g
+    num_cells_g = len(cn_g['cell_id'].unique())
+    # filter cn_s to all rows which have state==11 and copy>11
+    hlamp_cn_g = cn_g.loc[(cn_g[argv.cn_col]==max_cn) & (cn_g[argv.copy_col]>max_cn)]
+    # filter to just one chromosome if chrom is not None
+    if chrom is not None:
+        hlamp_cn_g = hlamp_cn_g.loc[hlamp_cn_g['chr']==chrom]
+    # compute the number of cells each hlamp loci appears
+    hlamp_cn_g = hlamp_cn_g.groupby(['chr', 'start', 'end']).cell_id.nunique().reset_index()
+    # compute the fraction of cells each hlamp loci appears
+    hlamp_cn_g['frac_cells'] = hlamp_cn_g['cell_id'] / num_cells_g
+    # filter hlamp loci to those that appear in more than pct_thresh of all cells
+    hlamp_cn_g = hlamp_cn_g.loc[hlamp_cn_g['frac_cells'] > pct_thresh]
+    print('removing {} loci'.format(hlamp_cn_g.shape[0]))
+    # remove all loci in cn_s and cn_g that appear in hlamp_cn_g
+    merged_cn_g = pd.merge(cn_g, hlamp_cn_g[['chr', 'start', 'end']], how='outer', indicator=True)
+    cn_g_filtered = merged_cn_g.loc[merged_cn_g['_merge']=='left_only'].drop(columns='_merge')
+    merged_cn_s = pd.merge(cn_s, hlamp_cn_g[['chr', 'start', 'end']], how='outer', indicator=True)
+    cn_s_filtered = merged_cn_s.loc[merged_cn_s['_merge']=='left_only'].drop(columns='_merge')
+    return cn_g_filtered, cn_s_filtered
+
+
 def main():
     argv = get_args()
-    cn_s = pd.read_csv(argv.cn_s, sep='\t')
-    cn_g = pd.read_csv(argv.cn_g1, sep='\t')
+    cn_s = pd.read_csv(argv.cn_s)
+    cn_g = pd.read_csv(argv.cn_g1)
     print('loaded data')
 
+    # check if this is dataset SA1091
+    dataset = argv.cn_s.split('/')[-2]
+    if dataset == 'SA1091':
+        print('removing hlamp loci')
+        print('cn_g.shape', cn_g.shape)
+        print('cn_s.shape', cn_s.shape)
+        cn_g, cn_s = remove_hlamp_loci(cn_g, cn_s, argv)
+        print('cn_g.shape', cn_g.shape) 
+        print('cn_s.shape', cn_s.shape)
+    
 
     # use library_id as the clone_id when it is not provided
     if 'clone_id' not in cn_g.columns:
@@ -68,12 +105,12 @@ def main():
     print('cn_g_out.shape', cn_g_out.shape)
 
     # save output files
-    cn_s_out.to_csv(argv.cn_s_out, sep='\t', index=False)
-    cn_g_out.to_csv(argv.cn_g_out, sep='\t', index=False)
+    cn_s_out.to_csv(argv.cn_s_out, index=False)
+    cn_g_out.to_csv(argv.cn_g_out, index=False)
 
     # this will be an empty df when argv.infer_mode!='pyro'
-    supp_s_output.to_csv(argv.supp_s_output, sep='\t', index=False)
-    supp_g_output.to_csv(argv.supp_g_output, sep='\t', index=False)
+    supp_s_output.to_csv(argv.supp_s_output, index=False)
+    supp_g_output.to_csv(argv.supp_g_output, index=False)
 
 
 if __name__ == '__main__':

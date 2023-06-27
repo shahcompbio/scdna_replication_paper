@@ -13,6 +13,7 @@ htert_metrics = metrics_samples.loc[metrics_samples['isabl_patient_id']=='184-hT
 # bad_datasets = ['SA1054', 'SA1055', 'SA1056']
 bad_datasets = []
 
+
 rule all_sig_lines:
     input:
         expand(
@@ -89,7 +90,7 @@ rule all_sig_lines:
             'plots/sig_lines/{dataset}/subclonal_rt_diffs.png',
             dataset=[
                 d for d in config['signatures_cell_lines']
-                if ((d not in bad_datasets) or (d not in ['OV2295']))
+                if ((d not in bad_datasets) and (d not in ['OV2295']))
             ]
         ),
         expand(
@@ -113,7 +114,8 @@ rule all_sig_lines:
         'plots/sig_lines/twidth_summary.png',
         'plots/sig_lines/clone_RT_X_profiles.png',
         'plots/sig_lines/clone_corrs.png',
-        'plots/sig_lines/frac_rep_distribution.png'
+        'plots/sig_lines/frac_rep_distribution.png',
+        'plots/sig_lines/Xi_dna_vs_rna_BAF.png'
         
         
 
@@ -503,7 +505,6 @@ rule cohort_clone_counts_sl:
         'deactivate'
 
 
-# TODO: split tsv and png into separate rules
 rule subclonal_rt_diffs_sl:
     input:
         rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
@@ -522,7 +523,6 @@ rule subclonal_rt_diffs_sl:
         'deactivate'
 
 
-# TODO: split tsv and png into separate rules
 rule subclonal_rt_diffs_summary_sl:
     input:
         rt = expand(
@@ -752,6 +752,27 @@ rule chrX_RT_sl:
         '--clone_rt_diffs_SA1055 {output.clone_rt_diffs_SA1055} '
         '&> {log} ; '
         'deactivate'
+
+
+rule Xi_dna_vs_rna_BAF_sl:
+    params:
+        datasets = [
+            d for d in config['signatures_cell_lines']
+            if ((d not in bad_datasets) and (d not in ['SA1292']))
+        ]
+    output: 
+        plot = 'plots/sig_lines/Xi_dna_vs_rna_BAF.png',
+        table = 'analysis/sig_lines/Xi_dna_vs_rna_BAF.csv.gz'
+    log: 'logs/sig_lines/Xi_dna_vs_rna_BAF.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/Xi_dna_vs_rna_BAF.py '
+        '--datasets {params.datasets} '
+        '--plot {output.plot} '
+        '--table {output.table} '
+        '&> {log}'
+        ' ; deactivate'
 
 
 rule cn_and_rt_correlations_sl:

@@ -152,4 +152,4 @@ if __name__ == '__main__':
     # create new column for reads per million (normalize each cell's total read count to be the same)
     cn = compute_reads_per_million(cn, reads_col='reads', rpm_col='rpm')
 
-    cn.to_csv(argv.output, sep='\t', index=False)
+    cn.to_csv(argv.output, index=False)

@@ -144,7 +144,7 @@
         "time" : "6:00",
         "mem" : 256
     },
-    "remove_nonreplicating_cells_st" :
+    "predict_cycle_phase_st" :
     {
         "time" : "6:00",
         "mem" : 256
