@@ -84,7 +84,7 @@ rule all_laks_flow:
                 d for d in ['T47D', 'GM18507', 'all']
             ]
         ),
-        'plots/laks_flow/GM18507/cn_s_example.png',
+        'plots/laks_flow/GM18507/cn_s_example.pdf',
         'plots/laks_flow/all/flow_error_cells.png',
         'plots/laks_flow/all/rpm_pca.png',
         'plots/laks_flow/all/rt_corr.png',
@@ -712,12 +712,12 @@ rule plot_example_cells_lf:
         cn_gm_g2 = 'analysis/laks_flow/GM18507/cn_g2.tsv',
         cn_gm_s = 'analysis/laks_flow/GM18507/cn_s.tsv',
     output:
-        cn_t_g1 = 'plots/laks_flow/T47D/cn_g1_example.png',
-        cn_t_g2 = 'plots/laks_flow/T47D/cn_g2_example.png',
-        cn_t_s = 'plots/laks_flow/T47D/cn_s_example.png',
-        cn_gm_g1 = 'plots/laks_flow/GM18507/cn_g1_example.png',
-        cn_gm_g2 = 'plots/laks_flow/GM18507/cn_g2_example.png',
-        cn_gm_s = 'plots/laks_flow/GM18507/cn_s_example.png',
+        cn_t_g1 = 'plots/laks_flow/T47D/cn_g1_example.pdf',
+        cn_t_g2 = 'plots/laks_flow/T47D/cn_g2_example.pdf',
+        cn_t_s = 'plots/laks_flow/T47D/cn_s_example.pdf',
+        cn_gm_g1 = 'plots/laks_flow/GM18507/cn_g1_example.pdf',
+        cn_gm_g2 = 'plots/laks_flow/GM18507/cn_g2_example.pdf',
+        cn_gm_s = 'plots/laks_flow/GM18507/cn_s_example.pdf',
     log: 'logs/laks_flow/plot_example_cells.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '

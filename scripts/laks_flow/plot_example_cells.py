@@ -1,7 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+# save svg text as text, not curves
+plt.rcParams['svg.fonttype'] = 'none'
+plt.rcParams['pdf.use14corefonts'] = True
 import seaborn as sns
-from scgenome.cnplot import plot_cell_cn_profile
+from scdna_replication_tools.plot_utils import plot_cell_cn_profile2
 from argparse import ArgumentParser
 
 
@@ -31,11 +34,22 @@ def plot_cell_cn_profile_with_density(cell_cn, title=None):
     # add subplot for cell cn profile
     # this plot should have a height of 1, width of 0.9, and be placed at (0.0, 0.0)
     ax = fig.add_axes([0.0, 0.0, 0.9, 1.0])
-    plot_cell_cn_profile(ax, cell_cn, 'rpm', cn_field_name='state', rawy=True)
-    ax.set_ylabel('reads per million')
+    plot_cell_cn_profile2(ax, cell_cn, 'rpm', cn_field_name='state', rawy=True)
+    ax.set_ylabel('reads per million', fontname='Arial', fontsize=11)
+    # set the x-axis label to be Arial of size 11
+    ax.set_xlabel('chromosome', fontname='Arial', fontsize=11)
 
     if title is not None:
-        ax.set_title(title)
+        ax.set_title(title, fontname='Arial', fontsize=11)
+    
+    # Set the font name for axis tick labels to be Arial
+    for tick in ax.get_xminorticklabels():
+        tick.set_fontname('Arial')
+        tick.set_fontsize(8)
+    for tick in ax.get_yticklabels():
+        tick.set_fontname('Arial')
+        tick.set_fontsize(8)
+
 
     # add subplot for density plot
     # this plot should have a height of 1, width of 0.1, and be placed at (0.9, 0.0)
@@ -70,6 +84,7 @@ def main():
     cn_gm_g1['chr'] = cn_gm_g1['chr'].astype('category')
     cn_gm_g2['chr'] = cn_gm_g2['chr'].astype('category')
     cn_gm_s['chr'] = cn_gm_s['chr'].astype('category')
+
 
     # plot a T47D cell in G1 phase
     for cell_id, cell_cn in cn_t_g1.groupby('cell_id'):
