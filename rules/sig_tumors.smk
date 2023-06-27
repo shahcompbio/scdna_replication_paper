@@ -160,10 +160,12 @@ rule infer_scRT_pyro_st:
         cn_prior_method = 'g1_composite',
         infer_mode = 'pert'
     log: 'logs/sig_tumors/{dataset}/infer_scRT_pyro.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/sig_tumors/infer_scRT.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_pyro_model_output_st:
