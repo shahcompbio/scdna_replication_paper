@@ -133,6 +133,33 @@ signatures_patient_tumors:
   # SA535:
   #   type: 'TNBC'
   #   signature: 'HRD-Dup'
+chrX_rt_datasets: [
+  'OV2295', 'SA1188', 'SA039', 'SA1292', 'SA1054', 'SA906a', 'SA1055', 'SA906b', 'SA1056',
+  'SA1047', 'SA1096', 'SA1049', 'SA1162', 'SA1050', 'SA1181', 'SA1051', 'SA1182', 'SA1052',
+  'SA1184', 'SA1053', 'SA501', 'SA1091', 'SA530', 'SA1093', 'SA604', 'SA1035', 'SA609', 'SA535'
+]
+chrX_rt_paths: [
+    'analysis/sig_lines/OV2295/scRT_pseudobulks.tsv',  'analysis/sig_lines/SA1188/scRT_pseudobulks.tsv',
+    'analysis/sig_lines/SA039/scRT_pseudobulks.tsv',   'analysis/sig_lines/SA1292/scRT_pseudobulks.tsv',
+    'analysis/sig_lines/SA1054/scRT_pseudobulks.tsv',  'analysis/sig_lines/SA906a/scRT_pseudobulks.tsv',
+    'analysis/sig_lines/SA1055/scRT_pseudobulks.tsv',  'analysis/sig_lines/SA906b/scRT_pseudobulks.tsv',
+    'analysis/sig_lines/SA1056/scRT_pseudobulks.tsv',
+    'analysis/sig_tumors/SA1047/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA1096/scRT_pseudobulks.csv.gz',
+    'analysis/sig_tumors/SA1049/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA1162/scRT_pseudobulks.csv.gz',
+    'analysis/sig_tumors/SA1050/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA1181/scRT_pseudobulks.csv.gz',
+    'analysis/sig_tumors/SA1051/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA1182/scRT_pseudobulks.csv.gz',
+    'analysis/sig_tumors/SA1052/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA1184/scRT_pseudobulks.csv.gz',
+    'analysis/sig_tumors/SA1053/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA501/scRT_pseudobulks.csv.gz',
+    'analysis/sig_tumors/SA1091/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA530/scRT_pseudobulks.csv.gz',
+    'analysis/sig_tumors/SA1093/scRT_pseudobulks.csv.gz',  'analysis/sig_tumors/SA604/scRT_pseudobulks.csv.gz',
+    'analysis/fitness/SA1035/scRT_pseudobulks.tsv',  'analysis/fitness/SA535/scRT_pseudobulks.tsv',
+    'analysis/fitness/SA609/scRT_pseudobulks.tsv'
+]
+chrX_count_paths: [
+  'analysis/sig_lines/cohort_clone_counts.tsv',
+  'analysis/sig_tumors/cohort_clone_counts.csv.gz',
+  'analysis/fitness/cohort_clone_counts.tsv'
+]
 simulated_datasets:
   # fully diploid datasets
   D1.0:
