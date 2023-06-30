@@ -9,7 +9,6 @@ bad_datasets = []
 
 rule all_chrX:
     input:
-        'analysis/chrX/clone_arm_bafs.csv.gz',
         'plots/chrX/main_figure.pdf'
 
 
