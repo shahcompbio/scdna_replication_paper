@@ -24,6 +24,7 @@ def get_args():
 
     p.add_argument('-cr', '--clone_rt', type=str, help='matrix of RT samples for each clone')
     p.add_argument('-f', '--features', type=str, help='clone feature metadata (e.g. signature, ploidy, cell type)')
+    p.add_argument('--remove_x', action='store_true', default=False, help='filter out all loci with chr=="X"')
     p.add_argument('-bip', '--beta_importance_posteriors', type=str, help='beta importance posteriors')
     p.add_argument('-rtp', '--rt_profile_posteriors', type=str, help='rt profile posteriors')
     p.add_argument('-lc', '--loss_curve', type=str, help='loss curve')
@@ -32,11 +33,6 @@ def get_args():
 
 
 def preprocess_data(clone_features, clone_rt):
-    # Optional: filter out all loci with chr=='X'
-    remove_x = False
-    if remove_x:
-        clone_rt = clone_rt.query('chr!="X"')
-    
     # set loci as index and create a tensor of RT values
     clone_rt = clone_rt.set_index(['chr', 'start', 'end'])
     rt_data = torch.tensor(clone_rt.values).type(torch.float64)
@@ -164,6 +160,10 @@ def main():
     clone_features = pd.read_csv(argv.features)
     clone_rt = pd.read_csv(argv.clone_rt)
 
+    # Optional: filter out all loci with chr=='X'
+    if argv.remove_x:
+        clone_rt = clone_rt.query('chr!="X"')
+
     # preprocess the data into torch tensors
     rt_data, cell_types, signatures, wgd = preprocess_data(clone_features, clone_rt)
 
@@ -209,11 +209,6 @@ def main():
                 temp_rt_norm = T.Normalize()(temp_rt)
                 output_df['{}_{}'.format(name, i)] = temp_rt_norm.detach().numpy()
     output_df.reset_index(inplace=True)
-
-    print('cell type importance shape:', samples['beta_cell_type_importance'].shape)
-    print('beta_cell_type_importance:', samples['beta_cell_type_importance'][:, 0, 0].detach().numpy())
-    print('beta_cell_type_importance abs:', np.abs(samples['beta_cell_type_importance'][:, 0, 0].detach().numpy()))
-    print('beta cell type importance abs dtype:', np.abs(samples['beta_cell_type_importance'][:, 0, 0].detach().numpy()).dtype)
 
     # create an output dataframe for the beta importance terms
     beta_importance_posteriors = pd.DataFrame({
