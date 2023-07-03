@@ -9,7 +9,7 @@ bad_datasets = []
 
 rule all_rt_model:
     input:
-        'analysis/rt_model/features.csv.gz'
+        'analysis/rt_model/loss_curve.csv.gz'
 
 
 rule load_data_rt:
@@ -38,3 +38,27 @@ rule load_data_rt:
         '--features {output.features} '
         '&> {log}'
         ' ; deactivate'
+
+
+rule run_rt_model:
+    input:
+        clone_rt = 'analysis/rt_model/clone_rt.csv.gz',
+        features = 'analysis/rt_model/features.csv.gz'
+    output:
+        beta_importance_posteriors = 'analysis/rt_model/beta_importance_posteriors.csv.gz',
+        rt_profile_posteriors = 'analysis/rt_model/rt_profile_posteriors.csv.gz',
+        loss_curve = 'analysis/rt_model/loss_curve.csv.gz',
+    log: 'logs/rt_model/run_rt_model.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/rt_model.py '
+        '--clone_rt {input.clone_rt} '
+        '--features {input.features} '
+        '--beta_importance_posteriors {output.beta_importance_posteriors} '
+        '--rt_profile_posteriors {output.rt_profile_posteriors} '
+        '--loss_curve {output.loss_curve} '
+        '&> {log}'
+        ' ; deactivate'
+
+
