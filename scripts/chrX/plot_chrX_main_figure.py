@@ -8,6 +8,7 @@ plt.rcParams['svg.fonttype'] = 'none'
 # plt.rcParams["font.family"] = 'Arial'
 plt.rcParams['pdf.use14corefonts'] = True
 import seaborn as sns
+from scdna_replication_tools.plot_utils import get_clone_cmap
 
 
 def get_args():
@@ -174,7 +175,7 @@ def plot_hTERT_sample_bafs_vs_rt(sample_df, ax):
 
 def plot_SA1054_subclonal_bafs_vs_rt(clone_df, ax):
     # scatterplot of the data
-    sns.scatterplot(y='mean_chrX_rt_delay', x='dna_chrX_baf_mean', hue='clone_id', data=clone_df.query('dataset=="SA1054"'), ax=ax, size='num_cells_s', sizes=(10, 100))
+    sns.scatterplot(y='mean_chrX_rt_delay', x='dna_chrX_baf_mean', hue='clone_id', data=clone_df.query('dataset=="SA1054"'), ax=ax, size='num_cells_s', sizes=(10, 100), palette=get_clone_cmap())
 
     sns.regplot(y='mean_chrX_rt_delay', x='dna_chrX_baf_mean', data=clone_df.query('dataset=="SA1054"'), scatter=False, ax=ax)
 
