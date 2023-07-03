@@ -34,7 +34,6 @@ def get_args():
 
 def preprocess_data(clone_features, clone_rt):
     # set loci as index and create a tensor of RT values
-    clone_rt = clone_rt.set_index(['chr', 'start', 'end'])
     rt_data = torch.tensor(clone_rt.values).type(torch.float64)
 
     # convert cell types to a tensor of floats
@@ -163,6 +162,9 @@ def main():
     # Optional: filter out all loci with chr=='X'
     if argv.remove_x:
         clone_rt = clone_rt.query('chr!="X"')
+    
+    # set clone_rt as the index
+    clone_rt = clone_rt.set_index(['chr', 'start', 'end'])
 
     # preprocess the data into torch tensors
     rt_data, cell_types, signatures, wgd = preprocess_data(clone_features, clone_rt)
