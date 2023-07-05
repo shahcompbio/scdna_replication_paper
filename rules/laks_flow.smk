@@ -69,7 +69,7 @@ rule all_laks_flow:
             'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
             dataset=[
                 d for d in perm_datasets
-                if (d not in ['T47D', 'GM18507'])
+                # if (d not in ['T47D', 'GM18507'])
             ]
         ),
         expand(
@@ -507,6 +507,23 @@ rule compute_rt_pseudobulks_composite_lf:
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/laks_flow/compute_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+    
+
+rule compute_clone_rt_pseudobulks_composite_lf:
+    input:
+        cn_T47D = 'analysis/laks_flow/T47D/cn_g_pyro_inferred_composite_filtered.tsv',
+        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_g_pyro_inferred_composite_filtered.tsv',
+    output:
+        T47D = 'analysis/laks_flow/T47D/rt_pseudobulks_composite.tsv',
+        GM18507 = 'analysis/laks_flow/GM18507/rt_pseudobulks_composite.tsv'
+    params:
+        rep_col = 'model_rep_state'
+    log: 'logs/laks_flow/all/compute_clone_rt_pseudobulks_composite.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/laks_flow/compute_clone_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
 
