@@ -40,7 +40,9 @@ def preprocess_data(clone_features, clone_rt):
     cell_types = torch.tensor(clone_features[[
         'type_HGSOC',
         'type_TNBC',
-        'type_hTERT'
+        'type_hTERT',
+        'type_T47D',
+        'type_GM18507'
     ]].values).type(torch.float64)
 
     # convert signatures to a tensor of floats
@@ -74,7 +76,7 @@ def model(cell_types, signatures, wgd, rt_data=None, num_loci=None, num_profiles
         num_loci, num_profiles = rt_data.shape
     assert num_loci is not None
     assert num_profiles is not None
-    assert cell_types.shape == (num_profiles, 3)  # HGSOC, TNBC, hTERT
+    assert cell_types.shape == (num_profiles, 5)  # HGSOC, TNBC, hTERT, T47D, GM18507
     assert signatures.shape == (num_profiles, 3)  # FBI, HRD, TD 
     assert wgd.shape == (num_profiles, 1)  # 1 when WGD, 0 when diploid
 
@@ -96,6 +98,8 @@ def model(cell_types, signatures, wgd, rt_data=None, num_loci=None, num_profiles
     ct_hgsoc = pyro.sample('ct_hgsoc', dist.Normal(torch.zeros(num_loci), torch.ones(num_loci)).to_event(1))
     ct_tnbc = pyro.sample('ct_tnbc', dist.Normal(torch.zeros(num_loci), torch.ones(num_loci)).to_event(1))
     ct_htert = pyro.sample('ct_htert', dist.Normal(torch.zeros(num_loci), torch.ones(num_loci)).to_event(1))
+    ct_t47d = pyro.sample('ct_t47d', dist.Normal(torch.zeros(num_loci), torch.ones(num_loci)).to_event(1))
+    ct_gm18507 = pyro.sample('ct_gm18507', dist.Normal(torch.zeros(num_loci), torch.ones(num_loci)).to_event(1))
 
     # get signature-specific replication timing
     sig_fbi = pyro.sample('sig_fbi', dist.Normal(torch.zeros(num_loci), torch.ones(num_loci)).to_event(1))
@@ -110,6 +114,8 @@ def model(cell_types, signatures, wgd, rt_data=None, num_loci=None, num_profiles
     ct_hgsoc_norm = T.Normalize()(ct_hgsoc)
     ct_tnbc_norm = T.Normalize()(ct_tnbc)
     ct_htert_norm = T.Normalize()(ct_htert)
+    ct_t47d_norm = T.Normalize()(ct_t47d)
+    ct_gm18507_norm = T.Normalize()(ct_gm18507)
     sig_fbi_norm = T.Normalize()(sig_fbi)
     sig_hrd_norm = T.Normalize()(sig_hrd)
     sig_td_norm = T.Normalize()(sig_td)
@@ -133,6 +139,8 @@ def model(cell_types, signatures, wgd, rt_data=None, num_loci=None, num_profiles
         term_hgsoc = beta_cell_type_importance * (ct_hgsoc_norm.reshape(-1, 1) * cell_types[:, 0])
         term_tnbc = beta_cell_type_importance * (ct_tnbc_norm.reshape(-1, 1) * cell_types[:, 1])
         term_htert = beta_cell_type_importance * (ct_htert_norm.reshape(-1, 1) * cell_types[:, 2])
+        term_t47d = beta_cell_type_importance * (ct_t47d_norm.reshape(-1, 1) * cell_types[:, 3])
+        term_gm18507 = beta_cell_type_importance * (ct_gm18507_norm.reshape(-1, 1) * cell_types[:, 4])
 
         # signature RT profiles
         term_fbi = beta_signature_importance * (sig_fbi_norm.reshape(-1, 1) * signatures[:, 0])
@@ -143,7 +151,7 @@ def model(cell_types, signatures, wgd, rt_data=None, num_loci=None, num_profiles
         term_wgd = beta_wgd_importance * (wgd_rt_norm.reshape(-1, 1) * wgd[:, 0])
 
         # sum all terms together to generate a mean on the real domain
-        mean = term_global_rt + term_hgsoc + term_tnbc + term_htert + term_fbi + term_hrd + term_td + term_wgd
+        mean = term_global_rt + term_hgsoc + term_tnbc + term_htert + term_t47d + term_gm18507 + term_fbi + term_hrd + term_td + term_wgd
 
         # sigmoid transform the mean so it lies on the 0-1 domain
         new_mean = torch.sigmoid(mean)

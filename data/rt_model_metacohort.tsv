@@ -27,3 +27,5 @@ SA501	analysis/sig_tumors/SA501/scRT_pseudobulks.csv.gz	analysis/sig_tumors/SA50
 SA609	analysis/fitness/SA609/scRT_pseudobulks.tsv	analysis/fitness/SA609/cn_pseudobulks.tsv	TNBC	FBI	PDX
 SA535	analysis/fitness/SA535/scRT_pseudobulks.tsv	analysis/fitness/SA535/cn_pseudobulks.tsv	TNBC	HRD	PDX
 SA1035	analysis/fitness/SA1035/scRT_pseudobulks.tsv	analysis/fitness/SA1035/cn_pseudobulks.tsv	TNBC	N/A	PDX
+T47D	analysis/laks_flow/T47D/rt_pseudobulks_composite.tsv	analysis/laks_flow/T47D/cn_pseudobulks.tsv	T47D	N/A	Line
+GM18507	analysis/laks_flow/GM18507/rt_pseudobulks_composite.tsv	analysis/laks_flow/GM18507/cn_pseudobulks.tsv	GM18507	N/A	Line

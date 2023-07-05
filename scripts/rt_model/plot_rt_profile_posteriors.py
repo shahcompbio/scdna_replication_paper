@@ -25,8 +25,8 @@ def main():
     rt_profiles['chr'] = rt_profiles['chr'].astype('str').astype('category')
 
     # plot the genome-wide learned parameters
-    plot_cols = ['global_rt_0', 'ct_hgsoc_0', 'ct_tnbc_0', 'ct_htert_0', 'sig_fbi_0', 'sig_hrd_0', 'sig_td_0', 'wgd_rt_0']
-    fig, ax = plt.subplots(4, 2, figsize=(12, 8), tight_layout=True, sharey=True)
+    plot_cols = ['global_rt_0', 'ct_hgsoc_0', 'ct_tnbc_0', 'ct_htert_0', 'ct_t47d_0', 'ct_gm18507_0', 'sig_fbi_0', 'sig_hrd_0', 'sig_td_0', 'wgd_rt_0']
+    fig, ax = plt.subplots(5, 2, figsize=(12, 10), tight_layout=True, sharey=True)
     ax = ax.flatten()
 
     for i, col_name in enumerate(plot_cols):
