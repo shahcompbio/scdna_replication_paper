@@ -14,7 +14,9 @@ rule all_rt_model:
         'plots/rt_model/beta_importance_posteriors.pdf',
         'plots/rt_model/beta_importance_posteriors_noX.pdf',
         'plots/rt_model/rt_profile_posteriors.pdf',
-        'plots/rt_model/rt_profile_posteriors_noX.pdf'
+        'plots/rt_model/rt_profile_posteriors_noX.pdf',
+        'plots/rt_model/clone_pca_embeddings.pdf',
+        'plots/rt_model/clone_pca_regression.pdf'
 
 
 rule load_data_rt:
@@ -159,4 +161,54 @@ rule plot_rt_profile_posteriors_noX_rt:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/rt_model/plot_rt_profile_posteriors.py '
         '{input} --noX {output} &> {log}'
+        ' ; deactivate'
+
+
+rule clone_rt_pca:
+    input:
+        clone_rt = 'analysis/rt_model/clone_rt.csv.gz',
+        features = 'analysis/rt_model/features.csv.gz',
+        table = 'data/rt_model_metacohort.tsv',
+    output:
+        embeddings = 'analysis/rt_model/clone_pca_embeddings.csv.gz',
+        loadings = 'analysis/rt_model/clone_pca_loadings.csv.gz',
+        explained_variance_pdf = 'plots/rt_model/clone_pca_explained_variance.pdf',
+    log: 'logs/rt_model/clone_rt_pca.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/clone_rt_pca.py '
+        '--clone_rt {input.clone_rt} '
+        '--features {input.features} '
+        '--table {input.table} '
+        '--embeddings {output.embeddings} '
+        '--loadings {output.loadings} '
+        '--explained_variance_pdf {output.explained_variance_pdf} '
+        '&> {log}'
+        ' ; deactivate'
+
+
+rule plot_clone_pca_embeddings_rt:
+    input: 'analysis/rt_model/clone_pca_embeddings.csv.gz',
+    output: 'plots/rt_model/clone_pca_embeddings.pdf'
+    log: 'logs/rt_model/plot_clone_pca_embeddings.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/plot_clone_pca_embeddings.py '
+        '{input} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule clone_pca_regression_rt:
+    input: 'analysis/rt_model/clone_pca_embeddings.csv.gz',
+    output:
+        coefficients = 'analysis/rt_model/clone_pca_regression_coefficients.csv.gz',
+        plot = 'plots/rt_model/clone_pca_regression.pdf',
+    log: 'logs/rt_model/clone_pca_regression.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/clone_pca_regression.py '
+        '{input} {output.coefficients} {output.plot} &> {log}'
         ' ; deactivate'
