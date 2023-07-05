@@ -4,10 +4,10 @@ SA906a	analysis/sig_lines/SA906a/scRT_pseudobulks.tsv	analysis/sig_lines/SA906a/
 SA906b	analysis/sig_lines/SA906b/scRT_pseudobulks.tsv	analysis/sig_lines/SA906b/cn_pseudobulks.tsv	hTERT	N/A	Line
 SA1188	analysis/sig_lines/SA1188/scRT_pseudobulks.tsv	analysis/sig_lines/SA1188/cn_pseudobulks.tsv	hTERT	N/A	Line
 SA1292	analysis/sig_lines/SA1292/scRT_pseudobulks.tsv	analysis/sig_lines/SA1292/cn_pseudobulks.tsv	hTERT	N/A	Line
-SA1056	analysis/sig_lines/SA1056/scRT_pseudobulks.tsv	analysis/sig_lines/SA1056/cn_pseudobulks.tsv	hTERT	HRD	Line
-SA1055	analysis/sig_lines/SA1055/scRT_pseudobulks.tsv	analysis/sig_lines/SA1055/cn_pseudobulks.tsv	hTERT	HRD	Line
-SA1054	analysis/sig_lines/SA1054/scRT_pseudobulks.tsv	analysis/sig_lines/SA1054/cn_pseudobulks.tsv	hTERT	HRD	Line
-OV2295	analysis/sig_lines/OV2295/scRT_pseudobulks.tsv	analysis/sig_lines/OV2295/cn_pseudobulks.tsv	HGSOC	N/A	Line
+SA1056	analysis/sig_lines/SA1056/scRT_pseudobulks.tsv	analysis/sig_lines/SA1056/cn_pseudobulks.tsv	hTERT	N/A	Line
+SA1055	analysis/sig_lines/SA1055/scRT_pseudobulks.tsv	analysis/sig_lines/SA1055/cn_pseudobulks.tsv	hTERT	N/A	Line
+SA1054	analysis/sig_lines/SA1054/scRT_pseudobulks.tsv	analysis/sig_lines/SA1054/cn_pseudobulks.tsv	hTERT	N/A	Line
+OV2295	analysis/sig_lines/OV2295/scRT_pseudobulks.tsv	analysis/sig_lines/OV2295/cn_pseudobulks.tsv	OV2295	N/A	Line
 SA1091	analysis/sig_tumors/SA1091/scRT_pseudobulks.csv.gz	analysis/sig_tumors/SA1091/cn_pseudobulks.csv.gz	HGSOC	FBI	PDX
 SA1047	analysis/sig_tumors/SA1047/scRT_pseudobulks.csv.gz	analysis/sig_tumors/SA1047/cn_pseudobulks.csv.gz	HGSOC	TD	PDX
 SA1093	analysis/sig_tumors/SA1093/scRT_pseudobulks.csv.gz	analysis/sig_tumors/SA1093/cn_pseudobulks.csv.gz	HGSOC	TD	PDX
