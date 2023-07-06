@@ -195,13 +195,13 @@ def main():
     elbo = pyro.infer.Trace_ELBO()
     svi = pyro.infer.SVI(model, auto_guide, adam, elbo)
 
-    # train the model
-    losses = []
-    for step in range(1000 if not smoke_test else 2):  # Consider running for more steps.
-        loss = svi.step(cell_types, signatures, wgd, rt_data, None, None)
-        losses.append(loss)
-        if step % 1 == 0:
-            logging.info("Elbo loss: {}".format(loss))
+    # # train the model
+    # losses = []
+    # for step in range(1000 if not smoke_test else 2):  # Consider running for more steps.
+    #     loss = svi.step(cell_types, signatures, wgd, rt_data, None, None)
+    #     losses.append(loss)
+    #     if step % 1 == 0:
+    #         logging.info("Elbo loss: {}".format(loss))
     
     losses = []
     loss_diffs = []
