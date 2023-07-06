@@ -87,7 +87,7 @@ def main():
     # reset the x-tick labels to rename '_' to '\n'
     ax[0].set_xticklabels([x.replace('_', '\n') for x in feature_cols])
 
-    sns.barplot(data=feature_coef_df, x='metafeature', y='log10_abs_coef', hue='PC', ax=ax[3])
+    sns.barplot(data=feature_coef_df, x='metafeature', y='log10_abs_coef', ax=ax[3])
     ax[3].set_ylabel('log10(abs(Coefficient))')
     ax[3].set_xlabel('Feature')
     ax[3].set_title('Multivariate linear regression of PCs\nusing K-fold CV')
