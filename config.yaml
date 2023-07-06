@@ -175,6 +175,23 @@ rt_model_count_paths: [
   'analysis/fitness/cohort_clone_counts.tsv',
   'analysis/laks_flow/all/cell_cycle_clone_counts.tsv'
 ]
+spectrum_datasets: [
+  # 'SPECTRUM-OV-002',
+  # 'SPECTRUM-OV-003',
+  # 'SPECTRUM-OV-009',
+  # 'SPECTRUM-OV-014',
+  # 'SPECTRUM-OV-022',
+  # 'SPECTRUM-OV-025',
+  # 'SPECTRUM-OV-031',
+  # 'SPECTRUM-OV-036',
+  # 'SPECTRUM-OV-044',
+  # 'SPECTRUM-OV-045',
+  # 'SPECTRUM-OV-068',
+  'SPECTRUM-OV-081',
+  # 'SPECTRUM-OV-083',
+  # 'SPECTRUM-OV-105',
+  # 'SPECTRUM-OV-107'
+]
 simulated_datasets:
   # fully diploid datasets
   D1.0:

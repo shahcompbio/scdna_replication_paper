@@ -105,6 +105,15 @@
         "time" : "120:00",
         "mem" : 256
     },
+    "collect_cn_data_sp" :
+    {
+        "mem" : 96
+    },
+    "infer_scRT_pyro_sp" :
+    {
+        "time" : "72:00",
+        "mem" : 128
+    },
     "scRT_accuracies_sim" :
     {
         "time" : "12:00"
