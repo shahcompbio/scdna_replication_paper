@@ -14,6 +14,8 @@ from pyro.nn import PyroModule
 # for CI testing
 smoke_test = ('CI' in os.environ)
 pyro.set_rng_seed(1)
+torch.manual_seed(1)
+np.random.seed(1)
 
 assert issubclass(PyroModule[nn.Linear], nn.Linear)
 assert issubclass(PyroModule[nn.Linear], PyroModule)
@@ -200,6 +202,35 @@ def main():
         losses.append(loss)
         if step % 1 == 0:
             logging.info("Elbo loss: {}".format(loss))
+    
+    losses = []
+    loss_diffs = []
+    frac_loss_diffs = []
+    total_loss_diff = np.nan
+    converged = False
+    for step in range(1000 if not smoke_test else 2):
+        loss = svi.step(cell_types, signatures, wgd, rt_data, None, None)
+        losses.append(loss)
+        
+        # check for convergence after 250 steps
+        # see if the ratio between the total loss difference (first and last) and 
+        # the the average of the 10 most recent loss differences is less than 1e-3
+        if step > 250:
+            total_loss_diff = abs(losses[-1] - losses[0])
+            temp_loss_diff = []
+            # loop over the past 10 losses and find their difference from the current loss
+            for i in range(10):
+                temp_loss_diff.append(abs(losses[-1] - losses[-i-2]))
+            # take the mean of the 5 differences, the smaller this is, the closer the losses are to converging
+            mean_temp_loss_diff = np.mean(temp_loss_diff)
+            loss_diffs.append(mean_temp_loss_diff)
+            frac_loss_diff = mean_temp_loss_diff / total_loss_diff
+            frac_loss_diffs.append(frac_loss_diff)
+            if frac_loss_diff < 1e-3:
+                converged = True
+        if converged:
+            print('Converged at step {}'.format(step))
+            break
 
     # create a dataframe for the iteration and loss values
     loss_df = pd.DataFrame({
