@@ -38,8 +38,8 @@ def main():
 
     num_components = 20
     pca = PCA(n_components=num_components)
-    # X = StandardScaler().fit_transform(clone_rt.values.T)
-    X = clone_rt.values.T
+    X = StandardScaler().fit_transform(clone_rt.values.T)
+    # X = clone_rt.values.T
     clone_embeddings = pca.fit_transform(X)
     clone_embeddings = pd.DataFrame(clone_embeddings, index=clone_rt.columns, columns=['PC{}'.format(i+1) for i in range(num_components)])
     clone_embeddings.reset_index(inplace=True)
