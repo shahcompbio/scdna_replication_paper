@@ -63,7 +63,7 @@ def main():
     rt_profiles['chr'] = rt_profiles['chr'].astype('str').astype('category')
 
     # plot the genome-wide learned parameters
-    fig, ax = plt.subplots(6, 2, figsize=(8, 8), tight_layout=True, sharey=True)
+    fig, ax = plt.subplots(6, 2, figsize=(12, 8), tight_layout=True, sharey=True)
     ax = ax.flatten()
 
     for i, col_prefix in enumerate(col_prefix_list):
