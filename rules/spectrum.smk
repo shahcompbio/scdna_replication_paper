@@ -49,6 +49,7 @@ rule all_spectrum:
                 if (d not in bad_datasets)
             ]
         ),
+        'plots/spectrum/SPECTRUM-OV-081/scRNA_phase.pdf'
          
 
 rule collect_cn_data_sp:
@@ -249,3 +250,13 @@ rule plot_clone_spf_sp:
     shell:
         'python3 scripts/spectrum/plot_clone_spf.py '
         '{input} {params} {output} &> {log}'
+
+
+rule plot_scRNA_phase_sp:
+    input: 'data/spectrum/SPECTRUM-OV-081_cell_cycle_meta.csv'
+    output: 'plots/spectrum/SPECTRUM-OV-081/scRNA_phase.pdf'
+    log: 'logs/spectrum/SPECTRUM-OV-081/plot_scRNA_phase.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/spectrum/plot_scRNA_phase.py '
+        '{input} {output} &> {log}'
