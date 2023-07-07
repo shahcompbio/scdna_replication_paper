@@ -27,9 +27,9 @@ def main():
     ax[0].pie(count_df.query('site=="LEFT_ADNEXA"')['num_cells'], labels=count_df.query('site=="LEFT_ADNEXA"')['phase'], autopct='%1.1f%%', shadow=True, startangle=90)
     ax[1].pie(count_df.query('site=="INFRACOLIC_OMENTUM"')['num_cells'], labels=count_df.query('site=="INFRACOLIC_OMENTUM"')['phase'], autopct='%1.1f%%', shadow=True, startangle=90)
 
-    ax[0].set_title('Left Adnexa (primary)')
-    ax[1].set_title('Infracolic Omentum (met)')
-    fig.suptitle('scRNA cell cycle distribution')
+    ax[0].set_title('Left Adnexa (primary)\nNGD clones dominant')
+    ax[1].set_title('Infracolic Omentum (met)\nWGD clone dominant')
+    fig.suptitle('scRNA cell cycle distribution of tumor cells')
 
     # save the figure
     fig.savefig(argv.plot, dpi=300, bbox_inches='tight')
