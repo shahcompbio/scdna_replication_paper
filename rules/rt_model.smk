@@ -16,7 +16,8 @@ rule all_rt_model:
         'plots/rt_model/rt_profile_posteriors.pdf',
         'plots/rt_model/rt_profile_posteriors_noX.pdf',
         'plots/rt_model/clone_pca_embeddings.pdf',
-        'plots/rt_model/clone_pca_regression.pdf'
+        'plots/rt_model/clone_pca_regression.pdf',
+        'plots/rt_model/metacohort_overview.pdf'
 
 
 rule load_data_rt:
@@ -44,6 +45,20 @@ rule load_data_rt:
         '--clone_cn {output.clone_cn} '
         '--features {output.features} '
         '&> {log}'
+        ' ; deactivate'
+
+
+rule metacohort_overview_rt:
+    input: 
+        features = 'analysis/rt_model/features.csv.gz',
+        table = 'data/rt_model_metacohort.tsv',
+    output: 'plots/rt_model/metacohort_overview.pdf'
+    log: 'logs/rt_model/metacohort_overview.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/metacohort_overview.py '
+        '-f {input.features} -t {input.table} -o {output} &> {log}'
         ' ; deactivate'
 
 
