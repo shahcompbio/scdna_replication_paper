@@ -146,6 +146,7 @@ data/gc_rt_bins.csv
 data/replication_timing/
 data/fitness/
 data/signatures/clone_trees/
+data/signatures/rna_buffering/
 data/HiC/
 data/gastric_10x/
 data/signals/

@@ -1,14 +1,23 @@
 import pandas as pd
-import numpy as np
 from scipy.stats import linregress
 from argparse import ArgumentParser
 import matplotlib.pyplot as plt
-# save svg text as text, not curves
-plt.rcParams['svg.fonttype'] = 'none'
-# plt.rcParams["font.family"] = 'Arial'
-plt.rcParams['pdf.use14corefonts'] = True
 import seaborn as sns
 from scdna_replication_tools.plot_utils import get_clone_cmap
+
+# set default matplotlib settings
+SMALL_SIZE = 7
+MEDIUM_SIZE = 8
+BIGGER_SIZE = 10
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=SMALL_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+plt.rcParams['svg.fonttype'] = 'none'
+plt.rcParams['pdf.use14corefonts'] = True
 
 
 def get_args():
@@ -33,6 +42,14 @@ def get_type_cmap():
     }
     return cmap
 
+cell_type_cdict = {
+    'hTERT': 'lightsteelblue', 0: 'lightsteelblue',
+    'HGSOC': 'teal', 1: 'teal',
+    'TNBC': 'salmon', 2: 'salmon',
+    'OV2295': 'lightgreen', 3: 'lightgreen',
+    'T47D': 'orchid', 4: 'orchid',
+    'GM18507': 'khaki', 5: 'khaki',
+}
 
 def merge_sample_rt_and_bafs(sample_mean_rt, sample_bafs):
     ''' Query and pivot the dataframes such that each row has both the chrX RT delay and BAFs for a given sample '''
@@ -161,8 +178,8 @@ def merge_sample_mapping(sample_df):
 
 def plot_hTERT_sample_bafs_vs_rt(sample_df, ax):
     # plot the hTERT samples
-    sns.regplot(y='mean_chrX_rt_delay', x='dna_baf_mean_Xf', data=sample_df.query('type=="hTERT"'), ax=ax, ci=None)
-    ax.set_ylabel('chrX RT delay\n<--delayed | advanced -->')
+    sns.regplot(y='mean_chrX_rt_delay', x='dna_baf_mean_Xf', data=sample_df.query('type=="hTERT"'), ax=ax, ci=None, color=cell_type_cdict['hTERT'])
+    ax.set_ylabel('chrX relative RT\n<--delayed | advanced -->')
     ax.set_xlabel('chrX DNA BAF')
     ax.set_title('hTERT samples')
     # add r and p-value annotations in the bottom-left corner
@@ -177,7 +194,7 @@ def plot_SA1054_subclonal_bafs_vs_rt(clone_df, ax):
     # scatterplot of the data
     sns.scatterplot(y='mean_chrX_rt_delay', x='dna_chrX_baf_mean', hue='clone_id', data=clone_df.query('dataset=="SA1054"'), ax=ax, size='num_cells_s', sizes=(10, 100), palette=get_clone_cmap())
 
-    sns.regplot(y='mean_chrX_rt_delay', x='dna_chrX_baf_mean', data=clone_df.query('dataset=="SA1054"'), scatter=False, ax=ax)
+    sns.regplot(y='mean_chrX_rt_delay', x='dna_chrX_baf_mean', data=clone_df.query('dataset=="SA1054"'), scatter=False, ax=ax, color='grey')
 
     # fit a linear regression model to the data
     res = linregress(clone_df.query('dataset=="SA1054"')['dna_chrX_baf_mean'].values, clone_df.query('dataset=="SA1054"')['mean_chrX_rt_delay'].values)
@@ -188,32 +205,37 @@ def plot_SA1054_subclonal_bafs_vs_rt(clone_df, ax):
     ax.set_xlim([ax.get_xlim()[0] - 0.05, ax.get_xlim()[1] + 0.05])
     ax.set_ylim([ax.get_ylim()[0] - 0.05, ax.get_ylim()[1] + 0.05])
 
-    ax.set_ylabel('chrX RT delay\n<--delayed | advanced-->')
+    ax.set_ylabel('chrX relative RT\n<--delayed | advanced-->')
     ax.set_xlabel('chrX DNA BAF')
     ax.set_title('SA1054 clones')
 
     # add the legend to the right of the plot
-    ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    # remove clone_id elements from the legend
+    handles, labels = ax.get_legend_handles_labels()
+    # subset handles and labels to just the 7th and final elements
+    handles = [handles[7], handles[-1]]
+    labels = [labels[7].split('.')[0], labels[-1].split('.')[0]]
+    ax.legend(handles, labels, loc='upper right', title='# S cells')
 
 
 def plot_sample_rt_delays(sample_df, ax):
     # make a barplot of 'mean_chrX_rt_delay' on the y-axis and 'dataset' on the x-axis with the bars colored by 'type'
-    sns.barplot(y='mean_chrX_rt_delay', x='dataset', hue='type', data=sample_df.sort_values(by=['type', 'dataset']), ax=ax, palette=get_type_cmap())
-    ax.set_ylabel('chrX RT delay\n<--delayed | advanced -->')
+    sns.barplot(y='mean_chrX_rt_delay', x='dataset', hue='type', data=sample_df.sort_values(by=['type', 'dataset']), ax=ax, palette=cell_type_cdict)
+    ax.set_ylabel('chrX relative RT\n<--delayed | advanced -->')
     ax.set_xlabel('Sample ID')
-    ax.set_title('All samples')
+    ax.set_title('HGSOC & TNBC metacohort')
     # rotate the x-tick labels by 45 degrees
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
-    # show the legend on the right side of the plot
-    ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='center')
+    # add the legend to the bottom left of the plot
+    ax.legend(loc='lower left', ncol=2)
 
 
 def plot_all_sample_bafs_vs_rt(sample_df, ax):
-    ''' Scatterplot of all samples with chrX DNA BAF on the x-axis and chrX RT delay on the y-axis '''
+    ''' Scatterplot of all samples with chrX DNA BAF on the x-axis and chrX relative RT on the y-axis '''
     # the regression plot should not include the data points
-    sns.scatterplot(y='mean_chrX_rt_delay', x='dna_baf_mean_Xf', hue='type', data=sample_df, ax=ax, palette=get_type_cmap(), legend=False)
-    sns.regplot(y='mean_chrX_rt_delay', x='dna_baf_mean_Xf', data=sample_df, scatter=False, ax=ax)
-    ax.set_ylabel('chrX RT delay\n<--delayed | advanced -->')
+    sns.scatterplot(y='mean_chrX_rt_delay', x='dna_baf_mean_Xf', hue='type', data=sample_df, ax=ax, palette=cell_type_cdict, legend=False)
+    sns.regplot(y='mean_chrX_rt_delay', x='dna_baf_mean_Xf', data=sample_df, scatter=False, ax=ax, color='grey')
+    ax.set_ylabel('chrX relative RT\n<--delayed | advanced -->')
     ax.set_xlabel('chrX DNA BAF')
     # add r and p-value annotations in the bottom-left corner
     reg = linregress(sample_df['dna_baf_mean_Xf'].values, sample_df['mean_chrX_rt_delay'].values)
@@ -223,34 +245,34 @@ def plot_all_sample_bafs_vs_rt(sample_df, ax):
     ax.set_ylim([ax.get_ylim()[0] - 0.05, ax.get_ylim()[1] + 0.05])
 
 
-def plot_expression_gap_vs_rt(sample_df, ax):
-    ''' Plot the chrX RT delay on the y-axis and the chrX expression gap (DNA BAF - RNA BAF) on the x-axis '''
+def plot_transcription_gap_vs_rt(sample_df, ax):
+    ''' Plot the chrX relative RT on the y-axis and the chrX transcription gap (DNA BAF - RNA BAF) on the x-axis '''
     # the regression plot should not include the data points
-    sns.scatterplot(y='mean_chrX_rt_delay', x='BAF_gap', hue='type', data=sample_df, ax=ax, palette=get_type_cmap(), legend=False)
-    sns.regplot(y='mean_chrX_rt_delay', x='BAF_gap', data=sample_df, scatter=False, ax=ax)
-    ax.set_ylabel('chrX RT delay\n<--delayed | advanced -->')
-    ax.set_xlabel('chrX expression gap\n<--less B-allele expression | more B-allele expression-->')
+    sns.scatterplot(y='mean_chrX_rt_delay', x='BAF_gap', hue='type', data=sample_df, ax=ax, palette=cell_type_cdict, legend=False)
+    sns.regplot(y='mean_chrX_rt_delay', x='BAF_gap', data=sample_df, scatter=False, ax=ax, color='grey')
+    ax.set_ylabel('chrX relative RT\n<--delayed | advanced -->')
+    ax.set_xlabel('chrX transcription gap\n<--less B | more B -->')
     # add r and p-value annotations in the bottom-left corner
     reg = linregress(sample_df.dropna()['BAF_gap'].values, sample_df.dropna()['mean_chrX_rt_delay'].values)
-    ax.text(0.05, 0.85, 'r={:.2f}\np={:.2e}'.format(reg.rvalue, reg.pvalue), transform=ax.transAxes)
+    ax.text(0.05, 0.80, 'r={:.2f}\np={:.2e}'.format(reg.rvalue, reg.pvalue), transform=ax.transAxes)
     # edit the x-and y-axis limits to give 0.05 padding on all sides compared to the current limits
     ax.set_xlim([ax.get_xlim()[0] - 0.05, ax.get_xlim()[1] + 0.05])
     ax.set_ylim([ax.get_ylim()[0] - 0.05, ax.get_ylim()[1] + 0.05])
 
 
 def plot_Xq_loh_rt_delays(sample_df, ax, Xq_loh_samples):
-    ''' Barplot of Xp RT delays for samples with Xq LOH but balanced Xp '''
+    ''' Barplot of Xp relative RTs for samples with Xq LOH but balanced Xp '''
     sample_df_Xq_loh = sample_df.loc[sample_df['dataset'].isin(Xq_loh_samples)]
-    sns.barplot(y='mean_chrXp_rt_delay', x='dataset', hue='type', data=sample_df_Xq_loh.sort_values(by=['type', 'dataset']), ax=ax, palette=get_type_cmap())
+    sns.barplot(y='mean_chrXp_rt_delay', x='dataset', hue='type', data=sample_df_Xq_loh.sort_values(by=['type', 'dataset']), ax=ax, palette=cell_type_cdict)
     
-    # add a horizontal line at the mean RT delay for SA039 (balanced across all of chrX)
-    ax.axhline(sample_df.query('dataset=="SA039"')['mean_chrXp_rt_delay'].values[0], color='k', linestyle='--', label='SA039 (balanced Xp and Xq)')
+    # add a horizontal line at the mean relative RT for SA039 (balanced across all of chrX)
+    ax.axhline(sample_df.query('dataset=="SA039"')['mean_chrXp_rt_delay'].values[0], color='grey', linestyle='--', label='SA039')
     
-    ax.set_ylabel('chrXp RT delay\n<--delayed | advanced -->')
-    ax.set_xlabel('sample')
-    ax.set_title('Samples with Xq LOH and balanced Xp')
+    ax.set_ylabel('chrXp relative RT\n<--delayed | advanced -->')
+    ax.set_xlabel(None)
+    ax.set_title('Samples with Xq LOH but not Xp LOH')
     # rotate the x-tick labels by 45 degrees
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='center')
     # show the legend on the bottom left of the plot
     ax.legend(loc='lower left')
 
@@ -260,13 +282,13 @@ def plot_Xq_loh_bafs(sample_df, sample_bafs, ax, Xq_loh_samples):
     # loop through all samples with Xq LOH but balanced Xp
     for s in Xq_loh_samples:
         # plot all the autosomes with grey points
-        sns.scatterplot(data=sample_bafs.query('patient==@s').query('chr_type=="autosome"'), x='dna_baf_mean', y='rna_baf_mean', color='k', alpha=0.1, ax=ax)
+        sns.scatterplot(data=sample_bafs.query('patient==@s').query('chr_type=="autosome"'), x='dna_baf_mean', y='rna_baf_mean', color='grey', alpha=0.1, ax=ax)
         # plot all of chrX with points colored by chrX arm and the marker shape indicating the sample
         sns.scatterplot(x='dna_baf_mean_Xp', y='rna_baf_mean_Xp', data=sample_df.query('dataset==@s'), color='C4', label='Xp', ax=ax)
         sns.scatterplot(x='dna_baf_mean_Xq', y='rna_baf_mean_Xq', data=sample_df.query('dataset==@s'), color='C5', label='Xq', ax=ax)
-    ax.set_xlabel('DNA BAF')
-    ax.set_ylabel('RNA BAF')
-    ax.set_title('Mean BAF per chromsome arm per sample\nSamples with Xq LOH but not Xp LOH')
+    ax.set_xlabel('Arm DNA BAF')
+    ax.set_ylabel('Arm RNA BAF')
+    ax.set_title('Samples with Xq LOH but not Xp LOH')
     # edit the legend to only take the first two elements and display in the top-left corner
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles[:2], labels[:2], loc='upper left')
@@ -310,29 +332,31 @@ def main():
     print(clone_df.head())
     print('clone_df columns:', clone_df.columns)
 
-    # create an 8.5 x 11 figure with 4 rows and 2 columns
-    fig, axes = plt.subplots(4, 2, figsize=(8.5, 11), tight_layout=True)
+    # create an 6.5 x 9 figure with 4 rows and 2 columns
+    # the width is not 8.5 because we wish to leave room for the SA1054 SIGNALS results
+    fig, axes = plt.subplots(4, 2, figsize=(6.5, 9), tight_layout=True)
+
     # merge the two subplots in the 2nd row into one subplot
     axes[1, 0].remove()
     axes[1, 1].remove()
     axes[1, 0] = fig.add_subplot(4, 2, (3, 4))
 
-    # the top left plot is the chrX RT delay vs DNA BAF for all hTERT sample pseudobulks
+    # the top left plot is the chrX relative RT vs DNA BAF for all hTERT sample pseudobulks
     plot_hTERT_sample_bafs_vs_rt(sample_df, axes[0, 0])
 
-    # the top right plot is the SA1054 clone RT delay vs DNA BAF
+    # the top right plot is the SA1054 clone relative RT vs DNA BAF
     plot_SA1054_subclonal_bafs_vs_rt(clone_df, axes[0, 1])
 
-    # create a barplot of all the sample RT delays, sorted and colored by type
+    # create a barplot of all the sample relative RTs, sorted and colored by type
     plot_sample_rt_delays(sample_df, axes[1, 0])
 
-    # the left plot in the 3rd row represents the chrX RT delay vs DNA BAF for all samples in the cohort
+    # the left plot in the 3rd row represents the chrX relative RT vs DNA BAF for all samples in the cohort
     plot_all_sample_bafs_vs_rt(sample_df, axes[2, 0])
 
-    # the right plot in the 3rd row represents the chrX RT delay vs chrX expression gap for all samples in the cohort
-    plot_expression_gap_vs_rt(sample_df, axes[2, 1])
+    # the right plot in the 3rd row represents the chrX relative RT vs chrX transcription gap for all samples in the cohort
+    plot_transcription_gap_vs_rt(sample_df, axes[2, 1])
 
-    # the bottom left plot represents the Xp RT delay of samples with Xq LOH but balanced Xp
+    # the bottom left plot represents the Xp relative RT of samples with Xq LOH but balanced Xp
     Xq_loh_samples = ['SA1091', 'SA1184', 'SA604', 'SA609']
     plot_Xq_loh_rt_delays(sample_df, axes[3, 0], Xq_loh_samples)
 

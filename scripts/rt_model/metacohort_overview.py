@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from argparse import ArgumentParser
+plt.rcParams['svg.fonttype'] = 'none'
+plt.rcParams['pdf.use14corefonts'] = True
 
 
 def get_args():
