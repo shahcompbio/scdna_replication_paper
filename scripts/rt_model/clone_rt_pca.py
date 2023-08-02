@@ -16,7 +16,8 @@ def get_args():
     p.add_argument('--remove_x', action='store_true', default=False, help='filter out all loci with chr=="X"')
     p.add_argument('-e', '--embeddings', type=str, help='PCA embeddings with relevant per-profile features')
     p.add_argument('-l', '--loadings', type=str, help='PCA loadings with relevant per-loci features')
-    p.add_argument('-ev', '--explained_variance_pdf', type=str, help='Curve showing explained variance by PCs')
+    p.add_argument('-evc', '--explained_variance_csv', type=str, help='Table showing explained variance by PCs')
+    p.add_argument('-evp', '--explained_variance_pdf', type=str, help='Curve showing explained variance by PCs')
 
     return p.parse_args()
 
@@ -58,6 +59,10 @@ def main():
     # save embeddings and loadings
     clone_embeddings.to_csv(argv.embeddings, index=False)
     clone_loadings.to_csv(argv.loadings, index=False)
+
+    # create and save a table showing the explained variance for each PC
+    explained_variance = pd.DataFrame({'PC': list(range(1, num_components+1)), 'explained_variance': pca.explained_variance_ratio_})
+    explained_variance.to_csv(argv.explained_variance_csv, index=False)
 
     # plot a lineplot of the cumulative explained variance for each PC
     fig = plt.figure(figsize=(4, 4))

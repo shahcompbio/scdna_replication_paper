@@ -17,6 +17,7 @@ rule all_rt_model:
         'plots/rt_model/rt_profile_posteriors_noX.pdf',
         'plots/rt_model/clone_pca_embeddings.pdf',
         'plots/rt_model/clone_pca_regression.pdf',
+        'analysis/rt_model/clone_pca_explained_variance.csv.gz',
         'plots/rt_model/metacohort_overview.pdf',
         'plots/rt_model/main_figure.pdf'
 
@@ -188,6 +189,7 @@ rule clone_rt_pca:
     output:
         embeddings = 'analysis/rt_model/clone_pca_embeddings.csv.gz',
         loadings = 'analysis/rt_model/clone_pca_loadings.csv.gz',
+        explained_variance_csv = 'analysis/rt_model/clone_pca_explained_variance.csv.gz',
         explained_variance_pdf = 'plots/rt_model/clone_pca_explained_variance.pdf',
     log: 'logs/rt_model/clone_rt_pca.log'
     # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
@@ -199,6 +201,7 @@ rule clone_rt_pca:
         '--table {input.table} '
         '--embeddings {output.embeddings} '
         '--loadings {output.loadings} '
+        '--explained_variance_csv {output.explained_variance_csv} '
         '--explained_variance_pdf {output.explained_variance_pdf} '
         '&> {log}'
         ' ; deactivate'
