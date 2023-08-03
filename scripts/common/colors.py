@@ -65,6 +65,8 @@ def get_methods_cmap():
         'PERT': 'yellowgreen',
         'Kronos': 'lightcoral',
         'laks': 'darksalmon',
+        'Laks': 'darksalmon',
+        'true': 'steelblue'
     }
     return cmap
 
