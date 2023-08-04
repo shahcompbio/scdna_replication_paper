@@ -26,11 +26,23 @@ print(ascn)
 cl <- fread(args$clones, sep='\t')
 print(cl)
 
+# subset cl to just include cell_id and clone_id columns, dropping duplicate rows
+cl <- cl[, c("cell_id", "clone_id")] %>% unique()
+print(cl)
+print('number of cells in cl')
+print(length(cl$cell_id))
+
+# subset the clone_ids to only be the intersection of cells that appear in ascn$cell_id
+cl <- cl[cl$cell_id %in% ascn$cell_id, ]
+print('number of cells in cl after subsetting')
+print(length(cl$cell_id))
+
 h1 <- plotHeatmap(ascn,
                   reorderclusters = TRUE,
                   show_clone_label = TRUE,
                   clusters = cl,
                   plottree = FALSE,
+                  show_library_label = FALSE,
                   plotcol = "state")
 print('Made h1')
 h2 <- plotHeatmap(ascn,
@@ -43,10 +55,10 @@ h2 <- plotHeatmap(ascn,
 print('Made h2')
 
 
-png(args$heatmap, width = 25, height = 12, units = "in", res = 300)
+pdf(args$heatmap, width = 25, height = 12)
 print(ComplexHeatmap::draw(h1 + h2,
                             ht_gap = unit(0.6, "cm"),
-                            column_title = paste0(args$dataset, "\nTotal number of cells: ", length(unique(ascn$cell_id))),
+                            column_title = paste0(args$dataset, "\n# of SIGNALS cells: ", length(unique(ascn$cell_id))),
                             column_title_gp = grid::gpar(fontsize = 20),
                             heatmap_legend_side = "bottom",
                             annotation_legend_side = "bottom",

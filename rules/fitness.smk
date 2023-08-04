@@ -100,7 +100,7 @@ rule all_fitness:
             ]
         ),
         expand(
-            'plots/fitness/{dataset}/signals_heatmaps.png',
+            'plots/fitness/{dataset}/signals_heatmaps.pdf',
             dataset=[
                 d for d in config['fitness_datasets']
                 if (d not in bad_datasets)
@@ -759,9 +759,9 @@ rule plot_rx_clone_spf_f:
 rule signals_heatmaps_f:
     input: 
         ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
-        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
+        clones = 'analysis/fitness/{dataset}/g1_phase_cells.tsv'
     output: 
-        figure = 'plots/fitness/{dataset}/signals_heatmaps.png'
+        figure = 'plots/fitness/{dataset}/signals_heatmaps.pdf'
     params:
         dataset = lambda wildcards: wildcards.dataset,
     log: 'logs/fitness/{dataset}/signals_heatmaps.log'

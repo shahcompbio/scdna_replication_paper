@@ -101,7 +101,7 @@ rule all_sig_lines:
             ]
         ),
         expand(
-            'plots/sig_lines/{dataset}/signals_heatmaps.png',
+            'plots/sig_lines/{dataset}/signals_heatmaps.pdf',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
@@ -662,7 +662,7 @@ rule signals_heatmaps_sl:
         ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
         clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
     output: 
-        figure = 'plots/sig_lines/{dataset}/signals_heatmaps.png'
+        figure = 'plots/sig_lines/{dataset}/signals_heatmaps.pdf'
     params:
         dataset = lambda wildcards: wildcards.dataset,
     log: 'logs/sig_lines/{dataset}/signals_heatmaps.log'
