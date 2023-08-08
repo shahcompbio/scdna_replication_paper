@@ -26,6 +26,15 @@ print(ascn)
 cl <- fread(args$clones, sep='\t')
 print(cl)
 
+# remove the chr9 centromeres
+print('number of rows before removing chr9 centromeres')
+print(nrow(ascn))
+start_centromere <- 38500001
+end_centromere <- 70000000
+ascn <- ascn[!(ascn$chr == '9' & ascn$start >= start_centromere & ascn$end <= end_centromere), ]
+print('number of rows after removing chr9 centromeres')
+print(nrow(ascn))
+
 # subset cl to just include cell_id and clone_id columns, dropping duplicate rows
 cl <- cl[, c("cell_id", "clone_id")] %>% unique()
 print(cl)
@@ -55,11 +64,11 @@ h2 <- plotHeatmap(ascn,
 print('Made h2')
 
 
-pdf(args$heatmap, width = 25, height = 12)
+pdf(args$heatmap, width = 11, height = 6)
 print(ComplexHeatmap::draw(h1 + h2,
                             ht_gap = unit(0.6, "cm"),
                             column_title = paste0(args$dataset, "\n# of SIGNALS cells: ", length(unique(ascn$cell_id))),
-                            column_title_gp = grid::gpar(fontsize = 20),
+                            column_title_gp = grid::gpar(fontsize = 10),
                             heatmap_legend_side = "bottom",
                             annotation_legend_side = "bottom",
                             show_heatmap_legend = TRUE))
