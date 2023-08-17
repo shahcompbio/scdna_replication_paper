@@ -16,6 +16,7 @@ jupyter:
 ```python
 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 clone_rt = pd.read_csv('/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/rt_model/clone_rt.csv.gz', low_memory=False)
 features = pd.read_csv('/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/rt_model/features.csv.gz', low_memory=False)
@@ -35,6 +36,10 @@ clone_rt = clone_rt[~clone_rt.index.isin(remove)]
 features = features.reindex(clone_rt.index)
 features.index.name = 'clone'
 
+```
+
+```python
+features
 ```
 
 ```python
@@ -64,7 +69,7 @@ encode_filename = '/work/shah/users/weinera2/projects/scdna_replication_paper/an
 encode = pd.read_csv(encode_filename, sep='\t', low_memory=True, usecols=columns).drop_duplicates()
 encode['start'] += 1
 encode = encode.set_index(['chr', 'start', 'end']).T
-encode.head()
+encode.index
 
 ```
 
@@ -123,39 +128,54 @@ features_type
 
 ```python
 
+features_dataset = features['dataset'].to_frame()
+features_dataset.head()
+
+```
+
+```python
+
 import seaborn as sns
 import scipy.spatial as sp
 import scipy.cluster.hierarchy as hc
 
 # Get unique attributes and sort them
-def get_colors(df):
-    colors = df.copy()
+def get_colors(df, palettes):
+    colors = df[palettes.keys()].copy()
     attribute_to_color = dict()
-    for col in df.columns:
+    for col in palettes.keys():
         unique_attrs = sorted(colors[col].unique())
-        cmap = sns.color_palette(palette='tab10', n_colors=len(unique_attrs))
+        cmap = sns.color_palette(palette=palettes[col], n_colors=len(unique_attrs))
         attribute_to_color[col] = dict(zip(unique_attrs, cmap))
         colors[col] = colors[col].map(attribute_to_color[col])
     return colors, attribute_to_color
 
-features_df = pd.concat([features_type, features_signature, features_ploidy, features_wgd], axis=1).fillna('N/A')
+features_df = pd.concat([features_type, features_signature, features_dataset, features_ploidy, features_wgd], axis=1).fillna('N/A')
 features_df.index.name = 'clone'
 
-col = 'type'
+palettes = {
+    'type': 'tab10',
+    'signature': 'bright',
+    'wgd': 'mako',
+    'dataset': 'tab20',
+}
 
-row_colors, attribute_to_color = get_colors(features_df[[col]])
+col_colors, attribute_to_color = get_colors(features_df, palettes)
 
 clone_rt_corr = clone_rt.T.corr()
 clone_rt_dism = 1 - clone_rt_corr
 linkage = hc.linkage(sp.distance.squareform(clone_rt_dism), method='average')
-g = sns.clustermap(clone_rt_corr, row_linkage=linkage, col_linkage=linkage, cmap=sns.cm.rocket, row_colors=row_colors, figsize=(8, 8))
-
-# Create a legend
-for attribute, color in attribute_to_color[col].items():
-    g.ax_col_dendrogram.bar(0, 0, color=color, label=attribute, linewidth=0)
-g.ax_col_dendrogram.legend(loc="center", ncols=2)
+g = sns.clustermap(clone_rt_corr, row_linkage=linkage, col_linkage=linkage, cmap=sns.cm.rocket, col_colors=col_colors, figsize=(8, 8))
 g.ax_heatmap.set_xticks([])
 g.ax_heatmap.set_yticks([])
+
+for feature in attribute_to_color.keys():
+    plt.figure(figsize=(4, 1))
+    ax = plt.gca()
+    for attribute, color in attribute_to_color[feature].items():
+        ax.bar(0, 0, color=color, label=attribute, linewidth=0)
+    ax.legend(loc='center', ncols=7, bbox_to_anchor=(0.5, 0.5), title=feature)
+    ax.axis('off')
 
 ```
 
@@ -376,29 +396,84 @@ Y = combined.copy()
 Y.values[:] = scaler.fit_transform(Y.T).T
 
 chromosomes = [str(a) for a in range(1, 23)] + ['X']
+chromosomes = ['1', '2', 'X']
+width = 20
+width = 5
 
 plot_data = Y.T.groupby(level=0).mean().melt(ignore_index=False, var_name='clone', value_name='mean_rt').reset_index()
 plot_data = plot_data.merge(features_df.reset_index(), how='left')
 plot_data.loc[plot_data['clone'].str.endswith('_rt'), 'type'] = plot_data.loc[plot_data['clone'].str.endswith('_rt'), 'clone']
 
-plt.figure(figsize=(20, 4))
+plt.figure(figsize=(width, 4))
 sns.barplot(x='chr', hue='type', y='mean_rt', order=chromosomes, data=plot_data, palette='tab10')
 plt.legend(ncols=2, loc='upper left', bbox_to_anchor=(1., 1.), title='type')
 sns.despine()
 
 plot_data2 = plot_data[~plot_data['clone'].str.endswith('_rt')]
 
-plt.figure(figsize=(20, 4))
+plt.figure(figsize=(width, 4))
 sns.barplot(x='chr', hue='type', y='mean_rt', order=chromosomes, data=plot_data2, palette='tab10')
 plt.legend(ncols=2, loc='upper left', bbox_to_anchor=(1., 1.), title='type')
 sns.despine()
 
 plot_data2 = plot_data[plot_data['clone'].str.endswith('_rt')]
+plot_data2 = plot_data[
+    # (plot_data['clone'] == 'mcf7_rt') |
+    # (plot_data['clone'] == 'helas3_rt') |
+    # (plot_data['clone'] == 'k562_rt') |
+    (plot_data['clone'] == 'gm12878_rt') |
+    (plot_data['clone'] == 'bj_rt') |
+    (~plot_data['clone'].str.endswith('_rt'))]
 
-plt.figure(figsize=(20, 4))
+plot_data2['type'].unique()
+
+plt.figure(figsize=(width, 4))
 sns.barplot(x='chr', hue='type', y='mean_rt', order=chromosomes, data=plot_data2, palette='tab10')
 plt.legend(ncols=2, loc='upper left', bbox_to_anchor=(1., 1.), title='type')
 sns.despine()
+
+plot_data2 = plot_data[(plot_data['clone'] == 'mcf7_rt') | (~plot_data['clone'].str.endswith('_rt'))]
+
+plt.figure(figsize=(width, 4))
+sns.barplot(x='chr', hue='type', y='mean_rt', order=chromosomes, data=plot_data2, palette='tab10')
+plt.legend(ncols=2, loc='upper left', bbox_to_anchor=(1., 1.), title='type')
+sns.despine()
+
+```
+
+```python
+
+Y = combined.copy()
+Y.values[:] = scaler.fit_transform(Y.T).T
+
+chromosomes = [str(a) for a in range(1, 23)] + ['X']
+chromosomes = ['1', '2', 'X']
+width = 20
+width = 5
+
+types_order = ['gm12878_rt', 'bj_rt', 'hTERT', 'OV2295', 'HGSOC', 'TNBC', 'T47D', 'GM18507']
+
+plot_data = Y.T.groupby(level=0).mean().melt(ignore_index=False, var_name='clone', value_name='mean_rt').reset_index()
+plot_data = plot_data.merge(features_df.reset_index(), how='left')
+plot_data.loc[plot_data['clone'].str.endswith('_rt'), 'type'] = plot_data.loc[plot_data['clone'].str.endswith('_rt'), 'clone']
+
+plot_data2 = plot_data[
+    (plot_data['clone'] == 'gm12878_rt') |
+    (plot_data['clone'] == 'bj_rt') |
+    (~plot_data['clone'].str.endswith('_rt'))]
+
+plt.figure(figsize=(width, 4))
+sns.barplot(x='chr', hue='type', y='mean_rt', order=chromosomes, hue_order=types_order, data=plot_data2, palette='tab10')
+plt.legend(ncols=2, loc='upper left', bbox_to_anchor=(0.05, 0.5), title='type', fontsize=8)
+sns.despine()
+
+```
+
+```python
+
+plot_data2 = plot_data[(plot_data['clone'] == 'mcf7_rt') | (~plot_data['clone'].str.endswith('_rt'))]
+
+sns.heatmap(plot_data2.groupby(['chr', 'type'])['mean_rt'].mean().unstack().T)
 
 ```
 

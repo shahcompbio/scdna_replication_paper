@@ -55,7 +55,7 @@ cell_lines = [
     'SA906b',
 ]
 
-cell_frac_rep = [cell_frac_rep]
+cell_frac_rep = []
 
 for dataset in pdxs:
     filename = f'/juno/work/shah/users/weinera2/projects/scdna_replication_paper/analysis/sig_tumors/{dataset}/s_phase_cells_with_scRT_filtered.csv.gz'
@@ -149,7 +149,7 @@ sns.displot(data=plot_data, x='cell_frac_rep', col='signature', kind='kde', comm
 
 import matplotlib.pyplot as plt
 
-plt.figure(figsize=(3,2))
+plt.figure(figsize=(2,2))
 sns.barplot(data=plot_data, x='signature', y='cell_frac_rep', color='0.5', width=0.4)
 sns.despine()
 
@@ -168,7 +168,7 @@ sns.despine()
 
 import matplotlib.pyplot as plt
 
-plt.figure(figsize=(3,2))
+plt.figure(figsize=(1,2))
 sns.barplot(data=plot_data, x='wgd', y='cell_frac_rep', color='0.5', width=0.4)
 sns.despine()
 
