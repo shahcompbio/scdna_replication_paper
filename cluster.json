@@ -244,5 +244,9 @@
     {
         "time" : "120:00",
         "mem" : 256
+    },
+    "hTERT_Sphase_BAFs_chrX" :
+    {
+        "mem" : 128
     }
 }
