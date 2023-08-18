@@ -48,7 +48,9 @@ def main():
     counts = load_counts(argv)
 
     # set a threshold for the number of S-phase cells in each clone
-    num_cell_threshold = 10
+    num_cell_threshold = 20
+
+    bad_clones = [('SA1052', 'G')]
 
     # load the table of input paths and metadata for each sample
     table = pd.read_csv(argv.table, sep='\t')
@@ -106,6 +108,10 @@ def main():
                 n = int(counts.query("dataset=='{}'".format(d)).query("clone_id=='{}'".format(c))['num_cells_s'].values[0])
             except:
                 n = 0  # if a clone is missing from 'counts', it means there are no S-phase cells
+            # set n to 0 if this clone is in the bad_clones list that we wish to remove
+            for bad_d, bad_c in bad_clones:
+                if d == bad_d and c == bad_c:
+                    n = 0
             if n > num_cell_threshold:
                 good_clones.append(col)
                 good_clone_cn_cols.append(clone_cn_col)

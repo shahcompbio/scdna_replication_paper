@@ -194,43 +194,18 @@ def main():
     adam = pyro.optim.Adam({"lr": 0.02})
     elbo = pyro.infer.Trace_ELBO()
     svi = pyro.infer.SVI(model, auto_guide, adam, elbo)
-
-    # # train the model
-    # losses = []
-    # for step in range(1000 if not smoke_test else 2):  # Consider running for more steps.
-    #     loss = svi.step(cell_types, signatures, wgd, rt_data, None, None)
-    #     losses.append(loss)
-    #     if step % 1 == 0:
-    #         logging.info("Elbo loss: {}".format(loss))
     
     losses = []
-    loss_diffs = []
-    frac_loss_diffs = []
-    total_loss_diff = np.nan
-    converged = False
     for step in range(1000 if not smoke_test else 2):
         loss = svi.step(cell_types, signatures, wgd, rt_data, None, None)
         losses.append(loss)
-        
-        # check for convergence after 250 steps
-        # see if the ratio between the total loss difference (first and last) and 
-        # the the average of the 10 most recent loss differences is less than 1e-3
-        if step > 250:
-            total_loss_diff = abs(losses[-1] - losses[0])
-            temp_loss_diff = []
-            # loop over the past 10 losses and find their difference from the current loss
-            for i in range(10):
-                temp_loss_diff.append(abs(losses[-1] - losses[-i-2]))
-            # take the mean of the 5 differences, the smaller this is, the closer the losses are to converging
-            mean_temp_loss_diff = np.mean(temp_loss_diff)
-            loss_diffs.append(mean_temp_loss_diff)
-            frac_loss_diff = mean_temp_loss_diff / total_loss_diff
-            frac_loss_diffs.append(frac_loss_diff)
-            if frac_loss_diff < 1e-3:
-                converged = True
-        if converged:
-            print('Converged at step {}'.format(step))
-            break
+
+        # fancy convergence check that sees if the past 10 iterations have plateaued
+        if step >= 500:
+            loss_diff = abs(max(losses[-10:-1]) - min(losses[-10:-1])) / abs(losses[0] - losses[-1])
+            if loss_diff < 1e-6:
+                print('ELBO converged at iteration ' + str(i))
+                break
 
     # create a dataframe for the iteration and loss values
     loss_df = pd.DataFrame({
