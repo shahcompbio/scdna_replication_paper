@@ -11,8 +11,12 @@ rule all_rt_model:
     input:
         'plots/rt_model/loss_curve.pdf',
         'plots/rt_model/loss_curve_noX.pdf',
+        'plots/rt_model/loss_curve_v2.pdf',
+        'plots/rt_model/loss_curve_v2_noX.pdf',
         'plots/rt_model/beta_importance_posteriors.pdf',
         'plots/rt_model/beta_importance_posteriors_noX.pdf',
+        'plots/rt_model/beta_importance_posteriors_v2.pdf',
+        'plots/rt_model/beta_importance_posteriors_v2_noX.pdf',
         'plots/rt_model/rt_profile_posteriors.pdf',
         'plots/rt_model/rt_profile_posteriors_noX.pdf',
         'plots/rt_model/clone_pca_embeddings.pdf',
@@ -109,6 +113,51 @@ rule run_rt_model_noX:
         ' ; deactivate'
 
 
+rule run_rt_model_v2:
+    input:
+        clone_rt = 'analysis/rt_model/clone_rt.csv.gz',
+        features = 'analysis/rt_model/features.csv.gz'
+    output:
+        beta_importance_posteriors = 'analysis/rt_model/beta_importance_posteriors_v2.csv.gz',
+        rt_profile_posteriors = 'analysis/rt_model/rt_profile_posteriors_v2.csv.gz',
+        loss_curve = 'analysis/rt_model/loss_curve_v2.csv.gz',
+    log: 'logs/rt_model/run_rt_model_v2.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/rt_model_v2.py '
+        '--clone_rt {input.clone_rt} '
+        '--features {input.features} '
+        '--beta_importance_posteriors {output.beta_importance_posteriors} '
+        '--rt_profile_posteriors {output.rt_profile_posteriors} '
+        '--loss_curve {output.loss_curve} '
+        '&> {log}'
+        ' ; deactivate'
+
+
+rule run_rt_model_v2_noX:
+    input:
+        clone_rt = 'analysis/rt_model/clone_rt.csv.gz',
+        features = 'analysis/rt_model/features.csv.gz'
+    output:
+        beta_importance_posteriors = 'analysis/rt_model/beta_importance_posteriors_v2_noX.csv.gz',
+        rt_profile_posteriors = 'analysis/rt_model/rt_profile_posteriors_v2_noX.csv.gz',
+        loss_curve = 'analysis/rt_model/loss_curve_v2_noX.csv.gz',
+    log: 'logs/rt_model/run_rt_model_v2_noX.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/rt_model_v2.py '
+        '--clone_rt {input.clone_rt} '
+        '--features {input.features} '
+        '--remove_x '
+        '--beta_importance_posteriors {output.beta_importance_posteriors} '
+        '--rt_profile_posteriors {output.rt_profile_posteriors} '
+        '--loss_curve {output.loss_curve} '
+        '&> {log}'
+        ' ; deactivate'
+
+
 rule plot_loss_curve_rt:
     input: 'analysis/rt_model/loss_curve.csv.gz'
     output: 'plots/rt_model/loss_curve.pdf'
@@ -133,6 +182,30 @@ rule plot_loss_curve_noX_rt:
         ' ; deactivate'
 
 
+rule plot_loss_curve_v2_rt:
+    input: 'analysis/rt_model/loss_curve_v2.csv.gz'
+    output: 'plots/rt_model/loss_curve_v2.pdf'
+    log: 'logs/rt_model/plot_loss_curve_v2.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/plot_loss_curve.py '
+        '{input} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule plot_loss_curve_v2_noX_rt:
+    input: 'analysis/rt_model/loss_curve_v2_noX.csv.gz'
+    output: 'plots/rt_model/loss_curve_v2_noX.pdf'
+    log: 'logs/rt_model/plot_loss_curve_v2_noX.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/plot_loss_curve.py '
+        '{input} {output} &> {log}'
+        ' ; deactivate'
+
+
 rule plot_beta_importance_posteriors_rt:
     input: 'analysis/rt_model/beta_importance_posteriors.csv.gz'
     output: 'plots/rt_model/beta_importance_posteriors.pdf'
@@ -149,6 +222,30 @@ rule plot_beta_importance_posteriors_noX_rt:
     input: 'analysis/rt_model/beta_importance_posteriors_noX.csv.gz'
     output: 'plots/rt_model/beta_importance_posteriors_noX.pdf'
     log: 'logs/rt_model/plot_beta_importance_posteriors_noX.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/plot_beta_importance_posteriors.py '
+        '{input} --noX {output} &> {log}'
+        ' ; deactivate'
+
+
+rule plot_beta_importance_posteriors_v2_rt:
+    input: 'analysis/rt_model/beta_importance_posteriors_v2.csv.gz'
+    output: 'plots/rt_model/beta_importance_posteriors_v2.pdf'
+    log: 'logs/rt_model/plot_beta_importance_posteriors_v2.log'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/rt_model/plot_beta_importance_posteriors.py '
+        '{input} {output} &> {log}'
+        ' ; deactivate'
+
+
+rule plot_beta_importance_posteriors_v2_noX_rt:
+    input: 'analysis/rt_model/beta_importance_posteriors_v2_noX.csv.gz'
+    output: 'plots/rt_model/beta_importance_posteriors_v2_noX.pdf'
+    log: 'logs/rt_model/plot_beta_importance_posteriors_v2_noX.log'
     # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '

@@ -107,6 +107,7 @@ rule all_sig_lines:
                 if (d not in bad_datasets)
             ]
         ),
+        'analysis/sig_lines/htert_rt_vs_time_profiles.csv.gz',
         'plots/sig_lines/phase_changes_cohort_confusion.png',
         'plots/sig_lines/subclonal_rt_diffs_summary.png',
         'plots/sig_lines/sample_cnas_vs_rt_dists.png',
@@ -839,3 +840,28 @@ rule cn_and_rt_correlations_sl:
         '--clone_corrs {output.clone_corrs} '
         '&> {log} ; '
         'deactivate'
+
+
+rule htert_rt_vs_time_sl:
+    input: 
+        times = 'data/fitness/dlp_summaries_rebuttal.csv',
+        scRT = expand(
+            'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+            dataset=[
+                d for d in ['SA039', 'SA906a', 'SA906b']
+            ]
+        )
+    output:
+        profiles = 'analysis/sig_lines/htert_rt_vs_time_profiles.csv.gz',
+        features = 'analysis/sig_lines/htert_rt_vs_time_features.csv.gz'
+    log: 'logs/sig_lines/htert_rt_vs_time.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/htert_rt_vs_time.py '
+        '--times {input.times} '
+        '--scRT {input.scRT} '
+        '--profiles {output.profiles} '
+        '--features {output.features} '
+        '&> {log} ; '
+        'deactivate'
+        
