@@ -69,7 +69,7 @@ rule all_laks_flow:
             'analysis/laks_flow/{dataset}/rt_pseudobulks_composite.tsv',
             dataset=[
                 d for d in perm_datasets
-                if (d not in ['T47D', 'GM18507'])
+                # if (d not in ['T47D', 'GM18507'])
             ]
         ),
         expand(
@@ -84,7 +84,8 @@ rule all_laks_flow:
                 d for d in ['T47D', 'GM18507', 'all']
             ]
         ),
-        'plots/laks_flow/GM18507/cn_s_example.png',
+        'analysis/laks_flow/all/cell_cycle_clone_counts.tsv',
+        'plots/laks_flow/GM18507/cn_s_example.pdf',
         'plots/laks_flow/all/flow_error_cells.png',
         'plots/laks_flow/all/rpm_pca.png',
         'plots/laks_flow/all/rt_corr.png',
@@ -509,6 +510,37 @@ rule compute_rt_pseudobulks_composite_lf:
         'python3 scripts/laks_flow/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log} ; '
         'deactivate'
+    
+
+rule compute_clone_rt_pseudobulks_composite_lf:
+    input:
+        cn_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_inferred_composite_filtered.tsv',
+    output:
+        T47D = 'analysis/laks_flow/T47D/rt_pseudobulks_composite.tsv',
+        GM18507 = 'analysis/laks_flow/GM18507/rt_pseudobulks_composite.tsv'
+    params:
+        rep_col = 'model_rep_state'
+    log: 'logs/laks_flow/all/compute_clone_rt_pseudobulks_composite.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/laks_flow/compute_clone_rt_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_cell_cycle_clone_counts_lf:
+    input:
+        cn_s_T47D = 'analysis/laks_flow/T47D/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_g_T47D = 'analysis/laks_flow/T47D/cn_g_pyro_inferred_composite_filtered.tsv',
+        cn_s_GM18507 = 'analysis/laks_flow/GM18507/cn_s_pyro_inferred_composite_filtered.tsv',
+        cn_g_GM18507 = 'analysis/laks_flow/GM18507/cn_g_pyro_inferred_composite_filtered.tsv',
+    output: 'analysis/laks_flow/all/cell_cycle_clone_counts.tsv'
+    log: 'logs/laks_flow/all/compute_cell_cycle_clone_counts.log'
+    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    shell:
+        'python3 scripts/laks_flow/compute_cell_cycle_clone_counts.py '
+        '{input} {output} &> {log}'
 
 
 rule compute_rt_pseudobulks_permuted_composite_lf:
@@ -712,12 +744,12 @@ rule plot_example_cells_lf:
         cn_gm_g2 = 'analysis/laks_flow/GM18507/cn_g2.tsv',
         cn_gm_s = 'analysis/laks_flow/GM18507/cn_s.tsv',
     output:
-        cn_t_g1 = 'plots/laks_flow/T47D/cn_g1_example.png',
-        cn_t_g2 = 'plots/laks_flow/T47D/cn_g2_example.png',
-        cn_t_s = 'plots/laks_flow/T47D/cn_s_example.png',
-        cn_gm_g1 = 'plots/laks_flow/GM18507/cn_g1_example.png',
-        cn_gm_g2 = 'plots/laks_flow/GM18507/cn_g2_example.png',
-        cn_gm_s = 'plots/laks_flow/GM18507/cn_s_example.png',
+        cn_t_g1 = 'plots/laks_flow/T47D/cn_g1_example.pdf',
+        cn_t_g2 = 'plots/laks_flow/T47D/cn_g2_example.pdf',
+        cn_t_s = 'plots/laks_flow/T47D/cn_s_example.pdf',
+        cn_gm_g1 = 'plots/laks_flow/GM18507/cn_g1_example.pdf',
+        cn_gm_g2 = 'plots/laks_flow/GM18507/cn_g2_example.pdf',
+        cn_gm_s = 'plots/laks_flow/GM18507/cn_s_example.pdf',
     log: 'logs/laks_flow/plot_example_cells.log'
     shell:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
@@ -735,4 +767,4 @@ rule plot_flow_error_cells_lf:
         'python3 scripts/laks_flow/plot_flow_error_cells.py '
         '{input} {output} &> {log} ; '
         'deactivate'
-    
+

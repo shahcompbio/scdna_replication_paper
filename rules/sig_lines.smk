@@ -101,15 +101,17 @@ rule all_sig_lines:
             ]
         ),
         expand(
-            'plots/sig_lines/{dataset}/signals_heatmaps.png',
+            'plots/sig_lines/{dataset}/signals_heatmaps.pdf',
             dataset=[
                 d for d in config['signatures_cell_lines']
                 if (d not in bad_datasets)
             ]
         ),
+        'analysis/sig_lines/htert_rt_vs_time_profiles.csv.gz',
         'plots/sig_lines/phase_changes_cohort_confusion.png',
         'plots/sig_lines/subclonal_rt_diffs_summary.png',
         'plots/sig_lines/sample_cnas_vs_rt_dists.png',
+        'plots/sig_lines/clone_cnas_vs_rt_dists.png',
         'plots/sig_lines/downsampled_twidth_scatter.png',
         'plots/sig_lines/twidth_summary.png',
         'plots/sig_lines/clone_RT_X_profiles.png',
@@ -578,6 +580,38 @@ rule sample_cnas_vs_rt:
         'deactivate'
 
 
+rule clone_cnas_vs_rt:
+    input:
+        rt = expand(
+            'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
+            dataset=[
+                'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
+            ]
+        ),
+        cn = expand(
+            'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv',
+            dataset=[
+                'SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055'
+            ]
+        )
+    output:
+        plot1 = 'plots/sig_lines/clone_cnas_vs_rt_dists.png',
+        plot2 = 'plots/sig_lines/clone_cnas_vs_rt_profiles.png'
+    params:
+        datasets = expand(['SA039', 'SA906a', 'SA906b', 'SA1292', 'SA1056', 'SA1188', 'SA1054', 'SA1055']),
+    log: 'logs/sig_lines/clone_cnas_vs_rt.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/clone_cnas_vs_rt.py '
+        '-ir {input.rt} '
+        '-ic {input.cn} '
+        '-d {params.datasets} '
+        '--plot1 {output.plot1} '
+        '--plot2 {output.plot2} '
+        '&> {log} ; '
+        'deactivate'
+
+
 rule twidth_analysis_sl:
     input: 
         scrt = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
@@ -662,7 +696,7 @@ rule signals_heatmaps_sl:
         ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
         clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
     output: 
-        figure = 'plots/sig_lines/{dataset}/signals_heatmaps.png'
+        figure = 'plots/sig_lines/{dataset}/signals_heatmaps.pdf'
     params:
         dataset = lambda wildcards: wildcards.dataset,
     log: 'logs/sig_lines/{dataset}/signals_heatmaps.log'
@@ -806,3 +840,28 @@ rule cn_and_rt_correlations_sl:
         '--clone_corrs {output.clone_corrs} '
         '&> {log} ; '
         'deactivate'
+
+
+rule htert_rt_vs_time_sl:
+    input: 
+        times = 'data/fitness/dlp_summaries_rebuttal.csv',
+        scRT = expand(
+            'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
+            dataset=[
+                d for d in ['SA039', 'SA906a', 'SA906b']
+            ]
+        )
+    output:
+        profiles = 'analysis/sig_lines/htert_rt_vs_time_profiles.csv.gz',
+        features = 'analysis/sig_lines/htert_rt_vs_time_features.csv.gz'
+    log: 'logs/sig_lines/htert_rt_vs_time.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/htert_rt_vs_time.py '
+        '--times {input.times} '
+        '--scRT {input.scRT} '
+        '--profiles {output.profiles} '
+        '--features {output.features} '
+        '&> {log} ; '
+        'deactivate'
+        

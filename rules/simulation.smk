@@ -95,12 +95,20 @@ rule all_simulation:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/simulation/{dataset}/subclonal_rt_diffs.png',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/simulation/P5.8/true_vs_inferred_heatmaps.png',
         'plots/simulation/all/rep_accuracies_param_sweep.png',
         'plots/simulation/all/cn_accuracies_param_sweep.png',
         'plots/simulation/all/phase_accuracies_param_sweep.png',
         'plots/simulation/all/clone_specific_rt_corr.png',
-        'plots/simulation/all/predicted_phase_confusion_mat.png'
+        'plots/simulation/all/predicted_phase_confusion_mat.png',
+        'plots/simulation/subclonal_rt_diffs_summary.png'
         
 
 rule simulate_cell_cn_states_sim:
@@ -903,4 +911,59 @@ rule clone_specific_rt_sim:
         'source ../scdna_replication_tools/venv3/bin/activate ; '
         'python3 scripts/simulation/clone_specific_rt.py '
         '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_cn_pseudobulks_sim:
+    input: 'analysis/simulation/{dataset}/g1_phase_cells_hmmcopy.csv.gz'
+    output: 'analysis/simulation/{dataset}/cn_pseudobulks.csv.gz'
+    params:
+        cn_state_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/simulation/{dataset}/compute_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/compute_cn_pseudobulks.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule subclonal_rt_diffs_sim:
+    input:
+        rt = 'analysis/simulation/{dataset}/scRT_pseudobulks_pyro_composite.tsv',
+        cn = 'analysis/simulation/{dataset}/cn_pseudobulks.csv.gz'
+    output:
+        tsv = 'analysis/simulation/{dataset}/subclonal_rt_diffs.csv.gz',
+        png = 'plots/simulation/{dataset}/subclonal_rt_diffs.png'
+    params:
+        rep_col = 'model_rep_state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/simulation/{dataset}/subclonal_rt_diffs.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/subclonal_rt_diffs.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule subclonal_rt_diffs_summary_sim:
+    input:
+        rt = expand(
+            'analysis/simulation/{dataset}/subclonal_rt_diffs.csv.gz',
+            dataset=[
+                d for d in config['simulated_datasets']
+                if (d not in bad_datasets) and (d.startswith('P')) and (d.endswith('.0'))
+            ]
+        )
+    output:
+        tsv = 'analysis/simulation/subclonal_rt_diffs_summary.csv.gz',
+        png = 'plots/simulation/subclonal_rt_diffs_summary.png'
+    log: 'logs/simulation/subclonal_rt_diffs_summary.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/simulation/subclonal_rt_diffs_summary.py '
+        '-i {input} '
+        '--table {output.tsv} '
+        '--plot {output.png} '
+        '&> {log} ; '
         'deactivate'

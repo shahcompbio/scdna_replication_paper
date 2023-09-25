@@ -283,6 +283,11 @@ def main():
     rt = load_rt_data(argv)
     cn = load_cn_data(argv)
 
+    # remove the site of p53 deletion on chr17
+    chr17_start_thresh = 21000001
+    cn = cn.loc[~((cn['chr'] == '17') & (cn['start'] <= chr17_start_thresh))]
+    rt = rt.loc[~((rt['chr'] == '17') & (rt['start'] <= chr17_start_thresh))]
+
     # make a table of copy number breakpoints
     bk = make_bk(cn, argv)
 

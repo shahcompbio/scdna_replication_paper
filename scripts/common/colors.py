@@ -1,4 +1,4 @@
-from matplotlib.colors import ListedColormap
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
 def get_phase_cmap():
     ''' Global color map for cell cycle phases '''
@@ -8,19 +8,6 @@ def get_phase_cmap():
         'G1': 'dodgerblue',
         'G2': 'lightblue',
         'LQ': 'lightgrey'
-    }
-    return cmap
-
-
-def get_cell_line_cmap():
-    ''' Global color map for cell lines '''
-    cmap = {
-        # orange for GM18507
-        'GM18507': 'C1',
-        1: 'C1',
-        # blue for T47D
-        'T47D': 'C0',
-        2: 'C0'
     }
     return cmap
 
@@ -73,11 +60,13 @@ def get_cn_cmap(cn_data):
 
 def get_methods_cmap():
     cmap = {
-        'PERT clone': 'lightblue',  # POWDERKEG BLUE
-        'PERT comp.': 'dodgerblue',  # TRUE BLUE
-        'PERT': 'dodgerblue',  # TRUE BLUE
-        'Kronos': 'goldenrod',  # GOLD
-        'laks': 'gold',  # YELLOW
+        'PERT clone': 'olive',
+        'PERT comp.': 'yellowgreen',
+        'PERT': 'yellowgreen',
+        'Kronos': 'lightcoral',
+        'laks': 'darksalmon',
+        'Laks': 'darksalmon',
+        'true': 'steelblue'
     }
     return cmap
 
@@ -102,26 +91,26 @@ def get_bkpt_cmap():
 
 def get_clone_cmap():
     cmap = {
-        'A': 'C0',
-        1: 'C0',
-        'B': 'C1',
-        2: 'C1',
-        'C': 'C2',
-        3: 'C2',
-        'D': 'C3',
-        4: 'C3',
-        'E': 'C4',
-        5: 'C4',
-        'F': 'C5',
-        6: 'C5',
-        'G': 'C6',
-        7: 'C6',
-        'H': 'C7',
-        8: 'C7',
-        'I': 'C8',
-        9: 'C8',
-        'J': 'C9',
-        10: 'C9',
+        'A': 'cadetblue',
+        1: 'cadetblue',
+        'B': 'chocolate',
+        2: 'chocolate',
+        'C': 'olivedrab',
+        3: 'olivedrab',
+        'D': 'tan',
+        4: 'tan',
+        'E': 'plum',
+        5: 'plum',
+        'F': 'indianred',
+        6: 'indianred',
+        'G': 'lightpink',
+        7: 'lightpink',
+        'H': 'slategrey',
+        8: 'slategrey',
+        'I': 'darkseagreen',
+        9: 'darkseagreen',
+        'J': 'darkkhaki',
+        10: 'darkkhaki',
         'K': 'lightsteelblue',
         11: 'lightsteelblue',
         'L': 'darksalmon',
@@ -164,9 +153,49 @@ def get_htert_cmap():
         'TP53-/-,BRCA2-/-': 'C5',
         'SA1054': 'C5',
         'SA1055': 'chocolate',
-        'OV2295': 'C6'
+        'OV2295': 'lightgreen'
     }
     return cmap
+
+
+def get_facs_cmap():
+    ''' Global color map for FACS isolated cell types '''
+    cmap = {
+        # FACS sorted cell lines
+        'GM18507': 'violet', 'SA928': 'violet', 1: 'violet',
+        'T47D': 'gold', 'SA1044': 'gold', 2: 'gold',
+    }
+    return cmap
+
+
+def get_metacohort_cmaps():
+    cell_type_cdict = {
+        'hTERT': 'lightsteelblue', 0: 'lightsteelblue',
+        'HGSOC': 'teal', 1: 'teal',
+        'TNBC': 'salmon', 2: 'salmon',
+        'OV2295': 'lightgreen', 3: 'lightgreen',
+        'T47D': 'gold', 4: 'gold',
+        'GM18507': 'violet', 5: 'violet',
+    }
+    cell_type_cmap = LinearSegmentedColormap.from_list('cell_type_cmap', list(cell_type_cdict.values()), N=len(cell_type_cdict))
+
+    signature_cdict = {
+        'FBI': 'plum', 0: 'plum',
+        'HRD': 'cyan', 1: 'cyan',
+        'TD': 'coral', 2: 'coral',
+    }
+    signature_cmap = LinearSegmentedColormap.from_list('signature_cmap', list(signature_cdict.values()), N=len(signature_cdict))
+
+    condition_cdict = {
+        'Line': 'tan', 0: 'tan',
+        'PDX': 'lightskyblue', 1: 'lightskyblue',
+    }
+    condition_cmap = LinearSegmentedColormap.from_list('condition_cmap', list(condition_cdict.values()), N=len(condition_cdict))
+
+    ploidy_cdict = {2:'#CCCCCC', 3:'#FDCC8A', 4:'#FC8D59', 5:'#E34A33'}
+    ploidy_cmap = LinearSegmentedColormap.from_list('ploidy_cmap', list(ploidy_cdict.values()), N=len(ploidy_cdict))
+
+    return cell_type_cmap, signature_cmap, condition_cmap, ploidy_cmap
 
 
 def get_rx_cmap():

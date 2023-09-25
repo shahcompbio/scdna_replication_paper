@@ -58,6 +58,13 @@ rule all_sig_tumors:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'plots/sig_tumors/{dataset}/signals_heatmaps.pdf',
+            dataset=[
+                d for d in config['signatures_patient_tumors']
+                if (d not in bad_datasets)
+            ]
+        ),
         'plots/sig_tumors/cohort_spf.png',
         'plots/sig_tumors/sample_cn_rt_corrs.png',
         'plots/sig_tumors/subclonal_rt_diffs_summary.png'
@@ -464,3 +471,24 @@ rule subclonal_rt_diffs_summary_st:
         '--plot {output.png} '
         '&> {log}'
         # ' ; deactivate'
+
+
+
+rule signals_heatmaps_st:
+    input: 
+        ascn = 'analysis/schnapps-results/persample/{dataset}_hscn.csv.gz',
+        clones = 'data/signatures/clone_trees/{dataset}_clones.tsv'
+    output: 
+        figure = 'plots/sig_tumors/{dataset}/signals_heatmaps.pdf'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+    log: 'logs/sig_tumors/{dataset}/signals_heatmaps.log'
+    singularity: 'docker://marcjwilliams1/signals'
+    # singularity: '/juno/work/shah/users/william1/singularity/signals_v0.7.6.sif'
+    shell:
+        'Rscript scripts/sig_tumors/signals_heatmaps.R '
+        '--ascn {input.ascn} '
+        '--clones {input.clones} '
+        '--dataset {params.dataset} '
+        '--heatmap {output.figure} '
+        '&> {log}'
