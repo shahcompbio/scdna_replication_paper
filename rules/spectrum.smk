@@ -6,10 +6,10 @@ np.random.seed(2794834348)
 configfile: "config.yaml"
 
 bad_datasets = [
-    'SPECTRUM-OV-002',
-    'SPECTRUM-OV-014',
-    'SPECTRUM-OV-068',
-    'SPECTRUM-OV-105'
+    # 'SPECTRUM-OV-002',
+    # 'SPECTRUM-OV-014',
+    # 'SPECTRUM-OV-068',
+    # 'SPECTRUM-OV-105'
 ]
 
 rule all_spectrum:
@@ -59,10 +59,12 @@ rule collect_cn_data_sp:
     params:
         dataset = lambda wildcards: wildcards.dataset
     shell: 
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/collect_cn_data.py '
         '--input {input} '
         '--dataset {params.dataset} '
         '--output {output} &> {log}'
+        ' ; deactivate'
 
 
 rule clone_assignments_sp:
@@ -74,20 +76,24 @@ rule clone_assignments_sp:
         dataset = lambda wildcards: wildcards.dataset,
         assign_col = 'copy'
     log: 'logs/spectrum/{dataset}/clone_assignments.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/clone_assignments.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule compute_ccc_features_sp:
     input: 'analysis/spectrum/{dataset}/cn_data_clones.csv.gz'
     output: 'analysis/spectrum/{dataset}/cn_data_features.csv.gz'
     log: 'logs/spectrum/{dataset}/compute_ccc_features.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/compute_ccc_features.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_ccc_features_sp:
@@ -96,10 +102,12 @@ rule plot_ccc_features_sp:
         plot1 = 'plots/spectrum/{dataset}/ccc_features_hist.png',
         plot2 = 'plots/spectrum/{dataset}/ccc_features_scatter.png'
     log: 'logs/spectrum/{dataset}/plot_ccc_features.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/plot_ccc_features.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule split_cell_cycle_sp:
@@ -108,10 +116,12 @@ rule split_cell_cycle_sp:
         cn_s = 'analysis/spectrum/{dataset}/s_phase_cells.csv.gz',
         cn_g1 = 'analysis/spectrum/{dataset}/g1_phase_cells.csv.gz'
     log: 'logs/spectrum/{dataset}/split_cell_cycle.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/split_cell_cycle.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_cn_heatmaps_sp:
@@ -123,10 +133,12 @@ rule plot_cn_heatmaps_sp:
         value_col = 'state',
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/spectrum/{dataset}/plot_cn_heatmaps.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/plot_s_vs_g_cn_heatmaps.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule infer_scRT_pyro_sp:
@@ -146,10 +158,12 @@ rule infer_scRT_pyro_sp:
         cn_prior_method = 'g1_composite',
         infer_mode = 'pert'
     log: 'logs/spectrum/{dataset}/infer_scRT_pyro.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/infer_scRT.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_pyro_model_output_sp:
@@ -162,8 +176,9 @@ rule plot_pyro_model_output_sp:
         top_title_prefix = 'input_set:_unknown',
         bottom_title_prefix = 'input_set:_high-confidence_G1/2-phase'
     log: 'logs/spectrum/{dataset}/plot_pyro_model_output.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/plot_pyro_model_output.py '
         '--cn_s {input.s_phase} '
         '--cn_g {input.g1_phase} '
@@ -172,6 +187,7 @@ rule plot_pyro_model_output_sp:
         '--bottom_title_prefix {params.bottom_title_prefix} '
         '--output {output} '
         '&> {log}'
+        ' ; deactivate'
 
 
 rule predict_cycle_phase_sp:
@@ -188,10 +204,12 @@ rule predict_cycle_phase_sp:
         cn_col = 'model_cn_state',
         rpm_col = 'rpm'
     log: 'logs/spectrum/{dataset}/predict_cycle_phase.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/predict_cycle_phase.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_filtered_pyro_model_output_sp:
@@ -204,8 +222,9 @@ rule plot_filtered_pyro_model_output_sp:
         top_title_prefix = 'PERT_S-phase',
         bottom_title_prefix = 'PERT_G1/2-phase'
     log: 'logs/spectrum/{dataset}/plot_filtered_pyro_model_output.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/plot_pyro_model_output.py '
         '--cn_s {input.s_phase} '
         '--cn_g {input.g1_phase} '
@@ -214,6 +233,7 @@ rule plot_filtered_pyro_model_output_sp:
         '--bottom_title_prefix {params.bottom_title_prefix} '
         '--output {output} '
         '&> {log}'
+        ' ; deactivate'
 
 
 rule compute_rt_pseudobulks_sp:
@@ -222,10 +242,12 @@ rule compute_rt_pseudobulks_sp:
     params:
         rep_col = 'model_rep_state',
     log: 'logs/spectrum/{dataset}/compute_rt_pseudobulks.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/compute_rt_pseudobulks.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule compute_cell_cycle_clone_counts_sp:
@@ -234,10 +256,12 @@ rule compute_cell_cycle_clone_counts_sp:
         cn_g = 'analysis/spectrum/{dataset}/g1_phase_cells_with_scRT_filtered.csv.gz'
     output: 'analysis/spectrum/{dataset}/cell_cycle_clone_counts.csv.gz'
     log: 'logs/spectrum/{dataset}/compute_cell_cycle_clone_counts.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/compute_cell_cycle_clone_counts.py '
         '{input} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_clone_spf_sp:
@@ -246,17 +270,21 @@ rule plot_clone_spf_sp:
     params:
         dataset = lambda wildcards: wildcards.dataset
     log: 'logs/spectrum/{dataset}/plot_clone_spf.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/plot_clone_spf.py '
         '{input} {params} {output} &> {log}'
+        ' ; deactivate'
 
 
 rule plot_scRNA_phase_sp:
     input: 'data/spectrum/SPECTRUM-OV-081_cell_cycle_meta.csv'
     output: 'plots/spectrum/SPECTRUM-OV-081/scRNA_phase.pdf'
     log: 'logs/spectrum/SPECTRUM-OV-081/plot_scRNA_phase.log'
-    singularity: 'docker://adamcweiner/scdna_replication_tools:main'
+    # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
+        'source ../scdna_replication_tools/venv4/bin/activate ; '
         'python3 scripts/spectrum/plot_scRNA_phase.py '
         '{input} {output} &> {log}'
+        ' ; deactivate'
