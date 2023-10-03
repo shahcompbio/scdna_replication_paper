@@ -144,7 +144,8 @@ rule plot_cn_heatmaps_sp:
 rule infer_scRT_pyro_sp:
     input:
         cn_s = 'analysis/spectrum/{dataset}/s_phase_cells.csv.gz',
-        cn_g1 = 'analysis/spectrum/{dataset}/g1_phase_cells.csv.gz'
+        cn_g1 = 'analysis/spectrum/{dataset}/g1_phase_cells.csv.gz',
+        rt_profile = 'analysis/sig_tumors/hgsoc_rt_profile.csv.gz',
     output:
         main_s_out = 'analysis/spectrum/{dataset}/s_phase_cells_with_scRT.csv.gz',
         supp_s_out = 'analysis/spectrum/{dataset}/scRT_pyro_supp_s_output.csv.gz',
@@ -156,7 +157,8 @@ rule infer_scRT_pyro_sp:
         copy_col = 'copy',
         gc_col = 'gc',
         cn_prior_method = 'g1_composite',
-        infer_mode = 'pert'
+        infer_mode = 'pert',
+        rt_init_col = 'hgsoc_rt_mean'
     log: 'logs/spectrum/{dataset}/infer_scRT_pyro.log'
     # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
