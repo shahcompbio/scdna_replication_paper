@@ -13,6 +13,7 @@ def get_args():
     p.add_argument('-l', '--lamb', type=float, nargs='+', help='negative binomial event probs lambda for each dataset')
     p.add_argument('-b0', '--beta0', type=float, nargs='+', help='beta0 for each dataset')
     p.add_argument('-b1', '--beta1', type=float, nargs='+', help='beta1 for each dataset')
+    p.add_argument('-ns', '--num_s', type=int, nargs='+', help='number of S-phase cells in each dataset')
     p.add_argument('-krc', '--kronos_rep_col', type=str, help='column containing the kronos model replication states')
     p.add_argument('-prc', '--pert_rep_col', type=str, help='column containing the pert model replication states')
     p.add_argument('-pcn', '--pert_cn_col', type=str, help='column containing the pert model copy number states')
@@ -56,7 +57,8 @@ def main():
         'num_clones': argv.num_clones,
         'lambda': argv.lamb,
         'beta0': argv.beta0,
-        'beta1': argv.beta1
+        'beta1': argv.beta1,
+        'num_s': argv.num_s
     })
 
     # load table with paths to model results
@@ -84,7 +86,7 @@ def main():
         temp_df = pd.DataFrame({
             'dataset': [dataset]*3, 'datatag': [datatag]*3,
             'alpha': [chunk['alpha'].values[0]]*3, 'lambda': [chunk['lambda'].values[0]]*3,
-            'beta0': [chunk['beta0'].values[0]]*3, 'beta1': [chunk['beta1'].values[0]]*3,
+            'beta0': [chunk['beta0'].values[0]]*3, 'beta1': [chunk['beta1'].values[0]]*3, 'num_s': [chunk['num_s'].values[0]]*3,
             'cell_cna_rate': [chunk.cell_cna_rate.values[0]]*3, 'num_clones': [chunk.num_clones.values[0]]*3,
             'method': methods, 'rep_accuracy': rep_accs, 'cn_accuracy': cn_accs
         })

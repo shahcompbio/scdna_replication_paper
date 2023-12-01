@@ -794,6 +794,7 @@ rule scRT_accuracies_sim:
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
         beta0 = expand([str(config['simulated_datasets'][d]['gc_betas'][0]) for d in config['simulated_datasets']]),
         beta1 = expand([str(config['simulated_datasets'][d]['gc_betas'][1]) for d in config['simulated_datasets']]),
+        num_s = expand([str(config['simulated_datasets'][d]['num_cells_S']) for d in config['simulated_datasets']]),
         kronos_rep_col = 'rt_state',
         pert_rep_col = 'model_rep_state',
         pert_cn_col = 'model_cn_state',
@@ -811,6 +812,7 @@ rule scRT_accuracies_sim:
         '--lamb {params.lamb} '
         '--beta0 {params.beta0} '
         '--beta1 {params.beta1} '
+        '--num_s {params.num_s} '
         '--kronos_rep_col {params.kronos_rep_col} '
         '--pert_rep_col {params.pert_rep_col} '
         '--pert_cn_col {params.pert_cn_col} '
@@ -858,6 +860,7 @@ rule phase_accuracies_sim:
         lamb = expand([str(config['simulated_datasets'][d]['lambda']) for d in config['simulated_datasets']]),
         beta0 = expand([str(config['simulated_datasets'][d]['gc_betas'][0]) for d in config['simulated_datasets']]),
         beta1 = expand([str(config['simulated_datasets'][d]['gc_betas'][1]) for d in config['simulated_datasets']]),
+        num_s = expand([str(config['simulated_datasets'][d]['num_cells_S']) for d in config['simulated_datasets']]),
         true_phase_col = 'true_phase',
         pert_phase_col = 'PERT_phase',
         laks_phase_col = 'laks_phase',
@@ -875,6 +878,7 @@ rule phase_accuracies_sim:
         '--lamb {params.lamb} '
         '--beta0 {params.beta0} '
         '--beta1 {params.beta1} '
+        '--num_s {params.num_s} '
         '--true_phase_col {params.true_phase_col} '
         '--pert_phase_col {params.pert_phase_col} '
         '--laks_phase_col {params.laks_phase_col} '

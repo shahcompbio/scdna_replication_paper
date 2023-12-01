@@ -32,7 +32,7 @@ def plot_cna_rate_rep_acc(df, ax, n=1, test='t-test_ind', text_format='star', lo
     x = "cell_cna_rate"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((0.05, "PERT clone"), (0.05, "PERT comp.")),
         ((0.02, "PERT clone"), (0.02, "PERT comp.")),
@@ -56,7 +56,7 @@ def plot_cna_rate_cn_acc(df, ax, n=1, test='t-test_ind', text_format='star', loc
     x = "cell_cna_rate"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((0.05, "PERT clone"), (0.05, "PERT comp.")),
         ((0.02, "PERT clone"), (0.02, "PERT comp.")),
@@ -75,7 +75,7 @@ def plot_clone_effect_rep_acc(df, ax, rate=0.02, test='t-test_ind', text_format=
     x = "num_clones"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((3, "Kronos"), (3, "PERT comp.")),
         ((3, "PERT clone"), (3, "Kronos")),
@@ -97,7 +97,7 @@ def plot_clone_effect_cn_acc(df, ax, rate=0.02, test='t-test_ind', text_format='
     x = "num_clones"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((3, "PERT clone"), (3, "PERT comp.")),
         ((1, "PERT clone"), (1, "PERT comp.")),
@@ -115,7 +115,7 @@ def plot_alpha_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', loc=
     x = "alpha"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02')
+    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02').query('num_s==400')
     box_pairs = [
         ((10.0, 'PERT comp.'), (10.0, 'PERT clone')),
         ((5.0, 'PERT comp.'), (5.0, 'PERT clone')),
@@ -133,7 +133,7 @@ def plot_alpha_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', loc
     x = "alpha"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02')
+    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02').query('num_s==400')
     box_pairs = [
         ((10.0, 'PERT comp.'), (10.0, 'PERT clone')),
         ((5.0, 'PERT comp.'), (5.0, 'PERT clone')),
@@ -157,7 +157,7 @@ def plot_lambda_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', loc
     x = "lamb"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2')
+    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((0.5, 'PERT clone'), (0.5, 'PERT comp.')),
         ((0.6, 'PERT clone'), (0.6, 'PERT comp.')),
@@ -177,7 +177,7 @@ def plot_lambda_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', lo
     x = "lamb"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2')
+    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((0.5, 'PERT clone'), (0.5, 'PERT comp.')),
         ((0.6, 'PERT clone'), (0.6, 'PERT comp.')),
@@ -207,7 +207,7 @@ def plot_gc_bias_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', lo
     x = "beta0"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75')
+    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75').query('num_s==400')
     box_pairs = [
         ((1.2, 'PERT comp.'), (1.2, 'PERT clone')),
         ((-1.2, 'PERT comp.'), (-1.2, 'PERT clone'))
@@ -224,7 +224,7 @@ def plot_gc_bias_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', l
     x = "beta0"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75')
+    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75').query('num_s==400')
     box_pairs = [
         ((1.2, 'PERT comp.'), (1.2, 'PERT clone')),
         ((-1.2, 'PERT comp.'), (-1.2, 'PERT clone')),
@@ -240,9 +240,55 @@ def plot_gc_bias_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', l
     ax.set_xlabel('Beta0 (GC bias slope)')
 
 
+def plot_num_s_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0, hue_order=None):
+    ''' Plot the cn accuracy vs number of S-phase cells in datasets with all other params fixed. '''
+    x = "num_s"
+    y = "cn_accuracy"
+    hue = "method"
+    temp_df = df.query('cell_cna_rate==0.2').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
+    box_pairs = [
+        ((400, 'PERT comp.'), (400, 'PERT clone')),
+        ((200, 'PERT comp.'), (200, 'PERT clone')),
+        ((100, 'PERT comp.'), (100, 'PERT clone')),
+        ((50, 'PERT comp.'), (50, 'PERT clone'))
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose, hue_order=hue_order)
+    ax.set_title('Sweep across number of S-phase cells')
+    ax.set_ylabel('CN state accuracy')
+    ax.set_xlabel('# S-phase cells')
+
+
+def plot_num_s_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0, hue_order=None):
+    ''' Plot the replication accuracy vs number of S-phase cells in datasets with all other params fixed. '''
+    x = "num_s"
+    y = "rep_accuracy"
+    hue = "method"
+    temp_df = df.query('cell_cna_rate==0.2').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
+    box_pairs = [
+        ((400, 'PERT comp.'), (400, 'PERT clone')),
+        ((200, 'PERT comp.'), (200, 'PERT clone')),
+        ((100, 'PERT comp.'), (100, 'PERT clone')),
+        ((50, 'PERT comp.'), (50, 'PERT clone')),
+        ((400, 'PERT comp.'), (400, 'Kronos')),
+        ((200, 'PERT comp.'), (200, 'Kronos')),
+        ((100, 'PERT comp.'), (100, 'Kronos')),
+        ((50, 'PERT comp.'), (50, 'Kronos')),
+        ((400, 'PERT clone'), (400, 'Kronos')),
+        ((200, 'PERT clone'), (200, 'Kronos')),
+        ((100, 'PERT clone'), (100, 'Kronos')),
+        ((50, 'PERT clone'), (50, 'Kronos'))
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose, hue_order=hue_order)
+    ax.set_title('Sweep across number of S-phase cells')
+    ax.set_ylabel('Replication state accuracy')
+    ax.set_xlabel('# S-phase cells')
+
+
 def plot_param_sweep_rep_acc(df, argv):
     """ Figure showing replication accuracy parameter sweep across num_clones and cell_cna_rate """
-    fig, ax = plt.subplots(2, 5, figsize=(20, 8), tight_layout=True)
+    fig, ax = plt.subplots(2, 6, figsize=(20, 8), tight_layout=True)
 
     # set the hue order to be the same for all plots
     hue_order = ['PERT comp.', 'PERT clone', 'Kronos']
@@ -256,11 +302,14 @@ def plot_param_sweep_rep_acc(df, argv):
     plot_clone_effect_rep_acc(df, ax[0, 3], rate=0.02, hue_order=hue_order)
     plot_clone_effect_rep_acc(df, ax[0, 4], rate=0.05, hue_order=hue_order)
 
-    # merge together the two supblots in the bottom left corner
+    # show effect of varying number of S-phase cells
+    plot_num_s_effect_rep_acc(df, ax[0, 5], hue_order=hue_order)
+
+    # merge together the 3 supblots in the bottom left corner
     gs = ax[1, 0].get_gridspec()
-    for a in ax[1, :2]:
+    for a in ax[1, :3]:
         a.remove()
-    axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
+    axbig_bottom_row = fig.add_subplot(gs[1, 0:3])
 
     # barplots of phase accuracies for all simulated datasets
     sns.barplot(
@@ -271,20 +320,20 @@ def plot_param_sweep_rep_acc(df, argv):
     axbig_bottom_row.set_title('All simulated datasets')
 
     # plot the effect of varying alpha
-    plot_alpha_effect_rep_acc(df, ax[1, 2], hue_order=hue_order)
+    plot_alpha_effect_rep_acc(df, ax[1, 3], hue_order=hue_order)
 
     # plot the effect of varying lambda
-    plot_lambda_effect_rep_acc(df, ax[1, 3], hue_order=hue_order)
+    plot_lambda_effect_rep_acc(df, ax[1, 4], hue_order=hue_order)
     
     # plot the effect of varying GC bias
-    plot_gc_bias_effect_rep_acc(df, ax[1, 4], hue_order=hue_order)
+    plot_gc_bias_effect_rep_acc(df, ax[1, 5], hue_order=hue_order)
 
     fig.savefig(argv.plot1, bbox_inches='tight', dpi=300)
 
 
 def plot_param_sweep_cn_acc(df, argv):
     """ Figure showing copy number accuracy parameter sweep across num_clones and cell_cna_rate """
-    fig, ax = plt.subplots(2, 5, figsize=(20, 8), tight_layout=True)
+    fig, ax = plt.subplots(2, 6, figsize=(20, 8), tight_layout=True)
 
     # remove all rows of df where method=='Kronos' since it doesn't predict CN states
     df = df.query('method!="Kronos"')
@@ -301,11 +350,14 @@ def plot_param_sweep_cn_acc(df, argv):
     plot_clone_effect_cn_acc(df, ax[0, 3], rate=0.02, hue_order=hue_order)
     plot_clone_effect_cn_acc(df, ax[0, 4], rate=0.05, hue_order=hue_order)
 
-    # merge together the two supblots in the bottom left corner
+    # show effect of varying number of S-phase cells
+    plot_num_s_effect_cn_acc(df, ax[0, 5], hue_order=hue_order)
+
+    # merge together the 3 supblots in the bottom left corner
     gs = ax[1, 0].get_gridspec()
-    for a in ax[1, :2]:
+    for a in ax[1, :3]:
         a.remove()
-    axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
+    axbig_bottom_row = fig.add_subplot(gs[1, 0:3])
 
     # barplots of phase accuracies for all simulated datasets
     sns.barplot(
@@ -315,13 +367,13 @@ def plot_param_sweep_cn_acc(df, argv):
     axbig_bottom_row.set_title('All simulated datasets')
 
     # plot the effect of varying alpha
-    plot_alpha_effect_cn_acc(df, ax[1, 2], hue_order=hue_order)
+    plot_alpha_effect_cn_acc(df, ax[1, 3], hue_order=hue_order)
 
     # plot the effect of varying lambda
-    plot_lambda_effect_cn_acc(df, ax[1, 3], hue_order=hue_order)
+    plot_lambda_effect_cn_acc(df, ax[1, 4], hue_order=hue_order)
     
     # plot the effect of varying GC bias
-    plot_gc_bias_effect_cn_acc(df, ax[1, 4], hue_order=hue_order)
+    plot_gc_bias_effect_cn_acc(df, ax[1, 5], hue_order=hue_order)
 
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
