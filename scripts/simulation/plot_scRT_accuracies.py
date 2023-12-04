@@ -245,12 +245,14 @@ def plot_num_s_effect_cn_acc(df, ax, test='t-test_ind', text_format='star', loc=
     x = "num_s"
     y = "cn_accuracy"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0.2').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
+    temp_df = df.query('cell_cna_rate==0.02').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
     box_pairs = [
         ((400, 'PERT comp.'), (400, 'PERT clone')),
         ((200, 'PERT comp.'), (200, 'PERT clone')),
         ((100, 'PERT comp.'), (100, 'PERT clone')),
-        ((50, 'PERT comp.'), (50, 'PERT clone'))
+        ((50, 'PERT comp.'), (50, 'PERT clone')),
+        ((25, 'PERT comp.'), (25, 'PERT clone')),
+        ((5, 'PERT comp.'), (5, 'PERT clone'))
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose, hue_order=hue_order)
@@ -264,20 +266,27 @@ def plot_num_s_effect_rep_acc(df, ax, test='t-test_ind', text_format='star', loc
     x = "num_s"
     y = "rep_accuracy"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0.2').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
+    temp_df = df.query('cell_cna_rate==0.02').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
+    print(temp_df[['num_s', 'method', 'rep_accuracy']])
     box_pairs = [
         ((400, 'PERT comp.'), (400, 'PERT clone')),
         ((200, 'PERT comp.'), (200, 'PERT clone')),
         ((100, 'PERT comp.'), (100, 'PERT clone')),
         ((50, 'PERT comp.'), (50, 'PERT clone')),
+        ((25, 'PERT comp.'), (25, 'PERT clone')),
+        ((5, 'PERT comp.'), (5, 'PERT clone')),
         ((400, 'PERT comp.'), (400, 'Kronos')),
         ((200, 'PERT comp.'), (200, 'Kronos')),
         ((100, 'PERT comp.'), (100, 'Kronos')),
         ((50, 'PERT comp.'), (50, 'Kronos')),
+        ((25, 'PERT comp.'), (25, 'Kronos')),
+        ((5, 'PERT comp.'), (5, 'Kronos')),
         ((400, 'PERT clone'), (400, 'Kronos')),
         ((200, 'PERT clone'), (200, 'Kronos')),
         ((100, 'PERT clone'), (100, 'Kronos')),
-        ((50, 'PERT clone'), (50, 'Kronos'))
+        ((50, 'PERT clone'), (50, 'Kronos')),
+        ((25, 'PERT clone'), (25, 'Kronos')),
+        ((5, 'PERT clone'), (5, 'Kronos'))
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose, hue_order=hue_order)

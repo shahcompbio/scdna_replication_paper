@@ -144,12 +144,14 @@ def plot_num_s_effect(df, ax, test='t-test_ind', text_format='star', loc='inside
     x = "num_s"
     y = "phase_acc"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0.2').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
+    temp_df = df.query('cell_cna_rate==0.02').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
     box_pairs = [
-        ((400, 'PERT'), (400, 'Laks')),
-        ((200, 'PERT'), (200, 'Laks')),
-        ((100, 'PERT'), (100, 'Laks')),
-        ((50, 'PERT'), (50, 'Laks'))
+        ((400, 'PERT'), (400, 'laks')),
+        ((200, 'PERT'), (200, 'laks')),
+        ((100, 'PERT'), (100, 'laks')),
+        ((50, 'PERT'), (50, 'laks')),
+        ((25, 'PERT'), (25, 'laks')),
+        ((5, 'PERT'), (5, 'laks')),
     ]
     violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
                        text_format=text_format, loc=loc, verbose=verbose)
