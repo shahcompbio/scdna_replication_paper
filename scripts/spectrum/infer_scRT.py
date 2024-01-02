@@ -101,9 +101,10 @@ def main():
     print('creating scrt object')
     # create scRT object with input
     scrt = scRT(
-        temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_init_col=argv.rt_init_col, assign_col=argv.copy_col,
+        temp_cn_s, temp_cn_g, input_col=argv.input_col, 
+        # rt_init_col=argv.rt_init_col,  # not yet implemented
+        assign_col=argv.copy_col,
         cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=1500
-        # max_iter=1500
     )
 
     # run inference

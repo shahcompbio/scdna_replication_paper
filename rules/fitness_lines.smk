@@ -4,11 +4,29 @@ import pandas as pd
 np.random.seed(2794834348)
 
 configfile: "config.yaml"
+hmmcopy_samples = pd.read_csv('data/signatures/signatures-hmmcopy.csv')
+metrics_samples = pd.read_csv('data/signatures/signatures-annotation.csv')
+htert_hmmcopy = hmmcopy_samples.loc[hmmcopy_samples['isabl_patient_id']=='184-hTERT']
+htert_metrics = metrics_samples.loc[metrics_samples['isabl_patient_id']=='184-hTERT']
 
 bad_datasets = []
 
 rule all_fitness_lines:
     input:
+        expand(
+            'plots/fitness_lines/{dataset}/ccc_features_scatter.png',
+            dataset=[
+                d for d in config['fitness_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
+        expand(
+            'plots/fitness_lines/{dataset}/inferred_cn_rep_results.png',
+            dataset=[
+                d for d in config['fitness_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
         expand(
             'plots/fitness_lines/{dataset}/inferred_cn_rep_results_filtered.png',
             dataset=[
@@ -61,12 +79,191 @@ rule all_fitness_lines:
         'plots/fitness_lines/s_predictiveness.png'
 
 
+def dataset_cn_files_fl(wildcards):
+    if wildcards.dataset == 'OV2295':
+        files = hmmcopy_samples.loc[
+            hmmcopy_samples['isabl_patient_id']==wildcards.dataset].loc[
+            hmmcopy_samples['result_type']=='reads']['result_filepath'].values
+    else:
+        col = 'in_{}'.format(wildcards.dataset)
+        htert_hmmcopy[col] = list(
+            map(lambda x: x.startswith(wildcards.dataset), htert_hmmcopy['isabl_sample_id'])
+        )
+        files = htert_hmmcopy.loc[
+            htert_hmmcopy[col]==True].loc[
+            htert_hmmcopy['result_type']=='reads']['result_filepath'].values
+    
+    return expand(files)
+
+
+def dataset_metric_files_fl(wildcards):
+    if wildcards.dataset == 'OV2295':
+        files = metrics_samples.loc[
+            metrics_samples['isabl_patient_id']==wildcards.dataset].loc[
+            metrics_samples['result_type']=='metrics']['result_filepath'].values
+    else:
+        col = 'in_{}'.format(wildcards.dataset)
+        htert_metrics[col] = list(
+            map(lambda x: x.startswith(wildcards.dataset), htert_metrics['isabl_sample_id'])
+        )
+        files = htert_metrics.loc[
+            htert_metrics[col]==True].loc[
+            htert_metrics['result_type']=='metrics']['result_filepath'].values
+    
+    return expand(files)
+
+
+def dataset_sample_ids_fl(wildcards):
+    if wildcards.dataset == 'OV2295':
+        sample_ids = metrics_samples.loc[metrics_samples['isabl_patient_id']==wildcards.dataset]['isabl_sample_id'].unique()
+    else:
+        col = 'in_{}'.format(wildcards.dataset)
+        htert_metrics[col] = list(
+            map(lambda x: x.startswith(wildcards.dataset), htert_metrics['isabl_sample_id'])
+        )
+        sample_ids = htert_metrics.loc[htert_metrics[col]==True]['isabl_sample_id'].unique()
+    
+    return expand(sample_ids)
+
+
+rule collect_cn_data_fl:
+    input: 
+        hmm = dataset_cn_files_fl,
+        annotation = dataset_metric_files_fl
+    output: 'analysis/fitness_lines/{dataset}/cn_data.tsv'
+    log: 'logs/fitness_lines/{dataset}/collect_cn_data.log'
+    params:
+        samples = dataset_sample_ids_fl,
+        dataset = lambda wildcards: wildcards.dataset
+    shell: 
+        'python scripts/fitness_lines/collect_cn_data.py '
+        '--hmm {input.hmm} --annotation {input.annotation} '
+        '--samples {params.samples} --dataset {params.dataset} '
+        '--output {output} &> {log}'
+
+
+rule clone_assignments_fl:
+    input: 
+        cn = 'analysis/fitness_lines/{dataset}/cn_data.tsv',
+        clones = 'data/fitness/fitness_cell_assignment_feb07_2020.tsv'
+    output: 'analysis/fitness_lines/{dataset}/cn_data_clones.tsv'
+    params:
+        dataset = lambda wildcards: wildcards.dataset,
+        assign_col = 'copy'
+    log: 'logs/fitness_lines/{dataset}/clone_assignments.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/clone_assignments.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule compute_ccc_features_fl:
+    input: 'analysis/fitness_lines/{dataset}/cn_data_clones.tsv'
+    output: 'analysis/fitness_lines/{dataset}/cn_data_features.tsv'
+    log: 'logs/fitness_lines/{dataset}/compute_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/compute_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_ccc_features_fl:
+    input: 'analysis/fitness_lines/{dataset}/cn_data_features.tsv'
+    output: 
+        plot1 = 'plots/fitness_lines/{dataset}/ccc_features_hist.png',
+        plot2 = 'plots/fitness_lines/{dataset}/ccc_features_scatter.png'
+    log: 'logs/fitness_lines/{dataset}/plot_ccc_features.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/plot_ccc_features.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule split_cell_cycle_fl:
+    input: 'analysis/fitness_lines/{dataset}/cn_data_features.tsv'
+    output:
+        cn_s = 'analysis/fitness_lines/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fitness_lines/{dataset}/g1_phase_cells.tsv'
+    log: 'logs/fitness_lines/{dataset}/split_cell_cycle.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/split_cell_cycle.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule infer_scRT_pyro_fl:
+    input:
+        cn_s = 'analysis/fitness_lines/{dataset}/s_phase_cells.tsv',
+        cn_g1 = 'analysis/fitness_lines/{dataset}/g1_phase_cells.tsv'
+    output:
+        main_s_out = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        supp_s_out = 'analysis/fitness_lines/{dataset}/scRT_pyro_supp_s_output.tsv',
+        main_g_out = 'analysis/fitness_lines/{dataset}/g1_phase_cells_with_scRT.tsv',
+        supp_g_out = 'analysis/fitness_lines/{dataset}/scRT_pyro_supp_g_output.tsv',
+    params:
+        input_col = 'rpm',
+        cn_col = 'state',
+        copy_col = 'copy',
+        gc_col = 'gc',
+        cn_prior_method = 'g1_composite',
+        infer_mode = 'pyro'
+    log: 'logs/fitness_lines/{dataset}/infer_scRT.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/infer_scRT.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule plot_pyro_model_output_fl:
+    input:
+        s_phase = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        g1_phase = 'analysis/fitness_lines/{dataset}/g1_phase_cells_with_scRT.tsv'
+    output:
+        plot1 = 'plots/fitness_lines/{dataset}/inferred_cn_rep_results.png',
+        plot2 = 'plots/fitness_lines/{dataset}/s_vs_g_hmmcopy_states.png',
+        plot3 = 'plots/fitness_lines/{dataset}/s_vs_g_rpm.png',
+    params:
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/fitness_lines/{dataset}/plot_pyro_model_output.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/plot_pyro_model_output.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
+rule revise_cell_cycle_labels_fl:
+    input: 
+        cn_s = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT.tsv',
+        cn_g = 'analysis/fitness_lines/{dataset}/g1_phase_cells_with_scRT.tsv',
+    output:
+        out_s = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT_filtered_no_times.tsv',
+        out_g = 'analysis/fitness_lines/{dataset}/g1_phase_cells_with_scRT_filtered_no_times.tsv',
+        out_lowqual = 'analysis/fitness_lines/{dataset}/model_lowqual_cells_no_times.tsv',
+    params:
+        frac_rt_col = 'cell_frac_rep',
+        rep_col = 'model_rep_state',
+        cn_col = 'model_cn_state',
+        rpm_col = 'rpm'
+    log: 'logs/fitness_lines/{dataset}/revise_cell_cycle_labels.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/fitness_lines/revise_cell_cycle_labels.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 # use the model output files from sig_lines.smk to assign S-phase cells to timepoints
 rule assign_timepoints_fl:
     input:
-        cn_s = 'analysis/sig_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',
-        cn_g = 'analysis/sig_lines/{dataset}/g1_phase_cells_with_scRT_filtered.tsv',
-        cn_lowqual = 'analysis/sig_lines/{dataset}/model_lowqual_cells.tsv',
+        cn_s = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT_filtered_no_times.tsv',
+        cn_g = 'analysis/fitness_lines/{dataset}/g1_phase_cells_with_scRT_filtered_no_times.tsv',
+        cn_lowqual = 'analysis/fitness_lines/{dataset}/model_lowqual_cells_no_times.tsv',
         times = 'data/fitness/dlp_summaries_rebuttal.csv'
     output: 
         cn_s = 'analysis/fitness_lines/{dataset}/s_phase_cells_with_scRT_filtered.tsv',

@@ -16,6 +16,40 @@ def get_args():
     return p.parse_args()
 
 
+def correct_normal_cells(df_s, df_g, thresh=0.90):
+    ''' 
+    Identify normal cells (>thresh% state==2 bins) and move them from df_s to df_g.
+    This is necessary as normal cells are not included in the tree but they are not S-phase. 
+    '''
+    # compute the fraction of cn state==2 bins for each cell
+    df_s['frac_state_2'] = df_s.groupby('cell_id')['state'].transform(lambda x: (x==2).sum() / len(x))
+    # get cells with >thresh% state==2 bins and quality > 0.75
+    # these are the normal cells which are confidently in G1/2-phase
+    normal_cells = df_s.query('frac_state_2>@thresh & quality > 0.75')
+
+    # remove normal cells from df_s
+    df_s = df_s.loc[~df_s['cell_id'].isin(normal_cells['cell_id'])].reset_index(drop=True)
+
+    # find the next available clone id for normal cells
+    # get all clone ids
+    clones = df_g['clone_id'].unique()
+    # get the next available clone id not counting 'None'
+    highest_clone = max([c for c in clones if c != 'None'])
+    # next clone id is the ascii character following the highest clone id
+    next_clone = chr(ord(highest_clone) + 1)
+    # rename the normal cells to the next available clone id
+    normal_cells['clone_id'] = next_clone
+
+    # change all the other normal cells initialized as S-phase to have the same clone_id
+    # these are the cells that have frac_state_2 but are still in df_s
+    df_s.loc[df_s['frac_state_2'] > thresh, 'clone_id'] = next_clone
+
+    # concatenate normal_cells to df_g
+    df_g = pd.concat([df_g, normal_cells], axis=0).reset_index(drop=True)
+
+    return df_s, df_g
+
+
 def rename_none_clone(cn):
     """ 
     Rename clone with 'None' or 0 to the next available clone id. 
@@ -53,9 +87,8 @@ def main():
     # need to assign clone_ids for the S-phase cells who do not appear in cn_g1
     cn_s = cn.loc[~cn['cell_id'].isin(cn_g1['cell_id'].unique())]
 
-    # note which cells were in the tree (had a clone assignment)
-    cn_g1['in_tree'] = True
-    cn_s['in_tree'] = False
+    # correct normal cells and move them into a new clone within the G1/2-phase cells
+    cn_s, cn_g1 = correct_normal_cells(cn_s, cn_g1)
 
     # compute conesensus clone profiles for assign_col
     clone_profiles = compute_consensus_clone_profiles(
@@ -68,6 +101,10 @@ def main():
         cn_s, clone_profiles, col_name=argv.assign_col,
         clone_col='clone_id', cell_col='cell_id', chr_col='chr', start_col='start'
     )
+
+    # note which cells were in the tree (had a clone assignment)
+    cn_g1['in_tree'] = True
+    cn_s['in_tree'] = False
 
     cn_out = pd.concat([cn_s, cn_g1], ignore_index=True)
 

@@ -22,6 +22,13 @@ rule all_spectrum:
             ]
         ),
         expand(
+            'plots/spectrum/{dataset}/ccc_features_scatter.png',
+            dataset=[
+                d for d in config['spectrum_datasets']
+                # if (d not in bad_datasets)
+            ]
+        ),
+        expand(
             'plots/spectrum/{dataset}/inferred_cn_rep_results.png',
             dataset=[
                 d for d in config['spectrum_datasets']

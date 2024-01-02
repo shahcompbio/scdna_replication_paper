@@ -107,6 +107,13 @@ rule all_sig_lines:
                 if (d not in bad_datasets)
             ]
         ),
+        expand(
+            'analysis/sig_lines/{dataset}/cn_pseudobulk_freqs.tsv',
+            dataset=[
+                d for d in config['signatures_cell_lines']
+                if (d not in bad_datasets)
+            ]
+        ),
         'analysis/sig_lines/htert_rt_vs_time_profiles.csv.gz',
         'plots/sig_lines/phase_changes_cohort_confusion.png',
         'plots/sig_lines/subclonal_rt_diffs_summary.png',
@@ -430,6 +437,20 @@ rule compute_cn_pseudobulks_sl:
         'deactivate'
 
 
+rule compute_cn_pseudobulk_freqs_sl:
+    input: 'analysis/sig_lines/{dataset}/g1_phase_cells.tsv'
+    output: 'analysis/sig_lines/{dataset}/cn_pseudobulk_freqs.tsv'
+    params:
+        cn_state_col = 'state',
+        dataset = lambda wildcards: wildcards.dataset
+    log: 'logs/sig_lines/{dataset}/compute_cn_pseudobulks.log'
+    shell:
+        'source ../scdna_replication_tools/venv3/bin/activate ; '
+        'python3 scripts/sig_lines/compute_cn_pseudobulk_freqs.py '
+        '{input} {params} {output} &> {log} ; '
+        'deactivate'
+
+
 rule plot_cn_pseudobulks_sl:
     input: 'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv'
     output: 
@@ -510,7 +531,8 @@ rule cohort_clone_counts_sl:
 rule subclonal_rt_diffs_sl:
     input:
         rt = 'analysis/sig_lines/{dataset}/scRT_pseudobulks.tsv',
-        cn = 'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv'
+        cn = 'analysis/sig_lines/{dataset}/cn_pseudobulks.tsv',
+        cn_freqs = 'analysis/sig_lines/{dataset}/cn_pseudobulk_freqs.tsv'
     output:
         tsv = 'analysis/sig_lines/{dataset}/subclonal_rt_diffs.tsv',
         png = 'plots/sig_lines/{dataset}/subclonal_rt_diffs.png'
