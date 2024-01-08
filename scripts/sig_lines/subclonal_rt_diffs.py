@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from statannot import add_stat_annotation
+from sklearn.preprocessing import scale
 from argparse import ArgumentParser
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -204,6 +205,11 @@ def main():
 
     # find all the columns containing clone RT profiles
     rt_cols = [x for x in df.columns if x.startswith('pseudobulk_clone') and x.endswith(argv.rep_col)]
+    # center and scale all the RT profiles to have mean 0 and std 1
+    # this is necessary as clones have different distributions of early vs late S-phase cells and
+    # we don't want to mistake these differences for RT shifts
+    df[rt_cols] = scale(df[rt_cols], axis=0)
+
     # find all the columns containing clone CN profiles
     clones = [x.split('_')[1].replace('clone', 'clone_') for x in rt_cols]
 
