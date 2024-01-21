@@ -10,7 +10,8 @@ def get_args():
 
     p.add_argument('input', type=str, help='table of rt profile posteriors')
     p.add_argument('--noX', action='store_true', help='binary indicator to include for version of the model where chrX is excluded')
-    p.add_argument('output', type=str, help='plot of rt profiles sampled from the posterior distribution')
+    p.add_argument('output_csv', type=str, help='csv of mean, median, upper & lowe CI intervals from posterior rt profiles')
+    p.add_argument('output_pdf', type=str, help='plot of rt profiles sampled from the posterior distribution')
 
     return p.parse_args()
 
@@ -87,7 +88,8 @@ def main():
             title = title + ' (no chrX)'
         ax[i].set_title(title)
 
-    fig.savefig(argv.output, dpi=300, bbox_inches='tight')
+    fig.savefig(argv.output_pdf, dpi=300, bbox_inches='tight')
+    rt_profiles.to_csv(argv.output_csv, index=False)
 
 
 if __name__ == '__main__':

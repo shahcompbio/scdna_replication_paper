@@ -151,4 +151,6 @@ data/HiC/
 data/gastric_10x/
 data/signals/
 data/spectrum/
+data/laks_flow/
+data/rmdsigs/
 manuscript/._*.pdf
