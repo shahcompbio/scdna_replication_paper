@@ -13,6 +13,7 @@ def get_args():
     p.add_argument('-l', '--lamb', type=float, nargs='+', help='negative binomial event probs lambda for each dataset')
     p.add_argument('-b0', '--beta0', type=float, nargs='+', help='0th beta term for GC bias polynomial in each dataset')
     p.add_argument('-b1', '--beta1', type=float, nargs='+', help='1st beta term for GC bias polynomial in each dataset')
+    p.add_argument('-ns', '--num_s', type=int, nargs='+', help='number of S-phase cells in each dataset')
     p.add_argument('-tp', '--true_phase_col', type=str, help='column containing the true cell cycle phase')
     p.add_argument('-pp', '--pert_phase_col', type=str, help='column containing the pert predicted cell cycle phase')
     p.add_argument('-lp', '--laks_phase_col', type=str, help='column containing the laks predicted cell cycle phase')
@@ -61,7 +62,8 @@ def main():
         'num_clones': argv.num_clones,
         'lambda': argv.lamb,
         'beta0': argv.beta0,
-        'beta1': argv.beta1
+        'beta1': argv.beta1,
+        'num_s': argv.num_s
     })
 
     # load table with paths to model results
@@ -95,6 +97,7 @@ def main():
         temp_df['lambda'] = chunk['lambda'].values[0]
         temp_df['beta0'] = chunk['beta0'].values[0]
         temp_df['beta1'] = chunk['beta1'].values[0]
+        temp_df['num_s'] = chunk['num_s'].values[0]
         temp_df['cell_cna_rate'] = chunk.cell_cna_rate.values[0]
         temp_df['num_clones'] = chunk.num_clones.values[0]
         temp_df['PERT_phase_acc'] = pert_phase_acc

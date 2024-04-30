@@ -21,7 +21,7 @@ def get_args():
 def plot_confusion_matrix(df, argv):
     ''' Given a table of true and inferred phases, plot a confusion matrix with counts of each cell in each phase '''
     # subset to just the rows with method=='PERT'
-    df = df.query('method=="PERT"').query('lamb==0.75')
+    df = df.query('method=="PERT"').query('lamb==0.75').query('num_s==400')
     # Plot confusion matrix
     fig, ax = plt.subplots(1, 1, figsize=(4, 4), tight_layout=True)
     sns.heatmap(pd.crosstab(df['predicted_phase'], df['true_phase']), annot=True, fmt='d', ax=ax, cmap='Blues')
@@ -52,7 +52,7 @@ def plot_cna_rate_phase_acc(df, ax, n=1, test='t-test_ind', text_format='star', 
     x = "cell_cna_rate"
     y = "phase_acc"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('num_clones=={}'.format(n)).query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((0.02, 'PERT'), (0.02, 'laks')),
         ((0.00, 'PERT'), (0.00, 'laks')),
@@ -70,7 +70,7 @@ def plot_clone_effect_phase_acc(df, ax, rate=0.02, test='t-test_ind', text_forma
     x = "num_clones"
     y = "phase_acc"
     hue = "method"
-    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2')
+    temp_df = df.query('alpha==10.0').query('lamb==0.75').query('cell_cna_rate=={}'.format(rate)).query('num_clones<4').query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((1, 'PERT'), (1, 'laks')),
         ((3, 'PERT'), (3, 'laks'))
@@ -88,7 +88,7 @@ def plot_alpha_effect(df, ax, test='t-test_ind', text_format='star', loc='inside
     x = "alpha"
     y = "phase_acc"
     hue = "method"
-    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02')
+    temp_df = df.query('lamb==0.75').query('beta0==1.2').query('num_clones<4').query('cell_cna_rate==0.02').query('num_s==400')
     box_pairs = [
         ((10.0, 'PERT'), (10.0, 'laks')),
         ((5.0, 'PERT'), (5.0, 'laks')),
@@ -106,7 +106,7 @@ def plot_lambda_effect(df, ax, test='t-test_ind', text_format='star', loc='insid
     x = "lamb"
     y = "phase_acc"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2')
+    temp_df = df.query('cell_cna_rate==0').query('num_clones==1').query('alpha==10.0').query('beta0==1.2').query('num_s==400')
     box_pairs = [
         ((0.5, 'laks'), (0.5, 'PERT')),
         ((0.6, 'laks'), (0.6, 'PERT')),
@@ -126,7 +126,7 @@ def plot_gc_bias_effect(df, ax, test='t-test_ind', text_format='star', loc='insi
     x = "beta0"
     y = "phase_acc"
     hue = "method"
-    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75')
+    temp_df = df.query('cell_cna_rate==0.0').query('num_clones==1').query('alpha==10.0').query('lamb==0.75').query('num_s==400')
     box_pairs = [
         ((1.2, 'PERT'), (1.2, 'laks')),
         ((-1.2, 'PERT'), (-1.2, 'laks')),
@@ -140,9 +140,29 @@ def plot_gc_bias_effect(df, ax, test='t-test_ind', text_format='star', loc='insi
     # ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
 
 
+def plot_num_s_effect(df, ax, test='t-test_ind', text_format='star', loc='inside', verbose=0):
+    x = "num_s"
+    y = "phase_acc"
+    hue = "method"
+    temp_df = df.query('cell_cna_rate==0.02').query('num_clones==3').query('alpha==10.0').query('lamb==0.75').query('beta0==1.2')
+    box_pairs = [
+        ((400, 'PERT'), (400, 'laks')),
+        ((200, 'PERT'), (200, 'laks')),
+        ((100, 'PERT'), (100, 'laks')),
+        ((50, 'PERT'), (50, 'laks')),
+        ((25, 'PERT'), (25, 'laks')),
+        ((5, 'PERT'), (5, 'laks')),
+    ]
+    violins_with_pvals(temp_df, x, y, hue, ax, box_pairs, test=test,
+                       text_format=text_format, loc=loc, verbose=verbose)
+    ax.set_title('Sweep across number of S-phase cells')
+    ax.set_ylabel('Replication state accuracy')
+    ax.set_xlabel('# S-phase cells')
+
+
 def plot_param_sweep(df, argv):
     """ Figure showing phase accuracy parameter sweep across num_clones and cell_cna_rate """
-    fig, ax = plt.subplots(2, 5, figsize=(20, 8), tight_layout=True)
+    fig, ax = plt.subplots(2, 6, figsize=(20, 8), tight_layout=True)
 
     # top row shows accuracy at predicting replication states
     # show effect of varying cna rate at fixed number of clones
@@ -153,11 +173,14 @@ def plot_param_sweep(df, argv):
     plot_clone_effect_phase_acc(df, ax[0, 3], rate=0.02)
     plot_clone_effect_phase_acc(df, ax[0, 4], rate=0.05)
 
-    # merge together the two supblots in the bottom left corner
+    # show effect of varying the number of S-phase cells
+    plot_num_s_effect(df, ax[0, 5])
+
+    # merge together the 3 supblots in the bottom left corner
     gs = ax[1, 0].get_gridspec()
-    for a in ax[1, :2]:
+    for a in ax[1, :3]:
         a.remove()
-    axbig_bottom_row = fig.add_subplot(gs[1, 0:2])
+    axbig_bottom_row = fig.add_subplot(gs[1, 0:3])
 
     # barplots of phase accuracies for all simulated datasets
     sns.barplot(data=df, x='datatag', y='phase_acc', hue='method', ax=axbig_bottom_row, palette=get_methods_cmap(), saturation=1)
@@ -165,13 +188,13 @@ def plot_param_sweep(df, argv):
     axbig_bottom_row.set_title('All simulated datasets')
 
     # plot the effect of varying alpha
-    plot_alpha_effect(df, ax[1, 2])
+    plot_alpha_effect(df, ax[1, 3])
 
     # plot the effect of varying lambda
-    plot_lambda_effect(df, ax[1, 3])
+    plot_lambda_effect(df, ax[1, 4])
     
     # plot the effect of varying GC bias
-    plot_gc_bias_effect(df, ax[1, 4])
+    plot_gc_bias_effect(df, ax[1, 5])
 
     fig.savefig(argv.plot2, bbox_inches='tight', dpi=300)
 
@@ -180,7 +203,7 @@ def plot_param_sweep(df, argv):
 def plot_jointplot(df, argv):
     ''' Plot a jointplot of the PERT and true fraction of replicated bins per cell. Use the phase class (TP, FP, TN, FN) as the hue. '''
     # subset to just the rows with method=='PERT'
-    df = df.query('method=="PERT"').query('lamb==0.75')
+    df = df.query('method=="PERT"').query('lamb==0.75').query('num_s==400')
     # phase_class_pal = {'TP': 'green', 'TN': 'blue', 'FP': 'red', 'FN': 'orange'}
     pal = get_phase_cmap()
     # create a JointGrid instance

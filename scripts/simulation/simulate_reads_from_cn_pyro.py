@@ -302,6 +302,10 @@ def main():
         # subset df_s to just S-phase cells belonging to this clone
         clone_df_s = df_s.query('clone_id=="{}"'.format(clone_id))
 
+        # if there are no cells in this clone, skip it
+        if clone_df_s.shape[0] == 0:
+            continue
+
         # dummy column where all cells have the same library_id
         clone_df_s['library_id'] = 'ABCD'
         libs_s, L_val_s = get_libraries_tensor(clone_df_s)

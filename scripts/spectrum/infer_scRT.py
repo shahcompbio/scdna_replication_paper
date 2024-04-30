@@ -8,12 +8,14 @@ def get_args():
 
     p.add_argument('cn_s', help='input long-form copy number dataframe for S-phase cells')
     p.add_argument('cn_g1', help='input long-form copy number dataframe for G1-phase cells including clone_id')
+    p.add_argument('rt_profile', help='input RT profile that should be used as a prior or initialization in the model')
     p.add_argument('input_col', help='column that contains raw reads or rpm that is used as observed data in model')
     p.add_argument('cn_col', help='column in that contains hmmcopy cn states')
     p.add_argument('copy_col', help='column in that contains hmmcopy cn states')
     p.add_argument('gc_col', help='column containing gc values')
     p.add_argument('cn_prior_method', help='method for assigning the cn prior of each S-phase cell (i.e. g1_clones, g1_composite, diploid, etc)')
-    p.add_argument('infer_mode', help='options: bulk/clone/cell/pyro')
+    p.add_argument('infer_mode', help='options: bulk/clone/cell/pert')
+    p.add_argument('rt_init_col', help='column containing the RT profile that should be used as initialization in the model')
     p.add_argument('cn_s_out', help='output csv that is same as cn_s input with inferred scRT added')
     p.add_argument('supp_s_output', help='supplementerary output csv containing sample- and library-level params inferred by the model')
     p.add_argument('cn_g_out', help='output csv that is same as cn_g input with inferred scRT added')
@@ -53,7 +55,19 @@ def main():
     argv = get_args()
     cn_s = pd.read_csv(argv.cn_s)
     cn_g = pd.read_csv(argv.cn_g1)
+    rt_profile = pd.read_csv(argv.rt_profile)
     print('loaded data')
+
+    # merge the rt profile into cn_s and cn_g
+    print('before merging RT profile')
+    print('cn_s.shape', cn_s.shape)
+    print('cn_g.shape', cn_g.shape)
+    print('rt_profile.shape', rt_profile.shape)
+    cn_s = pd.merge(cn_s, rt_profile[['chr', 'start', 'end', argv.rt_init_col]])
+    cn_g = pd.merge(cn_g, rt_profile[['chr', 'start', 'end', argv.rt_init_col]])
+    print('after merging RT profile')
+    print('cn_s.shape', cn_s.shape)
+    print('cn_g.shape', cn_g.shape)
 
     # check if this is dataset SA1091
     dataset = argv.cn_s.split('/')[-2]
@@ -81,13 +95,17 @@ def main():
 
     # temporarily remove columns that don't get used by infer_SPF in order to avoid
     # removing cells/loci that have NaN entries in some fields
-    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, argv.copy_col, 'library_id', argv.input_col]]
-    temp_cn_g = cn_g[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, argv.copy_col, 'library_id', 'clone_id', argv.input_col]]
+    temp_cn_s = cn_s[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, argv.copy_col, 'library_id', argv.input_col, argv.rt_init_col]]
+    temp_cn_g = cn_g[['cell_id', 'chr', 'start', 'end', argv.gc_col, argv.cn_col, argv.copy_col, 'library_id', 'clone_id', argv.input_col, argv.rt_init_col]]
 
     print('creating scrt object')
-    # create SPF object with input
-    scrt = scRT(temp_cn_s, temp_cn_g, input_col=argv.input_col, rt_prior_col=None, assign_col=argv.copy_col,
-                cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=1500)
+    # create scRT object with input
+    scrt = scRT(
+        temp_cn_s, temp_cn_g, input_col=argv.input_col, 
+        # rt_init_col=argv.rt_init_col,  # not yet implemented
+        assign_col=argv.copy_col,
+        cn_state_col=argv.cn_col, gc_col=argv.gc_col, cn_prior_method=argv.cn_prior_method, max_iter=1500
+    )
 
     # run inference
     print('running inference')

@@ -17,13 +17,15 @@ rule all_rt_model:
         'plots/rt_model/beta_importance_posteriors_noX.pdf',
         'plots/rt_model/beta_importance_posteriors_v2.pdf',
         'plots/rt_model/beta_importance_posteriors_v2_noX.pdf',
+        'analysis/rt_model/rt_profile_posteriors_summary.csv.gz',
+        'analysis/rt_model/rt_profile_posteriors_summary_noX.csv.gz',
         'plots/rt_model/rt_profile_posteriors.pdf',
         'plots/rt_model/rt_profile_posteriors_noX.pdf',
-        'plots/rt_model/clone_pca_embeddings.pdf',
-        'plots/rt_model/clone_pca_regression.pdf',
-        'analysis/rt_model/clone_pca_explained_variance.csv.gz',
+        # 'plots/rt_model/clone_pca_embeddings.pdf',
+        # 'plots/rt_model/clone_pca_regression.pdf',
+        # 'analysis/rt_model/clone_pca_explained_variance.csv.gz',
         'plots/rt_model/metacohort_overview.pdf',
-        'plots/rt_model/main_figure.pdf'
+        # 'plots/rt_model/main_figure.pdf'
 
 
 rule load_data_rt:
@@ -256,7 +258,9 @@ rule plot_beta_importance_posteriors_v2_noX_rt:
 
 rule plot_rt_profile_posteriors_rt:
     input: 'analysis/rt_model/rt_profile_posteriors.csv.gz'
-    output: 'plots/rt_model/rt_profile_posteriors.pdf'
+    output: 
+        'analysis/rt_model/rt_profile_posteriors_summary.csv.gz',
+        'plots/rt_model/rt_profile_posteriors.pdf'
     log: 'logs/rt_model/plot_rt_profile_posteriors.log'
     # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
@@ -268,7 +272,9 @@ rule plot_rt_profile_posteriors_rt:
 
 rule plot_rt_profile_posteriors_noX_rt:
     input: 'analysis/rt_model/rt_profile_posteriors_noX.csv.gz'
-    output: 'plots/rt_model/rt_profile_posteriors_noX.pdf'
+    output: 
+        'analysis/rt_model/rt_profile_posteriors_summary_noX.csv.gz',
+        'plots/rt_model/rt_profile_posteriors_noX.pdf'
     log: 'logs/rt_model/plot_rt_profile_posteriors_noX.log'
     # singularity: 'docker://adamcweiner/scdna_replication_tools:main'
     shell:
